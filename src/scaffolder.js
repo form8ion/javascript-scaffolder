@@ -151,8 +151,8 @@ export default async function ({projectRoot, projectName, visibility, license, v
     writeFile(`${projectRoot}/.nvmrc`, nodeVersion),
     writeFile(`${projectRoot}/package.json`, JSON.stringify(packageData)),
     ('Application' === packageType) && writeFile(`${projectRoot}/.npmrc`, 'save-exact=true'),
-    copyFile(resolve(__dirname, 'templates', 'huskyrc.json'), `${projectRoot}/.huskyrc.json`),
-    copyFile(resolve(__dirname, 'templates', 'commitlintrc.js'), `${projectRoot}/.commitlintrc.js`),
+    copyFile(resolve(__dirname, '..', 'templates', 'huskyrc.json'), `${projectRoot}/.huskyrc.json`),
+    copyFile(resolve(__dirname, '..', 'templates', 'commitlintrc.js'), `${projectRoot}/.commitlintrc.js`),
     ('Package' === packageType) && writeFile(
       `${projectRoot}/.npmignore`,
       `${npmIgnoreDirectories.join('\n')}\n\n${npmIgnoreFiles.join('\n')}`

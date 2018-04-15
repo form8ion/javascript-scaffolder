@@ -120,12 +120,12 @@ suite('javascript project scaffolder', () => {
       );
       assert.calledWith(
         fs.copyFile,
-        path.resolve(__dirname, '../../../../', 'packages/javascript/src/templates', 'huskyrc.json'),
+        path.resolve(__dirname, '../../', 'templates', 'huskyrc.json'),
         `${projectRoot}/.huskyrc.json`
       );
       assert.calledWith(
         fs.copyFile,
-        path.resolve(__dirname, '../../../../', 'packages/javascript/src/templates', 'commitlintrc.js'),
+        path.resolve(__dirname, '../../', 'templates', 'commitlintrc.js'),
         `${projectRoot}/.commitlintrc.js`
       );
     });
