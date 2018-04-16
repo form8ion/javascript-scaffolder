@@ -13,6 +13,7 @@
     "test": "run-s lint:* test:*",
     "test:unit": "nyc run-s test:unit:base",
     "test:unit:base": "mocha --recursive test/unit",
+    "coverage:report": "nyc report --reporter=text-lcov > coverage.lcov && codecov",
     "greenkeeper:update-lockfile": "greenkeeper-lockfile-update",
     "greenkeeper:upload-lockfile": "greenkeeper-lockfile-upload"
   },
