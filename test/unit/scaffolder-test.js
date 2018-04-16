@@ -11,7 +11,7 @@ import {
 import * as packageBuilder from '../../src/package';
 import * as installer from '../../src/install';
 import * as exec from '../../third-party-wrappers/exec-as-promised';
-import scaffoldJavaScript, {questionNames} from '../../src/scaffolder';
+import {scaffold, questionNames} from '../../src/scaffolder';
 import * as npmConf from '../../third-party-wrappers/npm-conf';
 
 suite('javascript project scaffolder', () => {
@@ -58,7 +58,7 @@ suite('javascript project scaffolder', () => {
     get.withArgs('init.author.url').returns(authorUrl);
     inquirer.prompt.resolves({[questionNames.NODE_VERSION_CATEGORY]: any.fromList(nodeVersionCategoryChoices)});
 
-    return scaffoldJavaScript({visibility, projectRoot}).then(() => {
+    return scaffold({visibility, projectRoot}).then(() => {
       assert.calledWith(
         inquirer.prompt,
         [
@@ -167,7 +167,7 @@ suite('javascript project scaffolder', () => {
         })
         .returns(packageDetails);
 
-      return scaffoldJavaScript({projectRoot, projectName, visibility, license, vcs, ci}).then(() => assert.calledWith(
+      return scaffold({projectRoot, projectName, visibility, license, vcs, ci}).then(() => assert.calledWith(
         fs.writeFile,
         `${projectRoot}/package.json`,
         JSON.stringify(packageDetails)
@@ -187,7 +187,7 @@ suite('javascript project scaffolder', () => {
         test('that scripting tools are installed', async () => {
           inquirer.prompt.resolves({[questionNames.NODE_VERSION_CATEGORY]: any.word()});
 
-          await scaffoldJavaScript({});
+          await scaffold({});
 
           assert.calledWith(installer.default, [...defaultDependencies]);
         });
@@ -200,7 +200,7 @@ suite('javascript project scaffolder', () => {
             [questionNames.UNIT_TESTS]: true
           });
 
-          await scaffoldJavaScript({});
+          await scaffold({});
 
           assert.calledWith(installer.default, [...defaultDependencies, 'mocha', 'chai', 'sinon']);
         });
@@ -211,7 +211,7 @@ suite('javascript project scaffolder', () => {
             [questionNames.UNIT_TESTS]: false
           });
 
-          await scaffoldJavaScript({});
+          await scaffold({});
 
           assert.calledWith(installer.default, [...defaultDependencies]);
         });
@@ -222,7 +222,7 @@ suite('javascript project scaffolder', () => {
             [questionNames.INTEGRATION_TESTS]: true
           });
 
-          await scaffoldJavaScript({});
+          await scaffold({});
 
           assert.calledWith(installer.default, [...defaultDependencies, 'cucumber', 'chai']);
         });
@@ -233,7 +233,7 @@ suite('javascript project scaffolder', () => {
             [questionNames.INTEGRATION_TESTS]: false
           });
 
-          await scaffoldJavaScript({});
+          await scaffold({});
 
           assert.calledWith(installer.default, [...defaultDependencies]);
         });
@@ -245,7 +245,7 @@ suite('javascript project scaffolder', () => {
             [questionNames.INTEGRATION_TESTS]: true
           });
 
-          await scaffoldJavaScript({});
+          await scaffold({});
 
           assert.calledWith(installer.default, [...defaultDependencies, 'mocha', 'chai', 'sinon', 'cucumber']);
         });
@@ -260,7 +260,7 @@ suite('javascript project scaffolder', () => {
         [questionNames.PACKAGE_TYPE]: 'Application'
       });
 
-      return scaffoldJavaScript({projectRoot, projectName, visibility: 'Public'}).then(() => {
+      return scaffold({projectRoot, projectName, visibility: 'Public'}).then(() => {
         assert.calledWith(fs.writeFile, `${projectRoot}/.npmrc`, 'save-exact=true');
       });
     });
@@ -272,7 +272,7 @@ suite('javascript project scaffolder', () => {
         [questionNames.PACKAGE_TYPE]: 'Package'
       });
 
-      return scaffoldJavaScript({projectRoot, projectName, visibility: 'Public'}).then(() => {
+      return scaffold({projectRoot, projectName, visibility: 'Public'}).then(() => {
         assert.neverCalledWith(fs.writeFile, `${projectRoot}/.npmrc`);
       });
     });
@@ -284,7 +284,7 @@ suite('javascript project scaffolder', () => {
         [questionNames.NODE_VERSION_CATEGORY]: 'Latest'
       });
 
-      return scaffoldJavaScript({projectRoot, projectName, visibility: 'Public'}).then(() => {
+      return scaffold({projectRoot, projectName, visibility: 'Public'}).then(() => {
         assert.calledWith(fs.writeFile, `${projectRoot}/.nvmrc`, latestVersion);
         assert.calledWith(exec.default, '. ~/.nvm/nvm.sh && nvm install', {silent: false});
       });
@@ -295,7 +295,7 @@ suite('javascript project scaffolder', () => {
         [questionNames.NODE_VERSION_CATEGORY]: 'LTS'
       });
 
-      return scaffoldJavaScript({projectRoot, projectName, visibility: 'Public'}).then(() => {
+      return scaffold({projectRoot, projectName, visibility: 'Public'}).then(() => {
         assert.calledWith(fs.writeFile, `${projectRoot}/.nvmrc`, ltsVersion);
         assert.calledWith(exec.default, '. ~/.nvm/nvm.sh && nvm install', {silent: false});
       });
@@ -312,7 +312,7 @@ suite('javascript project scaffolder', () => {
           [questionNames.PACKAGE_TYPE]: 'Package'
         });
 
-        const {badges} = await scaffoldJavaScript({projectRoot, projectName, visibility: 'Public'});
+        const {badges} = await scaffold({projectRoot, projectName, visibility: 'Public'});
 
         assert.deepEqual(badges.consumer.npm, {
           img: `https://img.shields.io/npm/v/${packageName}.svg`,
@@ -327,7 +327,7 @@ suite('javascript project scaffolder', () => {
           [questionNames.PACKAGE_TYPE]: 'Package'
         });
 
-        const {badges} = await scaffoldJavaScript({projectRoot, projectName, visibility: 'Private'});
+        const {badges} = await scaffold({projectRoot, projectName, visibility: 'Private'});
 
         assert.isUndefined(badges.consumer.npm);
       });
@@ -338,7 +338,7 @@ suite('javascript project scaffolder', () => {
           [questionNames.PACKAGE_TYPE]: any.word()
         });
 
-        const {badges} = await scaffoldJavaScript({projectRoot, projectName, visibility: 'Public'});
+        const {badges} = await scaffold({projectRoot, projectName, visibility: 'Public'});
 
         assert.isUndefined(badges.consumer.npm);
       });
@@ -348,7 +348,7 @@ suite('javascript project scaffolder', () => {
         packageBuilder.default.returns({name: packageName});
         inquirer.prompt.resolves({[questionNames.NODE_VERSION_CATEGORY]: any.word()});
 
-        const {badges} = await scaffoldJavaScript({projectRoot, projectName});
+        const {badges} = await scaffold({projectRoot, projectName});
 
         assert.deepEqual(badges.contribution['commit-convention'], {
           img: 'https://img.shields.io/badge/Conventional%20Commits-1.0.0-yellow.svg',
@@ -367,7 +367,7 @@ suite('javascript project scaffolder', () => {
       test('that files and directories are defined to be ignored from version control', async () => {
         inquirer.prompt.resolves({[questionNames.NODE_VERSION_CATEGORY]: any.word()});
 
-        const {vcsIgnore} = await scaffoldJavaScript({projectRoot, projectName, visibility: 'Public'});
+        const {vcsIgnore} = await scaffold({projectRoot, projectName, visibility: 'Public'});
 
         assert.include(vcsIgnore.files, '.eslintcache');
 
@@ -384,7 +384,7 @@ suite('javascript project scaffolder', () => {
         });
         packageBuilder.default.returns({});
 
-        await scaffoldJavaScript({projectRoot, projectName, visibility: 'Public'});
+        await scaffold({projectRoot, projectName, visibility: 'Public'});
 
         assert.calledWith(
           fs.writeFile,
@@ -409,7 +409,7 @@ rollup.config.js`)
         });
         packageBuilder.default.returns({});
 
-        await scaffoldJavaScript({projectRoot, projectName, visibility: 'Public', ci: 'Travis'});
+        await scaffold({projectRoot, projectName, visibility: 'Public', ci: 'Travis'});
 
         assert.calledWith(
           fs.writeFile,
@@ -426,7 +426,7 @@ rollup.config.js`)
           [questionNames.PACKAGE_TYPE]: any.word()
         });
 
-        await scaffoldJavaScript({projectRoot, projectName, visibility: 'Public'});
+        await scaffold({projectRoot, projectName, visibility: 'Public'});
 
         assert.neverCalledWith(fs.writeFile, `${projectRoot}/.npmignore`);
       });
@@ -436,7 +436,7 @@ rollup.config.js`)
       test('that `npm test` is defined as the verification command', async () => {
         inquirer.prompt.resolves({[questionNames.NODE_VERSION_CATEGORY]: any.word()});
 
-        const {verificationCommand} = await scaffoldJavaScript({projectRoot, projectName, visibility: any.word()});
+        const {verificationCommand} = await scaffold({projectRoot, projectName, visibility: any.word()});
 
         assert.equal(verificationCommand, 'npm test');
       });

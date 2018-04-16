@@ -46,7 +46,7 @@ async function determineNodeVersionForProject(nodeVersionCategory) {
   return lsLine.match(/(v[0-9]+\.[0-9]+\.[0-9]+)/)[1];
 }
 
-export default async function ({projectRoot, projectName, visibility, license, vcs, ci}) {
+export async function scaffold({projectRoot, projectName, visibility, license, vcs, ci}) {
   console.log(chalk.blue('Initializing JavaScript project'));     // eslint-disable-line no-console
 
   const npmConf = npmConfFactory();
