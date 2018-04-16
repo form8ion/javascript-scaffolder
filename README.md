@@ -1,5 +1,7 @@
 # javascript-scaffolder
 
+[![Greenkeeper badge](https://badges.greenkeeper.io/travi/javascript-scaffolder.svg)](https://greenkeeper.io/)
+
 opinionated scaffolder for JavaScript projects
 
 <!-- consumer badges -->
