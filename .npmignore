@@ -1,0 +1,11 @@
+/src/
+/test/
+
+.editorconfig
+.eslintcache
+.eslintignore
+.eslintrc.yml
+.markdownlintrc
+.nvmrc
+.travis.yml
+rollup.config.js

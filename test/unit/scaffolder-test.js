@@ -10,9 +10,9 @@ import {
 } from '../../src/prompt-condiftionals';
 import * as packageBuilder from '../../src/package';
 import * as installer from '../../src/install';
-import * as exec from '../../../../third-party-wrappers/exec-as-promised';
+import * as exec from '../../third-party-wrappers/exec-as-promised';
 import scaffoldJavaScript, {questionNames} from '../../src/scaffolder';
-import * as npmConf from '../../../../third-party-wrappers/npm-conf';
+import * as npmConf from '../../third-party-wrappers/npm-conf';
 
 suite('javascript project scaffolder', () => {
   let sandbox;

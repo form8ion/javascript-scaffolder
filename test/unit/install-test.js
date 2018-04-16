@@ -1,7 +1,7 @@
 import {assert} from 'chai';
 import sinon from 'sinon';
 import any from '@travi/any';
-import * as exec from '../../../../third-party-wrappers/exec-as-promised';
+import * as exec from '../../third-party-wrappers/exec-as-promised';
 import npmInstall from '../../src/install';
 
 suite('npm install', () => {
