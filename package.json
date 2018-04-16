@@ -1,6 +1,7 @@
 {
   "name": "@travi/javascript-scaffolder",
   "version": "0.0.0-semantically-released",
+  "description": "opinionated scaffolder for JavaScript projects",
   "license": "MIT",
   "repository": "travi/javascript-scaffolder",
   "bugs": "https://github.com/travi/javascript-scaffolder/issues",

@@ -1,4 +1,5 @@
 repository:
+  description: opinionated scaffolder for JavaScript projects
   has_wiki: false
   has_projects: false
   has_downloads: false
