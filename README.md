@@ -8,6 +8,8 @@ opinionated scaffolder for JavaScript projects
 
 <!-- status badges -->
 [![Build Status][ci-badge]][ci-link]
+[![Codecov](https://img.shields.io/codecov/c/github/travi/javascript-scaffolder.svg)](https://codecov.io/github/travi/javascript-scaffolder)
+
 
 <!-- contribution badges -->
 [![Conventional Commits][commit-convention-badge]][commit-convention-link]

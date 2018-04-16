@@ -11,7 +11,8 @@
     "lint:js": "eslint . --cache",
     "lint:travis": "travis lint --no-interactive",
     "test": "run-s lint:* test:*",
-    "test:unit": "mocha --recursive test/unit",
+    "test:unit": "nyc run-s test:unit:base",
+    "test:unit:base": "mocha --recursive test/unit",
     "greenkeeper:update-lockfile": "greenkeeper-lockfile-update",
     "greenkeeper:upload-lockfile": "greenkeeper-lockfile-upload"
   },
@@ -36,6 +37,7 @@
     "husky": "1.0.0-rc.1",
     "mocha": "5.1.0",
     "npm-run-all": "4.1.2",
+    "nyc": "11.6.0",
     "sinon": "4.5.0"
   },
   "dependencies": {
