@@ -1,6 +1,8 @@
 {
   "name": "@travi/javascript-scaffolder",
   "version": "0.0.0-semantically-released",
+  "main": "lib/index.cjs.js",
+  "module": "lib/index.es.js",
   "description": "opinionated scaffolder for JavaScript projects",
   "license": "MIT",
   "repository": "travi/javascript-scaffolder",
