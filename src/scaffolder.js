@@ -102,6 +102,7 @@ export async function scaffold({projectRoot, projectName, visibility, license, v
 
   const devDependencies = uniq([
     '@travi/eslint-config-travi',
+    'commitlint-config-travi',
     'npm-run-all',
     'husky@next',
     'cz-conventional-changelog',

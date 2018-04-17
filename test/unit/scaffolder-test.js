@@ -180,6 +180,7 @@ suite('javascript project scaffolder', () => {
     suite('dependencies', () => {
       const defaultDependencies = [
         '@travi/eslint-config-travi',
+        'commitlint-config-travi',
         'npm-run-all',
         'husky@next',
         'cz-conventional-changelog',
