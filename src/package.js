@@ -1,8 +1,9 @@
-export default function ({projectName, visibility, scope, packageType, license, tests, vcs, author, ci}) {
+export default function ({projectName, visibility, scope, packageType, license, tests, vcs, author, ci, description}) {
   const packageName = `${scope ? `@${scope}/` : ''}${projectName}`;
 
   return {
     name: packageName,
+    description,
     ...('Package' === packageType) && {version: '0.0.0-semantically-released'},
     license: license || 'UNLICENSED',
     ...('Application' === packageType) && {private: true},

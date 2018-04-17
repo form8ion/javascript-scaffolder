@@ -22,6 +22,16 @@ suite('package details builder', () => {
     });
   });
 
+  suite('description', () => {
+    test('that the description is included in the package details', () => {
+      const description = any.sentence();
+
+      const packageDetails = buildPackageDetails({description, visibility, tests: {}, vcs: {}, author: {}});
+
+      assert.equal(packageDetails.description, description);
+    });
+  });
+
   suite('author', () => {
     test('that the author details are provided', () => {
       const name = any.string();
