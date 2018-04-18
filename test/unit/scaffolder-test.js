@@ -184,7 +184,8 @@ suite('javascript project scaffolder', () => {
         'npm-run-all',
         'husky@next',
         'cz-conventional-changelog',
-        'greenkeeper-lockfile'
+        'greenkeeper-lockfile',
+        'nyc'
       ];
 
       suite('scripts', () => {
