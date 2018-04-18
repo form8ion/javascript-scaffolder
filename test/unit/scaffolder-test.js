@@ -253,6 +253,22 @@ suite('javascript project scaffolder', () => {
 
           assert.calledWith(installer.default, [...defaultDependencies, 'mocha', 'chai', 'sinon', 'cucumber']);
         });
+
+        test('that codecov is installed for public projects', async () => {
+          inquirer.prompt.resolves({[questionNames.NODE_VERSION_CATEGORY]: any.fromList(nodeVersionCategoryChoices)});
+
+          await scaffold({visibility: 'Public'});
+
+          assert.calledWith(installer.default, [...defaultDependencies, 'codecov']);
+        });
+
+        test('that codecov is not installed for private projects', async () => {
+          inquirer.prompt.resolves({[questionNames.NODE_VERSION_CATEGORY]: any.fromList(nodeVersionCategoryChoices)});
+
+          await scaffold({visibility: 'Private'});
+
+          assert.calledWith(installer.default, defaultDependencies);
+        });
       });
     });
   });
