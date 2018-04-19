@@ -209,7 +209,8 @@ suite('package details builder', () => {
           test('that the script is included if the project will be unit tested', () => {
             const packageDetails = buildPackageDetails({tests: {unit: true}, vcs: {}, author: {}});
 
-            assert.equal(packageDetails.scripts['test:unit'], 'mocha --recursive test/unit');
+            assert.equal(packageDetails.scripts['test:unit:base'], 'mocha --recursive test/unit');
+            assert.equal(packageDetails.scripts['test:unit'], 'nyc run-s test:unit:base');
           });
 
           test('that the script is not included if the project will not be unit tested', () => {
