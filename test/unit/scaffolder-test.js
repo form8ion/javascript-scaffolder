@@ -324,6 +324,8 @@ suite('javascript project scaffolder', () => {
 
         assert.include(vcsIgnore.directories, '/node_modules/');
         assert.include(vcsIgnore.directories, '/lib/');
+        assert.include(vcsIgnore.directories, '/coverage/');
+        assert.include(vcsIgnore.directories, '/.nyc_output/');
       });
     });
 
@@ -342,6 +344,8 @@ suite('javascript project scaffolder', () => {
           `${projectRoot}/.npmignore`,
           sinon.match(`/src/
 /test/
+/coverage/
+/.nyc_output/
 
 .editorconfig
 .eslintcache

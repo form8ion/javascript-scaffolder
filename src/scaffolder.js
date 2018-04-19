@@ -61,7 +61,7 @@ export async function scaffold({projectRoot, projectName, visibility, license, v
     description
   });
 
-  const npmIgnoreDirectories = ['/src/', '/test/'];
+  const npmIgnoreDirectories = ['/src/', '/test/', '/coverage/', '/.nyc_output/'];
   const npmIgnoreFiles = [
     '.editorconfig',
     '.eslintcache',
@@ -120,7 +120,7 @@ export async function scaffold({projectRoot, projectName, visibility, license, v
     },
     vcsIgnore: {
       files: ['.eslintcache'],
-      directories: ['/node_modules/', '/lib/']
+      directories: ['/node_modules/', '/lib/', '/coverage/', '/.nyc_output/']
     },
     verificationCommand: 'npm test'
   };
