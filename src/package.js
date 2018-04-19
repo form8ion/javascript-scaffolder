@@ -19,7 +19,7 @@ export default function ({projectName, visibility, scope, packageType, license, 
       ...('Application' === packageType) && {start: './lib/index.js'},
       'lint:js': 'eslint . --cache',
       ...('Travis' === ci) && {'lint:travis': 'travis lint --no-interactive'},
-      test: 'run-s lint:*',
+      test: `run-s lint:*${(tests.unit || tests.integration) ? ' test:*' : ''}`,
       ...tests.unit && {
         'test:unit:base': 'mocha --recursive test/unit',
         'test:unit': 'nyc run-s test:unit:base'
