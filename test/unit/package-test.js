@@ -269,6 +269,23 @@ suite('package details builder', () => {
           assert.isUndefined(packageDetails.scripts['lint:travis']);
         });
       });
+
+      suite('coverage', () => {
+        test('that a script is included to report coverage to codecov for public projects', () => {
+          const packageDetails = buildPackageDetails({tests: {}, vcs: {}, author: {}, visibility: 'Public'});
+
+          assert.equal(
+            packageDetails.scripts['coverage:report'],
+            'nyc report --reporter=text-lcov > coverage.lcov && codecov'
+          );
+        });
+
+        test('that a script is not included to report coverage to codecov for private projects', () => {
+          const packageDetails = buildPackageDetails({tests: {}, vcs: {}, author: {}, visibility: 'Private'});
+
+          assert.isUndefined(packageDetails.scripts['coverage:report']);
+        });
+      });
     });
 
     suite('greenkeeper', () => {
