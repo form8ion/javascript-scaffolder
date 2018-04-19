@@ -53,6 +53,11 @@ suite('javascript project scaffolder', () => {
         path.resolve(__dirname, '../../', 'templates', 'commitlintrc.js'),
         `${projectRoot}/.commitlintrc.js`
       );
+      assert.calledWith(
+        fs.copyFile,
+        path.resolve(__dirname, '../../', 'templates', 'nycrc.json'),
+        `${projectRoot}/.nycrc`
+      );
     });
   });
 
