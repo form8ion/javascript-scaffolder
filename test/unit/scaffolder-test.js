@@ -387,6 +387,21 @@ rollup.config.js`)
       });
     });
 
+    suite('eslint-ignore', () => {
+      test('that non-source files are excluded from linting', async () => {
+        prompts.prompt.resolves({[prompts.questionNames.NODE_VERSION_CATEGORY]: any.word()});
+
+        await scaffold({projectRoot});
+
+        assert.calledWith(
+          fs.writeFile,
+          `${projectRoot}/.eslintignore`,
+          sinon.match(`/lib/
+/coverage/`)
+        );
+      });
+    });
+
     suite('verification', () => {
       test('that `npm test` is defined as the verification command', async () => {
         prompts.prompt.resolves({[prompts.questionNames.NODE_VERSION_CATEGORY]: any.word()});

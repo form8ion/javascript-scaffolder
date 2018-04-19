@@ -61,6 +61,7 @@ export async function scaffold({projectRoot, projectName, visibility, license, v
     description
   });
 
+  const eslintIgnoreDirectories = ['/lib/', '/coverage/'];
   const npmIgnoreDirectories = ['/src/', '/test/', '/coverage/', '/.nyc_output/'];
   const npmIgnoreFiles = [
     '.editorconfig',
@@ -83,7 +84,8 @@ export async function scaffold({projectRoot, projectName, visibility, license, v
     ('Package' === packageType) && writeFile(
       `${projectRoot}/.npmignore`,
       `${npmIgnoreDirectories.join('\n')}\n\n${npmIgnoreFiles.join('\n')}`
-    )
+    ),
+    writeFile(`${projectRoot}/.eslintignore`, eslintIgnoreDirectories.join('\n'))
   ]);
 
   const versionCategory = answers[questionNames.NODE_VERSION_CATEGORY].toLowerCase();
