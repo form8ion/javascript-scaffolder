@@ -1,4 +1,4 @@
-import {questionNames} from './scaffolder';
+import {questionNames} from './prompts';
 
 export function shouldBeScopedPromptShouldBePresented(answers) {
   return 'Package' === answers[questionNames.PACKAGE_TYPE];

@@ -1,25 +1,19 @@
-import inquirer from 'inquirer';
 import path from 'path';
 import fs from 'mz/fs';
 import {assert} from 'chai';
 import any from '@travi/any';
 import sinon from 'sinon';
-import {
-  scopePromptShouldBePresented,
-  shouldBeScopedPromptShouldBePresented
-} from '../../src/prompt-condiftionals';
+import * as prompts from '../../src/prompts';
 import * as packageBuilder from '../../src/package';
 import * as installer from '../../src/install';
 import * as exec from '../../third-party-wrappers/exec-as-promised';
-import {scaffold, questionNames} from '../../src/scaffolder';
-import * as npmConf from '../../third-party-wrappers/npm-conf';
+import {scaffold} from '../../src/scaffolder';
 
 suite('javascript project scaffolder', () => {
   let sandbox;
   const projectRoot = any.string();
   const projectName = any.string();
   const visibility = any.fromList(['Private', 'Public']);
-  const nodeVersionCategoryChoices = ['LTS', 'Latest'];
   const ltsVersion = `v${any.integer()}.${any.integer()}.${any.integer()}`;
   const latestVersion = `v${any.integer()}.${any.integer()}.${any.integer()}`;
 
@@ -28,11 +22,10 @@ suite('javascript project scaffolder', () => {
 
     sandbox.stub(fs, 'writeFile');
     sandbox.stub(fs, 'copyFile');
-    sandbox.stub(inquirer, 'prompt');
     sandbox.stub(packageBuilder, 'default');
     sandbox.stub(installer, 'default');
     sandbox.stub(exec, 'default');
-    sandbox.stub(npmConf, 'default');
+    sandbox.stub(prompts, 'prompt');
 
     fs.writeFile.resolves();
     fs.copyFile.resolves();
@@ -42,82 +35,14 @@ suite('javascript project scaffolder', () => {
     exec.default
       .withArgs('. ~/.nvm/nvm.sh && nvm ls-remote --lts')
       .resolves([...any.listOf(any.word), ltsVersion, ''].join('\n'));
-    npmConf.default.returns({get: () => undefined});
   });
 
   teardown(() => sandbox.restore());
 
-  test('that the user is prompted for the necessary details', () => {
-    const authorName = any.string();
-    const authorEmail = any.string();
-    const authorUrl = any.url();
-    const get = sinon.stub();
-    npmConf.default.returns({get});
-    get.withArgs('init.author.name').returns(authorName);
-    get.withArgs('init.author.email').returns(authorEmail);
-    get.withArgs('init.author.url').returns(authorUrl);
-    inquirer.prompt.resolves({[questionNames.NODE_VERSION_CATEGORY]: any.fromList(nodeVersionCategoryChoices)});
+  test('that config files are created', () => {
+    prompts.prompt.resolves({[prompts.questionNames.NODE_VERSION_CATEGORY]: any.word()});
 
     return scaffold({visibility, projectRoot}).then(() => {
-      assert.calledWith(
-        inquirer.prompt,
-        [
-          {
-            name: questionNames.NODE_VERSION_CATEGORY,
-            message: 'What node.js version should be used?',
-            type: 'list',
-            choices: nodeVersionCategoryChoices,
-            default: 'Latest'
-          },
-          {
-            name: questionNames.PACKAGE_TYPE,
-            message: 'What type of JavaScript project is this?',
-            type: 'list',
-            choices: ['Application', 'Package'],
-            default: 'Package'
-          },
-          {
-            name: questionNames.SHOULD_BE_SCOPED,
-            message: 'Should this package be scoped?',
-            type: 'confirm',
-            when: shouldBeScopedPromptShouldBePresented,
-            default: true
-          },
-          {
-            name: questionNames.SCOPE,
-            message: 'What is the scope?',
-            when: scopePromptShouldBePresented,
-            default: 'travi'
-          },
-          {
-            name: questionNames.AUTHOR_NAME,
-            message: 'What is the author\'s name?',
-            default: authorName
-          },
-          {
-            name: questionNames.AUTHOR_EMAIL,
-            message: 'What is the author\'s email?',
-            default: authorEmail
-          },
-          {
-            name: questionNames.AUTHOR_URL,
-            message: 'What is the author\'s website url?',
-            default: authorUrl
-          },
-          {
-            name: questionNames.UNIT_TESTS,
-            message: 'Will this project be unit tested?',
-            type: 'confirm',
-            default: true
-          },
-          {
-            name: questionNames.INTEGRATION_TESTS,
-            message: 'Will this project be integration tested?',
-            type: 'confirm',
-            default: true
-          }
-        ]
-      );
       assert.calledWith(
         fs.copyFile,
         path.resolve(__dirname, '../../', 'templates', 'huskyrc.json'),
@@ -144,15 +69,15 @@ suite('javascript project scaffolder', () => {
       const authorUrl = any.url();
       const ci = any.word();
       const description = any.sentence();
-      inquirer.prompt.resolves({
-        [questionNames.SCOPE]: scope,
-        [questionNames.PACKAGE_TYPE]: packageType,
-        [questionNames.UNIT_TESTS]: tests.unit,
-        [questionNames.INTEGRATION_TESTS]: tests.integration,
-        [questionNames.NODE_VERSION_CATEGORY]: any.fromList(nodeVersionCategoryChoices),
-        [questionNames.AUTHOR_NAME]: authorName,
-        [questionNames.AUTHOR_EMAIL]: authorEmail,
-        [questionNames.AUTHOR_URL]: authorUrl
+      prompts.prompt.resolves({
+        [prompts.questionNames.SCOPE]: scope,
+        [prompts.questionNames.PACKAGE_TYPE]: packageType,
+        [prompts.questionNames.UNIT_TESTS]: tests.unit,
+        [prompts.questionNames.INTEGRATION_TESTS]: tests.integration,
+        [prompts.questionNames.NODE_VERSION_CATEGORY]: any.word(),
+        [prompts.questionNames.AUTHOR_NAME]: authorName,
+        [prompts.questionNames.AUTHOR_EMAIL]: authorEmail,
+        [prompts.questionNames.AUTHOR_URL]: authorUrl
       });
       packageBuilder.default
         .withArgs({
@@ -190,7 +115,7 @@ suite('javascript project scaffolder', () => {
 
       suite('scripts', () => {
         test('that scripting tools are installed', async () => {
-          inquirer.prompt.resolves({[questionNames.NODE_VERSION_CATEGORY]: any.word()});
+          prompts.prompt.resolves({[prompts.questionNames.NODE_VERSION_CATEGORY]: any.word()});
 
           await scaffold({});
 
@@ -200,9 +125,9 @@ suite('javascript project scaffolder', () => {
 
       suite('testing', () => {
         test('that mocha, chai, and sinon are installed when the project will be unit tested', async () => {
-          inquirer.prompt.resolves({
-            [questionNames.NODE_VERSION_CATEGORY]: any.fromList(nodeVersionCategoryChoices),
-            [questionNames.UNIT_TESTS]: true
+          prompts.prompt.resolves({
+            [prompts.questionNames.NODE_VERSION_CATEGORY]: any.word(),
+            [prompts.questionNames.UNIT_TESTS]: true
           });
 
           await scaffold({});
@@ -211,9 +136,9 @@ suite('javascript project scaffolder', () => {
         });
 
         test('that mocha, chai, and sinon are not installed when the project will not be unit tested', async () => {
-          inquirer.prompt.resolves({
-            [questionNames.NODE_VERSION_CATEGORY]: any.fromList(nodeVersionCategoryChoices),
-            [questionNames.UNIT_TESTS]: false
+          prompts.prompt.resolves({
+            [prompts.questionNames.NODE_VERSION_CATEGORY]: any.word(),
+            [prompts.questionNames.UNIT_TESTS]: false
           });
 
           await scaffold({});
@@ -222,9 +147,9 @@ suite('javascript project scaffolder', () => {
         });
 
         test('that cucumber and chai are installed when the project will be integration tested', async () => {
-          inquirer.prompt.resolves({
-            [questionNames.NODE_VERSION_CATEGORY]: any.fromList(nodeVersionCategoryChoices),
-            [questionNames.INTEGRATION_TESTS]: true
+          prompts.prompt.resolves({
+            [prompts.questionNames.NODE_VERSION_CATEGORY]: any.word(),
+            [prompts.questionNames.INTEGRATION_TESTS]: true
           });
 
           await scaffold({});
@@ -233,9 +158,9 @@ suite('javascript project scaffolder', () => {
         });
 
         test('that cucumber and chai are not installed when the project will not be integration tested', async () => {
-          inquirer.prompt.resolves({
-            [questionNames.NODE_VERSION_CATEGORY]: any.fromList(nodeVersionCategoryChoices),
-            [questionNames.INTEGRATION_TESTS]: false
+          prompts.prompt.resolves({
+            [prompts.questionNames.NODE_VERSION_CATEGORY]: any.word(),
+            [prompts.questionNames.INTEGRATION_TESTS]: false
           });
 
           await scaffold({});
@@ -244,10 +169,10 @@ suite('javascript project scaffolder', () => {
         });
 
         test('that unique dependencies are requested when various reasons overlap', async () => {
-          inquirer.prompt.resolves({
-            [questionNames.NODE_VERSION_CATEGORY]: any.fromList(nodeVersionCategoryChoices),
-            [questionNames.UNIT_TESTS]: true,
-            [questionNames.INTEGRATION_TESTS]: true
+          prompts.prompt.resolves({
+            [prompts.questionNames.NODE_VERSION_CATEGORY]: any.word(),
+            [prompts.questionNames.UNIT_TESTS]: true,
+            [prompts.questionNames.INTEGRATION_TESTS]: true
           });
 
           await scaffold({});
@@ -256,7 +181,7 @@ suite('javascript project scaffolder', () => {
         });
 
         test('that codecov is installed for public projects', async () => {
-          inquirer.prompt.resolves({[questionNames.NODE_VERSION_CATEGORY]: any.fromList(nodeVersionCategoryChoices)});
+          prompts.prompt.resolves({[prompts.questionNames.NODE_VERSION_CATEGORY]: any.word()});
 
           await scaffold({visibility: 'Public'});
 
@@ -264,7 +189,7 @@ suite('javascript project scaffolder', () => {
         });
 
         test('that codecov is not installed for private projects', async () => {
-          inquirer.prompt.resolves({[questionNames.NODE_VERSION_CATEGORY]: any.fromList(nodeVersionCategoryChoices)});
+          prompts.prompt.resolves({[prompts.questionNames.NODE_VERSION_CATEGORY]: any.word()});
 
           await scaffold({visibility: 'Private'});
 
@@ -276,9 +201,9 @@ suite('javascript project scaffolder', () => {
 
   suite('save-exact', () => {
     test('that the project is configured to use exact dependency versions if it is an application', () => {
-      inquirer.prompt.resolves({
-        [questionNames.NODE_VERSION_CATEGORY]: any.fromList(nodeVersionCategoryChoices),
-        [questionNames.PACKAGE_TYPE]: 'Application'
+      prompts.prompt.resolves({
+        [prompts.questionNames.NODE_VERSION_CATEGORY]: any.word(),
+        [prompts.questionNames.PACKAGE_TYPE]: 'Application'
       });
 
       return scaffold({projectRoot, projectName, visibility: 'Public'}).then(() => {
@@ -288,9 +213,9 @@ suite('javascript project scaffolder', () => {
 
     test('that the project is allowed to use semver ranges if it is a package', () => {
       packageBuilder.default.returns({name: any.word()});
-      inquirer.prompt.resolves({
-        [questionNames.NODE_VERSION_CATEGORY]: any.fromList(nodeVersionCategoryChoices),
-        [questionNames.PACKAGE_TYPE]: 'Package'
+      prompts.prompt.resolves({
+        [prompts.questionNames.NODE_VERSION_CATEGORY]: any.word(),
+        [prompts.questionNames.PACKAGE_TYPE]: 'Package'
       });
 
       return scaffold({projectRoot, projectName, visibility: 'Public'}).then(() => {
@@ -301,8 +226,8 @@ suite('javascript project scaffolder', () => {
 
   suite('nvm', () => {
     test('that the latest available version is used for the project when `Latest` is chosen', () => {
-      inquirer.prompt.resolves({
-        [questionNames.NODE_VERSION_CATEGORY]: 'Latest'
+      prompts.prompt.resolves({
+        [prompts.questionNames.NODE_VERSION_CATEGORY]: 'Latest'
       });
 
       return scaffold({projectRoot, projectName, visibility: 'Public'}).then(() => {
@@ -312,8 +237,8 @@ suite('javascript project scaffolder', () => {
     });
 
     test('that the latest available version is used for the project when `LTS` is chosen', () => {
-      inquirer.prompt.resolves({
-        [questionNames.NODE_VERSION_CATEGORY]: 'LTS'
+      prompts.prompt.resolves({
+        [prompts.questionNames.NODE_VERSION_CATEGORY]: 'LTS'
       });
 
       return scaffold({projectRoot, projectName, visibility: 'Public'}).then(() => {
@@ -328,9 +253,9 @@ suite('javascript project scaffolder', () => {
       test('that the npm badge is defined for public packages', async () => {
         const packageName = any.word();
         packageBuilder.default.returns({name: packageName});
-        inquirer.prompt.resolves({
-          [questionNames.NODE_VERSION_CATEGORY]: any.word(),
-          [questionNames.PACKAGE_TYPE]: 'Package'
+        prompts.prompt.resolves({
+          [prompts.questionNames.NODE_VERSION_CATEGORY]: any.word(),
+          [prompts.questionNames.PACKAGE_TYPE]: 'Package'
         });
 
         const {badges} = await scaffold({projectRoot, projectName, visibility: 'Public'});
@@ -343,9 +268,9 @@ suite('javascript project scaffolder', () => {
       });
 
       test('that the npm badge is not defined for private packages', async () => {
-        inquirer.prompt.resolves({
-          [questionNames.NODE_VERSION_CATEGORY]: any.word(),
-          [questionNames.PACKAGE_TYPE]: 'Package'
+        prompts.prompt.resolves({
+          [prompts.questionNames.NODE_VERSION_CATEGORY]: any.word(),
+          [prompts.questionNames.PACKAGE_TYPE]: 'Package'
         });
 
         const {badges} = await scaffold({projectRoot, projectName, visibility: 'Private'});
@@ -354,9 +279,9 @@ suite('javascript project scaffolder', () => {
       });
 
       test('that the npm badge is not defined if the project is not a package', async () => {
-        inquirer.prompt.resolves({
-          [questionNames.NODE_VERSION_CATEGORY]: any.word(),
-          [questionNames.PACKAGE_TYPE]: any.word()
+        prompts.prompt.resolves({
+          [prompts.questionNames.NODE_VERSION_CATEGORY]: any.word(),
+          [prompts.questionNames.PACKAGE_TYPE]: any.word()
         });
 
         const {badges} = await scaffold({projectRoot, projectName, visibility: 'Public'});
@@ -367,7 +292,7 @@ suite('javascript project scaffolder', () => {
       test('that the commit-convention badges are provided', async () => {
         const packageName = any.word();
         packageBuilder.default.returns({name: packageName});
-        inquirer.prompt.resolves({[questionNames.NODE_VERSION_CATEGORY]: any.word()});
+        prompts.prompt.resolves({[prompts.questionNames.NODE_VERSION_CATEGORY]: any.word()});
 
         const {badges} = await scaffold({projectRoot, projectName});
 
@@ -386,7 +311,7 @@ suite('javascript project scaffolder', () => {
 
     suite('vcs ignore', () => {
       test('that files and directories are defined to be ignored from version control', async () => {
-        inquirer.prompt.resolves({[questionNames.NODE_VERSION_CATEGORY]: any.word()});
+        prompts.prompt.resolves({[prompts.questionNames.NODE_VERSION_CATEGORY]: any.word()});
 
         const {vcsIgnore} = await scaffold({projectRoot, projectName, visibility: 'Public'});
 
@@ -399,9 +324,9 @@ suite('javascript project scaffolder', () => {
 
     suite('npm ignore', () => {
       test('that files and directories are defined to be ignored from the published npm package', async () => {
-        inquirer.prompt.resolves({
-          [questionNames.NODE_VERSION_CATEGORY]: any.word(),
-          [questionNames.PACKAGE_TYPE]: 'Package'
+        prompts.prompt.resolves({
+          [prompts.questionNames.NODE_VERSION_CATEGORY]: any.word(),
+          [prompts.questionNames.PACKAGE_TYPE]: 'Package'
         });
         packageBuilder.default.returns({});
 
@@ -424,9 +349,9 @@ rollup.config.js`)
       });
 
       test('that the travis config is ignored when travis it the ci service', async () => {
-        inquirer.prompt.resolves({
-          [questionNames.NODE_VERSION_CATEGORY]: any.word(),
-          [questionNames.PACKAGE_TYPE]: 'Package'
+        prompts.prompt.resolves({
+          [prompts.questionNames.NODE_VERSION_CATEGORY]: any.word(),
+          [prompts.questionNames.PACKAGE_TYPE]: 'Package'
         });
         packageBuilder.default.returns({});
 
@@ -442,9 +367,9 @@ rollup.config.js`)
       });
 
       test('that no npm ignore file is generated for non-packages', async () => {
-        inquirer.prompt.resolves({
-          [questionNames.NODE_VERSION_CATEGORY]: any.word(),
-          [questionNames.PACKAGE_TYPE]: any.word()
+        prompts.prompt.resolves({
+          [prompts.questionNames.NODE_VERSION_CATEGORY]: any.word(),
+          [prompts.questionNames.PACKAGE_TYPE]: any.word()
         });
 
         await scaffold({projectRoot, projectName, visibility: 'Public'});
@@ -455,7 +380,7 @@ rollup.config.js`)
 
     suite('verification', () => {
       test('that `npm test` is defined as the verification command', async () => {
-        inquirer.prompt.resolves({[questionNames.NODE_VERSION_CATEGORY]: any.word()});
+        prompts.prompt.resolves({[prompts.questionNames.NODE_VERSION_CATEGORY]: any.word()});
 
         const {verificationCommand} = await scaffold({projectRoot, projectName, visibility: any.word()});
 

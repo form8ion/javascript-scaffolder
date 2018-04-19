@@ -4,7 +4,7 @@ import {
   shouldBeScopedPromptShouldBePresented,
   scopePromptShouldBePresented
 } from '../../src/prompt-condiftionals';
-import {questionNames} from '../../src/scaffolder';
+import {questionNames} from '../../src/prompts';
 
 suite('javascript prompt conditionals', () => {
   suite('scope', () => {
