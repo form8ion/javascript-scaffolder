@@ -124,6 +124,7 @@ export async function scaffold({projectRoot, projectName, visibility, license, v
       files: ['.eslintcache'],
       directories: ['/node_modules/', '/lib/', '/coverage/', '/.nyc_output/']
     },
-    verificationCommand: 'npm test'
+    verificationCommand: 'npm test',
+    projectDetails: {...packageData.homepage && {homepage: packageData.homepage}}
   };
 }

@@ -35,6 +35,7 @@ suite('javascript project scaffolder', () => {
     exec.default
       .withArgs('. ~/.nvm/nvm.sh && nvm ls-remote --lts')
       .resolves([...any.listOf(any.word), ltsVersion, ''].join('\n'));
+    packageBuilder.default.returns({});
   });
 
   teardown(() => sandbox.restore());
@@ -409,6 +410,27 @@ rollup.config.js`)
         const {verificationCommand} = await scaffold({projectRoot, projectName, visibility: any.word()});
 
         assert.equal(verificationCommand, 'npm test');
+      });
+    });
+
+    suite('project details', () => {
+      test('that details are passed along', async () => {
+        const homepage = any.url();
+        prompts.prompt.resolves({[prompts.questionNames.NODE_VERSION_CATEGORY]: any.word()});
+        packageBuilder.default.returns({homepage});
+
+        const {projectDetails} = await scaffold({projectRoot, projectName, visibility: any.word()});
+
+        assert.equal(projectDetails.homepage, homepage);
+      });
+
+      test('that details are not passed along if not defined', async () => {
+        prompts.prompt.resolves({[prompts.questionNames.NODE_VERSION_CATEGORY]: any.word()});
+        packageBuilder.default.returns({});
+
+        const {projectDetails} = await scaffold({projectRoot, projectName, visibility: any.word()});
+
+        assert.isUndefined(projectDetails.homepage);
       });
     });
   });
