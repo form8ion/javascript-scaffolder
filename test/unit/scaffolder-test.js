@@ -40,25 +40,137 @@ suite('javascript project scaffolder', () => {
 
   teardown(() => sandbox.restore());
 
-  test('that config files are created', () => {
-    prompts.prompt.resolves({[prompts.questionNames.NODE_VERSION_CATEGORY]: any.word()});
+  suite('config files', () => {
+    test('that config files are created', () => {
+      prompts.prompt.resolves({[prompts.questionNames.NODE_VERSION_CATEGORY]: any.word()});
 
-    return scaffold({visibility, projectRoot}).then(() => {
-      assert.calledWith(
-        fs.copyFile,
-        path.resolve(__dirname, '../../', 'templates', 'huskyrc.json'),
-        `${projectRoot}/.huskyrc.json`
-      );
-      assert.calledWith(
-        fs.copyFile,
-        path.resolve(__dirname, '../../', 'templates', 'commitlintrc.js'),
-        `${projectRoot}/.commitlintrc.js`
-      );
-      assert.calledWith(
-        fs.copyFile,
-        path.resolve(__dirname, '../../', 'templates', 'nycrc.json'),
-        `${projectRoot}/.nycrc`
-      );
+      return scaffold({visibility, projectRoot, vcs: {}}).then(() => {
+        assert.calledWith(
+          fs.copyFile,
+          path.resolve(__dirname, '../../', 'templates', 'huskyrc.json'),
+          `${projectRoot}/.huskyrc.json`
+        );
+        assert.calledWith(
+          fs.copyFile,
+          path.resolve(__dirname, '../../', 'templates', 'commitlintrc.js'),
+          `${projectRoot}/.commitlintrc.js`
+        );
+        assert.calledWith(
+          fs.copyFile,
+          path.resolve(__dirname, '../../', 'templates', 'nycrc.json'),
+          `${projectRoot}/.nycrc`
+        );
+      });
+    });
+
+    suite('npm ignore', () => {
+      test('that files and directories are defined to be ignored from the published npm package', async () => {
+        prompts.prompt.resolves({
+          [prompts.questionNames.NODE_VERSION_CATEGORY]: any.word(),
+          [prompts.questionNames.PACKAGE_TYPE]: 'Package'
+        });
+
+        await scaffold({projectRoot, projectName, visibility: 'Public', vcs: {}});
+
+        assert.calledWith(
+          fs.writeFile,
+          `${projectRoot}/.npmignore`,
+          sinon.match(`/src/
+/test/
+/coverage/
+/.nyc_output/
+
+.babelrc
+.commitlintrc.js
+.editorconfig
+.eslintcache
+.eslintignore
+.eslintrc.yml
+.gitattributes
+.huskyrc.json
+.markdownlintrc
+.nvmrc
+coverage.lcov
+rollup.config.js`)
+        );
+      });
+
+      test('that the travis config is ignored when travis is the ci service', async () => {
+        prompts.prompt.resolves({
+          [prompts.questionNames.NODE_VERSION_CATEGORY]: any.word(),
+          [prompts.questionNames.PACKAGE_TYPE]: 'Package'
+        });
+        packageBuilder.default.returns({});
+
+        await scaffold({projectRoot, projectName, visibility: 'Public', ci: 'Travis', vcs: {}});
+
+        assert.calledWith(
+          fs.writeFile,
+          `${projectRoot}/.npmignore`,
+          sinon.match(`
+.travis.yml
+`)
+        );
+      });
+
+      test('that the github settings file is ignored when github is the vcs host', async () => {
+        prompts.prompt.resolves({
+          [prompts.questionNames.NODE_VERSION_CATEGORY]: any.word(),
+          [prompts.questionNames.PACKAGE_TYPE]: 'Package'
+        });
+        packageBuilder.default.returns({});
+
+        await scaffold({projectRoot, projectName, visibility: 'Public', vcs: {host: 'GitHub'}});
+
+        assert.calledWith(
+          fs.writeFile,
+          `${projectRoot}/.npmignore`,
+          sinon.match(`
+/.github/
+`)
+        );
+      });
+
+      test('that no npm ignore file is generated for non-packages', async () => {
+        prompts.prompt.resolves({
+          [prompts.questionNames.NODE_VERSION_CATEGORY]: any.word(),
+          [prompts.questionNames.PACKAGE_TYPE]: any.word()
+        });
+
+        await scaffold({projectRoot, projectName, visibility: 'Public', vcs: {}});
+
+        assert.neverCalledWith(fs.writeFile, `${projectRoot}/.npmignore`);
+      });
+    });
+
+    suite('eslint-ignore', () => {
+      test('that non-source files are excluded from linting', async () => {
+        prompts.prompt.resolves({
+          [prompts.questionNames.NODE_VERSION_CATEGORY]: any.word(),
+          [prompts.questionNames.UNIT_TESTS]: false
+        });
+
+        await scaffold({projectRoot, vcs: {}});
+
+        assert.calledWith(fs.writeFile, `${projectRoot}/.eslintignore`, sinon.match('/lib/'));
+        assert.neverCalledWith(fs.writeFile, `${projectRoot}/.eslintignore`, sinon.match('/coverage/'));
+      });
+
+      test('that the coverage folder is excluded from linting when the project is unit tested', async () => {
+        prompts.prompt.resolves({
+          [prompts.questionNames.NODE_VERSION_CATEGORY]: any.word(),
+          [prompts.questionNames.UNIT_TESTS]: true
+        });
+
+        await scaffold({projectRoot, vcs: {}});
+
+        assert.calledWith(
+          fs.writeFile,
+          `${projectRoot}/.eslintignore`,
+          sinon.match(`
+/coverage/`)
+        );
+      });
     });
   });
 
@@ -123,7 +235,7 @@ suite('javascript project scaffolder', () => {
         test('that scripting tools are installed', async () => {
           prompts.prompt.resolves({[prompts.questionNames.NODE_VERSION_CATEGORY]: any.word()});
 
-          await scaffold({});
+          await scaffold({vcs: {}});
 
           assert.calledWith(installer.default, [...defaultDependencies]);
         });
@@ -136,7 +248,7 @@ suite('javascript project scaffolder', () => {
             [prompts.questionNames.UNIT_TESTS]: true
           });
 
-          await scaffold({});
+          await scaffold({vcs: {}});
 
           assert.calledWith(installer.default, [...defaultDependencies, 'mocha', 'chai', 'sinon']);
         });
@@ -147,7 +259,7 @@ suite('javascript project scaffolder', () => {
             [prompts.questionNames.UNIT_TESTS]: false
           });
 
-          await scaffold({});
+          await scaffold({vcs: {}});
 
           assert.calledWith(installer.default, [...defaultDependencies]);
         });
@@ -158,7 +270,7 @@ suite('javascript project scaffolder', () => {
             [prompts.questionNames.INTEGRATION_TESTS]: true
           });
 
-          await scaffold({});
+          await scaffold({vcs: {}});
 
           assert.calledWith(installer.default, [...defaultDependencies, 'cucumber', 'chai']);
         });
@@ -169,7 +281,7 @@ suite('javascript project scaffolder', () => {
             [prompts.questionNames.INTEGRATION_TESTS]: false
           });
 
-          await scaffold({});
+          await scaffold({vcs: {}});
 
           assert.calledWith(installer.default, [...defaultDependencies]);
         });
@@ -181,7 +293,7 @@ suite('javascript project scaffolder', () => {
             [prompts.questionNames.INTEGRATION_TESTS]: true
           });
 
-          await scaffold({});
+          await scaffold({vcs: {}});
 
           assert.calledWith(installer.default, [...defaultDependencies, 'mocha', 'chai', 'sinon', 'cucumber']);
         });
@@ -189,7 +301,7 @@ suite('javascript project scaffolder', () => {
         test('that codecov is installed for public projects', async () => {
           prompts.prompt.resolves({[prompts.questionNames.NODE_VERSION_CATEGORY]: any.word()});
 
-          await scaffold({visibility: 'Public'});
+          await scaffold({visibility: 'Public', vcs: {}});
 
           assert.calledWith(installer.default, [...defaultDependencies, 'codecov']);
         });
@@ -197,7 +309,7 @@ suite('javascript project scaffolder', () => {
         test('that codecov is not installed for private projects', async () => {
           prompts.prompt.resolves({[prompts.questionNames.NODE_VERSION_CATEGORY]: any.word()});
 
-          await scaffold({visibility: 'Private'});
+          await scaffold({visibility: 'Private', vcs: {}});
 
           assert.calledWith(installer.default, defaultDependencies);
         });
@@ -212,7 +324,7 @@ suite('javascript project scaffolder', () => {
         [prompts.questionNames.PACKAGE_TYPE]: 'Application'
       });
 
-      return scaffold({projectRoot, projectName, visibility: 'Public'}).then(() => {
+      return scaffold({projectRoot, projectName, visibility: 'Public', vcs: {}}).then(() => {
         assert.calledWith(fs.writeFile, `${projectRoot}/.npmrc`, 'save-exact=true');
       });
     });
@@ -224,7 +336,7 @@ suite('javascript project scaffolder', () => {
         [prompts.questionNames.PACKAGE_TYPE]: 'Package'
       });
 
-      return scaffold({projectRoot, projectName, visibility: 'Public'}).then(() => {
+      return scaffold({projectRoot, projectName, visibility: 'Public', vcs: {}}).then(() => {
         assert.neverCalledWith(fs.writeFile, `${projectRoot}/.npmrc`);
       });
     });
@@ -236,7 +348,7 @@ suite('javascript project scaffolder', () => {
         [prompts.questionNames.NODE_VERSION_CATEGORY]: 'Latest'
       });
 
-      return scaffold({projectRoot, projectName, visibility: 'Public'}).then(() => {
+      return scaffold({projectRoot, projectName, visibility: 'Public', vcs: {}}).then(() => {
         assert.calledWith(fs.writeFile, `${projectRoot}/.nvmrc`, latestVersion);
         assert.calledWith(exec.default, '. ~/.nvm/nvm.sh && nvm install', {silent: false});
       });
@@ -247,7 +359,7 @@ suite('javascript project scaffolder', () => {
         [prompts.questionNames.NODE_VERSION_CATEGORY]: 'LTS'
       });
 
-      return scaffold({projectRoot, projectName, visibility: 'Public'}).then(() => {
+      return scaffold({projectRoot, projectName, visibility: 'Public', vcs: {}}).then(() => {
         assert.calledWith(fs.writeFile, `${projectRoot}/.nvmrc`, ltsVersion);
         assert.calledWith(exec.default, '. ~/.nvm/nvm.sh && nvm install', {silent: false});
       });
@@ -264,7 +376,7 @@ suite('javascript project scaffolder', () => {
           [prompts.questionNames.PACKAGE_TYPE]: 'Package'
         });
 
-        const {badges} = await scaffold({projectRoot, projectName, visibility: 'Public'});
+        const {badges} = await scaffold({projectRoot, projectName, visibility: 'Public', vcs: {}});
 
         assert.deepEqual(badges.consumer.npm, {
           img: `https://img.shields.io/npm/v/${packageName}.svg`,
@@ -279,7 +391,7 @@ suite('javascript project scaffolder', () => {
           [prompts.questionNames.PACKAGE_TYPE]: 'Package'
         });
 
-        const {badges} = await scaffold({projectRoot, projectName, visibility: 'Private'});
+        const {badges} = await scaffold({projectRoot, projectName, visibility: 'Private', vcs: {}});
 
         assert.isUndefined(badges.consumer.npm);
       });
@@ -290,7 +402,7 @@ suite('javascript project scaffolder', () => {
           [prompts.questionNames.PACKAGE_TYPE]: any.word()
         });
 
-        const {badges} = await scaffold({projectRoot, projectName, visibility: 'Public'});
+        const {badges} = await scaffold({projectRoot, projectName, visibility: 'Public', vcs: {}});
 
         assert.isUndefined(badges.consumer.npm);
       });
@@ -300,7 +412,7 @@ suite('javascript project scaffolder', () => {
         packageBuilder.default.returns({name: packageName});
         prompts.prompt.resolves({[prompts.questionNames.NODE_VERSION_CATEGORY]: any.word()});
 
-        const {badges} = await scaffold({projectRoot, projectName});
+        const {badges} = await scaffold({projectRoot, projectName, vcs: {}});
 
         assert.deepEqual(badges.contribution['commit-convention'], {
           img: 'https://img.shields.io/badge/Conventional%20Commits-1.0.0-yellow.svg',
@@ -319,7 +431,7 @@ suite('javascript project scaffolder', () => {
       test('that files and directories are defined to be ignored from version control', async () => {
         prompts.prompt.resolves({[prompts.questionNames.NODE_VERSION_CATEGORY]: any.word()});
 
-        const {vcsIgnore} = await scaffold({projectRoot, projectName, visibility: 'Public'});
+        const {vcsIgnore} = await scaffold({projectRoot, projectName, visibility: 'Public', vcs: {}});
 
         assert.include(vcsIgnore.files, '.eslintcache');
 
@@ -330,84 +442,11 @@ suite('javascript project scaffolder', () => {
       });
     });
 
-    suite('npm ignore', () => {
-      test('that files and directories are defined to be ignored from the published npm package', async () => {
-        prompts.prompt.resolves({
-          [prompts.questionNames.NODE_VERSION_CATEGORY]: any.word(),
-          [prompts.questionNames.PACKAGE_TYPE]: 'Package'
-        });
-        packageBuilder.default.returns({});
-
-        await scaffold({projectRoot, projectName, visibility: 'Public'});
-
-        assert.calledWith(
-          fs.writeFile,
-          `${projectRoot}/.npmignore`,
-          sinon.match(`/src/
-/test/
-/coverage/
-/.nyc_output/
-
-.editorconfig
-.eslintcache
-.eslintignore
-.eslintrc.yml
-.markdownlintrc
-.nvmrc
-rollup.config.js`)
-        );
-      });
-
-      test('that the travis config is ignored when travis it the ci service', async () => {
-        prompts.prompt.resolves({
-          [prompts.questionNames.NODE_VERSION_CATEGORY]: any.word(),
-          [prompts.questionNames.PACKAGE_TYPE]: 'Package'
-        });
-        packageBuilder.default.returns({});
-
-        await scaffold({projectRoot, projectName, visibility: 'Public', ci: 'Travis'});
-
-        assert.calledWith(
-          fs.writeFile,
-          `${projectRoot}/.npmignore`,
-          sinon.match(`
-.travis.yml
-`)
-        );
-      });
-
-      test('that no npm ignore file is generated for non-packages', async () => {
-        prompts.prompt.resolves({
-          [prompts.questionNames.NODE_VERSION_CATEGORY]: any.word(),
-          [prompts.questionNames.PACKAGE_TYPE]: any.word()
-        });
-
-        await scaffold({projectRoot, projectName, visibility: 'Public'});
-
-        assert.neverCalledWith(fs.writeFile, `${projectRoot}/.npmignore`);
-      });
-    });
-
-    suite('eslint-ignore', () => {
-      test('that non-source files are excluded from linting', async () => {
-        prompts.prompt.resolves({[prompts.questionNames.NODE_VERSION_CATEGORY]: any.word()});
-
-        await scaffold({projectRoot});
-
-        assert.calledWith(
-          fs.writeFile,
-          `${projectRoot}/.eslintignore`,
-          sinon.match(`/lib/
-/coverage/`)
-        );
-      });
-    });
-
     suite('verification', () => {
       test('that `npm test` is defined as the verification command', async () => {
         prompts.prompt.resolves({[prompts.questionNames.NODE_VERSION_CATEGORY]: any.word()});
 
-        const {verificationCommand} = await scaffold({projectRoot, projectName, visibility: any.word()});
+        const {verificationCommand} = await scaffold({projectRoot, projectName, visibility: any.word(), vcs: {}});
 
         assert.equal(verificationCommand, 'npm test');
       });
@@ -419,7 +458,7 @@ rollup.config.js`)
         prompts.prompt.resolves({[prompts.questionNames.NODE_VERSION_CATEGORY]: any.word()});
         packageBuilder.default.returns({homepage});
 
-        const {projectDetails} = await scaffold({projectRoot, projectName, visibility: any.word()});
+        const {projectDetails} = await scaffold({projectRoot, projectName, visibility: any.word(), vcs: {}});
 
         assert.equal(projectDetails.homepage, homepage);
       });
@@ -428,7 +467,7 @@ rollup.config.js`)
         prompts.prompt.resolves({[prompts.questionNames.NODE_VERSION_CATEGORY]: any.word()});
         packageBuilder.default.returns({});
 
-        const {projectDetails} = await scaffold({projectRoot, projectName, visibility: any.word()});
+        const {projectDetails} = await scaffold({projectRoot, projectName, visibility: any.word(), vcs: {}});
 
         assert.isUndefined(projectDetails.homepage);
       });

@@ -21,6 +21,8 @@ export async function scaffold({projectRoot, projectName, visibility, license, v
   console.log(chalk.blue('Initializing JavaScript project'));     // eslint-disable-line no-console
 
   const answers = await prompt();
+  const unitTested = answers[questionNames.UNIT_TESTS];
+  const integrationTested = answers[questionNames.INTEGRATION_TESTS];
 
   const devDependencies = uniq([
     '@travi/eslint-config-travi',
@@ -31,8 +33,8 @@ export async function scaffold({projectRoot, projectName, visibility, license, v
     'greenkeeper-lockfile',
     'nyc',
     ...'Public' === visibility ? ['codecov'] : [],
-    ...answers[questionNames.UNIT_TESTS] ? ['mocha', 'chai', 'sinon'] : [],
-    ...answers[questionNames.INTEGRATION_TESTS] ? ['cucumber', 'chai'] : []
+    ...unitTested ? ['mocha', 'chai', 'sinon'] : [],
+    ...integrationTested ? ['cucumber', 'chai'] : []
   ]);
 
   const nodeVersion = await determineNodeVersionForProject(answers[questionNames.NODE_VERSION_CATEGORY]);
@@ -49,8 +51,8 @@ export async function scaffold({projectRoot, projectName, visibility, license, v
     license,
     vcs,
     tests: {
-      unit: answers[questionNames.UNIT_TESTS],
-      integration: answers[questionNames.INTEGRATION_TESTS]
+      unit: unitTested,
+      integration: integrationTested
     },
     author: {
       name: answers[questionNames.AUTHOR_NAME],
@@ -61,16 +63,27 @@ export async function scaffold({projectRoot, projectName, visibility, license, v
     description
   });
 
-  const eslintIgnoreDirectories = ['/lib/', '/coverage/'];
-  const npmIgnoreDirectories = ['/src/', '/test/', '/coverage/', '/.nyc_output/'];
+  const eslintIgnoreDirectories = ['/lib/', ...unitTested ? ['/coverage/'] : []];
+  const npmIgnoreDirectories = [
+    '/src/',
+    '/test/',
+    '/coverage/',
+    '/.nyc_output/',
+    'GitHub' === vcs.host ? '/.github/' : undefined
+  ].filter(Boolean);
   const npmIgnoreFiles = [
+    '.babelrc',
+    '.commitlintrc.js',
     '.editorconfig',
     '.eslintcache',
     '.eslintignore',
     '.eslintrc.yml',
+    '.gitattributes',
+    '.huskyrc.json',
     '.markdownlintrc',
     '.nvmrc',
     ('Travis' === ci) && '.travis.yml',
+    'coverage.lcov',
     'rollup.config.js'
   ].filter(Boolean);
 
@@ -91,7 +104,6 @@ export async function scaffold({projectRoot, projectName, visibility, license, v
   const versionCategory = answers[questionNames.NODE_VERSION_CATEGORY].toLowerCase();
   console.log(chalk.grey(`Installing ${versionCategory} version of node using nvm`));  // eslint-disable-line no-console
   await exec('. ~/.nvm/nvm.sh && nvm install', {silent: false});
-
 
   console.log(chalk.grey('Installing devDependencies'));          // eslint-disable-line no-console
   await install(devDependencies);
