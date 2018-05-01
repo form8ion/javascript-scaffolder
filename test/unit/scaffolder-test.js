@@ -172,6 +172,38 @@ rollup.config.js`)
         );
       });
     });
+
+    suite('unit test', () => {
+      test('that a canary test is included when the project will be unit tested', async () => {
+        prompts.prompt.resolves({
+          [prompts.questionNames.NODE_VERSION_CATEGORY]: any.word(),
+          [prompts.questionNames.UNIT_TESTS]: true
+        });
+
+        await scaffold({projectRoot, vcs: {}});
+
+        assert.calledWith(
+          fs.copyFile,
+          path.resolve(__dirname, '../../', 'templates', 'canary-test.txt'),
+          `${projectRoot}/test/unit/canary-test.js`
+        );
+      });
+
+      test('that a canary test is not included when the project will be not unit tested', async () => {
+        prompts.prompt.resolves({
+          [prompts.questionNames.NODE_VERSION_CATEGORY]: any.word(),
+          [prompts.questionNames.UNIT_TESTS]: false
+        });
+
+        await scaffold({projectRoot, vcs: {}});
+
+        assert.neverCalledWith(
+          fs.copyFile,
+          path.resolve(__dirname, '../../', 'templates', 'canary-test.txt'),
+          `${projectRoot}/test/unit/canary-test.js`
+        );
+      });
+    });
   });
 
   suite('package', () => {

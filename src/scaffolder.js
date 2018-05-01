@@ -98,7 +98,11 @@ export async function scaffold({projectRoot, projectName, visibility, license, v
       `${projectRoot}/.npmignore`,
       `${npmIgnoreDirectories.join('\n')}\n\n${npmIgnoreFiles.join('\n')}`
     ),
-    writeFile(`${projectRoot}/.eslintignore`, eslintIgnoreDirectories.join('\n'))
+    writeFile(`${projectRoot}/.eslintignore`, eslintIgnoreDirectories.join('\n')),
+    unitTested && copyFile(
+      resolve(__dirname, '..', 'templates', 'canary-test.txt'),
+      `${projectRoot}/test/unit/canary-test.js`
+    )
   ]);
 
   const versionCategory = answers[questionNames.NODE_VERSION_CATEGORY].toLowerCase();
