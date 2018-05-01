@@ -272,7 +272,7 @@ suite('package details builder', () => {
 
       suite('coverage', () => {
         test('that a script is included to report coverage to codecov for public projects', () => {
-          const packageDetails = buildPackageDetails({tests: {}, vcs: {}, author: {}, visibility: 'Public'});
+          const packageDetails = buildPackageDetails({tests: {unit: true}, vcs: {}, author: {}, visibility: 'Public'});
 
           assert.equal(
             packageDetails.scripts['coverage:report'],
@@ -281,7 +281,13 @@ suite('package details builder', () => {
         });
 
         test('that a script is not included to report coverage to codecov for private projects', () => {
-          const packageDetails = buildPackageDetails({tests: {}, vcs: {}, author: {}, visibility: 'Private'});
+          const packageDetails = buildPackageDetails({tests: {unit: true}, vcs: {}, author: {}, visibility: 'Private'});
+
+          assert.isUndefined(packageDetails.scripts['coverage:report']);
+        });
+
+        test('that a script is not included to report coverage to codecov if the project wont be unit tested', () => {
+          const packageDetails = buildPackageDetails({tests: {}, vcs: {}, author: {}, visibility: 'Public'});
 
           assert.isUndefined(packageDetails.scripts['coverage:report']);
         });
