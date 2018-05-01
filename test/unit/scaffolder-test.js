@@ -187,6 +187,11 @@ rollup.config.js`)
           path.resolve(__dirname, '../../', 'templates', 'canary-test.txt'),
           `${projectRoot}/test/unit/canary-test.js`
         );
+        assert.calledWith(
+          fs.copyFile,
+          path.resolve(__dirname, '../../', 'templates', 'mocha.opts'),
+          `${projectRoot}/test/unit/mocha.opts`
+        );
       });
 
       test('that a canary test is not included when the project will be not unit tested', async () => {
@@ -201,6 +206,11 @@ rollup.config.js`)
           fs.copyFile,
           path.resolve(__dirname, '../../', 'templates', 'canary-test.txt'),
           `${projectRoot}/test/unit/canary-test.js`
+        );
+        assert.neverCalledWith(
+          fs.copyFile,
+          path.resolve(__dirname, '../../', 'templates', 'mocha.opts'),
+          `${projectRoot}/test/unit/mocha.opts`
         );
       });
     });
@@ -260,7 +270,8 @@ rollup.config.js`)
         'husky@next',
         'cz-conventional-changelog',
         'greenkeeper-lockfile',
-        'nyc'
+        'nyc',
+        'babel-register'
       ];
 
       suite('scripts', () => {

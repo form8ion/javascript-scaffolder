@@ -32,6 +32,7 @@ export async function scaffold({projectRoot, projectName, visibility, license, v
     'cz-conventional-changelog',
     'greenkeeper-lockfile',
     'nyc',
+    'babel-register',
     ...'Public' === visibility ? ['codecov'] : [],
     ...unitTested ? ['mocha', 'chai', 'sinon'] : [],
     ...integrationTested ? ['cucumber', 'chai'] : []
@@ -102,6 +103,10 @@ export async function scaffold({projectRoot, projectName, visibility, license, v
     unitTested && copyFile(
       resolve(__dirname, '..', 'templates', 'canary-test.txt'),
       `${projectRoot}/test/unit/canary-test.js`
+    ),
+    unitTested && copyFile(
+      resolve(__dirname, '..', 'templates', 'mocha.opts'),
+      `${projectRoot}/test/unit/mocha.opts`
     )
   ]);
 
