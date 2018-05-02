@@ -7,6 +7,7 @@ import * as prompts from '../../src/prompts';
 import * as packageBuilder from '../../src/package';
 import * as installer from '../../src/install';
 import * as exec from '../../third-party-wrappers/exec-as-promised';
+import * as mkdir from '../../third-party-wrappers/make-dir';
 import {scaffold} from '../../src/scaffolder';
 
 suite('javascript project scaffolder', () => {
@@ -26,6 +27,7 @@ suite('javascript project scaffolder', () => {
     sandbox.stub(installer, 'default');
     sandbox.stub(exec, 'default');
     sandbox.stub(prompts, 'prompt');
+    sandbox.stub(mkdir, 'default');
 
     fs.writeFile.resolves();
     fs.copyFile.resolves();
@@ -161,6 +163,7 @@ rollup.config.js`)
           [prompts.questionNames.NODE_VERSION_CATEGORY]: any.word(),
           [prompts.questionNames.UNIT_TESTS]: true
         });
+        mkdir.default.resolves();
 
         await scaffold({projectRoot, vcs: {}});
 
@@ -175,22 +178,24 @@ rollup.config.js`)
 
     suite('unit test', () => {
       test('that a canary test is included when the project will be unit tested', async () => {
+        const pathToCreatedDirectory = any.string();
         prompts.prompt.resolves({
           [prompts.questionNames.NODE_VERSION_CATEGORY]: any.word(),
           [prompts.questionNames.UNIT_TESTS]: true
         });
+        mkdir.default.withArgs(`${projectRoot}/test/unit`).resolves(pathToCreatedDirectory);
 
         await scaffold({projectRoot, vcs: {}});
 
         assert.calledWith(
           fs.copyFile,
           path.resolve(__dirname, '../../', 'templates', 'canary-test.txt'),
-          `${projectRoot}/test/unit/canary-test.js`
+          `${pathToCreatedDirectory}/canary-test.js`
         );
         assert.calledWith(
           fs.copyFile,
           path.resolve(__dirname, '../../', 'templates', 'mocha.opts'),
-          `${projectRoot}/test/unit/mocha.opts`
+          `${pathToCreatedDirectory}/mocha.opts`
         );
       });
 
@@ -202,16 +207,9 @@ rollup.config.js`)
 
         await scaffold({projectRoot, vcs: {}});
 
-        assert.neverCalledWith(
-          fs.copyFile,
-          path.resolve(__dirname, '../../', 'templates', 'canary-test.txt'),
-          `${projectRoot}/test/unit/canary-test.js`
-        );
-        assert.neverCalledWith(
-          fs.copyFile,
-          path.resolve(__dirname, '../../', 'templates', 'mocha.opts'),
-          `${projectRoot}/test/unit/mocha.opts`
-        );
+        assert.neverCalledWith(mkdir.default, `${projectRoot}/test/unit`);
+        assert.neverCalledWith(fs.copyFile, path.resolve(__dirname, '../../', 'templates', 'canary-test.txt'));
+        assert.neverCalledWith(fs.copyFile, path.resolve(__dirname, '../../', 'templates', 'mocha.opts'));
       });
     });
   });
@@ -253,6 +251,7 @@ rollup.config.js`)
           description
         })
         .returns(packageDetails);
+      mkdir.default.resolves();
 
       return scaffold({projectRoot, projectName, visibility, license, vcs, ci, description})
         .then(() => assert.calledWith(
@@ -290,6 +289,7 @@ rollup.config.js`)
             [prompts.questionNames.NODE_VERSION_CATEGORY]: any.word(),
             [prompts.questionNames.UNIT_TESTS]: true
           });
+          mkdir.default.resolves();
 
           await scaffold({vcs: {}});
 
@@ -335,6 +335,7 @@ rollup.config.js`)
             [prompts.questionNames.UNIT_TESTS]: true,
             [prompts.questionNames.INTEGRATION_TESTS]: true
           });
+          mkdir.default.resolves();
 
           await scaffold({vcs: {}});
 

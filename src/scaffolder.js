@@ -3,6 +3,7 @@ import {copyFile, writeFile} from 'mz/fs';
 import chalk from 'chalk';
 import uniq from 'lodash.uniq';
 import exec from '../third-party-wrappers/exec-as-promised';
+import mkdir from '../third-party-wrappers/make-dir';
 import buildPackage from './package';
 import install from './install';
 import {questionNames, prompt} from './prompts';
@@ -100,14 +101,10 @@ export async function scaffold({projectRoot, projectName, visibility, license, v
       `${npmIgnoreDirectories.join('\n')}\n\n${npmIgnoreFiles.join('\n')}`
     ),
     writeFile(`${projectRoot}/.eslintignore`, eslintIgnoreDirectories.join('\n')),
-    unitTested && copyFile(
-      resolve(__dirname, '..', 'templates', 'canary-test.txt'),
-      `${projectRoot}/test/unit/canary-test.js`
-    ),
-    unitTested && copyFile(
-      resolve(__dirname, '..', 'templates', 'mocha.opts'),
-      `${projectRoot}/test/unit/mocha.opts`
-    )
+    unitTested && mkdir(`${projectRoot}/test/unit`).then(path => Promise.all([
+      copyFile(resolve(__dirname, '..', 'templates', 'canary-test.txt'), `${path}/canary-test.js`),
+      copyFile(resolve(__dirname, '..', 'templates', 'mocha.opts'), `${path}/mocha.opts`)
+    ]))
   ]);
 
   const versionCategory = answers[questionNames.NODE_VERSION_CATEGORY].toLowerCase();
