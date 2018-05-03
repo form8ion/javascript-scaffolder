@@ -9,16 +9,24 @@ import install from './install';
 import {questionNames, prompt} from './prompts';
 
 async function determineNodeVersionForProject(nodeVersionCategory) {
-  console.log(chalk.grey(`Determining ${                          // eslint-disable-line no-console
-    nodeVersionCategory.toLowerCase()
-  } version of node`));
+  const lowerCaseCategory = nodeVersionCategory.toLowerCase();
+  console.log(chalk.grey(`Determining ${lowerCaseCategory} version of node`));    // eslint-disable-line no-console
   const nvmLsOutput = await exec(`. ~/.nvm/nvm.sh && nvm ls-remote${('LTS' === nodeVersionCategory) ? ' --lts' : ''}`);
   const lsLines = nvmLsOutput.split('\n');
   const lsLine = lsLines[lsLines.length - 2];
   return lsLine.match(/(v[0-9]+\.[0-9]+\.[0-9]+)/)[1];
 }
 
-export async function scaffold({projectRoot, projectName, visibility, license, vcs, ci, description}) {
+export async function scaffold({
+  projectRoot,
+  projectName,
+  visibility,
+  license,
+  vcs,
+  ci,
+  description,
+  eslintConfigPrefix
+}) {
   console.log(chalk.blue('Initializing JavaScript project'));     // eslint-disable-line no-console
 
   const answers = await prompt();
@@ -92,6 +100,8 @@ export async function scaffold({projectRoot, projectName, visibility, license, v
   await Promise.all([
     writeFile(`${projectRoot}/.nvmrc`, nodeVersion),
     writeFile(`${projectRoot}/package.json`, JSON.stringify(packageData)),
+    eslintConfigPrefix && writeFile(`${projectRoot}/.eslintrc.yml`, `extends: '${eslintConfigPrefix}/rules/es6'`),
+    eslintConfigPrefix && writeFile(`${projectRoot}/.eslintignore`, eslintIgnoreDirectories.join('\n')),
     ('Application' === packageType) && writeFile(`${projectRoot}/.npmrc`, 'save-exact=true'),
     copyFile(resolve(__dirname, '..', 'templates', 'huskyrc.json'), `${projectRoot}/.huskyrc.json`),
     copyFile(resolve(__dirname, '..', 'templates', 'commitlintrc.js'), `${projectRoot}/.commitlintrc.js`),
@@ -100,10 +110,17 @@ export async function scaffold({projectRoot, projectName, visibility, license, v
       `${projectRoot}/.npmignore`,
       `${npmIgnoreDirectories.join('\n')}\n\n${npmIgnoreFiles.join('\n')}`
     ),
-    writeFile(`${projectRoot}/.eslintignore`, eslintIgnoreDirectories.join('\n')),
     unitTested && mkdir(`${projectRoot}/test/unit`).then(path => Promise.all([
       copyFile(resolve(__dirname, '..', 'templates', 'canary-test.txt'), `${path}/canary-test.js`),
-      copyFile(resolve(__dirname, '..', 'templates', 'mocha.opts'), `${path}/mocha.opts`)
+      copyFile(resolve(__dirname, '..', 'templates', 'mocha.opts'), `${path}/mocha.opts`),
+      eslintConfigPrefix && writeFile(
+        `${projectRoot}/test/.eslintrc.yml`,
+        `extends: '${eslintConfigPrefix}/rules/tests/base'`
+      ),
+      eslintConfigPrefix && writeFile(
+        `${projectRoot}/test/unit/.eslintrc.yml`,
+        `extends: '${eslintConfigPrefix}/rules/tests/mocha'`
+      )
     ]))
   ]);
 

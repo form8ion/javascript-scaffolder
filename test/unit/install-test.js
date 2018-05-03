@@ -8,7 +8,7 @@ suite('npm install', () => {
   let sandbox;
 
   setup(() => {
-    sandbox = sinon.sandbox.create();
+    sandbox = sinon.createSandbox();
 
     sandbox.stub(exec, 'default');
   });

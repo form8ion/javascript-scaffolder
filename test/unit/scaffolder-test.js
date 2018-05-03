@@ -19,7 +19,7 @@ suite('javascript project scaffolder', () => {
   const latestVersion = `v${any.integer()}.${any.integer()}.${any.integer()}`;
 
   setup(() => {
-    sandbox = sinon.sandbox.create();
+    sandbox = sinon.createSandbox();
 
     sandbox.stub(fs, 'writeFile');
     sandbox.stub(fs, 'copyFile');
@@ -145,37 +145,6 @@ rollup.config.js`)
       });
     });
 
-    suite('eslint-ignore', () => {
-      test('that non-source files are excluded from linting', async () => {
-        prompts.prompt.resolves({
-          [prompts.questionNames.NODE_VERSION_CATEGORY]: any.word(),
-          [prompts.questionNames.UNIT_TESTS]: false
-        });
-
-        await scaffold({projectRoot, vcs: {}});
-
-        assert.calledWith(fs.writeFile, `${projectRoot}/.eslintignore`, sinon.match('/lib/'));
-        assert.neverCalledWith(fs.writeFile, `${projectRoot}/.eslintignore`, sinon.match('/coverage/'));
-      });
-
-      test('that the coverage folder is excluded from linting when the project is unit tested', async () => {
-        prompts.prompt.resolves({
-          [prompts.questionNames.NODE_VERSION_CATEGORY]: any.word(),
-          [prompts.questionNames.UNIT_TESTS]: true
-        });
-        mkdir.default.resolves();
-
-        await scaffold({projectRoot, vcs: {}});
-
-        assert.calledWith(
-          fs.writeFile,
-          `${projectRoot}/.eslintignore`,
-          sinon.match(`
-/coverage/`)
-        );
-      });
-    });
-
     suite('unit test', () => {
       test('that a canary test is included when the project will be unit tested', async () => {
         const pathToCreatedDirectory = any.string();
@@ -210,6 +179,93 @@ rollup.config.js`)
         assert.neverCalledWith(mkdir.default, `${projectRoot}/test/unit`);
         assert.neverCalledWith(fs.copyFile, path.resolve(__dirname, '../../', 'templates', 'canary-test.txt'));
         assert.neverCalledWith(fs.copyFile, path.resolve(__dirname, '../../', 'templates', 'mocha.opts'));
+      });
+    });
+
+    suite('eslint', () => {
+      const eslintConfigPrefix = any.string();
+
+      test('that the base config is added to the root of the project if the config prefix is provided', async () => {
+        prompts.prompt.resolves({
+          [prompts.questionNames.NODE_VERSION_CATEGORY]: any.word(),
+          [prompts.questionNames.UNIT_TESTS]: false
+        });
+
+        await scaffold({projectRoot, vcs: {}, eslintConfigPrefix});
+
+        assert.calledWith(fs.writeFile, `${projectRoot}/.eslintrc.yml`, `extends: '${eslintConfigPrefix}/rules/es6'`);
+        assert.neverCalledWith(fs.writeFile, `${projectRoot}/test/.eslintrc.yml`);
+        assert.neverCalledWith(fs.writeFile, `${projectRoot}/test/unit/.eslintrc.yml`);
+      });
+
+      test(
+        'that the test config is added if the config prefix is provided and the project will be unit tested',
+        async () => {
+          prompts.prompt.resolves({
+            [prompts.questionNames.NODE_VERSION_CATEGORY]: any.word(),
+            [prompts.questionNames.UNIT_TESTS]: true
+          });
+          mkdir.default.resolves();
+
+          await scaffold({projectRoot, vcs: {}, eslintConfigPrefix});
+
+          assert.calledWith(
+            fs.writeFile,
+            `${projectRoot}/test/.eslintrc.yml`,
+            `extends: '${eslintConfigPrefix}/rules/tests/base'`
+          );
+          assert.calledWith(
+            fs.writeFile,
+            `${projectRoot}/test/unit/.eslintrc.yml`,
+            `extends: '${eslintConfigPrefix}/rules/tests/mocha'`
+          );
+        }
+      );
+
+      test('that the no config is added if the config prefix is not provided', async () => {
+        prompts.prompt.resolves({
+          [prompts.questionNames.NODE_VERSION_CATEGORY]: any.word(),
+          [prompts.questionNames.UNIT_TESTS]: true
+        });
+        mkdir.default.resolves();
+
+        await scaffold({projectRoot, vcs: {}});
+
+        assert.neverCalledWith(fs.writeFile, `${projectRoot}/.eslintrc.yml`);
+        assert.neverCalledWith(fs.writeFile, `${projectRoot}/.eslintignore`);
+        assert.neverCalledWith(fs.writeFile, `${projectRoot}/test/.eslintrc.yml`);
+        assert.neverCalledWith(fs.writeFile, `${projectRoot}/test/unit/.eslintrc.yml`);
+      });
+
+      suite('eslint-ignore', () => {
+        test('that non-source files are excluded from linting', async () => {
+          prompts.prompt.resolves({
+            [prompts.questionNames.NODE_VERSION_CATEGORY]: any.word(),
+            [prompts.questionNames.UNIT_TESTS]: false
+          });
+
+          await scaffold({projectRoot, vcs: {}, eslintConfigPrefix});
+
+          assert.calledWith(fs.writeFile, `${projectRoot}/.eslintignore`, sinon.match('/lib/'));
+          assert.neverCalledWith(fs.writeFile, `${projectRoot}/.eslintignore`, sinon.match('/coverage/'));
+        });
+
+        test('that the coverage folder is excluded from linting when the project is unit tested', async () => {
+          prompts.prompt.resolves({
+            [prompts.questionNames.NODE_VERSION_CATEGORY]: any.word(),
+            [prompts.questionNames.UNIT_TESTS]: true
+          });
+          mkdir.default.resolves();
+
+          await scaffold({projectRoot, vcs: {}, eslintConfigPrefix});
+
+          assert.calledWith(
+            fs.writeFile,
+            `${projectRoot}/.eslintignore`,
+            sinon.match(`
+/coverage/`)
+          );
+        });
       });
     });
   });
