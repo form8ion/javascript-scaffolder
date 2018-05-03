@@ -28,7 +28,7 @@ opinionated scaffolder for JavaScript projects
 ### Installation
 
 ```sh
-$ npm install @travi/project-scaffolder -S
+$ npm install @travi/javascript-scaffolder -S
 ```
 
 ## Contributing
