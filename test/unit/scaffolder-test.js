@@ -164,7 +164,7 @@ rollup.config.js`)
         assert.calledWith(
           fs.copyFile,
           path.resolve(__dirname, '../../', 'templates', 'mocha.opts'),
-          `${pathToCreatedDirectory}/mocha.opts`
+          `${pathToCreatedDirectory}/../mocha.opts`
         );
       });
 

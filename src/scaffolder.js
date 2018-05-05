@@ -112,7 +112,7 @@ export async function scaffold({
     ),
     unitTested && mkdir(`${projectRoot}/test/unit`).then(path => Promise.all([
       copyFile(resolve(__dirname, '..', 'templates', 'canary-test.txt'), `${path}/canary-test.js`),
-      copyFile(resolve(__dirname, '..', 'templates', 'mocha.opts'), `${path}/mocha.opts`),
+      copyFile(resolve(__dirname, '..', 'templates', 'mocha.opts'), `${path}/../mocha.opts`),
       eslintConfigPrefix && writeFile(
         `${projectRoot}/test/.eslintrc.yml`,
         `extends: '${eslintConfigPrefix}/rules/tests/base'`
