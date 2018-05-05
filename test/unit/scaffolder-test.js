@@ -62,6 +62,7 @@ suite('javascript project scaffolder', () => {
           path.resolve(__dirname, '../../', 'templates', 'nycrc.json'),
           `${projectRoot}/.nycrc`
         );
+        assert.calledWith(fs.writeFile, `${projectRoot}/.babelrc`, JSON.stringify({presets: ['travi']}));
       });
     });
 
@@ -320,6 +321,7 @@ rollup.config.js`)
     suite('dependencies', () => {
       const defaultDependencies = [
         '@travi/eslint-config-travi',
+        'babel-preset-travi',
         'commitlint-config-travi',
         'npm-run-all',
         'husky@next',
