@@ -4,7 +4,11 @@ export default function ({projectName, visibility, scope, packageType, license, 
   return {
     name: packageName,
     description,
-    ...('Package' === packageType) && {version: '0.0.0-semantically-released'},
+    ...('Package' === packageType) && {
+      version: '0.0.0-semantically-released',
+      main: 'lib/index.cjs.js',
+      module: 'lib/index.es.js'
+    },
     license: license || 'UNLICENSED',
     ...('Application' === packageType) && {private: true},
     ...('GitHub' === vcs.host) && {
@@ -32,7 +36,8 @@ export default function ({projectName, visibility, scope, packageType, license, 
       ...('Package' === packageType) && {
         build: 'run-s clean build:*',
         'build:js': 'rollup -c',
-        watch: "run-s 'build:js -- --watch'"
+        watch: 'run-s \'build:js -- --watch\'',
+        prepublishOnly: 'run-s build'
       },
       'greenkeeper:update-lockfile': 'greenkeeper-lockfile-update',
       'greenkeeper:upload-lockfile': 'greenkeeper-lockfile-upload'

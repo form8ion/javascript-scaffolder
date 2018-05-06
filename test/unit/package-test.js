@@ -32,6 +32,26 @@ suite('package details builder', () => {
     });
   });
 
+  suite('main/module', () => {
+    suite('application', () => {
+      test('that these properties aer not defined for applications', () => {
+        const packageDetails = buildPackageDetails({tests: {}, vcs: {}, author: {}, packageType: 'Application'});
+
+        assert.isUndefined(packageDetails.main);
+        assert.isUndefined(packageDetails.module);
+      });
+    });
+
+    suite('package', () => {
+      test('that `main` and `module` are defined for package consumers', () => {
+        const packageDetails = buildPackageDetails({tests: {}, vcs: {}, author: {}, packageType: 'Package'});
+
+        assert.equal(packageDetails.main, 'lib/index.cjs.js');
+        assert.equal(packageDetails.module, 'lib/index.es.js');
+      });
+    });
+  });
+
   suite('author', () => {
     test('that the author details are provided', () => {
       const name = any.string();
@@ -326,6 +346,24 @@ suite('package details builder', () => {
           assert.equal(packageDetails.scripts.build, 'run-s clean build:*');
           assert.equal(packageDetails.scripts['build:js'], 'rollup -c');
           assert.equal(packageDetails.scripts.watch, "run-s 'build:js -- --watch'");
+        });
+      });
+    });
+
+    suite('publish', () => {
+      suite('application', () => {
+        test('that publishing is not configured', () => {
+          const packageDetails = buildPackageDetails({tests: {}, vcs: {}, author: {}, packageType: 'Application'});
+
+          assert.isUndefined(packageDetails.scripts.prepublishOnly);
+        });
+      });
+
+      suite('package', () => {
+        test('that the build is executed before publishing', () => {
+          const packageDetails = buildPackageDetails({tests: {}, vcs: {}, author: {}, packageType: 'Package'});
+
+          assert.equal(packageDetails.scripts.prepublishOnly, 'run-s build');
         });
       });
     });
