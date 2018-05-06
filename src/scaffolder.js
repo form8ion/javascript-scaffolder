@@ -32,6 +32,7 @@ export async function scaffold({
   const answers = await prompt();
   const unitTested = answers[questionNames.UNIT_TESTS];
   const integrationTested = answers[questionNames.INTEGRATION_TESTS];
+  const packageType = answers[questionNames.PACKAGE_TYPE];
 
   const devDependencies = uniq([
     '@travi/eslint-config-travi',
@@ -43,6 +44,7 @@ export async function scaffold({
     'greenkeeper-lockfile',
     'nyc',
     'babel-register',
+    ...'Package' === packageType ? ['rimraf'] : [],
     ...'Public' === visibility ? ['codecov'] : [],
     ...unitTested ? ['mocha', 'chai', 'sinon'] : [],
     ...integrationTested ? ['cucumber', 'chai'] : []
@@ -51,8 +53,6 @@ export async function scaffold({
   const nodeVersion = await determineNodeVersionForProject(answers[questionNames.NODE_VERSION_CATEGORY]);
 
   console.log(chalk.grey('Writing project files'));      // eslint-disable-line no-console
-
-  const packageType = answers[questionNames.PACKAGE_TYPE];
 
   const packageData = buildPackage({
     projectName,

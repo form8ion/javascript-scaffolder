@@ -339,6 +339,17 @@ rollup.config.js`)
 
           assert.calledWith(installer.default, [...defaultDependencies]);
         });
+
+        test('that the appropriate packages are installed for `Package` type projects', async () => {
+          prompts.prompt.resolves({
+            [prompts.questionNames.NODE_VERSION_CATEGORY]: any.word(),
+            [prompts.questionNames.PACKAGE_TYPE]: 'Package'
+          });
+
+          await scaffold({vcs: {}});
+
+          assert.calledWith(installer.default, [...defaultDependencies, 'rimraf']);
+        });
       });
 
       suite('testing', () => {

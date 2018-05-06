@@ -216,6 +216,20 @@ suite('package details builder', () => {
         assert.equal(packageDetails.scripts.test, 'run-s lint:* test:*');
       });
 
+      suite('clean', () => {
+        test('that no clean script is defined if the package-type is not `Package`', () => {
+          const packageDetails = buildPackageDetails({tests: {}, vcs: {}, author: {}, packageType: any.word()});
+
+          assert.isUndefined(packageDetails.scripts.clean);
+        });
+
+        test('that the clean script removes the `lib/` directory if the package-type is `Package`', () => {
+          const packageDetails = buildPackageDetails({tests: {}, vcs: {}, author: {}, packageType: 'Package'});
+
+          assert.equal(packageDetails.scripts.clean, 'rimraf lib/');
+        });
+      });
+
       suite('tests', () => {
         suite('unit', () => {
           test('that the script is included if the project will be unit tested', () => {

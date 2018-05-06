@@ -16,6 +16,7 @@ export default function ({projectName, visibility, scope, packageType, license, 
     },
     author: `${author.name} <${author.email}> (${author.url})`,
     scripts: {
+      ...('Package' === packageType) && {clean: 'rimraf lib/'},
       ...('Application' === packageType) && {start: './lib/index.js'},
       'lint:js': 'eslint . --cache',
       ...('Travis' === ci) && {'lint:travis': 'travis lint --no-interactive'},
