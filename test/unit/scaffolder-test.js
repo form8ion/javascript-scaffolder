@@ -269,6 +269,38 @@ rollup.config.js`)
         });
       });
     });
+
+    suite('build', () => {
+      suite('application', () => {
+        test('that rollup is not configured', async () => {
+          prompts.prompt.resolves({
+            [prompts.questionNames.NODE_VERSION_CATEGORY]: any.word(),
+            [prompts.questionNames.PACKAGE_TYPE]: 'Application'
+          });
+
+          await scaffold({visibility, projectRoot, vcs: {}});
+
+          assert.neverCalledWith(fs.copyFile, path.resolve(__dirname, '../../', 'templates', 'rollup.config.js'));
+        });
+      });
+
+      suite('package', () => {
+        test('that the package gets bundled with rollup', async () => {
+          prompts.prompt.resolves({
+            [prompts.questionNames.NODE_VERSION_CATEGORY]: any.word(),
+            [prompts.questionNames.PACKAGE_TYPE]: 'Package'
+          });
+
+          await scaffold({visibility, projectRoot, vcs: {}});
+
+          assert.calledWith(
+            fs.copyFile,
+            path.resolve(__dirname, '../../', 'templates', 'rollup.config.js'),
+            `${projectRoot}/rollup.config.js`
+          );
+        });
+      });
+    });
   });
 
   suite('package', () => {
@@ -348,7 +380,7 @@ rollup.config.js`)
 
           await scaffold({vcs: {}});
 
-          assert.calledWith(installer.default, [...defaultDependencies, 'rimraf']);
+          assert.calledWith(installer.default, [...defaultDependencies, 'rimraf', 'rollup']);
         });
       });
 

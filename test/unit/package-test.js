@@ -308,6 +308,28 @@ suite('package details builder', () => {
       });
     });
 
+    suite('build', () => {
+      suite('application', () => {
+        test('that rollup is not used', () => {
+          const packageDetails = buildPackageDetails({tests: {}, vcs: {}, author: {}, packageType: 'Application'});
+
+          assert.isUndefined(packageDetails.scripts.build);
+          assert.isUndefined(packageDetails.scripts['build:js']);
+          assert.isUndefined(packageDetails.scripts.watch);
+        });
+      });
+
+      suite('package', () => {
+        test('that the rollup build is scripted', () => {
+          const packageDetails = buildPackageDetails({tests: {}, vcs: {}, author: {}, packageType: 'Package'});
+
+          assert.equal(packageDetails.scripts.build, 'run-s clean build:*');
+          assert.equal(packageDetails.scripts['build:js'], 'rollup -c');
+          assert.equal(packageDetails.scripts.watch, "run-s 'build:js -- --watch'");
+        });
+      });
+    });
+
     suite('greenkeeper', () => {
       test('that the lockfile scripts expose the commands for the ci steps', () => {
         const packageDetails = buildPackageDetails({packageType: 'Application', tests: {}, vcs: {}, author: {}});

@@ -44,7 +44,7 @@ export async function scaffold({
     'greenkeeper-lockfile',
     'nyc',
     'babel-register',
-    ...'Package' === packageType ? ['rimraf'] : [],
+    ...'Package' === packageType ? ['rimraf', 'rollup'] : [],
     ...'Public' === visibility ? ['codecov'] : [],
     ...unitTested ? ['mocha', 'chai', 'sinon'] : [],
     ...integrationTested ? ['cucumber', 'chai'] : []
@@ -108,10 +108,10 @@ export async function scaffold({
     copyFile(resolve(__dirname, '..', 'templates', 'huskyrc.json'), `${projectRoot}/.huskyrc.json`),
     copyFile(resolve(__dirname, '..', 'templates', 'commitlintrc.js'), `${projectRoot}/.commitlintrc.js`),
     copyFile(resolve(__dirname, '..', 'templates', 'nycrc.json'), `${projectRoot}/.nycrc`),
-    ('Package' === packageType) && writeFile(
-      `${projectRoot}/.npmignore`,
-      `${npmIgnoreDirectories.join('\n')}\n\n${npmIgnoreFiles.join('\n')}`
-    ),
+    ('Package' === packageType) && Promise.all([
+      writeFile(`${projectRoot}/.npmignore`, `${npmIgnoreDirectories.join('\n')}\n\n${npmIgnoreFiles.join('\n')}`),
+      copyFile(resolve(__dirname, '..', 'templates', 'rollup.config.js'), `${projectRoot}/rollup.config.js`)
+    ]),
     unitTested && mkdir(`${projectRoot}/test/unit`).then(path => Promise.all([
       copyFile(resolve(__dirname, '..', 'templates', 'canary-test.txt'), `${path}/canary-test.js`),
       copyFile(resolve(__dirname, '..', 'templates', 'mocha.opts'), `${path}/../mocha.opts`),

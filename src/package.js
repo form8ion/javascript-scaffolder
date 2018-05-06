@@ -29,6 +29,11 @@ export default function ({projectName, visibility, scope, packageType, license, 
       ...tests.unit && ('Public' === visibility) && {
         'coverage:report': 'nyc report --reporter=text-lcov > coverage.lcov && codecov'
       },
+      ...('Package' === packageType) && {
+        build: 'run-s clean build:*',
+        'build:js': 'rollup -c',
+        watch: "run-s 'build:js -- --watch'"
+      },
       'greenkeeper:update-lockfile': 'greenkeeper-lockfile-update',
       'greenkeeper:upload-lockfile': 'greenkeeper-lockfile-upload'
     },
