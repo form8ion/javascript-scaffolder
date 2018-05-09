@@ -18,4 +18,4 @@
 .nycrc
 .travis.yml
 coverage.lcov
-rollup.config.js
+/rollup.config.js
