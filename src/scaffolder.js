@@ -25,7 +25,7 @@ export async function scaffold({
   vcs,
   ci,
   description,
-  eslintConfigPrefix
+  configs = {}
 }) {
   console.log(chalk.blue('Initializing JavaScript project'));     // eslint-disable-line no-console
 
@@ -35,7 +35,7 @@ export async function scaffold({
   const packageType = answers[questionNames.PACKAGE_TYPE];
 
   const devDependencies = uniq([
-    '@travi/eslint-config-travi',
+    configs.eslint && configs.eslint.packageName,
     'babel-preset-travi',
     'commitlint-config-travi',
     'npm-run-all',
@@ -48,7 +48,7 @@ export async function scaffold({
     ...'Public' === visibility ? ['codecov'] : [],
     ...unitTested ? ['mocha', 'chai', 'sinon'] : [],
     ...integrationTested ? ['cucumber', 'chai'] : []
-  ]);
+  ].filter(Boolean));
 
   const nodeVersion = await determineNodeVersionForProject(answers[questionNames.NODE_VERSION_CATEGORY]);
 
@@ -102,8 +102,10 @@ export async function scaffold({
     writeFile(`${projectRoot}/.nvmrc`, nodeVersion),
     writeFile(`${projectRoot}/package.json`, JSON.stringify(packageData)),
     writeFile(`${projectRoot}/.babelrc`, JSON.stringify({presets: ['travi']})),
-    eslintConfigPrefix && writeFile(`${projectRoot}/.eslintrc.yml`, `extends: '${eslintConfigPrefix}/rules/es6'`),
-    eslintConfigPrefix && writeFile(`${projectRoot}/.eslintignore`, eslintIgnoreDirectories.join('\n')),
+    configs.eslint && Promise.all([
+      writeFile(`${projectRoot}/.eslintrc.yml`, `extends: '${configs.eslint.prefix}/rules/es6'`),
+      writeFile(`${projectRoot}/.eslintignore`, eslintIgnoreDirectories.join('\n'))
+    ]),
     ('Application' === packageType) && writeFile(`${projectRoot}/.npmrc`, 'save-exact=true'),
     copyFile(resolve(__dirname, '..', 'templates', 'huskyrc.json'), `${projectRoot}/.huskyrc.json`),
     copyFile(resolve(__dirname, '..', 'templates', 'commitlintrc.js'), `${projectRoot}/.commitlintrc.js`),
@@ -115,14 +117,10 @@ export async function scaffold({
     unitTested && mkdir(`${projectRoot}/test/unit`).then(path => Promise.all([
       copyFile(resolve(__dirname, '..', 'templates', 'canary-test.txt'), `${path}/canary-test.js`),
       copyFile(resolve(__dirname, '..', 'templates', 'mocha.opts'), `${path}/../mocha.opts`),
-      eslintConfigPrefix && writeFile(
-        `${projectRoot}/test/.eslintrc.yml`,
-        `extends: '${eslintConfigPrefix}/rules/tests/base'`
-      ),
-      eslintConfigPrefix && writeFile(
-        `${projectRoot}/test/unit/.eslintrc.yml`,
-        `extends: '${eslintConfigPrefix}/rules/tests/mocha'`
-      )
+      configs.eslint && Promise.all([
+        writeFile(`${projectRoot}/test/.eslintrc.yml`, `extends: '${configs.eslint.prefix}/rules/tests/base'`),
+        writeFile(`${projectRoot}/test/unit/.eslintrc.yml`, `extends: '${configs.eslint.prefix}/rules/tests/mocha'`)
+      ])
     ]))
   ]);
 

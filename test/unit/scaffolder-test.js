@@ -17,6 +17,7 @@ suite('javascript project scaffolder', () => {
   const visibility = any.fromList(['Private', 'Public']);
   const ltsVersion = `v${any.integer()}.${any.integer()}.${any.integer()}`;
   const latestVersion = `v${any.integer()}.${any.integer()}.${any.integer()}`;
+  const eslintConfigName = any.string();
 
   setup(() => {
     sandbox = sinon.createSandbox();
@@ -192,7 +193,7 @@ rollup.config.js`)
           [prompts.questionNames.UNIT_TESTS]: false
         });
 
-        await scaffold({projectRoot, vcs: {}, eslintConfigPrefix});
+        await scaffold({projectRoot, vcs: {}, configs: {eslint: {prefix: eslintConfigPrefix}}});
 
         assert.calledWith(fs.writeFile, `${projectRoot}/.eslintrc.yml`, `extends: '${eslintConfigPrefix}/rules/es6'`);
         assert.neverCalledWith(fs.writeFile, `${projectRoot}/test/.eslintrc.yml`);
@@ -208,7 +209,7 @@ rollup.config.js`)
           });
           mkdir.default.resolves();
 
-          await scaffold({projectRoot, vcs: {}, eslintConfigPrefix});
+          await scaffold({projectRoot, vcs: {}, configs: {eslint: {prefix: eslintConfigPrefix}}});
 
           assert.calledWith(
             fs.writeFile,
@@ -245,7 +246,7 @@ rollup.config.js`)
             [prompts.questionNames.UNIT_TESTS]: false
           });
 
-          await scaffold({projectRoot, vcs: {}, eslintConfigPrefix});
+          await scaffold({projectRoot, vcs: {}, configs: {eslint: {prefix: eslintConfigPrefix}}});
 
           assert.calledWith(fs.writeFile, `${projectRoot}/.eslintignore`, sinon.match('/lib/'));
           assert.neverCalledWith(fs.writeFile, `${projectRoot}/.eslintignore`, sinon.match('/coverage/'));
@@ -258,7 +259,7 @@ rollup.config.js`)
           });
           mkdir.default.resolves();
 
-          await scaffold({projectRoot, vcs: {}, eslintConfigPrefix});
+          await scaffold({projectRoot, vcs: {}, configs: {eslint: {prefix: eslintConfigPrefix}}});
 
           assert.calledWith(
             fs.writeFile,
@@ -352,7 +353,6 @@ rollup.config.js`)
 
     suite('dependencies', () => {
       const defaultDependencies = [
-        '@travi/eslint-config-travi',
         'babel-preset-travi',
         'commitlint-config-travi',
         'npm-run-all',
@@ -381,6 +381,16 @@ rollup.config.js`)
           await scaffold({vcs: {}});
 
           assert.calledWith(installer.default, [...defaultDependencies, 'rimraf', 'rollup']);
+        });
+      });
+
+      suite('lint', () => {
+        test('that the eslint config is installed when defined', async () => {
+          prompts.prompt.resolves({[prompts.questionNames.NODE_VERSION_CATEGORY]: any.word()});
+
+          await scaffold({vcs: {}, configs: {eslint: {packageName: eslintConfigName}}});
+
+          assert.calledWith(installer.default, [eslintConfigName, ...defaultDependencies]);
         });
       });
 
