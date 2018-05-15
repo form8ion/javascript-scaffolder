@@ -30,27 +30,27 @@ const testingQuestions = [
   }
 ];
 
-function authorQuestions(npmConf) {
+function authorQuestions({name, email, url}) {
   return [
     {
       name: questionNames.AUTHOR_NAME,
       message: 'What is the author\'s name?',
-      default: npmConf.get('init.author.name')
+      default: name
     },
     {
       name: questionNames.AUTHOR_EMAIL,
       message: 'What is the author\'s email?',
-      default: npmConf.get('init.author.email')
+      default: email
     },
     {
       name: questionNames.AUTHOR_URL,
       message: 'What is the author\'s website url?',
-      default: npmConf.get('init.author.url')
+      default: url
     }
   ];
 }
 
-export async function prompt({npmAccount}) {
+export async function prompt({npmAccount, author}) {
   const npmConf = npmConfFactory();
 
   return promptWithInquirer([
@@ -81,7 +81,11 @@ export async function prompt({npmAccount}) {
       when: scopePromptShouldBePresented,
       default: npmAccount || await exec('npm whoami')
     },
-    ...authorQuestions(npmConf),
+    ...authorQuestions(author || {
+      name: npmConf.get('init.author.name'),
+      email: npmConf.get('init.author.email'),
+      url: npmConf.get('init.author.url')
+    }),
     ...testingQuestions
   ]);
 }

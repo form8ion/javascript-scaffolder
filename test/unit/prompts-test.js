@@ -96,12 +96,35 @@ suite('prompts', () => {
 
   test('that defaults are overridden by the provided options', () => {
     const npmAccount = any.word();
+    const author = {name: any.string(), email: any.string(), url: any.url()};
     const get = sinon.stub();
     npmConf.default.returns({get});
 
-    return prompt({npmAccount}).then(() => assert.calledWith(
-      inquirer.prompt,
-      sinon.match(value => 1 === value.filter(question => npmAccount === question.default).length)
-    ));
+    return prompt({npmAccount, author}).then(() => {
+      assert.calledWith(
+        inquirer.prompt,
+        sinon.match(value => 1 === value.filter((
+          question => questionNames.SCOPE === question.name && npmAccount === question.default
+        )).length)
+      );
+      assert.calledWith(
+        inquirer.prompt,
+        sinon.match(value => 1 === value.filter((
+          question => questionNames.AUTHOR_NAME === question.name && author.name === question.default
+        )).length)
+      );
+      assert.calledWith(
+        inquirer.prompt,
+        sinon.match(value => 1 === value.filter((
+          question => questionNames.AUTHOR_EMAIL === question.name && author.email === question.default
+        )).length)
+      );
+      assert.calledWith(
+        inquirer.prompt,
+        sinon.match(value => 1 === value.filter((
+          question => questionNames.AUTHOR_URL === question.name && author.url === question.default
+        )).length)
+      );
+    });
   });
 });
