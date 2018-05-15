@@ -33,7 +33,7 @@ suite('prompts', () => {
     get.withArgs('init.author.url').returns(authorUrl);
     inquirer.prompt.resolves();
 
-    return prompt().then(() => assert.calledWith(
+    return prompt({}).then(() => assert.calledWith(
       inquirer.prompt,
       [
         {
@@ -91,6 +91,17 @@ suite('prompts', () => {
           default: true
         }
       ]
+    ));
+  });
+
+  test('that defaults are overridden by the provided options', () => {
+    const npmAccount = any.word();
+    const get = sinon.stub();
+    npmConf.default.returns({get});
+
+    return prompt({npmAccount}).then(() => assert.calledWith(
+      inquirer.prompt,
+      sinon.match(value => 1 === value.filter(question => npmAccount === question.default).length)
     ));
   });
 });

@@ -50,7 +50,7 @@ function authorQuestions(npmConf) {
   ];
 }
 
-export async function prompt() {
+export async function prompt({npmAccount}) {
   const npmConf = npmConfFactory();
 
   return promptWithInquirer([
@@ -79,7 +79,7 @@ export async function prompt() {
       name: questionNames.SCOPE,
       message: 'What is the scope?',
       when: scopePromptShouldBePresented,
-      default: await exec('npm whoami')
+      default: npmAccount || await exec('npm whoami')
     },
     ...authorQuestions(npmConf),
     ...testingQuestions

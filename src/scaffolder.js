@@ -25,11 +25,12 @@ export async function scaffold({
   vcs,
   ci,
   description,
-  configs = {}
+  configs = {},
+  overrides = {}
 }) {
   console.log(chalk.blue('Initializing JavaScript project'));     // eslint-disable-line no-console
 
-  const answers = await prompt();
+  const answers = await prompt(overrides);
   const unitTested = answers[questionNames.UNIT_TESTS];
   const integrationTested = answers[questionNames.INTEGRATION_TESTS];
   const packageType = answers[questionNames.PACKAGE_TYPE];

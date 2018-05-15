@@ -386,9 +386,10 @@ rollup.config.js`)
 
       suite('lint', () => {
         test('that the eslint config is installed when defined', async () => {
-          prompts.prompt.resolves({[prompts.questionNames.NODE_VERSION_CATEGORY]: any.word()});
+          const overrides = any.simpleObject();
+          prompts.prompt.withArgs(overrides).resolves({[prompts.questionNames.NODE_VERSION_CATEGORY]: any.word()});
 
-          await scaffold({vcs: {}, configs: {eslint: {packageName: eslintConfigName}}});
+          await scaffold({vcs: {}, configs: {eslint: {packageName: eslintConfigName}}, overrides});
 
           assert.calledWith(installer.default, [eslintConfigName, ...defaultDependencies]);
         });
@@ -474,7 +475,7 @@ rollup.config.js`)
 
   suite('save-exact', () => {
     test('that the project is configured to use exact dependency versions if it is an application', () => {
-      prompts.prompt.resolves({
+      prompts.prompt.withArgs({}).resolves({
         [prompts.questionNames.NODE_VERSION_CATEGORY]: any.word(),
         [prompts.questionNames.PACKAGE_TYPE]: 'Application'
       });
