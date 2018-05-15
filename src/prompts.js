@@ -1,4 +1,5 @@
 import {prompt as promptWithInquirer} from 'inquirer';
+import exec from '../third-party-wrappers/exec-as-promised';
 import {scopePromptShouldBePresented, shouldBeScopedPromptShouldBePresented} from './prompt-condiftionals';
 import npmConfFactory from '../third-party-wrappers/npm-conf';
 
@@ -49,7 +50,7 @@ function authorQuestions(npmConf) {
   ];
 }
 
-export function prompt() {
+export async function prompt() {
   const npmConf = npmConfFactory();
 
   return promptWithInquirer([
@@ -78,7 +79,7 @@ export function prompt() {
       name: questionNames.SCOPE,
       message: 'What is the scope?',
       when: scopePromptShouldBePresented,
-      default: 'travi'
+      default: await exec('npm whoami')
     },
     ...authorQuestions(npmConf),
     ...testingQuestions

@@ -2,6 +2,7 @@ import inquirer from 'inquirer';
 import sinon from 'sinon';
 import {assert} from 'chai';
 import any from '@travi/any';
+import * as exec from '../../third-party-wrappers/exec-as-promised';
 import * as npmConf from '../../third-party-wrappers/npm-conf';
 import {scopePromptShouldBePresented, shouldBeScopedPromptShouldBePresented} from '../../src/prompt-condiftionals';
 import {prompt, questionNames} from '../../src/prompts';
@@ -14,6 +15,7 @@ suite('prompts', () => {
 
     sandbox.stub(inquirer, 'prompt');
     sandbox.stub(npmConf, 'default');
+    sandbox.stub(exec, 'default');
   });
 
   teardown(() => sandbox.restore());
@@ -22,8 +24,10 @@ suite('prompts', () => {
     const authorName = any.string();
     const authorEmail = any.string();
     const authorUrl = any.url();
+    const npmUser = any.word();
     const get = sinon.stub();
     npmConf.default.returns({get});
+    exec.default.withArgs('npm whoami').resolves(npmUser);
     get.withArgs('init.author.name').returns(authorName);
     get.withArgs('init.author.email').returns(authorEmail);
     get.withArgs('init.author.url').returns(authorUrl);
@@ -57,7 +61,7 @@ suite('prompts', () => {
           name: questionNames.SCOPE,
           message: 'What is the scope?',
           when: scopePromptShouldBePresented,
-          default: 'travi'
+          default: npmUser
         },
         {
           name: questionNames.AUTHOR_NAME,
