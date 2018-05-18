@@ -53,11 +53,7 @@ suite('javascript project scaffolder', () => {
           path.resolve(__dirname, '../../', 'templates', 'huskyrc.json'),
           `${projectRoot}/.huskyrc.json`
         );
-        assert.calledWith(
-          fs.copyFile,
-          path.resolve(__dirname, '../../', 'templates', 'commitlintrc.js'),
-          `${projectRoot}/.commitlintrc.js`
-        );
+        assert.calledWith(fs.writeFile, `${projectRoot}/.commitlintrc.js`, "module.exports = {extends: ['travi']};");
         assert.calledWith(
           fs.copyFile,
           path.resolve(__dirname, '../../', 'templates', 'nycrc.json'),
