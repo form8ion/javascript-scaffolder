@@ -37,8 +37,8 @@ export async function scaffold({
 
   const devDependencies = uniq([
     configs.eslint && configs.eslint.packageName,
+    configs.commitlint && configs.commitlint.packageName,
     'babel-preset-travi',
-    'commitlint-config-travi',
     'npm-run-all',
     'husky@next',
     'cz-conventional-changelog',
@@ -109,7 +109,10 @@ export async function scaffold({
     ]),
     ('Application' === packageType) && writeFile(`${projectRoot}/.npmrc`, 'save-exact=true'),
     copyFile(resolve(__dirname, '..', 'templates', 'huskyrc.json'), `${projectRoot}/.huskyrc.json`),
-    writeFile(`${projectRoot}/.commitlintrc.js`, "module.exports = {extends: ['travi']};"),
+    configs.commitlint && writeFile(
+      `${projectRoot}/.commitlintrc.js`,
+      `module.exports = {extends: ['${configs.commitlint.name}']};`
+    ),
     copyFile(resolve(__dirname, '..', 'templates', 'nycrc.json'), `${projectRoot}/.nycrc`),
     ('Package' === packageType) && Promise.all([
       writeFile(`${projectRoot}/.npmignore`, `${npmIgnoreDirectories.join('\n')}\n\n${npmIgnoreFiles.join('\n')}`),

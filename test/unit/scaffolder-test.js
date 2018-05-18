@@ -17,7 +17,6 @@ suite('javascript project scaffolder', () => {
   const visibility = any.fromList(['Private', 'Public']);
   const ltsVersion = `v${any.integer()}.${any.integer()}.${any.integer()}`;
   const latestVersion = `v${any.integer()}.${any.integer()}.${any.integer()}`;
-  const eslintConfigName = any.string();
 
   setup(() => {
     sandbox = sinon.createSandbox();
@@ -53,7 +52,6 @@ suite('javascript project scaffolder', () => {
           path.resolve(__dirname, '../../', 'templates', 'huskyrc.json'),
           `${projectRoot}/.huskyrc.json`
         );
-        assert.calledWith(fs.writeFile, `${projectRoot}/.commitlintrc.js`, "module.exports = {extends: ['travi']};");
         assert.calledWith(
           fs.copyFile,
           path.resolve(__dirname, '../../', 'templates', 'nycrc.json'),
@@ -267,6 +265,30 @@ rollup.config.js`)
       });
     });
 
+    suite('commitlint', () => {
+      const commitlintConfigPrefix = any.word();
+
+      test('that the config is added to the root of the project if the package is defined', async () => {
+        prompts.prompt.resolves({[prompts.questionNames.NODE_VERSION_CATEGORY]: any.word()});
+
+        await scaffold({projectRoot, vcs: {}, configs: {commitlint: {name: commitlintConfigPrefix}}});
+
+        assert.calledWith(
+          fs.writeFile,
+          `${projectRoot}/.commitlintrc.js`,
+          `module.exports = {extends: ['${commitlintConfigPrefix}']};`
+        );
+      });
+
+      test('that the config is not added to the root of the project if the package is not defined', async () => {
+        prompts.prompt.resolves({[prompts.questionNames.NODE_VERSION_CATEGORY]: any.word()});
+
+        await scaffold({projectRoot, vcs: {}, configs: {}});
+
+        assert.neverCalledWith(fs.writeFile, `${projectRoot}/.commitlintrc.js`);
+      });
+    });
+
     suite('build', () => {
       suite('application', () => {
         test('that rollup is not configured', async () => {
@@ -350,7 +372,6 @@ rollup.config.js`)
     suite('dependencies', () => {
       const defaultDependencies = [
         'babel-preset-travi',
-        'commitlint-config-travi',
         'npm-run-all',
         'husky@next',
         'cz-conventional-changelog',
@@ -381,6 +402,9 @@ rollup.config.js`)
       });
 
       suite('lint', () => {
+        const eslintConfigName = any.string();
+        const commitlintConfigName = any.string();
+
         test('that the eslint config is installed when defined', async () => {
           const overrides = any.simpleObject();
           prompts.prompt.withArgs(overrides).resolves({[prompts.questionNames.NODE_VERSION_CATEGORY]: any.word()});
@@ -388,6 +412,15 @@ rollup.config.js`)
           await scaffold({vcs: {}, configs: {eslint: {packageName: eslintConfigName}}, overrides});
 
           assert.calledWith(installer.default, [eslintConfigName, ...defaultDependencies]);
+        });
+
+        test('that the commitlint config is installed when defined', async () => {
+          const overrides = any.simpleObject();
+          prompts.prompt.withArgs(overrides).resolves({[prompts.questionNames.NODE_VERSION_CATEGORY]: any.word()});
+
+          await scaffold({vcs: {}, configs: {commitlint: {packageName: commitlintConfigName}}, overrides});
+
+          assert.calledWith(installer.default, [commitlintConfigName, ...defaultDependencies]);
         });
       });
 
