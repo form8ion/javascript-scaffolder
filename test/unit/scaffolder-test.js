@@ -44,9 +44,11 @@ suite('javascript project scaffolder', () => {
 
   suite('config files', () => {
     test('that config files are created', () => {
+      const babelPresetName = any.string();
+
       prompts.prompt.resolves({[prompts.questionNames.NODE_VERSION_CATEGORY]: any.word()});
 
-      return scaffold({visibility, projectRoot, vcs: {}}).then(() => {
+      return scaffold({visibility, projectRoot, vcs: {}, configs: {babelPreset: {name: babelPresetName}}}).then(() => {
         assert.calledWith(
           fs.copyFile,
           path.resolve(__dirname, '../../', 'templates', 'huskyrc.json'),
@@ -57,7 +59,7 @@ suite('javascript project scaffolder', () => {
           path.resolve(__dirname, '../../', 'templates', 'nycrc.json'),
           `${projectRoot}/.nycrc`
         );
-        assert.calledWith(fs.writeFile, `${projectRoot}/.babelrc`, JSON.stringify({presets: ['travi']}));
+        assert.calledWith(fs.writeFile, `${projectRoot}/.babelrc`, JSON.stringify({presets: [babelPresetName]}));
       });
     });
 
@@ -371,7 +373,6 @@ rollup.config.js`)
 
     suite('dependencies', () => {
       const defaultDependencies = [
-        'babel-preset-travi',
         'npm-run-all',
         'husky@next',
         'cz-conventional-changelog',
@@ -421,6 +422,19 @@ rollup.config.js`)
           await scaffold({vcs: {}, configs: {commitlint: {packageName: commitlintConfigName}}, overrides});
 
           assert.calledWith(installer.default, [commitlintConfigName, ...defaultDependencies]);
+        });
+      });
+
+      suite('babel', () => {
+        const babelPresetName = any.string();
+
+        test('that the babel-preset is installed when defined', async () => {
+          const overrides = any.simpleObject();
+          prompts.prompt.withArgs(overrides).resolves({[prompts.questionNames.NODE_VERSION_CATEGORY]: any.word()});
+
+          await scaffold({vcs: {}, configs: {babelPreset: {packageName: babelPresetName}}, overrides});
+
+          assert.calledWith(installer.default, [babelPresetName, ...defaultDependencies]);
         });
       });
 

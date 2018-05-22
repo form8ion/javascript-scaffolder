@@ -38,7 +38,7 @@ export async function scaffold({
   const devDependencies = uniq([
     configs.eslint && configs.eslint.packageName,
     configs.commitlint && configs.commitlint.packageName,
-    'babel-preset-travi',
+    configs.babelPreset && configs.babelPreset.packageName,
     'npm-run-all',
     'husky@next',
     'cz-conventional-changelog',
@@ -102,7 +102,7 @@ export async function scaffold({
   await Promise.all([
     writeFile(`${projectRoot}/.nvmrc`, nodeVersion),
     writeFile(`${projectRoot}/package.json`, JSON.stringify(packageData)),
-    writeFile(`${projectRoot}/.babelrc`, JSON.stringify({presets: ['travi']})),
+    configs.babelPreset && writeFile(`${projectRoot}/.babelrc`, JSON.stringify({presets: [configs.babelPreset.name]})),
     configs.eslint && Promise.all([
       writeFile(`${projectRoot}/.eslintrc.yml`, `extends: '${configs.eslint.prefix}/rules/es6'`),
       writeFile(`${projectRoot}/.eslintignore`, eslintIgnoreDirectories.join('\n'))
