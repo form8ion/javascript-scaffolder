@@ -9,7 +9,7 @@ export default function ({projectName, visibility, scope, packageType, license, 
       main: 'lib/index.cjs.js',
       module: 'lib/index.es.js'
     },
-    license: license || 'UNLICENSED',
+    license,
     ...('Application' === packageType) && {private: true},
     ...('GitHub' === vcs.host) && {
       repository: `${vcs.owner}/${vcs.name}`,
