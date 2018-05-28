@@ -55,7 +55,9 @@
   },
   "dependencies": {
     "chalk": "2.4.0",
+    "hoek": "^5.0.3",
     "inquirer": "5.2.0",
+    "joi": "^13.3.0",
     "lodash.uniq": "4.5.0",
     "make-dir": "1.2.0",
     "mz": "2.7.0",
