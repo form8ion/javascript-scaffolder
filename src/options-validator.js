@@ -27,7 +27,7 @@ export function validate(options) {
         packageName: joi.string().required(),
         name: joi.string().required()
       })
-    }),
+    }).default({}),
     overrides: joi.object({
       npmAccount: joi.string(),
       author: joi.object({
@@ -35,8 +35,10 @@ export function validate(options) {
         email: joi.string().email(),
         url: joi.string().uri()
       })
-    })
+    }).default({})
   }).required());
 
   hoek.assert(!validated.error, validated.error);
+
+  return validated.value;
 }

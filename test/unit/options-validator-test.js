@@ -300,4 +300,20 @@ suite('options validator', () => {
       ' [child "author" fails because [child "url" fails because ["url" must be a valid uri]]]'
     ));
   });
+
+  test('that `configs` and `overrides` default to empty objects', () => {
+    const options = {
+      projectRoot: any.string(),
+      projectName: any.string(),
+      visibility: any.fromList(['Public', 'Private']),
+      license: any.string(),
+      vcs: {host: any.word(), owner: any.word(), name: any.word()},
+      ci: any.string(),
+      description: any.string()
+    };
+
+    const validated = validate(options);
+
+    assert.deepEqual(validated, {...options, configs: {}, overrides: {}});
+  });
 });
