@@ -9,7 +9,9 @@ export default {
     'inquirer',
     'lodash.uniq',
     'shelljs',
-    'make-dir'
+    'make-dir',
+    'joi',
+    'hoek'
   ],
   output: [
     {file: 'lib/index.cjs.js', format: 'cjs', sourcemap: true},
