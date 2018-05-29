@@ -132,4 +132,96 @@ suite('options validator', () => {
     }),
     'child "description" fails because ["description" is required]'
   ));
+
+  suite('configs', () => {
+    suite('eslint', () => {
+      test('that `packageName` is required', () => assert.throws(
+        () => validate({
+          projectRoot: any.string(),
+          projectName: any.string(),
+          visibility: any.fromList(['Public', 'Private']),
+          license: any.string(),
+          vcs: {host: any.word(), owner: any.word(), name: any.word()},
+          ci: any.string(),
+          description: any.string(),
+          configs: {eslint: {}}
+        }),
+        'child "packageName" fails because ["packageName" is required]'
+      ));
+
+      test('that `prefix` is required', () => assert.throws(
+        () => validate({
+          projectRoot: any.string(),
+          projectName: any.string(),
+          visibility: any.fromList(['Public', 'Private']),
+          license: any.string(),
+          vcs: {host: any.word(), owner: any.word(), name: any.word()},
+          ci: any.string(),
+          description: any.string(),
+          configs: {eslint: {packageName: any.string()}}
+        }),
+        'child "prefix" fails because ["prefix" is required]'
+      ));
+    });
+
+    suite('commitlint', () => {
+      test('that `packageName` is required', () => assert.throws(
+        () => validate({
+          projectRoot: any.string(),
+          projectName: any.string(),
+          visibility: any.fromList(['Public', 'Private']),
+          license: any.string(),
+          vcs: {host: any.word(), owner: any.word(), name: any.word()},
+          ci: any.string(),
+          description: any.string(),
+          configs: {commitlint: {}}
+        }),
+        'child "packageName" fails because ["packageName" is required]'
+      ));
+
+      test('that `name` is required', () => assert.throws(
+        () => validate({
+          projectRoot: any.string(),
+          projectName: any.string(),
+          visibility: any.fromList(['Public', 'Private']),
+          license: any.string(),
+          vcs: {host: any.word(), owner: any.word(), name: any.word()},
+          ci: any.string(),
+          description: any.string(),
+          configs: {commitlint: {packageName: any.string()}}
+        }),
+        'child "name" fails because ["name" is required]'
+      ));
+    });
+
+    suite('babel preset', () => {
+      test('that `packageName` is required', () => assert.throws(
+        () => validate({
+          projectRoot: any.string(),
+          projectName: any.string(),
+          visibility: any.fromList(['Public', 'Private']),
+          license: any.string(),
+          vcs: {host: any.word(), owner: any.word(), name: any.word()},
+          ci: any.string(),
+          description: any.string(),
+          configs: {babelPreset: {}}
+        }),
+        'child "packageName" fails because ["packageName" is required]'
+      ));
+
+      test('that `name` is required', () => assert.throws(
+        () => validate({
+          projectRoot: any.string(),
+          projectName: any.string(),
+          visibility: any.fromList(['Public', 'Private']),
+          license: any.string(),
+          vcs: {host: any.word(), owner: any.word(), name: any.word()},
+          ci: any.string(),
+          description: any.string(),
+          configs: {babelPreset: {packageName: any.string()}}
+        }),
+        'child "name" fails because ["name" is required]'
+      ));
+    });
+  });
 });

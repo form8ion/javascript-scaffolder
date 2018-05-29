@@ -13,7 +13,21 @@ export function validate(options) {
       name: joi.string().required()
     }).required(),
     ci: joi.string().required(),
-    description: joi.string().required()
+    description: joi.string().required(),
+    configs: joi.object({
+      eslint: joi.object({
+        packageName: joi.string().required(),
+        prefix: joi.string().required()
+      }),
+      commitlint: joi.object({
+        packageName: joi.string().required(),
+        name: joi.string().required()
+      }),
+      babelPreset: joi.object({
+        packageName: joi.string().required(),
+        name: joi.string().required()
+      })
+    })
   }).required());
 
   hoek.assert(!validated.error, validated.error);
