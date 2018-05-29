@@ -224,4 +224,80 @@ suite('options validator', () => {
       ));
     });
   });
+
+  suite('overrides', () => {
+    const email = `${any.word()}@${any.word()}.${any.word()}`;
+
+    test('that `npmAccount` can be overridden', () => {
+      validate({
+        projectRoot: any.string(),
+        projectName: any.string(),
+        visibility: any.fromList(['Public', 'Private']),
+        license: any.string(),
+        vcs: {host: any.word(), owner: any.word(), name: any.word()},
+        ci: any.string(),
+        description: any.string(),
+        overrides: {npmAccount: any.word()}
+      });
+    });
+
+    suite('author', () => {
+      test('that `author` can be overridden', () => {
+        validate({
+          projectRoot: any.string(),
+          projectName: any.string(),
+          visibility: any.fromList(['Public', 'Private']),
+          license: any.string(),
+          vcs: {host: any.word(), owner: any.word(), name: any.word()},
+          ci: any.string(),
+          description: any.string(),
+          overrides: {author: {name: any.string(), email, url: any.url()}}
+        });
+      });
+    });
+
+    test('that `author.name` is required', () => assert.throws(
+      () => validate({
+        projectRoot: any.string(),
+        projectName: any.string(),
+        visibility: any.fromList(['Public', 'Private']),
+        license: any.string(),
+        vcs: {host: any.word(), owner: any.word(), name: any.word()},
+        ci: any.string(),
+        description: any.string(),
+        overrides: {author: {}}
+      }),
+      'child "overrides" fails because [child "author" fails because [child "name" fails because ["name" is required]]]'
+    ));
+
+    test('that `author.email` must be an email address when provided', () => assert.throws(
+      () => validate({
+        projectRoot: any.string(),
+        projectName: any.string(),
+        visibility: any.fromList(['Public', 'Private']),
+        license: any.string(),
+        vcs: {host: any.word(), owner: any.word(), name: any.word()},
+        ci: any.string(),
+        description: any.string(),
+        overrides: {author: {name: any.string(), email: any.string()}}
+      }),
+      'child "overrides" fails because' +
+      ' [child "author" fails because [child "email" fails because ["email" must be a valid email]]]'
+    ));
+
+    test('that `author.url` must be a valid uri when provided', () => assert.throws(
+      () => validate({
+        projectRoot: any.string(),
+        projectName: any.string(),
+        visibility: any.fromList(['Public', 'Private']),
+        license: any.string(),
+        vcs: {host: any.word(), owner: any.word(), name: any.word()},
+        ci: any.string(),
+        description: any.string(),
+        overrides: {author: {name: any.string(), email, url: any.string()}}
+      }),
+      'child "overrides" fails because' +
+      ' [child "author" fails because [child "url" fails because ["url" must be a valid uri]]]'
+    ));
+  });
 });

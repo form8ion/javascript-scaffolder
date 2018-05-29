@@ -27,6 +27,14 @@ export function validate(options) {
         packageName: joi.string().required(),
         name: joi.string().required()
       })
+    }),
+    overrides: joi.object({
+      npmAccount: joi.string(),
+      author: joi.object({
+        name: joi.string().required(),
+        email: joi.string().email(),
+        url: joi.string().uri()
+      })
     })
   }).required());
 
