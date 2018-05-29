@@ -6,6 +6,7 @@ import exec from '../third-party-wrappers/exec-as-promised';
 import mkdir from '../third-party-wrappers/make-dir';
 import buildPackage from './package';
 import install from './install';
+import {validate} from './options-validator';
 import {questionNames, prompt} from './prompts';
 
 async function determineNodeVersionForProject(nodeVersionCategory) {
@@ -17,19 +18,10 @@ async function determineNodeVersionForProject(nodeVersionCategory) {
   return lsLine.match(/(v[0-9]+\.[0-9]+\.[0-9]+)/)[1];
 }
 
-export async function scaffold({
-  projectRoot,
-  projectName,
-  visibility,
-  license,
-  vcs,
-  ci,
-  description,
-  configs = {},
-  overrides = {}
-}) {
+export async function scaffold(options) {
   console.log(chalk.blue('Initializing JavaScript project'));     // eslint-disable-line no-console
 
+  const {projectRoot, projectName, visibility, license, vcs, ci, description, configs, overrides} = validate(options);
   const answers = await prompt(overrides);
   const unitTested = answers[questionNames.UNIT_TESTS];
   const integrationTested = answers[questionNames.INTEGRATION_TESTS];
