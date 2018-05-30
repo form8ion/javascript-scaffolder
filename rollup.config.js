@@ -8,7 +8,10 @@ export default {
     'chalk',
     'inquirer',
     'lodash.uniq',
-    'shelljs'
+    'shelljs',
+    'make-dir',
+    'joi',
+    'hoek'
   ],
   output: [
     {file: 'lib/index.cjs.js', format: 'cjs', sourcemap: true},

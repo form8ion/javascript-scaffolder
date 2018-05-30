@@ -1,4 +1,5 @@
 import {prompt as promptWithInquirer} from 'inquirer';
+import exec from '../third-party-wrappers/exec-as-promised';
 import {scopePromptShouldBePresented, shouldBeScopedPromptShouldBePresented} from './prompt-condiftionals';
 import npmConfFactory from '../third-party-wrappers/npm-conf';
 
@@ -29,27 +30,27 @@ const testingQuestions = [
   }
 ];
 
-function authorQuestions(npmConf) {
+function authorQuestions({name, email, url}) {
   return [
     {
       name: questionNames.AUTHOR_NAME,
       message: 'What is the author\'s name?',
-      default: npmConf.get('init.author.name')
+      default: name
     },
     {
       name: questionNames.AUTHOR_EMAIL,
       message: 'What is the author\'s email?',
-      default: npmConf.get('init.author.email')
+      default: email
     },
     {
       name: questionNames.AUTHOR_URL,
       message: 'What is the author\'s website url?',
-      default: npmConf.get('init.author.url')
+      default: url
     }
   ];
 }
 
-export function prompt() {
+export async function prompt({npmAccount, author}) {
   const npmConf = npmConfFactory();
 
   return promptWithInquirer([
@@ -78,9 +79,13 @@ export function prompt() {
       name: questionNames.SCOPE,
       message: 'What is the scope?',
       when: scopePromptShouldBePresented,
-      default: 'travi'
+      default: npmAccount || await exec('npm whoami')
     },
-    ...authorQuestions(npmConf),
+    ...authorQuestions(author || {
+      name: npmConf.get('init.author.name'),
+      email: npmConf.get('init.author.email'),
+      url: npmConf.get('init.author.url')
+    }),
     ...testingQuestions
   ]);
 }

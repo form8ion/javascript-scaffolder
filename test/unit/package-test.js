@@ -92,12 +92,6 @@ suite('package details builder', () => {
 
       assert.equal(packageDetails.license, license);
     });
-
-    test('that the license is defined as `UNLICENSED` when not provided', () => {
-      const packageDetails = buildPackageDetails({tests: {}, vcs: {}, author: {}});
-
-      assert.equal(packageDetails.license, 'UNLICENSED');
-    });
   });
 
   suite('github', () => {
