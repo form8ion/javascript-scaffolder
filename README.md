@@ -38,6 +38,7 @@ $ npm install @travi/javascript-scaffolder -S
 [![Commitizen friendly][commitizen-badge]][commitizen-link]
 [![semantic-release](https://img.shields.io/badge/%20%20%F0%9F%93%A6%F0%9F%9A%80-semantic--release-e10079.svg)](https://github.com/semantic-release/semantic-release)
 [![Greenkeeper badge](https://badges.greenkeeper.io/travi/javascript-scaffolder.svg)](https://greenkeeper.io/)
+[![PRs Welcome][PRs-badge]][PRs-link]
 
 ### Dependencies
 
@@ -67,3 +68,5 @@ $ npm test
 [commit-convention-badge]: https://img.shields.io/badge/Conventional%20Commits-1.0.0-yellow.svg
 [commitizen-link]: http://commitizen.github.io/cz-cli/
 [commitizen-badge]: https://img.shields.io/badge/commitizen-friendly-brightgreen.svg
+[PRs-link]: http://makeapullrequest.com
+[PRs-badge]: https://img.shields.io/badge/PRs-welcome-brightgreen.svg
