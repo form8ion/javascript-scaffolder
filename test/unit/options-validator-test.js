@@ -110,29 +110,6 @@ suite('options validator', () => {
     ));
   });
 
-  test('that `ci` is required', () => assert.throws(
-    () => validate({
-      projectRoot: any.string(),
-      projectName: any.string(),
-      visibility: any.fromList(['Public', 'Private']),
-      license: any.string(),
-      vcs: {host: any.word(), owner: any.word(), name: any.word()}
-    }),
-    'child "ci" fails because ["ci" is required]'
-  ));
-
-  test('that `description` is required', () => assert.throws(
-    () => validate({
-      projectRoot: any.string(),
-      projectName: any.string(),
-      visibility: any.fromList(['Public', 'Private']),
-      license: any.string(),
-      vcs: {host: any.word(), owner: any.word(), name: any.word()},
-      ci: any.string()
-    }),
-    'child "description" fails because ["description" is required]'
-  ));
-
   suite('configs', () => {
     suite('eslint', () => {
       test('that `packageName` is required', () => assert.throws(
