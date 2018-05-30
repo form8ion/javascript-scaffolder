@@ -31,6 +31,116 @@ opinionated scaffolder for JavaScript projects
 $ npm install @travi/javascript-scaffolder -S
 ```
 
+### As one of the languages for scaffolding a project
+
+This scaffolder is intended to be used to scaffold the
+[language specific details](https://github.com/travi/project-scaffolder#languages-_optional_)
+within the [project-scaffolder](https://github.com/travi/project-scaffolder).
+
+#### Example
+
+```js
+import program from 'commander';
+import {scaffold} from '@travi/project-scaffolder';
+import {scaffold as scaffoldJavaScript} from '@travi/javascript-scaffolder';
+
+program
+  .command('scaffold')
+  .description('scaffold a new project')
+  .action(() => scaffold({
+    languages: {
+      JavaScript: options => scaffoldJavaScript({
+        ...options,
+        configs: {
+          eslint: {prefix: '@travi/travi', packageName: '@travi/eslint-config-travi'},
+          commitlint: {name: 'travi', packageName: 'commitlint-config-travi'},
+          babelPreset: {name: 'travi', packageName: 'babel-preset-travi'}
+        }
+      })
+    }, 
+    overrides: {copyrightHolder: 'Matt Travi'}
+  }).catch(err => {
+    console.error(err);
+    process.exitCode = 1;
+  }));
+```
+
+#### Options
+
+##### `projectRoot` __string__ (_required_)
+
+path to the root of the project
+
+##### `projectName` __string__ (_required_)
+
+name of the project (w/o a [scope](https://docs.npmjs.com/misc/scope))
+
+##### `visibility` __string__ (_required_)
+
+visibility of the project (`Public` or `Private`)
+
+##### `license` __string__ (_required_)
+
+##### `vcs` __object__ (_required_)
+
+* `host` __string__ (_required_)
+  VCS hosting service
+* `owner` __string__ (_required_)
+  account name on the host service for the repository
+* `name` __string__ (_required_)
+  repository name 
+
+##### `ci` __string__ (_optional_)
+
+name of the chosen CI service
+
+##### `description` __string__ (_optional_)
+
+short summary of the project
+
+##### `configs` __object__ (_optional_)
+
+* `eslint`: __object__ (_optional_)
+  details about the [shareable config](https://eslint.org/docs/developer-guide/shareable-configs)
+  to be used for the project
+  * `packageName` __string__ (_required_)
+    name of the `npm` package
+  * `prefix` __string__ (_required_)
+    name to be used when referring to the config within the `.eslintrc` files
+  
+  :warning: while i'm not confident that it is the recommended convention, it
+  is assumed the defined config has a `rules/` directory exposed from the package
+  with rulesets defined for
+  * `es6.js`
+  * `tests/base.js`
+  * `tests/mocha.js`
+* `commitlint` __object__ (_optional_)
+  details about the [shareable config](https://marionebl.github.io/commitlint/#/concepts-shareable-config)
+  to be used for the project
+  * `packageName` __string__ (_required_)
+    name of the `npm` package
+  * `name` __string__ (_required_)
+    name to be used when referring to the config within the `.commitlintrc.js` file
+* `babelPreset` __object__ (_optional_)
+  details about the [preset](https://babeljs.io/docs/plugins/#creating-a-preset)
+  to be used for the project
+  * `packageName` __string__ (_required_)
+    name of the `npm` package
+  * `name` __string__ (_required_)
+    shorthand name to be used when referring to the config
+    
+##### `overrides` __object__ (_optional_)
+
+* `npmAccount` __string__ (_optional_)
+  the account the package should be published under. used to suggest a
+  [scope](https://docs.npmjs.com/misc/scope). defaults to `$ npm whoami`
+* `author` __object__ (_optional_)
+  [details](https://docs.npmjs.com/files/package.json#people-fields-author-contributors)
+  about the package author
+  * `name` __string__ (_required_) defaults to `$npm config get init.author.name`
+  * `email` __string__ (_optional_) defaults to `$npm config get init.author.email`
+  * `url` __string (_optional_) defaults to `$npm config get init.author.url`
+  
 ## Contributing
 
 <!-- contribution badges -->
