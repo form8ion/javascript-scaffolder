@@ -31,6 +31,21 @@ opinionated scaffolder for JavaScript projects
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
+## Features
+
+* Sets the [node.js](https://nodejs.org/) version to the latest or LTS version
+  (your choice) using [nvm](https://github.com/creationix/nvm)
+* Scaffolds the `package.json`
+  * Enables linting of:
+    * JavaScript with [ESLint](https://eslint.org/)
+    * The `.travis.yml` using [`travis.rb`](https://github.com/travis-ci/travis.rb#lint),
+      when [Travis](https://travis-ci.com) is the chosen CI
+  * enables updating the lockfile for [Greenkeeper](https://greenkeeper.io) PRs
+* Enables transpilation with [Babel](https://babeljs.io)
+* Defines and enforces the [commit message convention](https://conventionalcommits.org/)
+* Defines [badges](https://sheilds.io) for inclusion in the `README.md`
+* Defines files to be ignored from `git` and `npm`
+
 ## Usage
 
 <!-- consumer badges -->
@@ -178,6 +193,7 @@ $ npm test
 ## Related Projects
 
 * [project-scaffolder](https://npm.im/@travi/project-scaffolder)
+* [scaffolder-sub-command](https://github.com/travi/scaffolder-sub-command)
 * [cli](https://npm.im/@travi/cli)
 
 [npm-link]: https://www.npmjs.com/package/@travi/javascript-scaffolder
