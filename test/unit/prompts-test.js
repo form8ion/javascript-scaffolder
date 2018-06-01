@@ -41,7 +41,7 @@ suite('prompts', () => {
           message: 'What node.js version should be used?',
           type: 'list',
           choices: ['LTS', 'Latest'],
-          default: 'Latest'
+          default: 'LTS'
         },
         {
           name: questionNames.PACKAGE_TYPE,
