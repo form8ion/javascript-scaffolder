@@ -99,7 +99,7 @@ export async function scaffold(options) {
       writeFile(`${projectRoot}/.eslintrc.yml`, `extends: '${configs.eslint.prefix}/rules/es6'`),
       writeFile(`${projectRoot}/.eslintignore`, eslintIgnoreDirectories.join('\n'))
     ]),
-    ('Application' === packageType) && writeFile(`${projectRoot}/.npmrc`, 'save-exact=true'),
+    ('Application' === packageType) && writeFile(`${projectRoot}/.npmrc`, 'save-exact=true\n'),
     copyFile(resolve(__dirname, '..', 'templates', 'huskyrc.json'), `${projectRoot}/.huskyrc.json`),
     configs.commitlint && writeFile(
       `${projectRoot}/.commitlintrc.js`,

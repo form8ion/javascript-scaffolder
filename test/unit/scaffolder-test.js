@@ -586,7 +586,10 @@ rollup.config.js`)
         [prompts.questionNames.PACKAGE_TYPE]: 'Application'
       });
 
-      return scaffold(options).then(() => assert.calledWith(fs.writeFile, `${projectRoot}/.npmrc`, 'save-exact=true'));
+      return scaffold(options).then(() => assert.calledWith(
+        fs.writeFile,
+        `${projectRoot}/.npmrc`, 'save-exact=true\n'
+      ));
     });
 
     test('that the project is allowed to use semver ranges if it is a package', () => {
