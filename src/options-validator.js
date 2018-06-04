@@ -35,7 +35,12 @@ export function validate(options) {
         email: joi.string().email(),
         url: joi.string().uri()
       })
-    }).default({})
+    }).default({}),
+    ciServices: joi.object().pattern(/^/, joi.object({
+      scaffolder: joi.func().arity(1).required(),
+      public: joi.boolean(),
+      private: joi.boolean()
+    })).default({})
   }).required());
 
   hoek.assert(!validated.error, validated.error);

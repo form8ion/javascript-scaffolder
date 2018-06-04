@@ -45,6 +45,8 @@ opinionated scaffolder for JavaScript projects
 * Defines and enforces the [commit message convention](https://conventionalcommits.org/)
 * Defines [badges](https://sheilds.io) for inclusion in the `README.md`
 * Defines files to be ignored from `git` and `npm`
+* Scaffolds CI service config from the user choice of the
+  [provided scaffolders](#ciservices-__object__-_optional_)
 
 ## Usage
 
@@ -168,6 +170,16 @@ short summary of the project
   * `email` __string__ (_optional_) defaults to `$npm config get init.author.email`
   * `url` __string (_optional_) defaults to `$npm config get init.author.url`
   
+##### `ciServices` __object__ (_optional_)
+
+* keys: __string__ Name of the service
+* values: __object__
+  * `scaffolder`: __function__ (_required_) scaffolds the ci service options
+  * `public`: __boolean__ (_optional_) whether this service should be presented
+    as a public option
+  * `private`: __boolean__ (_optional_) whether this service should be presented
+    as a private option
+
 ## Contributing
 
 <!-- contribution badges -->

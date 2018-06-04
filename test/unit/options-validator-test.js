@@ -256,7 +256,7 @@ suite('options validator', () => {
         vcs: {host: any.word(), owner: any.word(), name: any.word()},
         ci: any.string(),
         description: any.string(),
-        overrides: {author: {name: any.string(), email: any.string()}}
+        overrides: {author: {name: any.string(), email: any.word()}}
       }),
       'child "overrides" fails because' +
       ' [child "author" fails because [child "email" fails because ["email" must be a valid email]]]'
@@ -278,7 +278,63 @@ suite('options validator', () => {
     ));
   });
 
-  test('that `configs` and `overrides` default to empty objects', () => {
+  suite('ci services', () => {
+    const ciServiceName = any.word();
+
+    test('that the scaffolder function is required', () => assert.throws(
+      () => validate({
+        projectRoot: any.string(),
+        projectName: any.string(),
+        visibility: any.fromList(['Public', 'Private']),
+        license: any.string(),
+        vcs: {host: any.word(), owner: any.word(), name: any.word()},
+        ci: any.string(),
+        description: any.string(),
+        ciServices: {[ciServiceName]: {}}
+      }),
+      `child "ciServices" fails because [child "${ciServiceName}" fails because ` +
+      '[child "scaffolder" fails because ["scaffolder" is required]]]'
+    ));
+
+    test('that a provided ci-service scaffolder must accept a single argument', () => assert.throws(
+      () => validate({
+        projectRoot: any.string(),
+        projectName: any.string(),
+        visibility: any.fromList(['Public', 'Private']),
+        license: any.string(),
+        vcs: {host: any.word(), owner: any.word(), name: any.word()},
+        ci: any.string(),
+        description: any.string(),
+        ciServices: {[ciServiceName]: {scaffolder: () => undefined}}
+      }),
+      `child "ciServices" fails because [child "${ciServiceName}" fails because ` +
+      '[child "scaffolder" fails because ["scaffolder" must have an arity of 1]]]'
+    ));
+
+    test('that a provided ci-service scaffolder can be enabled for public projects', () => validate({
+      projectRoot: any.string(),
+      projectName: any.string(),
+      visibility: any.fromList(['Public', 'Private']),
+      license: any.string(),
+      vcs: {host: any.word(), owner: any.word(), name: any.word()},
+      ci: any.string(),
+      description: any.string(),
+      ciServices: {[ciServiceName]: {scaffolder: options => options, public: any.boolean()}}
+    }));
+
+    test('that a provided ci-service scaffolder can be enabled for public projects', () => validate({
+      projectRoot: any.string(),
+      projectName: any.string(),
+      visibility: any.fromList(['Public', 'Private']),
+      license: any.string(),
+      vcs: {host: any.word(), owner: any.word(), name: any.word()},
+      ci: any.string(),
+      description: any.string(),
+      ciServices: {[ciServiceName]: {scaffolder: options => options, private: any.boolean()}}
+    }));
+  });
+
+  test('that `configs`, `overrides`, and `ciServices` default to empty objects', () => {
     const options = {
       projectRoot: any.string(),
       projectName: any.string(),
@@ -291,6 +347,6 @@ suite('options validator', () => {
 
     const validated = validate(options);
 
-    assert.deepEqual(validated, {...options, configs: {}, overrides: {}});
+    assert.deepEqual(validated, {...options, configs: {}, overrides: {}, ciServices: {}});
   });
 });
