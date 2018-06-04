@@ -21,8 +21,19 @@ async function determineNodeVersionForProject(nodeVersionCategory) {
 export async function scaffold(options) {
   console.log(chalk.blue('Initializing JavaScript project'));     // eslint-disable-line no-console
 
-  const {projectRoot, projectName, visibility, license, vcs, ci, description, configs, overrides} = validate(options);
-  const answers = await prompt(overrides);
+  const {
+    projectRoot,
+    projectName,
+    visibility,
+    license,
+    vcs,
+    ci,
+    description,
+    configs,
+    overrides,
+    ciServices
+  } = validate(options);
+  const answers = await prompt(overrides, ciServices);
   const unitTested = answers[questionNames.UNIT_TESTS];
   const integrationTested = answers[questionNames.INTEGRATION_TESTS];
   const packageType = answers[questionNames.PACKAGE_TYPE];

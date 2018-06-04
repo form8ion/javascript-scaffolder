@@ -14,6 +14,8 @@ import {scaffold} from '../../src/scaffolder';
 suite('javascript project scaffolder', () => {
   let sandbox;
   const options = any.simpleObject();
+  const overrides = any.simpleObject();
+  const ciServices = any.simpleObject();
   const projectRoot = any.string();
   const projectName = any.string();
   const visibility = any.fromList(['Private', 'Public']);
@@ -450,11 +452,12 @@ rollup.config.js`)
         const commitlintConfigName = any.string();
 
         test('that the eslint config is installed when defined', async () => {
-          const overrides = any.simpleObject();
           validator.validate
             .withArgs(options)
-            .returns({vcs: {}, configs: {eslint: {packageName: eslintConfigName}}, overrides});
-          prompts.prompt.withArgs(overrides).resolves({[prompts.questionNames.NODE_VERSION_CATEGORY]: any.word()});
+            .returns({vcs: {}, configs: {eslint: {packageName: eslintConfigName}}, overrides, ciServices});
+          prompts.prompt
+            .withArgs(overrides, ciServices)
+            .resolves({[prompts.questionNames.NODE_VERSION_CATEGORY]: any.word()});
 
           await scaffold(options);
 
@@ -462,11 +465,12 @@ rollup.config.js`)
         });
 
         test('that the commitlint config is installed when defined', async () => {
-          const overrides = any.simpleObject();
           validator.validate
             .withArgs(options)
-            .returns({vcs: {}, configs: {commitlint: {packageName: commitlintConfigName}}, overrides});
-          prompts.prompt.withArgs(overrides).resolves({[prompts.questionNames.NODE_VERSION_CATEGORY]: any.word()});
+            .returns({vcs: {}, configs: {commitlint: {packageName: commitlintConfigName}}, overrides, ciServices});
+          prompts.prompt
+            .withArgs(overrides, ciServices)
+            .resolves({[prompts.questionNames.NODE_VERSION_CATEGORY]: any.word()});
 
           await scaffold(options);
 
@@ -478,11 +482,12 @@ rollup.config.js`)
         const babelPresetName = any.string();
 
         test('that the babel-preset is installed when defined', async () => {
-          const overrides = any.simpleObject();
           validator.validate
             .withArgs(options)
-            .returns({vcs: {}, configs: {babelPreset: {packageName: babelPresetName}}, overrides});
-          prompts.prompt.withArgs(overrides).resolves({[prompts.questionNames.NODE_VERSION_CATEGORY]: any.word()});
+            .returns({vcs: {}, configs: {babelPreset: {packageName: babelPresetName}}, overrides, ciServices});
+          prompts.prompt
+            .withArgs(overrides, ciServices)
+            .resolves({[prompts.questionNames.NODE_VERSION_CATEGORY]: any.word()});
 
           await scaffold(options);
 
@@ -577,11 +582,10 @@ rollup.config.js`)
 
   suite('save-exact', () => {
     test('that the project is configured to use exact dependency versions if it is an application', () => {
-      const overrides = any.simpleObject();
       validator.validate
         .withArgs(options)
-        .returns({projectRoot, projectName, visibility: 'Public', vcs: {}, configs: {}, overrides});
-      prompts.prompt.withArgs(overrides).resolves({
+        .returns({projectRoot, projectName, visibility: 'Public', vcs: {}, configs: {}, overrides, ciServices});
+      prompts.prompt.withArgs(overrides, ciServices).resolves({
         [prompts.questionNames.NODE_VERSION_CATEGORY]: any.word(),
         [prompts.questionNames.PACKAGE_TYPE]: 'Application'
       });
