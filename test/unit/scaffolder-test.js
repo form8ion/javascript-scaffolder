@@ -9,6 +9,7 @@ import * as installer from '../../src/install';
 import * as exec from '../../third-party-wrappers/exec-as-promised';
 import * as mkdir from '../../third-party-wrappers/make-dir';
 import * as validator from '../../src/options-validator';
+import * as ci from '../../src/ci';
 import {scaffold} from '../../src/scaffolder';
 
 suite('javascript project scaffolder', () => {
@@ -33,6 +34,7 @@ suite('javascript project scaffolder', () => {
     sandbox.stub(prompts, 'prompt');
     sandbox.stub(mkdir, 'default');
     sandbox.stub(validator, 'validate');
+    sandbox.stub(ci, 'default');
 
     fs.writeFile.resolves();
     fs.copyFile.resolves();
@@ -43,6 +45,7 @@ suite('javascript project scaffolder', () => {
       .withArgs('. ~/.nvm/nvm.sh && nvm ls-remote --lts')
       .resolves([...any.listOf(any.word), ltsVersion, ''].join('\n'));
     packageBuilder.default.returns({});
+    ci.default.resolves({});
   });
 
   teardown(() => sandbox.restore());
@@ -52,7 +55,7 @@ suite('javascript project scaffolder', () => {
       const babelPresetName = any.string();
       validator.validate
         .withArgs(options)
-        .returns({visibility, projectRoot, vcs: {}, configs: {babelPreset: {name: babelPresetName}}});
+        .returns({visibility, projectRoot, vcs: {}, configs: {babelPreset: {name: babelPresetName}}, ciServices});
 
       prompts.prompt.resolves({[prompts.questionNames.NODE_VERSION_CATEGORY]: any.word()});
 
@@ -75,7 +78,7 @@ suite('javascript project scaffolder', () => {
       test('that files and directories are defined to be ignored from the published npm package', async () => {
         validator.validate
           .withArgs(options)
-          .returns({projectRoot, projectName, visibility: 'Public', vcs: {}, configs: {}});
+          .returns({projectRoot, projectName, visibility: 'Public', vcs: {}, configs: {}, ciServices});
         prompts.prompt.resolves({
           [prompts.questionNames.NODE_VERSION_CATEGORY]: any.word(),
           [prompts.questionNames.PACKAGE_TYPE]: 'Package'
@@ -109,10 +112,11 @@ rollup.config.js`)
       test('that the travis config is ignored when travis is the ci service', async () => {
         validator.validate
           .withArgs(options)
-          .returns({projectRoot, projectName, visibility: 'Public', ci: 'Travis', vcs: {}, configs: {}});
+          .returns({projectRoot, projectName, visibility: 'Public', vcs: {}, configs: {}, ciServices});
         prompts.prompt.resolves({
           [prompts.questionNames.NODE_VERSION_CATEGORY]: any.word(),
-          [prompts.questionNames.PACKAGE_TYPE]: 'Package'
+          [prompts.questionNames.PACKAGE_TYPE]: 'Package',
+          [prompts.questionNames.CI_SERVICE]: 'Travis'
         });
         packageBuilder.default.returns({});
 
@@ -130,7 +134,7 @@ rollup.config.js`)
       test('that the github settings file is ignored when github is the vcs host', async () => {
         validator.validate
           .withArgs(options)
-          .returns({projectRoot, projectName, visibility: 'Public', vcs: {host: 'GitHub'}, configs: {}});
+          .returns({projectRoot, projectName, visibility: 'Public', vcs: {host: 'GitHub'}, configs: {}, ciServices});
         prompts.prompt.resolves({
           [prompts.questionNames.NODE_VERSION_CATEGORY]: any.word(),
           [prompts.questionNames.PACKAGE_TYPE]: 'Package'
@@ -151,7 +155,7 @@ rollup.config.js`)
       test('that no npm ignore file is generated for non-packages', async () => {
         validator.validate
           .withArgs(options)
-          .returns({projectRoot, projectName, visibility: 'Public', vcs: {}, configs: {}});
+          .returns({projectRoot, projectName, visibility: 'Public', vcs: {}, configs: {}, ciServices});
         prompts.prompt.resolves({
           [prompts.questionNames.NODE_VERSION_CATEGORY]: any.word(),
           [prompts.questionNames.PACKAGE_TYPE]: any.word()
@@ -166,7 +170,7 @@ rollup.config.js`)
     suite('unit test', () => {
       test('that a canary test is included when the project will be unit tested', async () => {
         const pathToCreatedDirectory = any.string();
-        validator.validate.withArgs(options).returns({projectRoot, vcs: {}, configs: {}});
+        validator.validate.withArgs(options).returns({projectRoot, vcs: {}, configs: {}, ciServices});
         prompts.prompt.resolves({
           [prompts.questionNames.NODE_VERSION_CATEGORY]: any.word(),
           [prompts.questionNames.UNIT_TESTS]: true
@@ -188,7 +192,7 @@ rollup.config.js`)
       });
 
       test('that a canary test is not included when the project will be not unit tested', async () => {
-        validator.validate.withArgs(options).returns({projectRoot, vcs: {}, configs: {}});
+        validator.validate.withArgs(options).returns({projectRoot, vcs: {}, configs: {}, ciServices});
         prompts.prompt.resolves({
           [prompts.questionNames.NODE_VERSION_CATEGORY]: any.word(),
           [prompts.questionNames.UNIT_TESTS]: false
@@ -208,7 +212,7 @@ rollup.config.js`)
       test('that the base config is added to the root of the project if the config prefix is provided', async () => {
         validator.validate
           .withArgs(options)
-          .returns({projectRoot, vcs: {}, configs: {eslint: {prefix: eslintConfigPrefix}}});
+          .returns({projectRoot, vcs: {}, configs: {eslint: {prefix: eslintConfigPrefix}}, ciServices});
         prompts.prompt.resolves({
           [prompts.questionNames.NODE_VERSION_CATEGORY]: any.word(),
           [prompts.questionNames.UNIT_TESTS]: false
@@ -226,7 +230,7 @@ rollup.config.js`)
         async () => {
           validator.validate
             .withArgs(options)
-            .returns({projectRoot, vcs: {}, configs: {eslint: {prefix: eslintConfigPrefix}}});
+            .returns({projectRoot, vcs: {}, configs: {eslint: {prefix: eslintConfigPrefix}}, ciServices});
           prompts.prompt.resolves({
             [prompts.questionNames.NODE_VERSION_CATEGORY]: any.word(),
             [prompts.questionNames.UNIT_TESTS]: true
@@ -249,7 +253,7 @@ rollup.config.js`)
       );
 
       test('that the no config is added if the config prefix is not provided', async () => {
-        validator.validate.withArgs(options).returns({projectRoot, vcs: {}, configs: {}});
+        validator.validate.withArgs(options).returns({projectRoot, vcs: {}, configs: {}, ciServices});
         prompts.prompt.resolves({
           [prompts.questionNames.NODE_VERSION_CATEGORY]: any.word(),
           [prompts.questionNames.UNIT_TESTS]: true
@@ -268,7 +272,7 @@ rollup.config.js`)
         test('that non-source files are excluded from linting', async () => {
           validator.validate
             .withArgs(options)
-            .returns({projectRoot, vcs: {}, configs: {eslint: {prefix: eslintConfigPrefix}}});
+            .returns({projectRoot, vcs: {}, configs: {eslint: {prefix: eslintConfigPrefix}}, ciServices});
           prompts.prompt.resolves({
             [prompts.questionNames.NODE_VERSION_CATEGORY]: any.word(),
             [prompts.questionNames.UNIT_TESTS]: false
@@ -283,7 +287,7 @@ rollup.config.js`)
         test('that the coverage folder is excluded from linting when the project is unit tested', async () => {
           validator.validate
             .withArgs(options)
-            .returns({projectRoot, vcs: {}, configs: {eslint: {prefix: eslintConfigPrefix}}});
+            .returns({projectRoot, vcs: {}, configs: {eslint: {prefix: eslintConfigPrefix}}, ciServices});
           prompts.prompt.resolves({
             [prompts.questionNames.NODE_VERSION_CATEGORY]: any.word(),
             [prompts.questionNames.UNIT_TESTS]: true
@@ -308,7 +312,7 @@ rollup.config.js`)
       test('that the config is added to the root of the project if the package is defined', async () => {
         validator.validate
           .withArgs(options)
-          .returns({projectRoot, vcs: {}, configs: {commitlint: {name: commitlintConfigPrefix}}});
+          .returns({projectRoot, vcs: {}, configs: {commitlint: {name: commitlintConfigPrefix}}, ciServices});
         prompts.prompt.resolves({[prompts.questionNames.NODE_VERSION_CATEGORY]: any.word()});
 
         await scaffold(options);
@@ -321,7 +325,7 @@ rollup.config.js`)
       });
 
       test('that the config is not added to the root of the project if the package is not defined', async () => {
-        validator.validate.withArgs(options).returns({projectRoot, vcs: {}, configs: {}});
+        validator.validate.withArgs(options).returns({projectRoot, vcs: {}, configs: {}, ciServices});
         prompts.prompt.resolves({[prompts.questionNames.NODE_VERSION_CATEGORY]: any.word()});
 
         await scaffold(options);
@@ -333,7 +337,7 @@ rollup.config.js`)
     suite('build', () => {
       suite('application', () => {
         test('that rollup is not configured', async () => {
-          validator.validate.withArgs(options).returns({visibility, projectRoot, vcs: {}, configs: {}});
+          validator.validate.withArgs(options).returns({visibility, projectRoot, vcs: {}, configs: {}, ciServices});
           prompts.prompt.resolves({
             [prompts.questionNames.NODE_VERSION_CATEGORY]: any.word(),
             [prompts.questionNames.PACKAGE_TYPE]: 'Application'
@@ -347,7 +351,7 @@ rollup.config.js`)
 
       suite('package', () => {
         test('that the package gets bundled with rollup', async () => {
-          validator.validate.withArgs(options).returns({visibility, projectRoot, vcs: {}, configs: {}});
+          validator.validate.withArgs(options).returns({visibility, projectRoot, vcs: {}, configs: {}, ciServices});
           prompts.prompt.resolves({
             [prompts.questionNames.NODE_VERSION_CATEGORY]: any.word(),
             [prompts.questionNames.PACKAGE_TYPE]: 'Package'
@@ -376,11 +380,11 @@ rollup.config.js`)
       const authorName = any.string();
       const authorEmail = any.string();
       const authorUrl = any.url();
-      const ci = any.word();
+      const ciService = any.word();
       const description = any.sentence();
       validator.validate
         .withArgs(options)
-        .returns({projectRoot, projectName, visibility, license, vcs, ci, description, configs: {}});
+        .returns({projectRoot, projectName, visibility, license, vcs, description, configs: {}, ciServices});
       prompts.prompt.resolves({
         [prompts.questionNames.SCOPE]: scope,
         [prompts.questionNames.PACKAGE_TYPE]: packageType,
@@ -389,7 +393,8 @@ rollup.config.js`)
         [prompts.questionNames.NODE_VERSION_CATEGORY]: any.word(),
         [prompts.questionNames.AUTHOR_NAME]: authorName,
         [prompts.questionNames.AUTHOR_EMAIL]: authorEmail,
-        [prompts.questionNames.AUTHOR_URL]: authorUrl
+        [prompts.questionNames.AUTHOR_URL]: authorUrl,
+        [prompts.questionNames.CI_SERVICE]: ciService
       });
       packageBuilder.default
         .withArgs({
@@ -401,7 +406,7 @@ rollup.config.js`)
           tests,
           vcs,
           author: {name: authorName, email: authorEmail, url: authorUrl},
-          ci,
+          ci: ciService,
           description
         })
         .returns(packageDetails);
@@ -426,7 +431,7 @@ rollup.config.js`)
 
       suite('scripts', () => {
         test('that scripting tools are installed', async () => {
-          validator.validate.withArgs(options).returns({vcs: {}, configs: {}});
+          validator.validate.withArgs(options).returns({vcs: {}, configs: {}, ciServices});
           prompts.prompt.resolves({[prompts.questionNames.NODE_VERSION_CATEGORY]: any.word()});
 
           await scaffold(options);
@@ -435,7 +440,7 @@ rollup.config.js`)
         });
 
         test('that the appropriate packages are installed for `Package` type projects', async () => {
-          validator.validate.withArgs(options).returns({vcs: {}, configs: {}});
+          validator.validate.withArgs(options).returns({vcs: {}, configs: {}, ciServices});
           prompts.prompt.resolves({
             [prompts.questionNames.NODE_VERSION_CATEGORY]: any.word(),
             [prompts.questionNames.PACKAGE_TYPE]: 'Package'
@@ -456,7 +461,7 @@ rollup.config.js`)
             .withArgs(options)
             .returns({vcs: {}, configs: {eslint: {packageName: eslintConfigName}}, overrides, ciServices});
           prompts.prompt
-            .withArgs(overrides, ciServices)
+            .withArgs(overrides, Object.keys(ciServices))
             .resolves({[prompts.questionNames.NODE_VERSION_CATEGORY]: any.word()});
 
           await scaffold(options);
@@ -469,7 +474,7 @@ rollup.config.js`)
             .withArgs(options)
             .returns({vcs: {}, configs: {commitlint: {packageName: commitlintConfigName}}, overrides, ciServices});
           prompts.prompt
-            .withArgs(overrides, ciServices)
+            .withArgs(overrides, Object.keys(ciServices))
             .resolves({[prompts.questionNames.NODE_VERSION_CATEGORY]: any.word()});
 
           await scaffold(options);
@@ -486,7 +491,7 @@ rollup.config.js`)
             .withArgs(options)
             .returns({vcs: {}, configs: {babelPreset: {packageName: babelPresetName}}, overrides, ciServices});
           prompts.prompt
-            .withArgs(overrides, ciServices)
+            .withArgs(overrides, Object.keys(ciServices))
             .resolves({[prompts.questionNames.NODE_VERSION_CATEGORY]: any.word()});
 
           await scaffold(options);
@@ -497,7 +502,7 @@ rollup.config.js`)
 
       suite('testing', () => {
         test('that mocha, chai, and sinon are installed when the project will be unit tested', async () => {
-          validator.validate.withArgs(options).returns({vcs: {}, configs: {}});
+          validator.validate.withArgs(options).returns({vcs: {}, configs: {}, ciServices});
           prompts.prompt.resolves({
             [prompts.questionNames.NODE_VERSION_CATEGORY]: any.word(),
             [prompts.questionNames.UNIT_TESTS]: true
@@ -510,7 +515,7 @@ rollup.config.js`)
         });
 
         test('that mocha, chai, and sinon are not installed when the project will not be unit tested', async () => {
-          validator.validate.withArgs(options).returns({vcs: {}, configs: {}});
+          validator.validate.withArgs(options).returns({vcs: {}, configs: {}, ciServices});
           prompts.prompt.resolves({
             [prompts.questionNames.NODE_VERSION_CATEGORY]: any.word(),
             [prompts.questionNames.UNIT_TESTS]: false
@@ -522,7 +527,7 @@ rollup.config.js`)
         });
 
         test('that cucumber and chai are installed when the project will be integration tested', async () => {
-          validator.validate.withArgs(options).returns({vcs: {}, configs: {}});
+          validator.validate.withArgs(options).returns({vcs: {}, configs: {}, ciServices});
           prompts.prompt.resolves({
             [prompts.questionNames.NODE_VERSION_CATEGORY]: any.word(),
             [prompts.questionNames.INTEGRATION_TESTS]: true
@@ -534,7 +539,7 @@ rollup.config.js`)
         });
 
         test('that cucumber and chai are not installed when the project will not be integration tested', async () => {
-          validator.validate.withArgs(options).returns({vcs: {}, configs: {}});
+          validator.validate.withArgs(options).returns({vcs: {}, configs: {}, ciServices});
           prompts.prompt.resolves({
             [prompts.questionNames.NODE_VERSION_CATEGORY]: any.word(),
             [prompts.questionNames.INTEGRATION_TESTS]: false
@@ -546,7 +551,7 @@ rollup.config.js`)
         });
 
         test('that unique dependencies are requested when various reasons overlap', async () => {
-          validator.validate.withArgs(options).returns({vcs: {}, configs: {}});
+          validator.validate.withArgs(options).returns({vcs: {}, configs: {}, ciServices});
           prompts.prompt.resolves({
             [prompts.questionNames.NODE_VERSION_CATEGORY]: any.word(),
             [prompts.questionNames.UNIT_TESTS]: true,
@@ -560,7 +565,7 @@ rollup.config.js`)
         });
 
         test('that codecov is installed for public projects', async () => {
-          validator.validate.withArgs(options).returns({visibility: 'Public', vcs: {}, configs: {}});
+          validator.validate.withArgs(options).returns({visibility: 'Public', vcs: {}, configs: {}, ciServices});
           prompts.prompt.resolves({[prompts.questionNames.NODE_VERSION_CATEGORY]: any.word()});
 
           await scaffold(options);
@@ -569,7 +574,7 @@ rollup.config.js`)
         });
 
         test('that codecov is not installed for private projects', async () => {
-          validator.validate.withArgs(options).returns({visibility: 'Private', vcs: {}, configs: {}});
+          validator.validate.withArgs(options).returns({visibility: 'Private', vcs: {}, configs: {}, ciServices});
           prompts.prompt.resolves({[prompts.questionNames.NODE_VERSION_CATEGORY]: any.word()});
 
           await scaffold(options);
@@ -585,7 +590,7 @@ rollup.config.js`)
       validator.validate
         .withArgs(options)
         .returns({projectRoot, projectName, visibility: 'Public', vcs: {}, configs: {}, overrides, ciServices});
-      prompts.prompt.withArgs(overrides, ciServices).resolves({
+      prompts.prompt.withArgs(overrides, Object.keys(ciServices)).resolves({
         [prompts.questionNames.NODE_VERSION_CATEGORY]: any.word(),
         [prompts.questionNames.PACKAGE_TYPE]: 'Application'
       });
@@ -600,7 +605,7 @@ rollup.config.js`)
       packageBuilder.default.returns({name: any.word()});
       validator.validate
         .withArgs(options)
-        .returns({projectRoot, projectName, visibility: 'Public', vcs: {}, configs: {}});
+        .returns({projectRoot, projectName, visibility: 'Public', vcs: {}, configs: {}, ciServices});
       prompts.prompt.resolves({
         [prompts.questionNames.NODE_VERSION_CATEGORY]: any.word(),
         [prompts.questionNames.PACKAGE_TYPE]: 'Package'
@@ -614,7 +619,7 @@ rollup.config.js`)
     test('that the latest available version is used for the project when `Latest` is chosen', () => {
       validator.validate
         .withArgs(options)
-        .returns({projectRoot, projectName, visibility: 'Public', vcs: {}, configs: {}});
+        .returns({projectRoot, projectName, visibility: 'Public', vcs: {}, configs: {}, ciServices});
       prompts.prompt.resolves({[prompts.questionNames.NODE_VERSION_CATEGORY]: 'Latest'});
 
       return scaffold(options).then(() => {
@@ -626,7 +631,7 @@ rollup.config.js`)
     test('that the latest available version is used for the project when `LTS` is chosen', () => {
       validator.validate
         .withArgs(options)
-        .returns({projectRoot, projectName, visibility: 'Public', vcs: {}, configs: {}});
+        .returns({projectRoot, projectName, visibility: 'Public', vcs: {}, configs: {}, ciServices});
       prompts.prompt.resolves({[prompts.questionNames.NODE_VERSION_CATEGORY]: 'LTS'});
 
       return scaffold(options).then(() => {
@@ -643,7 +648,7 @@ rollup.config.js`)
         packageBuilder.default.returns({name: packageName});
         validator.validate
           .withArgs(options)
-          .returns({projectRoot, projectName, visibility: 'Public', vcs: {}, configs: {}});
+          .returns({projectRoot, projectName, visibility: 'Public', vcs: {}, configs: {}, ciServices});
         prompts.prompt.resolves({
           [prompts.questionNames.NODE_VERSION_CATEGORY]: any.word(),
           [prompts.questionNames.PACKAGE_TYPE]: 'Package'
@@ -661,7 +666,7 @@ rollup.config.js`)
       test('that the npm badge is not defined for private packages', async () => {
         validator.validate
           .withArgs(options)
-          .returns({projectRoot, projectName, visibility: 'Private', vcs: {}, configs: {}});
+          .returns({projectRoot, projectName, visibility: 'Private', vcs: {}, configs: {}, ciServices});
         prompts.prompt.resolves({
           [prompts.questionNames.NODE_VERSION_CATEGORY]: any.word(),
           [prompts.questionNames.PACKAGE_TYPE]: 'Package'
@@ -675,7 +680,7 @@ rollup.config.js`)
       test('that the npm badge is not defined if the project is not a package', async () => {
         validator.validate
           .withArgs(options)
-          .returns({projectRoot, projectName, visibility: 'Public', vcs: {}, configs: {}});
+          .returns({projectRoot, projectName, visibility: 'Public', vcs: {}, configs: {}, ciServices});
         prompts.prompt.resolves({
           [prompts.questionNames.NODE_VERSION_CATEGORY]: any.word(),
           [prompts.questionNames.PACKAGE_TYPE]: any.word()
@@ -688,7 +693,7 @@ rollup.config.js`)
 
       test('that the commit-convention badges are provided', async () => {
         const packageName = any.word();
-        validator.validate.withArgs(options).returns({projectRoot, projectName, vcs: {}, configs: {}});
+        validator.validate.withArgs(options).returns({projectRoot, projectName, vcs: {}, configs: {}, ciServices});
         packageBuilder.default.returns({name: packageName});
         prompts.prompt.resolves({[prompts.questionNames.NODE_VERSION_CATEGORY]: any.word()});
 
@@ -705,13 +710,47 @@ rollup.config.js`)
           link: 'http://commitizen.github.io/cz-cli/'
         });
       });
+
+      test('that the ci badge is provided', async () => {
+        const vcs = any.simpleObject();
+        const badge = any.simpleObject();
+        const ciService = any.word();
+        prompts.prompt.resolves({
+          [prompts.questionNames.NODE_VERSION_CATEGORY]: any.word(),
+          [prompts.questionNames.CI_SERVICE]: ciService
+        });
+        validator.validate
+          .withArgs(options)
+          .returns({projectRoot, projectName, vcs, configs: {}, ciServices, visibility});
+        ci.default.withArgs(ciServices, ciService, {projectRoot, vcs, visibility}).resolves({badge});
+
+        const {badges} = await scaffold(options);
+
+        assert.equal(badges.status.ci, badge);
+      });
+
+      test('that the ci badge is not provided when not defined', async () => {
+        const vcs = any.simpleObject();
+        const ciService = any.word();
+        prompts.prompt.resolves({
+          [prompts.questionNames.NODE_VERSION_CATEGORY]: any.word(),
+          [prompts.questionNames.CI_SERVICE]: ciService
+        });
+        validator.validate
+          .withArgs(options)
+          .returns({projectRoot, projectName, vcs, configs: {}, ciServices, visibility});
+
+        const {badges} = await scaffold(options);
+
+        assert.notProperty(badges.status, 'ci');
+      });
     });
 
     suite('vcs ignore', () => {
       test('that files and directories are defined to be ignored from version control', async () => {
         validator.validate
           .withArgs(options)
-          .returns({projectRoot, projectName, visibility: 'Public', vcs: {}, configs: {}});
+          .returns({projectRoot, projectName, visibility: 'Public', vcs: {}, configs: {}, ciServices});
         prompts.prompt.resolves({[prompts.questionNames.NODE_VERSION_CATEGORY]: any.word()});
 
         const {vcsIgnore} = await scaffold(options);
@@ -729,7 +768,7 @@ rollup.config.js`)
       test('that `npm test` is defined as the verification command', async () => {
         validator.validate
           .withArgs(options)
-          .returns({projectRoot, projectName, visibility: any.word(), vcs: {}, configs: {}});
+          .returns({projectRoot, projectName, visibility: any.word(), vcs: {}, configs: {}, ciServices});
         prompts.prompt.resolves({[prompts.questionNames.NODE_VERSION_CATEGORY]: any.word()});
 
         const {verificationCommand} = await scaffold(options);
@@ -743,7 +782,7 @@ rollup.config.js`)
         const homepage = any.url();
         validator.validate
           .withArgs(options)
-          .returns({projectRoot, projectName, visibility: any.word(), vcs: {}, configs: {}});
+          .returns({projectRoot, projectName, visibility: any.word(), vcs: {}, configs: {}, ciServices});
         prompts.prompt.resolves({[prompts.questionNames.NODE_VERSION_CATEGORY]: any.word()});
         packageBuilder.default.returns({homepage});
 
@@ -755,7 +794,7 @@ rollup.config.js`)
       test('that details are not passed along if not defined', async () => {
         validator.validate
           .withArgs(options)
-          .returns({projectRoot, projectName, visibility: any.word(), vcs: {}, configs: {}});
+          .returns({projectRoot, projectName, visibility: any.word(), vcs: {}, configs: {}, ciServices});
         prompts.prompt.resolves({[prompts.questionNames.NODE_VERSION_CATEGORY]: any.word()});
         packageBuilder.default.returns({});
 

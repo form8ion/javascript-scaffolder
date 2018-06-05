@@ -12,7 +12,8 @@ export const questionNames = {
   INTEGRATION_TESTS: 'integrationTests',
   AUTHOR_NAME: 'authorName',
   AUTHOR_EMAIL: 'authorEmail',
-  AUTHOR_URL: 'authorUrl'
+  AUTHOR_URL: 'authorUrl',
+  CI_SERVICE: 'ciService'
 };
 
 const testingQuestions = [
@@ -50,7 +51,7 @@ function authorQuestions({name, email, url}) {
   ];
 }
 
-export async function prompt({npmAccount, author}) {
+export async function prompt({npmAccount, author}, ciServices) {
   const npmConf = npmConfFactory();
 
   return promptWithInquirer([
@@ -86,6 +87,12 @@ export async function prompt({npmAccount, author}) {
       email: npmConf.get('init.author.email'),
       url: npmConf.get('init.author.url')
     }),
-    ...testingQuestions
+    ...testingQuestions,
+    {
+      name: questionNames.CI_SERVICE,
+      type: 'list',
+      message: 'Which continuous integration service will be used?',
+      choices: [...ciServices, 'Other']
+    }
   ]);
 }

@@ -8,6 +8,7 @@ import buildPackage from './package';
 import install from './install';
 import {validate} from './options-validator';
 import {questionNames, prompt} from './prompts';
+import scaffoldCi from './ci';
 
 async function determineNodeVersionForProject(nodeVersionCategory) {
   const lowerCaseCategory = nodeVersionCategory.toLowerCase();
@@ -27,13 +28,12 @@ export async function scaffold(options) {
     visibility,
     license,
     vcs,
-    ci,
     description,
     configs,
     overrides,
     ciServices
   } = validate(options);
-  const answers = await prompt(overrides, ciServices);
+  const answers = await prompt(overrides, Object.keys(ciServices));
   const unitTested = answers[questionNames.UNIT_TESTS];
   const integrationTested = answers[questionNames.INTEGRATION_TESTS];
   const packageType = answers[questionNames.PACKAGE_TYPE];
@@ -57,6 +57,8 @@ export async function scaffold(options) {
   const nodeVersion = await determineNodeVersionForProject(answers[questionNames.NODE_VERSION_CATEGORY]);
 
   console.log(chalk.grey('Writing project files'));      // eslint-disable-line no-console
+
+  const ci = answers[questionNames.CI_SERVICE];
 
   const packageData = buildPackage({
     projectName,
@@ -102,7 +104,8 @@ export async function scaffold(options) {
     'rollup.config.js'
   ].filter(Boolean);
 
-  await Promise.all([
+  const [ciService] = await Promise.all([
+    scaffoldCi(ciServices, answers[questionNames.CI_SERVICE], {projectRoot, vcs, visibility}),
     writeFile(`${projectRoot}/.nvmrc`, nodeVersion),
     writeFile(`${projectRoot}/package.json`, JSON.stringify(packageData)),
     configs.babelPreset && writeFile(`${projectRoot}/.babelrc`, JSON.stringify({presets: [configs.babelPreset.name]})),
@@ -160,6 +163,9 @@ export async function scaffold(options) {
           text: 'Commitizen friendly',
           link: 'http://commitizen.github.io/cz-cli/'
         }
+      },
+      status: {
+        ...ciService.badge && {ci: ciService.badge}
       }
     },
     vcsIgnore: {

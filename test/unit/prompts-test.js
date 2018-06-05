@@ -26,6 +26,7 @@ suite('prompts', () => {
     const authorUrl = any.url();
     const npmUser = any.word();
     const get = sinon.stub();
+    const ciServices = any.listOf(any.string);
     npmConf.default.returns({get});
     exec.default.withArgs('npm whoami').resolves(npmUser);
     get.withArgs('init.author.name').returns(authorName);
@@ -33,7 +34,7 @@ suite('prompts', () => {
     get.withArgs('init.author.url').returns(authorUrl);
     inquirer.prompt.resolves();
 
-    return prompt({}).then(() => assert.calledWith(
+    return prompt({}, ciServices).then(() => assert.calledWith(
       inquirer.prompt,
       [
         {
@@ -89,6 +90,12 @@ suite('prompts', () => {
           message: 'Will this project be integration tested?',
           type: 'confirm',
           default: true
+        },
+        {
+          name: questionNames.CI_SERVICE,
+          type: 'list',
+          message: 'Which continuous integration service will be used?',
+          choices: [...ciServices, 'Other']
         }
       ]
     ));
@@ -100,7 +107,7 @@ suite('prompts', () => {
     const get = sinon.stub();
     npmConf.default.returns({get});
 
-    return prompt({npmAccount, author}).then(() => {
+    return prompt({npmAccount, author}, []).then(() => {
       assert.calledWith(
         inquirer.prompt,
         sinon.match(value => 1 === value.filter((

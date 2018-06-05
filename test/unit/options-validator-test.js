@@ -36,7 +36,6 @@ suite('options validator', () => {
       visibility: 'Public',
       license: any.string(),
       vcs: {host: any.word(), owner: any.word(), name: any.word()},
-      ci: any.string(),
       description: any.string()
     }));
 
@@ -46,7 +45,6 @@ suite('options validator', () => {
       visibility: 'Private',
       license: any.string(),
       vcs: {host: any.word(), owner: any.word(), name: any.word()},
-      ci: any.string(),
       description: any.string()
     }));
 
@@ -212,7 +210,6 @@ suite('options validator', () => {
         visibility: any.fromList(['Public', 'Private']),
         license: any.string(),
         vcs: {host: any.word(), owner: any.word(), name: any.word()},
-        ci: any.string(),
         description: any.string(),
         overrides: {npmAccount: any.word()}
       });
@@ -226,7 +223,6 @@ suite('options validator', () => {
           visibility: any.fromList(['Public', 'Private']),
           license: any.string(),
           vcs: {host: any.word(), owner: any.word(), name: any.word()},
-          ci: any.string(),
           description: any.string(),
           overrides: {author: {name: any.string(), email, url: any.url()}}
         });
@@ -240,7 +236,6 @@ suite('options validator', () => {
         visibility: any.fromList(['Public', 'Private']),
         license: any.string(),
         vcs: {host: any.word(), owner: any.word(), name: any.word()},
-        ci: any.string(),
         description: any.string(),
         overrides: {author: {}}
       }),
@@ -254,7 +249,6 @@ suite('options validator', () => {
         visibility: any.fromList(['Public', 'Private']),
         license: any.string(),
         vcs: {host: any.word(), owner: any.word(), name: any.word()},
-        ci: any.string(),
         description: any.string(),
         overrides: {author: {name: any.string(), email: any.word()}}
       }),
@@ -269,7 +263,6 @@ suite('options validator', () => {
         visibility: any.fromList(['Public', 'Private']),
         license: any.string(),
         vcs: {host: any.word(), owner: any.word(), name: any.word()},
-        ci: any.string(),
         description: any.string(),
         overrides: {author: {name: any.string(), email, url: any.string()}}
       }),
@@ -288,7 +281,6 @@ suite('options validator', () => {
         visibility: any.fromList(['Public', 'Private']),
         license: any.string(),
         vcs: {host: any.word(), owner: any.word(), name: any.word()},
-        ci: any.string(),
         description: any.string(),
         ciServices: {[ciServiceName]: {}}
       }),
@@ -303,7 +295,6 @@ suite('options validator', () => {
         visibility: any.fromList(['Public', 'Private']),
         license: any.string(),
         vcs: {host: any.word(), owner: any.word(), name: any.word()},
-        ci: any.string(),
         description: any.string(),
         ciServices: {[ciServiceName]: {scaffolder: () => undefined}}
       }),
@@ -317,7 +308,6 @@ suite('options validator', () => {
       visibility: any.fromList(['Public', 'Private']),
       license: any.string(),
       vcs: {host: any.word(), owner: any.word(), name: any.word()},
-      ci: any.string(),
       description: any.string(),
       ciServices: {[ciServiceName]: {scaffolder: options => options, public: any.boolean()}}
     }));
@@ -328,7 +318,6 @@ suite('options validator', () => {
       visibility: any.fromList(['Public', 'Private']),
       license: any.string(),
       vcs: {host: any.word(), owner: any.word(), name: any.word()},
-      ci: any.string(),
       description: any.string(),
       ciServices: {[ciServiceName]: {scaffolder: options => options, private: any.boolean()}}
     }));
@@ -341,7 +330,6 @@ suite('options validator', () => {
       visibility: any.fromList(['Public', 'Private']),
       license: any.string(),
       vcs: {host: any.word(), owner: any.word(), name: any.word()},
-      ci: any.string(),
       description: any.string()
     };
 

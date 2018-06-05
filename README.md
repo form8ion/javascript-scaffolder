@@ -10,6 +10,7 @@ opinionated scaffolder for JavaScript projects
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 
 
+* [Features](#features)
 * [Usage](#usage)
   * [Installation](#installation)
   * [As one of the languages for scaffolding a project](#as-one-of-the-languages-for-scaffolding-a-project)
@@ -20,10 +21,10 @@ opinionated scaffolder for JavaScript projects
       * [`visibility` __string__ (_required_)](#visibility-__string__-_required_)
       * [`license` __string__ (_required_)](#license-__string__-_required_)
       * [`vcs` __object__ (_required_)](#vcs-__object__-_required_)
-      * [`ci` __string__ (_optional_)](#ci-__string__-_optional_)
       * [`description` __string__ (_optional_)](#description-__string__-_optional_)
       * [`configs` __object__ (_optional_)](#configs-__object__-_optional_)
       * [`overrides` __object__ (_optional_)](#overrides-__object__-_optional_)
+      * [`ciServices` __object__ (_optional_)](#ciservices-__object__-_optional_)
 * [Contributing](#contributing)
   * [Dependencies](#dependencies)
   * [Verification](#verification)
@@ -118,10 +119,6 @@ visibility of the project (`Public` or `Private`)
   account name on the host service for the repository
 * `name` __string__ (_required_)
   repository name 
-
-##### `ci` __string__ (_optional_)
-
-name of the chosen CI service
 
 ##### `description` __string__ (_optional_)
 
