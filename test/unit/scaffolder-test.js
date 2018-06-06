@@ -736,14 +736,16 @@ rollup.config.js`)
         const vcs = any.simpleObject();
         const badge = any.simpleObject();
         const ciService = any.word();
+        const packageType = any.word();
         prompts.prompt.resolves({
           [prompts.questionNames.NODE_VERSION_CATEGORY]: any.word(),
-          [prompts.questionNames.CI_SERVICE]: ciService
+          [prompts.questionNames.CI_SERVICE]: ciService,
+          [prompts.questionNames.PACKAGE_TYPE]: packageType
         });
         validator.validate
           .withArgs(options)
           .returns({projectRoot, projectName, vcs, configs: {}, ciServices, visibility});
-        ci.default.withArgs(ciServices, ciService, {projectRoot, vcs, visibility}).resolves({badge});
+        ci.default.withArgs(ciServices, ciService, {projectRoot, vcs, visibility, packageType}).resolves({badge});
 
         const {badges} = await scaffold(options);
 
