@@ -65,11 +65,6 @@ suite('javascript project scaffolder', () => {
           path.resolve(__dirname, '../../', 'templates', 'huskyrc.json'),
           `${projectRoot}/.huskyrc.json`
         );
-        assert.calledWith(
-          fs.copyFile,
-          path.resolve(__dirname, '../../', 'templates', 'nycrc.json'),
-          `${projectRoot}/.nycrc`
-        );
         assert.calledWith(fs.writeFile, `${projectRoot}/.babelrc`, JSON.stringify({presets: [babelPresetName]}));
       });
     });
@@ -186,6 +181,11 @@ rollup.config.js`)
         );
         assert.calledWith(
           fs.copyFile,
+          path.resolve(__dirname, '../../', 'templates', 'nycrc.json'),
+          `${projectRoot}/.nycrc`
+        );
+        assert.calledWith(
+          fs.copyFile,
           path.resolve(__dirname, '../../', 'templates', 'mocha.opts'),
           `${pathToCreatedDirectory}/../mocha.opts`
         );
@@ -202,6 +202,7 @@ rollup.config.js`)
 
         assert.neverCalledWith(mkdir.default, `${projectRoot}/test/unit`);
         assert.neverCalledWith(fs.copyFile, path.resolve(__dirname, '../../', 'templates', 'canary-test.txt'));
+        assert.neverCalledWith(fs.copyFile, path.resolve(__dirname, '../../', 'templates', 'nycrc.json'));
         assert.neverCalledWith(fs.copyFile, path.resolve(__dirname, '../../', 'templates', 'mocha.opts'));
       });
     });
@@ -425,9 +426,9 @@ rollup.config.js`)
         'husky@next',
         'cz-conventional-changelog',
         'greenkeeper-lockfile',
-        'nyc',
         'babel-register'
       ];
+      const unitTestDependencies = ['mocha', 'chai', 'sinon', 'nyc'];
 
       suite('scripts', () => {
         test('that scripting tools are installed', async () => {
@@ -511,7 +512,7 @@ rollup.config.js`)
 
           await scaffold(options);
 
-          assert.calledWith(installer.default, [...defaultDependencies, 'mocha', 'chai', 'sinon']);
+          assert.calledWith(installer.default, [...defaultDependencies, ...unitTestDependencies]);
         });
 
         test('that mocha, chai, and sinon are not installed when the project will not be unit tested', async () => {
@@ -561,21 +562,41 @@ rollup.config.js`)
 
           await scaffold(options);
 
-          assert.calledWith(installer.default, [...defaultDependencies, 'mocha', 'chai', 'sinon', 'cucumber']);
+          assert.calledWith(installer.default, [...defaultDependencies, ...unitTestDependencies, 'cucumber']);
         });
 
         test('that codecov is installed for public projects', async () => {
           validator.validate.withArgs(options).returns({visibility: 'Public', vcs: {}, configs: {}, ciServices});
-          prompts.prompt.resolves({[prompts.questionNames.NODE_VERSION_CATEGORY]: any.word()});
+          prompts.prompt.resolves({
+            [prompts.questionNames.NODE_VERSION_CATEGORY]: any.word(),
+            [prompts.questionNames.UNIT_TESTS]: true
+          });
+          mkdir.default.resolves();
 
           await scaffold(options);
 
-          assert.calledWith(installer.default, [...defaultDependencies, 'codecov']);
+          assert.calledWith(installer.default, [...defaultDependencies, 'codecov', ...unitTestDependencies]);
         });
 
         test('that codecov is not installed for private projects', async () => {
           validator.validate.withArgs(options).returns({visibility: 'Private', vcs: {}, configs: {}, ciServices});
-          prompts.prompt.resolves({[prompts.questionNames.NODE_VERSION_CATEGORY]: any.word()});
+          prompts.prompt.resolves({
+            [prompts.questionNames.NODE_VERSION_CATEGORY]: any.word(),
+            [prompts.questionNames.UNIT_TESTS]: true
+          });
+          mkdir.default.resolves();
+
+          await scaffold(options);
+
+          assert.calledWith(installer.default, [...defaultDependencies, ...unitTestDependencies]);
+        });
+
+        test('that codecov is not installed for projects that are not unit tested', async () => {
+          validator.validate.withArgs(options).returns({visibility: 'Public', vcs: {}, configs: {}, ciServices});
+          prompts.prompt.resolves({
+            [prompts.questionNames.NODE_VERSION_CATEGORY]: any.word(),
+            [prompts.questionNames.UNIT_TESTS]: false
+          });
 
           await scaffold(options);
 

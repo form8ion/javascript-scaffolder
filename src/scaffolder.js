@@ -46,11 +46,10 @@ export async function scaffold(options) {
     'husky@next',
     'cz-conventional-changelog',
     'greenkeeper-lockfile',
-    'nyc',
     'babel-register',
     ...'Package' === packageType ? ['rimraf', 'rollup'] : [],
-    ...'Public' === visibility ? ['codecov'] : [],
-    ...unitTested ? ['mocha', 'chai', 'sinon'] : [],
+    ...'Public' === visibility && unitTested ? ['codecov'] : [],
+    ...unitTested ? ['mocha', 'chai', 'sinon', 'nyc'] : [],
     ...integrationTested ? ['cucumber', 'chai'] : []
   ].filter(Boolean));
 
@@ -119,12 +118,12 @@ export async function scaffold(options) {
       `${projectRoot}/.commitlintrc.js`,
       `module.exports = {extends: ['${configs.commitlint.name}']};`
     ),
-    copyFile(resolve(__dirname, '..', 'templates', 'nycrc.json'), `${projectRoot}/.nycrc`),
     ('Package' === packageType) && Promise.all([
       writeFile(`${projectRoot}/.npmignore`, `${npmIgnoreDirectories.join('\n')}\n\n${npmIgnoreFiles.join('\n')}`),
       copyFile(resolve(__dirname, '..', 'templates', 'rollup.config.js'), `${projectRoot}/rollup.config.js`)
     ]),
     unitTested && mkdir(`${projectRoot}/test/unit`).then(path => Promise.all([
+      copyFile(resolve(__dirname, '..', 'templates', 'nycrc.json'), `${projectRoot}/.nycrc`),
       copyFile(resolve(__dirname, '..', 'templates', 'canary-test.txt'), `${path}/canary-test.js`),
       copyFile(resolve(__dirname, '..', 'templates', 'mocha.opts'), `${path}/../mocha.opts`),
       configs.eslint && Promise.all([
