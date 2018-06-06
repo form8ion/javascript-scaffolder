@@ -165,7 +165,13 @@ export async function scaffold(options) {
       },
       status: {
         ...ciService.badge && {ci: ciService.badge},
-        ...unitTested && 'Public' === visibility && {coverage: {}}
+        ...unitTested && 'Public' === visibility && {
+          coverage: {
+            img: `https://img.shields.io/codecov/c/github/${vcs.owner}/${vcs.name}.svg`,
+            link: `https://codecov.io/github/${vcs.owner}/${vcs.name}`,
+            text: 'Codecov'
+          }
+        }
       }
     },
     vcsIgnore: {

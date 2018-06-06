@@ -770,17 +770,22 @@ rollup.config.js`)
 
       suite('coverage', () => {
         test('that the coverage badge is provided', async () => {
+          const vcs = {owner: any.word(), name: any.word()};
           prompts.prompt.resolves({
             [prompts.questionNames.NODE_VERSION_CATEGORY]: any.word(),
             [prompts.questionNames.UNIT_TESTS]: true
           });
           validator.validate
-            .returns({projectRoot, projectName, vcs: {}, configs: {}, ciServices, visibility: 'Public'});
+            .returns({projectRoot, projectName, vcs, configs: {}, ciServices, visibility: 'Public'});
           mkdir.default.resolves();
 
           const {badges} = await scaffold(options);
 
-          assert.deepEqual(badges.status.coverage, {});
+          assert.deepEqual(badges.status.coverage, {
+            img: `https://img.shields.io/codecov/c/github/${vcs.owner}/${vcs.name}.svg`,
+            link: `https://codecov.io/github/${vcs.owner}/${vcs.name}`,
+            text: 'Codecov'
+          });
         });
 
         test('that the coverage badge is not provided for private projects', async () => {
