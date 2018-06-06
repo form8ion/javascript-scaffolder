@@ -744,6 +744,49 @@ rollup.config.js`)
 
         assert.notProperty(badges.status, 'ci');
       });
+
+      suite('coverage', () => {
+        test('that the coverage badge is provided', async () => {
+          prompts.prompt.resolves({
+            [prompts.questionNames.NODE_VERSION_CATEGORY]: any.word(),
+            [prompts.questionNames.UNIT_TESTS]: true
+          });
+          validator.validate
+            .returns({projectRoot, projectName, vcs: {}, configs: {}, ciServices, visibility: 'Public'});
+          mkdir.default.resolves();
+
+          const {badges} = await scaffold(options);
+
+          assert.deepEqual(badges.status.coverage, {});
+        });
+
+        test('that the coverage badge is not provided for private projects', async () => {
+          prompts.prompt.resolves({
+            [prompts.questionNames.NODE_VERSION_CATEGORY]: any.word(),
+            [prompts.questionNames.UNIT_TESTS]: true
+          });
+          validator.validate
+            .returns({projectRoot, projectName, vcs: {}, configs: {}, ciServices, visibility: 'Private'});
+          mkdir.default.resolves();
+
+          const {badges} = await scaffold(options);
+
+          assert.notProperty(badges.status, 'coverage');
+        });
+
+        test('that the coverage badge is not provided when a project is not unit tested', async () => {
+          prompts.prompt.resolves({
+            [prompts.questionNames.NODE_VERSION_CATEGORY]: any.word(),
+            [prompts.questionNames.UNIT_TESTS]: false
+          });
+          validator.validate
+            .returns({projectRoot, projectName, vcs: {}, configs: {}, ciServices, visibility: 'Public'});
+
+          const {badges} = await scaffold(options);
+
+          assert.notProperty(badges.status, 'coverage');
+        });
+      });
     });
 
     suite('vcs ignore', () => {

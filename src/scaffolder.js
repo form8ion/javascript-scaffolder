@@ -165,7 +165,8 @@ export async function scaffold(options) {
         }
       },
       status: {
-        ...ciService.badge && {ci: ciService.badge}
+        ...ciService.badge && {ci: ciService.badge},
+        ...unitTested && 'Public' === visibility && {coverage: {}}
       }
     },
     vcsIgnore: {
