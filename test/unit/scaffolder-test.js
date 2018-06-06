@@ -732,6 +732,40 @@ rollup.config.js`)
         });
       });
 
+      suite('semantic-release', () => {
+        test('that the semantic-release badge is provided for packages', async () => {
+          const packageName = any.word();
+          validator.validate.withArgs(options).returns({projectRoot, projectName, vcs: {}, configs: {}, ciServices});
+          packageBuilder.default.returns({name: packageName});
+          prompts.prompt.resolves({
+            [prompts.questionNames.NODE_VERSION_CATEGORY]: any.word(),
+            [prompts.questionNames.PACKAGE_TYPE]: 'Package'
+          });
+
+          const {badges} = await scaffold(options);
+
+          assert.deepEqual(badges.contribution['semantic-release'], {
+            img: 'https://img.shields.io/badge/%20%20%F0%9F%93%A6%F0%9F%9A%80-semantic--release-e10079.svg',
+            text: 'semantic-release',
+            link: 'https://github.com/semantic-release/semantic-release'
+          });
+        });
+
+        test('that the semantic-release badge is not provided for non-packages', async () => {
+          const packageName = any.word();
+          validator.validate.withArgs(options).returns({projectRoot, projectName, vcs: {}, configs: {}, ciServices});
+          packageBuilder.default.returns({name: packageName});
+          prompts.prompt.resolves({
+            [prompts.questionNames.NODE_VERSION_CATEGORY]: any.word(),
+            [prompts.questionNames.PACKAGE_TYPE]: any.word()
+          });
+
+          const {badges} = await scaffold(options);
+
+          assert.notProperty(badges.contribution, 'semantic-release');
+        });
+      });
+
       test('that the ci badge is provided', async () => {
         const vcs = any.simpleObject();
         const badge = any.simpleObject();

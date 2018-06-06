@@ -161,6 +161,13 @@ export async function scaffold(options) {
           img: 'https://img.shields.io/badge/commitizen-friendly-brightgreen.svg',
           text: 'Commitizen friendly',
           link: 'http://commitizen.github.io/cz-cli/'
+        },
+        ...'Package' === packageType && {
+          'semantic-release': {
+            img: 'https://img.shields.io/badge/%20%20%F0%9F%93%A6%F0%9F%9A%80-semantic--release-e10079.svg',
+            text: 'semantic-release',
+            link: 'https://github.com/semantic-release/semantic-release'
+          }
         }
       },
       status: {
