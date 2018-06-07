@@ -10,7 +10,7 @@ suite('ci', () => {
     const chosenServiceScaffolder = sinon.stub();
     const scaffolderResult = any.simpleObject();
     chosenServiceScaffolder.withArgs(options).resolves(scaffolderResult);
-    const scaffolders = {...any.simpleObject(), [chosenService]: chosenServiceScaffolder};
+    const scaffolders = {...any.simpleObject(), [chosenService]: {scaffolder: chosenServiceScaffolder}};
 
     return assert.becomes(scaffoldCi(scaffolders, chosenService, options), scaffolderResult);
   });
