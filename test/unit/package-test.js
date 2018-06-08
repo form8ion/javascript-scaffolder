@@ -288,7 +288,7 @@ suite('package details builder', () => {
         test('that the travis config file is linted when the ci service is travis', () => {
           const packageDetails = buildPackageDetails({tests: {}, vcs: {}, author: {}, ci: 'Travis'});
 
-          assert.equal(packageDetails.scripts['lint:travis'], 'travis lint --exit-code --no-interactive');
+          assert.equal(packageDetails.scripts['lint:travis'], 'travis-lint .travis.yml');
         });
 
         test('that the travis config file is not linted when the ci service is not travis', () => {

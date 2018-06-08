@@ -23,7 +23,7 @@ export default function ({projectName, visibility, scope, packageType, license, 
       ...('Package' === packageType) && {clean: 'rimraf lib/'},
       ...('Application' === packageType) && {start: './lib/index.js'},
       'lint:js': 'eslint . --cache',
-      ...('Travis' === ci) && {'lint:travis': 'travis lint --exit-code --no-interactive'},
+      ...('Travis' === ci) && {'lint:travis': 'travis-lint .travis.yml'},
       test: `run-s lint:*${(tests.unit || tests.integration) ? ' test:*' : ''}`,
       ...tests.unit && {
         'test:unit:base': 'mocha --recursive test/unit',

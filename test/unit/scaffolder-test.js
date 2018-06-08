@@ -482,6 +482,22 @@ rollup.config.js`)
 
           assert.calledWith(installer.default, [commitlintConfigName, ...defaultDependencies]);
         });
+
+        test('that the travis-lint is installed when Travis is the chosen ci-service', async () => {
+          validator.validate
+            .withArgs(options)
+            .returns({vcs: {}, configs: {}, overrides, ciServices});
+          prompts.prompt
+            .withArgs(overrides, Object.keys(ciServices))
+            .resolves({
+              [prompts.questionNames.NODE_VERSION_CATEGORY]: any.word(),
+              [prompts.questionNames.CI_SERVICE]: 'Travis'
+            });
+
+          await scaffold(options);
+
+          assert.calledWith(installer.default, [...defaultDependencies, 'travis-lint']);
+        });
       });
 
       suite('babel', () => {

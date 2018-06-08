@@ -37,6 +37,7 @@ export async function scaffold(options) {
   const unitTested = answers[questionNames.UNIT_TESTS];
   const integrationTested = answers[questionNames.INTEGRATION_TESTS];
   const packageType = answers[questionNames.PACKAGE_TYPE];
+  const ci = answers[questionNames.CI_SERVICE];
 
   const devDependencies = uniq([
     configs.eslint && configs.eslint.packageName,
@@ -50,14 +51,13 @@ export async function scaffold(options) {
     ...'Package' === packageType ? ['rimraf', 'rollup'] : [],
     ...'Public' === visibility && unitTested ? ['codecov'] : [],
     ...unitTested ? ['mocha', 'chai', 'sinon', 'nyc'] : [],
-    ...integrationTested ? ['cucumber', 'chai'] : []
+    ...integrationTested ? ['cucumber', 'chai'] : [],
+    ...'Travis' === ci ? ['travis-lint'] : []
   ].filter(Boolean));
 
   const nodeVersion = await determineNodeVersionForProject(answers[questionNames.NODE_VERSION_CATEGORY]);
 
   console.log(chalk.grey('Writing project files'));      // eslint-disable-line no-console
-
-  const ci = answers[questionNames.CI_SERVICE];
 
   const packageData = buildPackage({
     projectName,
