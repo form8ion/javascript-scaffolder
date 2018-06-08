@@ -1,7 +1,7 @@
-export default function (scaffolders, chosenService, options) {
-  const scaffolder = scaffolders[chosenService];
+export default function (services, chosenService, options) {
+  const service = services[chosenService];
 
-  if (scaffolder) return scaffolder.scaffolder(options);
+  if (service) return service.scaffolder(options);
 
   return undefined;
 }
