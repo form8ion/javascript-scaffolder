@@ -181,6 +181,20 @@ export async function scaffold(options) {
         }
       }
     },
+    documentation: {
+      contributing: `### Dependencies
+
+\`\`\`sh
+$ nvm install
+$ npm install
+\`\`\`
+
+### Verification
+
+\`\`\`sh
+$ npm test
+\`\`\``
+    },
     vcsIgnore: {
       files: ['.eslintcache'],
       directories: ['/node_modules/', '/lib/', '/coverage/', '/.nyc_output/']

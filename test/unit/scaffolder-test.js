@@ -925,4 +925,36 @@ rollup.config.js`)
       });
     });
   });
+
+  suite('documentation', () => {
+    test('that contribution details are provided', async () => {
+      validator.validate.returns({
+        projectRoot,
+        projectName,
+        visibility: any.word(),
+        vcs: {},
+        configs: {},
+        ciServices
+      });
+      prompts.prompt.resolves({[prompts.questionNames.NODE_VERSION_CATEGORY]: any.word()});
+
+      const {documentation} = await scaffold(options);
+
+      assert.equal(
+        documentation.contributing,
+        `### Dependencies
+
+\`\`\`sh
+$ nvm install
+$ npm install
+\`\`\`
+
+### Verification
+
+\`\`\`sh
+$ npm test
+\`\`\``
+      );
+    });
+  });
 });
