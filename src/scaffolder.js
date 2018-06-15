@@ -182,7 +182,7 @@ export async function scaffold(options) {
         }
       }
     },
-    documentation: scaffoldDocumentation(),
+    documentation: scaffoldDocumentation({packageType, packageName: packageData.name}),
     vcsIgnore: {
       files: ['.eslintcache'],
       directories: ['/node_modules/', '/lib/', '/coverage/', '/.nyc_output/']

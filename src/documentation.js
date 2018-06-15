@@ -1,5 +1,12 @@
-export default function () {
+export default function ({packageType, packageName}) {
   return {
+    ...'Package' === packageType && {
+      usage: `### Installation
+
+\`\`\`sh
+$ npm install ${packageName}
+\`\`\``
+    },
     contributing: `### Dependencies
 
 \`\`\`sh
