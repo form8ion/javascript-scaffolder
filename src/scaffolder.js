@@ -9,6 +9,7 @@ import install from './install';
 import {validate} from './options-validator';
 import {questionNames, prompt} from './prompts';
 import scaffoldCi from './ci';
+import scaffoldDocumentation from './documentation';
 
 async function determineNodeVersionForProject(nodeVersionCategory) {
   const lowerCaseCategory = nodeVersionCategory.toLowerCase();
@@ -181,20 +182,7 @@ export async function scaffold(options) {
         }
       }
     },
-    documentation: {
-      contributing: `### Dependencies
-
-\`\`\`sh
-$ nvm install
-$ npm install
-\`\`\`
-
-### Verification
-
-\`\`\`sh
-$ npm test
-\`\`\``
-    },
+    documentation: scaffoldDocumentation(),
     vcsIgnore: {
       files: ['.eslintcache'],
       directories: ['/node_modules/', '/lib/', '/coverage/', '/.nyc_output/']

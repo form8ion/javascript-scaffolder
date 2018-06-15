@@ -10,6 +10,7 @@ import * as exec from '../../third-party-wrappers/exec-as-promised';
 import * as mkdir from '../../third-party-wrappers/make-dir';
 import * as validator from '../../src/options-validator';
 import * as ci from '../../src/ci';
+import * as documentation from '../../src/documentation';
 import {scaffold} from '../../src/scaffolder';
 
 suite('javascript project scaffolder', () => {
@@ -35,6 +36,7 @@ suite('javascript project scaffolder', () => {
     sandbox.stub(mkdir, 'default');
     sandbox.stub(validator, 'validate');
     sandbox.stub(ci, 'default');
+    sandbox.stub(documentation, 'default');
 
     fs.writeFile.resolves();
     fs.copyFile.resolves();
@@ -924,37 +926,18 @@ rollup.config.js`)
         assert.isUndefined(projectDetails.homepage);
       });
     });
-  });
 
-  suite('documentation', () => {
-    test('that contribution details are provided', async () => {
-      validator.validate.returns({
-        projectRoot,
-        projectName,
-        visibility: any.word(),
-        vcs: {},
-        configs: {},
-        ciServices
+    suite('documentation', () => {
+      test('that appropriate documentation is passed along', async () => {
+        const docs = any.simpleObject();
+        documentation.default.returns(docs);
+        prompts.prompt.resolves({[prompts.questionNames.NODE_VERSION_CATEGORY]: any.word()});
+        validator.validate.returns({projectRoot, projectName, visibility, vcs: {}, configs: {}, ciServices});
+
+        const {documentation: documentationContent} = await scaffold(options);
+
+        assert.equal(documentationContent, docs);
       });
-      prompts.prompt.resolves({[prompts.questionNames.NODE_VERSION_CATEGORY]: any.word()});
-
-      const {documentation} = await scaffold(options);
-
-      assert.equal(
-        documentation.contributing,
-        `### Dependencies
-
-\`\`\`sh
-$ nvm install
-$ npm install
-\`\`\`
-
-### Verification
-
-\`\`\`sh
-$ npm test
-\`\`\``
-      );
     });
   });
 });
