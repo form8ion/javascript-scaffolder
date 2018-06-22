@@ -39,6 +39,7 @@ export async function scaffold(options) {
   const integrationTested = answers[questionNames.INTEGRATION_TESTS];
   const packageType = answers[questionNames.PACKAGE_TYPE];
   const ci = answers[questionNames.CI_SERVICE];
+  const scope = answers[questionNames.SCOPE];
 
   const devDependencies = uniq([
     configs.eslint && configs.eslint.packageName,
@@ -63,7 +64,7 @@ export async function scaffold(options) {
   const packageData = buildPackage({
     projectName,
     visibility,
-    scope: answers[questionNames.SCOPE],
+    scope,
     packageType,
     license,
     vcs,
@@ -182,7 +183,7 @@ export async function scaffold(options) {
         }
       }
     },
-    documentation: scaffoldDocumentation({packageType, packageName: packageData.name}),
+    documentation: scaffoldDocumentation({packageType, packageName: packageData.name, visibility, scope}),
     vcsIgnore: {
       files: ['.eslintcache'],
       directories: ['/node_modules/', '/lib/', '/coverage/', '/.nyc_output/']

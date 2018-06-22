@@ -930,15 +930,17 @@ rollup.config.js`)
     suite('documentation', () => {
       test('that appropriate documentation is passed along', async () => {
         const docs = any.simpleObject();
+        const scope = any.word();
         const packageType = any.word();
         const packageName = any.string();
         prompts.prompt.resolves({
           [prompts.questionNames.NODE_VERSION_CATEGORY]: any.word(),
-          [prompts.questionNames.PACKAGE_TYPE]: packageType
+          [prompts.questionNames.PACKAGE_TYPE]: packageType,
+          [prompts.questionNames.SCOPE]: scope
         });
         packageBuilder.default.returns({name: packageName});
-        documentation.default.withArgs({packageType, packageName}).returns(docs);
-        validator.validate.returns({projectRoot, projectName, visibility, vcs: {}, configs: {}, ciServices});
+        documentation.default.withArgs({packageType, packageName, visibility, scope}).returns(docs);
+        validator.validate.returns({projectRoot, projectName, visibility, vcs: {}, configs: {}, ciServices, scope});
 
         const {documentation: documentationContent} = await scaffold(options);
 

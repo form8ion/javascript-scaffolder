@@ -4,22 +4,47 @@ import scaffoldDocumentation from '../../src/documentation';
 
 suite('documentation', () => {
   suite('usage', () => {
-    test('that usage document is not provided (yet) for apps', () => {
-      const documentation = scaffoldDocumentation({packageType: any.string()});
+    suite('apps', () => {
+      test('that usage document is not provided (yet) for apps', () => {
+        const documentation = scaffoldDocumentation({packageType: any.string()});
 
-      assert.notProperty(documentation, 'usage');
+        assert.notProperty(documentation, 'usage');
+      });
     });
 
-    test('that npm install instructions are provided for packages', () => {
-      const packageName = any.string();
+    suite('packages', () => {
+      test('that npm install instructions are provided for packages', () => {
+        const packageName = any.string();
 
-      const documentation = scaffoldDocumentation({packageType: 'Package', packageName});
+        const documentation = scaffoldDocumentation({packageType: 'Package', packageName});
 
-      assert.equal(documentation.usage, `### Installation
+        assert.equal(documentation.usage, `### Installation
 
 \`\`\`sh
 $ npm install ${packageName}
 \`\`\``);
+      });
+
+      test('that an access note is provided for private packages', () => {
+        const packageName = any.string();
+        const scope = any.word();
+
+        const documentation = scaffoldDocumentation({
+          packageType: 'Package',
+          packageName,
+          visibility: 'Private',
+          scope
+        });
+
+        assert.equal(documentation.usage, `### Installation
+
+:warning: this is a private package, so you will need to use an npm token with
+access to private packages under \`@${scope}\`
+
+\`\`\`sh
+$ npm install ${packageName}
+\`\`\``);
+      });
     });
   });
 
