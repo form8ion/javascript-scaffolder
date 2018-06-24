@@ -12,7 +12,7 @@
   "scripts": {
     "clean": "rimraf lib/",
     "lint:js": "eslint . --cache",
-    "lint:travis": "travis lint --no-interactive",
+    "lint:travis": "travis-lint .travis.yml",
     "lint:sensitive": "ban",
     "test": "run-s lint:* test:*",
     "test:unit": "nyc run-s test:unit:base",
@@ -53,7 +53,8 @@
     "npm-run-all": "4.1.3",
     "nyc": "12.0.2",
     "rollup": "0.61.2",
-    "sinon": "6.0.0"
+    "sinon": "6.0.0",
+    "travis-lint": "^1.0.0"
   },
   "dependencies": {
     "chalk": "2.4.0",
