@@ -428,7 +428,8 @@ rollup.config.js`)
         'husky@next',
         'cz-conventional-changelog',
         'greenkeeper-lockfile',
-        'babel-register'
+        'babel-register',
+        'ban-sensitive-files'
       ];
       const unitTestDependencies = ['mocha', 'chai', 'sinon', 'nyc'];
 

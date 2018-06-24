@@ -285,6 +285,12 @@ suite('package details builder', () => {
           assert.equal(packageDetails.scripts['lint:js'], 'eslint . --cache');
         });
 
+        test('that sensitive files are prevented from being committed', () => {
+          const packageDetails = buildPackageDetails({tests: {}, vcs: {}, author: {}});
+
+          assert.equal(packageDetails.scripts['lint:sensitive'], 'ban');
+        });
+
         test('that the travis config file is linted when the ci service is travis', () => {
           const packageDetails = buildPackageDetails({tests: {}, vcs: {}, author: {}, ci: 'Travis'});
 

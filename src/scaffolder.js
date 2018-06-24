@@ -50,6 +50,7 @@ export async function scaffold(options) {
     'cz-conventional-changelog',
     'greenkeeper-lockfile',
     'babel-register',
+    'ban-sensitive-files',
     ...'Package' === packageType ? ['rimraf', 'rollup'] : [],
     ...'Public' === visibility && unitTested ? ['codecov'] : [],
     ...unitTested ? ['mocha', 'chai', 'sinon', 'nyc'] : [],
