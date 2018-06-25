@@ -452,7 +452,10 @@ rollup.config.js`)
 
           await scaffold(options);
 
-          assert.calledWith(installer.default, [...defaultDependencies, 'rimraf', 'rollup']);
+          assert.calledWith(
+            installer.default,
+            [...defaultDependencies, 'rimraf', 'rollup', 'rollup-plugin-auto-external']
+          );
         });
       });
 

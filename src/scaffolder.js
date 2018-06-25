@@ -51,7 +51,7 @@ export async function scaffold(options) {
     'greenkeeper-lockfile',
     'babel-register',
     'ban-sensitive-files',
-    ...'Package' === packageType ? ['rimraf', 'rollup'] : [],
+    ...'Package' === packageType ? ['rimraf', 'rollup', 'rollup-plugin-auto-external'] : [],
     ...'Public' === visibility && unitTested ? ['codecov'] : [],
     ...unitTested ? ['mocha', 'chai', 'sinon', 'nyc'] : [],
     ...integrationTested ? ['cucumber', 'chai'] : [],
