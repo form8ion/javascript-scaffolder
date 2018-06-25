@@ -215,19 +215,19 @@ suite('package details builder', () => {
       test('that the `test` script is defined', () => {
         const packageDetails = buildPackageDetails({tests: {}, vcs: {}, author: {}});
 
-        assert.equal(packageDetails.scripts.test, 'run-s lint:*');
+        assert.equal(packageDetails.scripts.test, 'npm-run-all --print-label --parallel lint:*');
       });
 
       test('that the `test` script includes running tests when the project will be unit tested', () => {
         const packageDetails = buildPackageDetails({tests: {unit: true}, vcs: {}, author: {}});
 
-        assert.equal(packageDetails.scripts.test, 'run-s lint:* test:*');
+        assert.equal(packageDetails.scripts.test, 'npm-run-all --print-label --parallel lint:* test:*');
       });
 
       test('that the `test` script includes running tests when the project will be integration tested', () => {
         const packageDetails = buildPackageDetails({tests: {integration: true}, vcs: {}, author: {}});
 
-        assert.equal(packageDetails.scripts.test, 'run-s lint:* test:*');
+        assert.equal(packageDetails.scripts.test, 'npm-run-all --print-label --parallel lint:* test:*');
       });
 
       suite('clean', () => {
