@@ -2,10 +2,11 @@ import inquirer from 'inquirer';
 import sinon from 'sinon';
 import {assert} from 'chai';
 import any from '@travi/any';
-import * as exec from '../../third-party-wrappers/exec-as-promised';
-import * as npmConf from '../../third-party-wrappers/npm-conf';
-import {scopePromptShouldBePresented, shouldBeScopedPromptShouldBePresented} from '../../src/prompt-condiftionals';
-import {prompt, questionNames} from '../../src/prompts';
+import * as exec from '../../../third-party-wrappers/exec-as-promised';
+import * as npmConf from '../../../third-party-wrappers/npm-conf';
+import {scopePromptShouldBePresented, shouldBeScopedPromptShouldBePresented} from '../../../src/prompts/condiftionals';
+import {prompt} from '../../../src/prompts/questions';
+import {questionNames} from '../../../src/prompts/question-names';
 
 suite('prompts', () => {
   let sandbox;

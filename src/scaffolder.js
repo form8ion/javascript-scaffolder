@@ -7,9 +7,10 @@ import mkdir from '../third-party-wrappers/make-dir';
 import buildPackage from './package';
 import install from './install';
 import {validate} from './options-validator';
-import {questionNames, prompt} from './prompts';
+import {prompt} from './prompts/questions';
 import scaffoldCi from './ci';
 import scaffoldDocumentation from './documentation';
+import {questionNames} from './prompts/question-names';
 
 async function determineNodeVersionForProject(nodeVersionCategory) {
   const lowerCaseCategory = nodeVersionCategory.toLowerCase();
