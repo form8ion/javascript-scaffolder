@@ -1,1 +1,9 @@
 extends: '@travi/travi/rules/tests/base'
+
+rules:
+  operator-linebreak:
+    - error
+    - after
+    - overrides:
+        "?": before
+        ":": before

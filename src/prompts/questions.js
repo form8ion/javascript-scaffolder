@@ -1,20 +1,8 @@
 import {prompt as promptWithInquirer} from 'inquirer';
-import exec from '../third-party-wrappers/exec-as-promised';
-import {scopePromptShouldBePresented, shouldBeScopedPromptShouldBePresented} from './prompt-condiftionals';
-import npmConfFactory from '../third-party-wrappers/npm-conf';
-
-export const questionNames = {
-  NODE_VERSION_CATEGORY: 'nodeVersionCategory',
-  PACKAGE_TYPE: 'packageType',
-  SHOULD_BE_SCOPED: 'shouldBeScoped',
-  SCOPE: 'scope',
-  UNIT_TESTS: 'unitTests',
-  INTEGRATION_TESTS: 'integrationTests',
-  AUTHOR_NAME: 'authorName',
-  AUTHOR_EMAIL: 'authorEmail',
-  AUTHOR_URL: 'authorUrl',
-  CI_SERVICE: 'ciService'
-};
+import exec from '../../third-party-wrappers/exec-as-promised';
+import {scopePromptShouldBePresented, shouldBeScopedPromptShouldBePresented} from './condiftionals';
+import npmConfFactory from '../../third-party-wrappers/npm-conf';
+import {questionNames} from './question-names';
 
 const testingQuestions = [
   {
