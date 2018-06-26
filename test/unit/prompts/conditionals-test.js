@@ -3,7 +3,7 @@ import {assert} from 'chai';
 import {
   shouldBeScopedPromptShouldBePresented,
   scopePromptShouldBePresented
-} from '../../../src/prompts/condiftionals';
+} from '../../../src/prompts/conditionals';
 import {questionNames} from '../../../src/prompts/question-names';
 
 suite('javascript prompt conditionals', () => {

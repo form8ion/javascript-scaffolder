@@ -1,6 +1,6 @@
 import {prompt as promptWithInquirer} from 'inquirer';
 import exec from '../../third-party-wrappers/exec-as-promised';
-import {scopePromptShouldBePresented, shouldBeScopedPromptShouldBePresented} from './condiftionals';
+import {scopePromptShouldBePresented, shouldBeScopedPromptShouldBePresented} from './conditionals';
 import npmConfFactory from '../../third-party-wrappers/npm-conf';
 import {questionNames} from './question-names';
 
