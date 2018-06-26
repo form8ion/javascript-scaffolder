@@ -794,15 +794,21 @@ rollup.config.js`)
         const badge = any.simpleObject();
         const ciService = any.word();
         const packageType = any.word();
+        const nodeVersion = `v${any.integer()}.${any.integer()}.${any.integer()}`;
         prompts.prompt.resolves({
           [questionNames.NODE_VERSION_CATEGORY]: any.word(),
           [questionNames.CI_SERVICE]: ciService,
           [questionNames.PACKAGE_TYPE]: packageType
         });
+        exec.default
+          .withArgs('. ~/.nvm/nvm.sh && nvm ls-remote')
+          .resolves([...any.listOf(any.word), nodeVersion, ''].join('\n'));
         validator.validate
           .withArgs(options)
           .returns({projectRoot, projectName, vcs, configs: {}, ciServices, visibility});
-        ci.default.withArgs(ciServices, ciService, {projectRoot, vcs, visibility, packageType}).resolves({badge});
+        ci.default
+          .withArgs(ciServices, ciService, {projectRoot, vcs, visibility, packageType, nodeVersion})
+          .resolves({badge});
 
         const {badges} = await scaffold(options);
 

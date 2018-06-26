@@ -108,7 +108,7 @@ export async function scaffold(options) {
   ].filter(Boolean);
 
   const [ciService] = await Promise.all([
-    scaffoldCi(ciServices, answers[questionNames.CI_SERVICE], {projectRoot, vcs, visibility, packageType}),
+    scaffoldCi(ciServices, ci, {projectRoot, vcs, visibility, packageType, nodeVersion}),
     writeFile(`${projectRoot}/.nvmrc`, nodeVersion),
     writeFile(`${projectRoot}/package.json`, JSON.stringify(packageData)),
     configs.babelPreset && writeFile(`${projectRoot}/.babelrc`, JSON.stringify({presets: [configs.babelPreset.name]})),
