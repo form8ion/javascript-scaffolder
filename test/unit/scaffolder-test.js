@@ -6,12 +6,11 @@ import sinon from 'sinon';
 import * as prompts from '../../src/prompts/questions';
 import * as packageBuilder from '../../src/package';
 import * as installer from '../../src/install';
-import * as exec from '../../third-party-wrappers/exec-as-promised';
 import * as mkdir from '../../third-party-wrappers/make-dir';
 import * as optionsValidator from '../../src/options-validator';
 import * as ci from '../../src/ci';
 import * as documentation from '../../src/documentation';
-import * as nodeVersionFinder from '../../src/node-version';
+import * as nodeVersionHandler from '../../src/node-version';
 import {scaffold} from '../../src/scaffolder';
 import {questionNames} from '../../src/prompts/question-names';
 
@@ -32,13 +31,13 @@ suite('javascript project scaffolder', () => {
     sandbox.stub(fs, 'copyFile');
     sandbox.stub(packageBuilder, 'default');
     sandbox.stub(installer, 'default');
-    sandbox.stub(exec, 'default');
     sandbox.stub(prompts, 'prompt');
     sandbox.stub(mkdir, 'default');
     sandbox.stub(optionsValidator, 'validate');
     sandbox.stub(ci, 'default');
     sandbox.stub(documentation, 'default');
-    sandbox.stub(nodeVersionFinder, 'determineLatestVersionOf');
+    sandbox.stub(nodeVersionHandler, 'determineLatestVersionOf');
+    sandbox.stub(nodeVersionHandler, 'install');
 
     fs.writeFile.resolves();
     fs.copyFile.resolves();
@@ -73,7 +72,6 @@ suite('javascript project scaffolder', () => {
           .withArgs(options)
           .returns({projectRoot, projectName, visibility: 'Public', vcs: {}, configs: {}, ciServices});
         prompts.prompt.resolves({
-          [questionNames.NODE_VERSION_CATEGORY]: any.word(),
           [questionNames.PACKAGE_TYPE]: 'Package'
         });
 
@@ -107,7 +105,6 @@ rollup.config.js`)
           .withArgs(options)
           .returns({projectRoot, projectName, visibility: 'Public', vcs: {}, configs: {}, ciServices});
         prompts.prompt.resolves({
-          [questionNames.NODE_VERSION_CATEGORY]: any.word(),
           [questionNames.PACKAGE_TYPE]: 'Package',
           [questionNames.CI_SERVICE]: 'Travis'
         });
@@ -128,10 +125,7 @@ rollup.config.js`)
         optionsValidator.validate
           .withArgs(options)
           .returns({projectRoot, projectName, visibility: 'Public', vcs: {host: 'GitHub'}, configs: {}, ciServices});
-        prompts.prompt.resolves({
-          [questionNames.NODE_VERSION_CATEGORY]: any.word(),
-          [questionNames.PACKAGE_TYPE]: 'Package'
-        });
+        prompts.prompt.resolves({[questionNames.PACKAGE_TYPE]: 'Package'});
         packageBuilder.default.returns({});
 
         await scaffold(options);
@@ -149,10 +143,7 @@ rollup.config.js`)
         optionsValidator.validate
           .withArgs(options)
           .returns({projectRoot, projectName, visibility: 'Public', vcs: {}, configs: {}, ciServices});
-        prompts.prompt.resolves({
-          [questionNames.NODE_VERSION_CATEGORY]: any.word(),
-          [questionNames.PACKAGE_TYPE]: any.word()
-        });
+        prompts.prompt.resolves({[questionNames.PACKAGE_TYPE]: any.word()});
 
         await scaffold(options);
 
@@ -164,10 +155,7 @@ rollup.config.js`)
       test('that a canary test is included when the project will be unit tested', async () => {
         const pathToCreatedDirectory = any.string();
         optionsValidator.validate.withArgs(options).returns({projectRoot, vcs: {}, configs: {}, ciServices});
-        prompts.prompt.resolves({
-          [questionNames.NODE_VERSION_CATEGORY]: any.word(),
-          [questionNames.UNIT_TESTS]: true
-        });
+        prompts.prompt.resolves({[questionNames.UNIT_TESTS]: true});
         mkdir.default.withArgs(`${projectRoot}/test/unit`).resolves(pathToCreatedDirectory);
 
         await scaffold(options);
@@ -191,10 +179,7 @@ rollup.config.js`)
 
       test('that a canary test is not included when the project will be not unit tested', async () => {
         optionsValidator.validate.withArgs(options).returns({projectRoot, vcs: {}, configs: {}, ciServices});
-        prompts.prompt.resolves({
-          [questionNames.NODE_VERSION_CATEGORY]: any.word(),
-          [questionNames.UNIT_TESTS]: false
-        });
+        prompts.prompt.resolves({[questionNames.UNIT_TESTS]: false});
 
         await scaffold(options);
 
@@ -212,10 +197,7 @@ rollup.config.js`)
         optionsValidator.validate
           .withArgs(options)
           .returns({projectRoot, vcs: {}, configs: {eslint: {prefix: eslintConfigPrefix}}, ciServices});
-        prompts.prompt.resolves({
-          [questionNames.NODE_VERSION_CATEGORY]: any.word(),
-          [questionNames.UNIT_TESTS]: false
-        });
+        prompts.prompt.resolves({[questionNames.UNIT_TESTS]: false});
 
         await scaffold(options);
 
@@ -230,10 +212,7 @@ rollup.config.js`)
           optionsValidator.validate
             .withArgs(options)
             .returns({projectRoot, vcs: {}, configs: {eslint: {prefix: eslintConfigPrefix}}, ciServices});
-          prompts.prompt.resolves({
-            [questionNames.NODE_VERSION_CATEGORY]: any.word(),
-            [questionNames.UNIT_TESTS]: true
-          });
+          prompts.prompt.resolves({[questionNames.UNIT_TESTS]: true});
           mkdir.default.resolves();
 
           await scaffold(options);
@@ -253,10 +232,7 @@ rollup.config.js`)
 
       test('that the no config is added if the config prefix is not provided', async () => {
         optionsValidator.validate.withArgs(options).returns({projectRoot, vcs: {}, configs: {}, ciServices});
-        prompts.prompt.resolves({
-          [questionNames.NODE_VERSION_CATEGORY]: any.word(),
-          [questionNames.UNIT_TESTS]: true
-        });
+        prompts.prompt.resolves({[questionNames.UNIT_TESTS]: true});
         mkdir.default.resolves();
 
         await scaffold(options);
@@ -272,10 +248,7 @@ rollup.config.js`)
           optionsValidator.validate
             .withArgs(options)
             .returns({projectRoot, vcs: {}, configs: {eslint: {prefix: eslintConfigPrefix}}, ciServices});
-          prompts.prompt.resolves({
-            [questionNames.NODE_VERSION_CATEGORY]: any.word(),
-            [questionNames.UNIT_TESTS]: false
-          });
+          prompts.prompt.resolves({[questionNames.UNIT_TESTS]: false});
 
           await scaffold(options);
 
@@ -287,10 +260,7 @@ rollup.config.js`)
           optionsValidator.validate
             .withArgs(options)
             .returns({projectRoot, vcs: {}, configs: {eslint: {prefix: eslintConfigPrefix}}, ciServices});
-          prompts.prompt.resolves({
-            [questionNames.NODE_VERSION_CATEGORY]: any.word(),
-            [questionNames.UNIT_TESTS]: true
-          });
+          prompts.prompt.resolves({[questionNames.UNIT_TESTS]: true});
           mkdir.default.resolves();
 
           await scaffold(options);
@@ -312,7 +282,7 @@ rollup.config.js`)
         optionsValidator.validate
           .withArgs(options)
           .returns({projectRoot, vcs: {}, configs: {commitlint: {name: commitlintConfigPrefix}}, ciServices});
-        prompts.prompt.resolves({[questionNames.NODE_VERSION_CATEGORY]: any.word()});
+        prompts.prompt.resolves({});
 
         await scaffold(options);
 
@@ -325,7 +295,7 @@ rollup.config.js`)
 
       test('that the config is not added to the root of the project if the package is not defined', async () => {
         optionsValidator.validate.withArgs(options).returns({projectRoot, vcs: {}, configs: {}, ciServices});
-        prompts.prompt.resolves({[questionNames.NODE_VERSION_CATEGORY]: any.word()});
+        prompts.prompt.resolves({});
 
         await scaffold(options);
 
@@ -339,10 +309,7 @@ rollup.config.js`)
           optionsValidator.validate
             .withArgs(options)
             .returns({visibility, projectRoot, vcs: {}, configs: {}, ciServices});
-          prompts.prompt.resolves({
-            [questionNames.NODE_VERSION_CATEGORY]: any.word(),
-            [questionNames.PACKAGE_TYPE]: 'Application'
-          });
+          prompts.prompt.resolves({[questionNames.PACKAGE_TYPE]: 'Application'});
 
           await scaffold(options);
 
@@ -355,10 +322,7 @@ rollup.config.js`)
           optionsValidator.validate
             .withArgs(options)
             .returns({visibility, projectRoot, vcs: {}, configs: {}, ciServices});
-          prompts.prompt.resolves({
-            [questionNames.NODE_VERSION_CATEGORY]: any.word(),
-            [questionNames.PACKAGE_TYPE]: 'Package'
-          });
+          prompts.prompt.resolves({[questionNames.PACKAGE_TYPE]: 'Package'});
 
           await scaffold(options);
 
@@ -393,7 +357,6 @@ rollup.config.js`)
         [questionNames.PACKAGE_TYPE]: packageType,
         [questionNames.UNIT_TESTS]: tests.unit,
         [questionNames.INTEGRATION_TESTS]: tests.integration,
-        [questionNames.NODE_VERSION_CATEGORY]: any.word(),
         [questionNames.AUTHOR_NAME]: authorName,
         [questionNames.AUTHOR_EMAIL]: authorEmail,
         [questionNames.AUTHOR_URL]: authorUrl,
@@ -436,7 +399,7 @@ rollup.config.js`)
       suite('scripts', () => {
         test('that scripting tools are installed', async () => {
           optionsValidator.validate.withArgs(options).returns({vcs: {}, configs: {}, ciServices});
-          prompts.prompt.resolves({[questionNames.NODE_VERSION_CATEGORY]: any.word()});
+          prompts.prompt.resolves({});
 
           await scaffold(options);
 
@@ -445,10 +408,7 @@ rollup.config.js`)
 
         test('that the appropriate packages are installed for `Package` type projects', async () => {
           optionsValidator.validate.withArgs(options).returns({vcs: {}, configs: {}, ciServices});
-          prompts.prompt.resolves({
-            [questionNames.NODE_VERSION_CATEGORY]: any.word(),
-            [questionNames.PACKAGE_TYPE]: 'Package'
-          });
+          prompts.prompt.resolves({[questionNames.PACKAGE_TYPE]: 'Package'});
 
           await scaffold(options);
 
@@ -467,9 +427,7 @@ rollup.config.js`)
           optionsValidator.validate
             .withArgs(options)
             .returns({vcs: {}, configs: {eslint: {packageName: eslintConfigName}}, overrides, ciServices});
-          prompts.prompt
-            .withArgs(overrides, Object.keys(ciServices))
-            .resolves({[questionNames.NODE_VERSION_CATEGORY]: any.word()});
+          prompts.prompt.withArgs(overrides, Object.keys(ciServices)).resolves({});
 
           await scaffold(options);
 
@@ -480,9 +438,7 @@ rollup.config.js`)
           optionsValidator.validate
             .withArgs(options)
             .returns({vcs: {}, configs: {commitlint: {packageName: commitlintConfigName}}, overrides, ciServices});
-          prompts.prompt
-            .withArgs(overrides, Object.keys(ciServices))
-            .resolves({[questionNames.NODE_VERSION_CATEGORY]: any.word()});
+          prompts.prompt.withArgs(overrides, Object.keys(ciServices)).resolves({});
 
           await scaffold(options);
 
@@ -493,12 +449,7 @@ rollup.config.js`)
           optionsValidator.validate
             .withArgs(options)
             .returns({vcs: {}, configs: {}, overrides, ciServices});
-          prompts.prompt
-            .withArgs(overrides, Object.keys(ciServices))
-            .resolves({
-              [questionNames.NODE_VERSION_CATEGORY]: any.word(),
-              [questionNames.CI_SERVICE]: 'Travis'
-            });
+          prompts.prompt.withArgs(overrides, Object.keys(ciServices)).resolves({[questionNames.CI_SERVICE]: 'Travis'});
 
           await scaffold(options);
 
@@ -513,9 +464,7 @@ rollup.config.js`)
           optionsValidator.validate
             .withArgs(options)
             .returns({vcs: {}, configs: {babelPreset: {packageName: babelPresetName}}, overrides, ciServices});
-          prompts.prompt
-            .withArgs(overrides, Object.keys(ciServices))
-            .resolves({[questionNames.NODE_VERSION_CATEGORY]: any.word()});
+          prompts.prompt.withArgs(overrides, Object.keys(ciServices)).resolves({});
 
           await scaffold(options);
 
@@ -526,10 +475,7 @@ rollup.config.js`)
       suite('testing', () => {
         test('that mocha, chai, and sinon are installed when the project will be unit tested', async () => {
           optionsValidator.validate.withArgs(options).returns({vcs: {}, configs: {}, ciServices});
-          prompts.prompt.resolves({
-            [questionNames.NODE_VERSION_CATEGORY]: any.word(),
-            [questionNames.UNIT_TESTS]: true
-          });
+          prompts.prompt.resolves({[questionNames.UNIT_TESTS]: true});
           mkdir.default.resolves();
 
           await scaffold(options);
@@ -539,10 +485,7 @@ rollup.config.js`)
 
         test('that mocha, chai, and sinon are not installed when the project will not be unit tested', async () => {
           optionsValidator.validate.withArgs(options).returns({vcs: {}, configs: {}, ciServices});
-          prompts.prompt.resolves({
-            [questionNames.NODE_VERSION_CATEGORY]: any.word(),
-            [questionNames.UNIT_TESTS]: false
-          });
+          prompts.prompt.resolves({[questionNames.UNIT_TESTS]: false});
 
           await scaffold(options);
 
@@ -551,10 +494,7 @@ rollup.config.js`)
 
         test('that cucumber and chai are installed when the project will be integration tested', async () => {
           optionsValidator.validate.withArgs(options).returns({vcs: {}, configs: {}, ciServices});
-          prompts.prompt.resolves({
-            [questionNames.NODE_VERSION_CATEGORY]: any.word(),
-            [questionNames.INTEGRATION_TESTS]: true
-          });
+          prompts.prompt.resolves({[questionNames.INTEGRATION_TESTS]: true});
 
           await scaffold(options);
 
@@ -563,10 +503,7 @@ rollup.config.js`)
 
         test('that cucumber and chai are not installed when the project will not be integration tested', async () => {
           optionsValidator.validate.withArgs(options).returns({vcs: {}, configs: {}, ciServices});
-          prompts.prompt.resolves({
-            [questionNames.NODE_VERSION_CATEGORY]: any.word(),
-            [questionNames.INTEGRATION_TESTS]: false
-          });
+          prompts.prompt.resolves({[questionNames.INTEGRATION_TESTS]: false});
 
           await scaffold(options);
 
@@ -576,7 +513,6 @@ rollup.config.js`)
         test('that unique dependencies are requested when various reasons overlap', async () => {
           optionsValidator.validate.withArgs(options).returns({vcs: {}, configs: {}, ciServices});
           prompts.prompt.resolves({
-            [questionNames.NODE_VERSION_CATEGORY]: any.word(),
             [questionNames.UNIT_TESTS]: true,
             [questionNames.INTEGRATION_TESTS]: true
           });
@@ -589,10 +525,7 @@ rollup.config.js`)
 
         test('that codecov is installed for public projects', async () => {
           optionsValidator.validate.withArgs(options).returns({visibility: 'Public', vcs: {}, configs: {}, ciServices});
-          prompts.prompt.resolves({
-            [questionNames.NODE_VERSION_CATEGORY]: any.word(),
-            [questionNames.UNIT_TESTS]: true
-          });
+          prompts.prompt.resolves({[questionNames.UNIT_TESTS]: true});
           mkdir.default.resolves();
 
           await scaffold(options);
@@ -604,10 +537,7 @@ rollup.config.js`)
           optionsValidator.validate
             .withArgs(options)
             .returns({visibility: 'Private', vcs: {}, configs: {}, ciServices});
-          prompts.prompt.resolves({
-            [questionNames.NODE_VERSION_CATEGORY]: any.word(),
-            [questionNames.UNIT_TESTS]: true
-          });
+          prompts.prompt.resolves({[questionNames.UNIT_TESTS]: true});
           mkdir.default.resolves();
 
           await scaffold(options);
@@ -617,10 +547,7 @@ rollup.config.js`)
 
         test('that codecov is not installed for projects that are not unit tested', async () => {
           optionsValidator.validate.withArgs(options).returns({visibility: 'Public', vcs: {}, configs: {}, ciServices});
-          prompts.prompt.resolves({
-            [questionNames.NODE_VERSION_CATEGORY]: any.word(),
-            [questionNames.UNIT_TESTS]: false
-          });
+          prompts.prompt.resolves({[questionNames.UNIT_TESTS]: false});
 
           await scaffold(options);
 
@@ -635,10 +562,9 @@ rollup.config.js`)
       optionsValidator.validate
         .withArgs(options)
         .returns({projectRoot, projectName, visibility, vcs: {}, configs: {}, overrides, ciServices});
-      prompts.prompt.withArgs(overrides, Object.keys(ciServices), visibility).resolves({
-        [questionNames.NODE_VERSION_CATEGORY]: any.word(),
-        [questionNames.PACKAGE_TYPE]: 'Application'
-      });
+      prompts.prompt
+        .withArgs(overrides, Object.keys(ciServices), visibility)
+        .resolves({[questionNames.PACKAGE_TYPE]: 'Application'});
 
       return scaffold(options).then(() => assert.calledWith(
         fs.writeFile,
@@ -651,10 +577,7 @@ rollup.config.js`)
       optionsValidator.validate
         .withArgs(options)
         .returns({projectRoot, projectName, visibility: 'Public', vcs: {}, configs: {}, ciServices});
-      prompts.prompt.resolves({
-        [questionNames.NODE_VERSION_CATEGORY]: any.word(),
-        [questionNames.PACKAGE_TYPE]: 'Package'
-      });
+      prompts.prompt.resolves({[questionNames.PACKAGE_TYPE]: 'Package'});
 
       return scaffold(options).then(() => assert.neverCalledWith(fs.writeFile, `${projectRoot}/.npmrc`));
     });
@@ -668,10 +591,7 @@ rollup.config.js`)
         optionsValidator.validate
           .withArgs(options)
           .returns({projectRoot, projectName, visibility: 'Public', vcs: {}, configs: {}, ciServices});
-        prompts.prompt.resolves({
-          [questionNames.NODE_VERSION_CATEGORY]: any.word(),
-          [questionNames.PACKAGE_TYPE]: 'Package'
-        });
+        prompts.prompt.resolves({[questionNames.PACKAGE_TYPE]: 'Package'});
 
         const {badges} = await scaffold(options);
 
@@ -686,10 +606,7 @@ rollup.config.js`)
         optionsValidator.validate
           .withArgs(options)
           .returns({projectRoot, projectName, visibility: 'Private', vcs: {}, configs: {}, ciServices});
-        prompts.prompt.resolves({
-          [questionNames.NODE_VERSION_CATEGORY]: any.word(),
-          [questionNames.PACKAGE_TYPE]: 'Package'
-        });
+        prompts.prompt.resolves({[questionNames.PACKAGE_TYPE]: 'Package'});
 
         const {badges} = await scaffold(options);
 
@@ -700,10 +617,7 @@ rollup.config.js`)
         optionsValidator.validate
           .withArgs(options)
           .returns({projectRoot, projectName, visibility: 'Public', vcs: {}, configs: {}, ciServices});
-        prompts.prompt.resolves({
-          [questionNames.NODE_VERSION_CATEGORY]: any.word(),
-          [questionNames.PACKAGE_TYPE]: any.word()
-        });
+        prompts.prompt.resolves({[questionNames.PACKAGE_TYPE]: any.word()});
 
         const {badges} = await scaffold(options);
 
@@ -716,7 +630,7 @@ rollup.config.js`)
           .withArgs(options)
           .returns({projectRoot, projectName, vcs: {}, configs: {}, ciServices});
         packageBuilder.default.returns({name: packageName});
-        prompts.prompt.resolves({[questionNames.NODE_VERSION_CATEGORY]: any.word()});
+        prompts.prompt.resolves({});
 
         const {badges} = await scaffold(options);
 
@@ -739,10 +653,7 @@ rollup.config.js`)
             .withArgs(options)
             .returns({projectRoot, projectName, vcs: {}, configs: {}, ciServices});
           packageBuilder.default.returns({name: packageName});
-          prompts.prompt.resolves({
-            [questionNames.NODE_VERSION_CATEGORY]: any.word(),
-            [questionNames.PACKAGE_TYPE]: 'Package'
-          });
+          prompts.prompt.resolves({[questionNames.PACKAGE_TYPE]: 'Package'});
 
           const {badges} = await scaffold(options);
 
@@ -759,10 +670,7 @@ rollup.config.js`)
             .withArgs(options)
             .returns({projectRoot, projectName, vcs: {}, configs: {}, ciServices});
           packageBuilder.default.returns({name: packageName});
-          prompts.prompt.resolves({
-            [questionNames.NODE_VERSION_CATEGORY]: any.word(),
-            [questionNames.PACKAGE_TYPE]: any.word()
-          });
+          prompts.prompt.resolves({[questionNames.PACKAGE_TYPE]: any.word()});
 
           const {badges} = await scaffold(options);
 
@@ -781,7 +689,7 @@ rollup.config.js`)
           [questionNames.CI_SERVICE]: ciService,
           [questionNames.PACKAGE_TYPE]: packageType
         });
-        nodeVersionFinder.determineLatestVersionOf.withArgs(versionCategory).returns(version);
+        nodeVersionHandler.determineLatestVersionOf.withArgs(versionCategory).returns(version);
         optionsValidator.validate
           .withArgs(options)
           .returns({projectRoot, projectName, vcs, configs: {}, ciServices, visibility});
@@ -792,15 +700,13 @@ rollup.config.js`)
         const {badges} = await scaffold(options);
 
         assert.equal(badges.status.ci, badge);
+        assert.calledWith(nodeVersionHandler.install, versionCategory);
       });
 
       test('that the ci badge is not provided when not defined', async () => {
         const vcs = any.simpleObject();
         const ciService = any.word();
-        prompts.prompt.resolves({
-          [questionNames.NODE_VERSION_CATEGORY]: any.word(),
-          [questionNames.CI_SERVICE]: ciService
-        });
+        prompts.prompt.resolves({[questionNames.CI_SERVICE]: ciService});
         optionsValidator.validate
           .withArgs(options)
           .returns({projectRoot, projectName, vcs, configs: {}, ciServices, visibility});
@@ -813,10 +719,7 @@ rollup.config.js`)
       suite('coverage', () => {
         test('that the coverage badge is provided', async () => {
           const vcs = {owner: any.word(), name: any.word()};
-          prompts.prompt.resolves({
-            [questionNames.NODE_VERSION_CATEGORY]: any.word(),
-            [questionNames.UNIT_TESTS]: true
-          });
+          prompts.prompt.resolves({[questionNames.UNIT_TESTS]: true});
           optionsValidator.validate
             .returns({projectRoot, projectName, vcs, configs: {}, ciServices, visibility: 'Public'});
           mkdir.default.resolves();
@@ -831,10 +734,7 @@ rollup.config.js`)
         });
 
         test('that the coverage badge is not provided for private projects', async () => {
-          prompts.prompt.resolves({
-            [questionNames.NODE_VERSION_CATEGORY]: any.word(),
-            [questionNames.UNIT_TESTS]: true
-          });
+          prompts.prompt.resolves({[questionNames.UNIT_TESTS]: true});
           optionsValidator.validate
             .returns({projectRoot, projectName, vcs: {}, configs: {}, ciServices, visibility: 'Private'});
           mkdir.default.resolves();
@@ -845,10 +745,7 @@ rollup.config.js`)
         });
 
         test('that the coverage badge is not provided when a project is not unit tested', async () => {
-          prompts.prompt.resolves({
-            [questionNames.NODE_VERSION_CATEGORY]: any.word(),
-            [questionNames.UNIT_TESTS]: false
-          });
+          prompts.prompt.resolves({[questionNames.UNIT_TESTS]: false});
           optionsValidator.validate
             .returns({projectRoot, projectName, vcs: {}, configs: {}, ciServices, visibility: 'Public'});
 
@@ -864,7 +761,7 @@ rollup.config.js`)
         optionsValidator.validate
           .withArgs(options)
           .returns({projectRoot, projectName, visibility: 'Public', vcs: {}, configs: {}, ciServices});
-        prompts.prompt.resolves({[questionNames.NODE_VERSION_CATEGORY]: any.word()});
+        prompts.prompt.resolves({});
 
         const {vcsIgnore} = await scaffold(options);
 
@@ -882,7 +779,7 @@ rollup.config.js`)
         optionsValidator.validate
           .withArgs(options)
           .returns({projectRoot, projectName, visibility: any.word(), vcs: {}, configs: {}, ciServices});
-        prompts.prompt.resolves({[questionNames.NODE_VERSION_CATEGORY]: any.word()});
+        prompts.prompt.resolves({});
 
         const {verificationCommand} = await scaffold(options);
 
@@ -896,7 +793,7 @@ rollup.config.js`)
         optionsValidator.validate
           .withArgs(options)
           .returns({projectRoot, projectName, visibility: any.word(), vcs: {}, configs: {}, ciServices});
-        prompts.prompt.resolves({[questionNames.NODE_VERSION_CATEGORY]: any.word()});
+        prompts.prompt.resolves({});
         packageBuilder.default.returns({homepage});
 
         const {projectDetails} = await scaffold(options);
@@ -908,7 +805,7 @@ rollup.config.js`)
         optionsValidator.validate
           .withArgs(options)
           .returns({projectRoot, projectName, visibility: any.word(), vcs: {}, configs: {}, ciServices});
-        prompts.prompt.resolves({[questionNames.NODE_VERSION_CATEGORY]: any.word()});
+        prompts.prompt.resolves({});
         packageBuilder.default.returns({});
 
         const {projectDetails} = await scaffold(options);
@@ -924,7 +821,6 @@ rollup.config.js`)
         const packageType = any.word();
         const packageName = any.string();
         prompts.prompt.resolves({
-          [questionNames.NODE_VERSION_CATEGORY]: any.word(),
           [questionNames.PACKAGE_TYPE]: packageType,
           [questionNames.SCOPE]: scope
         });

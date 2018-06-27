@@ -2,7 +2,7 @@ import sinon from 'sinon';
 import any from '@travi/any';
 import {assert} from 'chai';
 import * as exec from '../../third-party-wrappers/exec-as-promised';
-import {determineLatestVersionOf} from '../../src/node-version';
+import {determineLatestVersionOf, install} from '../../src/node-version';
 
 suite('node version', () => {
   let sandbox;
@@ -30,5 +30,11 @@ suite('node version', () => {
       .resolves([...any.listOf(any.word), version, ''].join('\n'));
 
     assert.equal(await determineLatestVersionOf('LTS'), version);
+  });
+
+  test('that the node version gets installed', async () => {
+    await install(any.word());
+
+    assert.calledWith(exec.default, '. ~/.nvm/nvm.sh && nvm install', {silent: false});
   });
 });

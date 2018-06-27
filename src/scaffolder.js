@@ -2,7 +2,6 @@ import {resolve} from 'path';
 import {copyFile, writeFile} from 'mz/fs';
 import chalk from 'chalk';
 import uniq from 'lodash.uniq';
-import exec from '../third-party-wrappers/exec-as-promised';
 import mkdir from '../third-party-wrappers/make-dir';
 import buildPackage from './package';
 import install from './install';
@@ -10,7 +9,7 @@ import {validate} from './options-validator';
 import {prompt} from './prompts/questions';
 import scaffoldCi from './ci';
 import scaffoldDocumentation from './documentation';
-import {determineLatestVersionOf} from './node-version';
+import {determineLatestVersionOf, install as installNodeVersion} from './node-version';
 import {questionNames} from './prompts/question-names';
 
 export async function scaffold(options) {
@@ -33,6 +32,7 @@ export async function scaffold(options) {
   const packageType = answers[questionNames.PACKAGE_TYPE];
   const ci = answers[questionNames.CI_SERVICE];
   const scope = answers[questionNames.SCOPE];
+  const nodeVersionCategory = answers[questionNames.NODE_VERSION_CATEGORY];
 
   const devDependencies = uniq([
     configs.eslint && configs.eslint.packageName,
@@ -51,7 +51,7 @@ export async function scaffold(options) {
     ...'Travis' === ci ? ['travis-lint'] : []
   ].filter(Boolean));
 
-  const nodeVersion = await determineLatestVersionOf(answers[questionNames.NODE_VERSION_CATEGORY]);
+  const nodeVersion = await determineLatestVersionOf(nodeVersionCategory);
 
   console.log(chalk.grey('Writing project files'));      // eslint-disable-line no-console
 
@@ -129,9 +129,7 @@ export async function scaffold(options) {
     ]))
   ]);
 
-  const versionCategory = answers[questionNames.NODE_VERSION_CATEGORY].toLowerCase();
-  console.log(chalk.grey(`Installing ${versionCategory} version of node using nvm`));  // eslint-disable-line no-console
-  await exec('. ~/.nvm/nvm.sh && nvm install', {silent: false});
+  await installNodeVersion(nodeVersionCategory);
 
   console.log(chalk.grey('Installing devDependencies'));          // eslint-disable-line no-console
   await install(devDependencies);

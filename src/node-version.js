@@ -12,3 +12,10 @@ export async function determineLatestVersionOf(nodeVersionCategory) {
 
   return lsLine.match(/(v[0-9]+\.[0-9]+\.[0-9]+)/)[1];
 }
+
+export function install(nodeVersionCategory) {
+  const category = nodeVersionCategory.toLowerCase();
+  console.log(chalk.grey(`Installing ${category} version of node using nvm`));  // eslint-disable-line no-console
+
+  return exec('. ~/.nvm/nvm.sh && nvm install', {silent: false});
+}
