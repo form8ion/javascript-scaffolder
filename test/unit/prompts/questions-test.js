@@ -4,6 +4,7 @@ import {assert} from 'chai';
 import any from '@travi/any';
 import * as exec from '../../../third-party-wrappers/exec-as-promised';
 import * as npmConf from '../../../third-party-wrappers/npm-conf';
+import * as validators from '../../../src/prompts/validators';
 import {scopePromptShouldBePresented, shouldBeScopedPromptShouldBePresented} from '../../../src/prompts/conditionals';
 import {prompt} from '../../../src/prompts/questions';
 import {questionNames} from '../../../src/prompts/question-names';
@@ -17,6 +18,7 @@ suite('prompts', () => {
     sandbox.stub(inquirer, 'prompt');
     sandbox.stub(npmConf, 'default');
     sandbox.stub(exec, 'default');
+    sandbox.stub(validators, 'scope');
   });
 
   teardown(() => sandbox.restore());
@@ -26,16 +28,19 @@ suite('prompts', () => {
     const authorEmail = any.string();
     const authorUrl = any.url();
     const npmUser = any.word();
+    const visibility = any.word();
     const get = sinon.stub();
     const ciServices = any.listOf(any.string);
+    const scopeValidator = () => undefined;
     npmConf.default.returns({get});
     exec.default.withArgs('npm whoami').resolves(npmUser);
     get.withArgs('init.author.name').returns(authorName);
     get.withArgs('init.author.email').returns(authorEmail);
     get.withArgs('init.author.url').returns(authorUrl);
+    validators.scope.withArgs(visibility).returns(scopeValidator);
     inquirer.prompt.resolves();
 
-    return prompt({}, ciServices).then(() => assert.calledWith(
+    return prompt({}, ciServices, visibility).then(() => assert.calledWith(
       inquirer.prompt,
       [
         {
@@ -63,6 +68,7 @@ suite('prompts', () => {
           name: questionNames.SCOPE,
           message: 'What is the scope?',
           when: scopePromptShouldBePresented,
+          validate: scopeValidator,
           default: npmUser
         },
         {

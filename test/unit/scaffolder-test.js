@@ -633,8 +633,8 @@ rollup.config.js`)
     test('that the project is configured to use exact dependency versions if it is an application', () => {
       validator.validate
         .withArgs(options)
-        .returns({projectRoot, projectName, visibility: 'Public', vcs: {}, configs: {}, overrides, ciServices});
-      prompts.prompt.withArgs(overrides, Object.keys(ciServices)).resolves({
+        .returns({projectRoot, projectName, visibility, vcs: {}, configs: {}, overrides, ciServices});
+      prompts.prompt.withArgs(overrides, Object.keys(ciServices), visibility).resolves({
         [questionNames.NODE_VERSION_CATEGORY]: any.word(),
         [questionNames.PACKAGE_TYPE]: 'Application'
       });

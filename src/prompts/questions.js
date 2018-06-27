@@ -3,6 +3,7 @@ import exec from '../../third-party-wrappers/exec-as-promised';
 import {scopePromptShouldBePresented, shouldBeScopedPromptShouldBePresented} from './conditionals';
 import npmConfFactory from '../../third-party-wrappers/npm-conf';
 import {questionNames} from './question-names';
+import {scope as validateScope} from './validators';
 
 const testingQuestions = [
   {
@@ -39,7 +40,7 @@ function authorQuestions({name, email, url}) {
   ];
 }
 
-export async function prompt({npmAccount, author}, ciServices) {
+export async function prompt({npmAccount, author}, ciServices, visibility) {
   const npmConf = npmConfFactory();
 
   return promptWithInquirer([
@@ -68,6 +69,7 @@ export async function prompt({npmAccount, author}, ciServices) {
       name: questionNames.SCOPE,
       message: 'What is the scope?',
       when: scopePromptShouldBePresented,
+      validate: validateScope(visibility),
       default: npmAccount || await exec('npm whoami')
     },
     ...authorQuestions(author || {
