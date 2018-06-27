@@ -10,16 +10,8 @@ import {validate} from './options-validator';
 import {prompt} from './prompts/questions';
 import scaffoldCi from './ci';
 import scaffoldDocumentation from './documentation';
+import {determineLatestVersionOf} from './node-version';
 import {questionNames} from './prompts/question-names';
-
-async function determineNodeVersionForProject(nodeVersionCategory) {
-  const lowerCaseCategory = nodeVersionCategory.toLowerCase();
-  console.log(chalk.grey(`Determining ${lowerCaseCategory} version of node`));    // eslint-disable-line no-console
-  const nvmLsOutput = await exec(`. ~/.nvm/nvm.sh && nvm ls-remote${('LTS' === nodeVersionCategory) ? ' --lts' : ''}`);
-  const lsLines = nvmLsOutput.split('\n');
-  const lsLine = lsLines[lsLines.length - 2];
-  return lsLine.match(/(v[0-9]+\.[0-9]+\.[0-9]+)/)[1];
-}
 
 export async function scaffold(options) {
   console.log(chalk.blue('Initializing JavaScript project'));     // eslint-disable-line no-console
@@ -59,7 +51,7 @@ export async function scaffold(options) {
     ...'Travis' === ci ? ['travis-lint'] : []
   ].filter(Boolean));
 
-  const nodeVersion = await determineNodeVersionForProject(answers[questionNames.NODE_VERSION_CATEGORY]);
+  const nodeVersion = await determineLatestVersionOf(answers[questionNames.NODE_VERSION_CATEGORY]);
 
   console.log(chalk.grey('Writing project files'));      // eslint-disable-line no-console
 
