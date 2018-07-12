@@ -203,6 +203,7 @@ $ npm test
 
 * [project-scaffolder](https://npm.im/@travi/project-scaffolder)
 * [scaffolder-sub-command](https://github.com/travi/scaffolder-sub-command)
+* [travis-scaffolder-javascript](https://github.com/travi/travis-scaffolder-javascript)
 * [cli](https://npm.im/@travi/cli)
 
 [npm-link]: https://www.npmjs.com/package/@travi/javascript-scaffolder
