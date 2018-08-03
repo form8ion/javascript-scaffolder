@@ -363,7 +363,7 @@ suite('package details builder', () => {
         test('that the build is executed before publishing', () => {
           const packageDetails = buildPackageDetails({tests: {}, vcs: {}, author: {}, packageType: 'Package'});
 
-          assert.equal(packageDetails.scripts.prepublishOnly, 'run-s build');
+          assert.equal(packageDetails.scripts.prepack, 'run-s build');
         });
       });
     });

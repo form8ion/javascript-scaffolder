@@ -38,7 +38,7 @@ export default function ({projectName, visibility, scope, packageType, license, 
         build: 'run-s clean build:*',
         'build:js': 'rollup -c',
         watch: 'run-s \'build:js -- --watch\'',
-        prepublishOnly: 'run-s build'
+        prepack: 'run-s build'
       },
       'greenkeeper:update-lockfile': 'greenkeeper-lockfile-update',
       'greenkeeper:upload-lockfile': 'greenkeeper-lockfile-upload'
