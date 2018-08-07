@@ -58,13 +58,13 @@ export async function prompt({npmAccount, author}, ciServices, visibility) {
       choices: ['Application', 'Package'],
       default: 'Package'
     },
-    {
+    ...'Private' === visibility ? [] : [{
       name: questionNames.SHOULD_BE_SCOPED,
       message: 'Should this package be scoped?',
       type: 'confirm',
       when: shouldBeScopedPromptShouldBePresented,
       default: true
-    },
+    }],
     {
       name: questionNames.SCOPE,
       message: 'What is the scope?',
