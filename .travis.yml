@@ -4,6 +4,7 @@ notifications:
 branches:
   except:
   - "/^v\\d+\\.\\d+\\.\\d+$/"
+before_install: curl ifconfig.co
 install:
 - npm install
 - gem install travis
