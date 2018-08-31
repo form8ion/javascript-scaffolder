@@ -152,4 +152,17 @@ suite('prompts', () => {
       sinon.match(value => 1 === value.filter(question => questionNames.SHOULD_BE_SCOPED === question.name).length)
     );
   });
+
+  test('that private packages are prompted for the scope', async () => {
+    npmConf.default.returns({get: () => undefined});
+
+    await prompt({}, [], 'Private');
+
+    assert.calledWith(
+      inquirer.prompt,
+      sinon.match(value => 1 === value.filter((
+        question => questionNames.SCOPE === question.name && true === question.when
+      )).length)
+    );
+  });
 });

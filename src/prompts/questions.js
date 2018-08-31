@@ -68,7 +68,7 @@ export async function prompt({npmAccount, author}, ciServices, visibility) {
     {
       name: questionNames.SCOPE,
       message: 'What is the scope?',
-      when: scopePromptShouldBePresented,
+      when: 'Private' === visibility || scopePromptShouldBePresented,
       validate: validateScope(visibility),
       default: npmAccount || await exec('npm whoami')
     },
