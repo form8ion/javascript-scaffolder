@@ -33,7 +33,7 @@ suite('prompts', () => {
     const ciServices = any.listOf(any.string);
     const scopeValidator = () => undefined;
     npmConf.default.returns({get});
-    exec.default.withArgs('npm whoami').resolves(npmUser);
+    exec.default.withArgs('npm whoami').resolves(`${npmUser}\n`);
     get.withArgs('init.author.name').returns(authorName);
     get.withArgs('init.author.email').returns(authorEmail);
     get.withArgs('init.author.url').returns(authorUrl);
@@ -143,6 +143,7 @@ suite('prompts', () => {
   });
 
   test('that private packages are not asked about whether they should be scoped', async () => {
+    exec.default.withArgs('npm whoami').resolves(any.word());
     npmConf.default.returns({get: () => undefined});
 
     await prompt({}, [], 'Private');
@@ -154,6 +155,7 @@ suite('prompts', () => {
   });
 
   test('that private packages are prompted for the scope', async () => {
+    exec.default.withArgs('npm whoami').resolves(any.word());
     npmConf.default.returns({get: () => undefined});
 
     await prompt({}, [], 'Private');
