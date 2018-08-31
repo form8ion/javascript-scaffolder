@@ -221,13 +221,13 @@ suite('package details builder', () => {
       test('that the `test` script includes running tests when the project will be unit tested', () => {
         const packageDetails = buildPackageDetails({tests: {unit: true}, vcs: {}, author: {}});
 
-        assert.equal(packageDetails.scripts.test, 'npm-run-all --print-label --parallel lint:* test:*');
+        assert.equal(packageDetails.scripts.test, 'npm-run-all --print-label --parallel lint:* --parallel test:*');
       });
 
       test('that the `test` script includes running tests when the project will be integration tested', () => {
         const packageDetails = buildPackageDetails({tests: {integration: true}, vcs: {}, author: {}});
 
-        assert.equal(packageDetails.scripts.test, 'npm-run-all --print-label --parallel lint:* test:*');
+        assert.equal(packageDetails.scripts.test, 'npm-run-all --print-label --parallel lint:* --parallel test:*');
       });
 
       suite('clean', () => {

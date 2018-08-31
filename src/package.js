@@ -25,7 +25,7 @@ export default function ({projectName, visibility, scope, packageType, license, 
       'lint:js': 'eslint . --cache',
       ...('Travis' === ci) && {'lint:travis': 'travis-lint .travis.yml'},
       'lint:sensitive': 'ban',
-      test: `npm-run-all --print-label --parallel lint:*${(tests.unit || tests.integration) ? ' test:*' : ''}`,
+      test: `npm-run-all --print-label --parallel lint:*${(tests.unit || tests.integration) ? ' --parallel test:*' : ''}`,    // eslint-disable-line max-len
       ...tests.unit && {
         'test:unit:base': 'mocha --recursive test/unit',
         'test:unit': 'nyc run-s test:unit:base'
