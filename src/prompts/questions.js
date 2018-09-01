@@ -1,4 +1,4 @@
-import {prompt as promptWithInquirer} from 'inquirer';
+import {prompt as promptWithInquirer, Separator} from 'inquirer';
 import exec from '../../third-party-wrappers/exec-as-promised';
 import {scopePromptShouldBePresented, shouldBeScopedPromptShouldBePresented} from './conditionals';
 import npmConfFactory from '../../third-party-wrappers/npm-conf';
@@ -82,7 +82,7 @@ export async function prompt({npmAccount, author}, ciServices, visibility) {
       name: questionNames.CI_SERVICE,
       type: 'list',
       message: 'Which continuous integration service will be used?',
-      choices: [...ciServices, 'Other']
+      choices: [...ciServices, new Separator(), 'Other']
     }
   ]);
 }

@@ -102,7 +102,7 @@ suite('prompts', () => {
           name: questionNames.CI_SERVICE,
           type: 'list',
           message: 'Which continuous integration service will be used?',
-          choices: [...ciServices, 'Other']
+          choices: [...ciServices, new inquirer.Separator(), 'Other']
         }
       ]
     ));
