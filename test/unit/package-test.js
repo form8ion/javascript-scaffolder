@@ -53,14 +53,26 @@ suite('package details builder', () => {
   });
 
   suite('author', () => {
-    test('that the author details are provided', () => {
-      const name = any.string();
-      const email = any.string();
-      const url = any.string();
+    const name = any.string();
+    const email = any.string();
+    const url = any.string();
 
+    test('that the author details are provided', () => {
       const packageDetails = buildPackageDetails({tests: {}, vcs: {}, author: {name, email, url}});
 
       assert.equal(packageDetails.author, `${name} <${email}> (${url})`);
+    });
+
+    test('that the angle brackets are not included if email is not provided', () => {
+      const packageDetails = buildPackageDetails({tests: {}, vcs: {}, author: {name, url}});
+
+      assert.equal(packageDetails.author, `${name} (${url})`);
+    });
+
+    test('that the parenthesis are not included if url is not provided', () => {
+      const packageDetails = buildPackageDetails({tests: {}, vcs: {}, author: {name, email}});
+
+      assert.equal(packageDetails.author, `${name} <${email}>`);
     });
   });
 

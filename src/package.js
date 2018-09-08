@@ -18,7 +18,7 @@ export default function ({projectName, visibility, scope, packageType, license, 
         ? `https://npm.im/${packageName}`
         : `https://github.com/${vcs.owner}/${vcs.name}#readme`
     },
-    author: `${author.name} <${author.email}> (${author.url})`,
+    author: `${author.name}${author.email ? ` <${author.email}>` : ''}${author.url ? ` (${author.url})` : ''}`,
     scripts: {
       ...('Package' === packageType) && {clean: 'rimraf lib/'},
       ...('Application' === packageType) && {start: './lib/index.js'},
