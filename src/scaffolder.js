@@ -46,7 +46,7 @@ export async function scaffold(options) {
     'ban-sensitive-files',
     ...'Package' === packageType ? ['rimraf', 'rollup', 'rollup-plugin-auto-external'] : [],
     ...'Public' === visibility && unitTested ? ['codecov'] : [],
-    ...unitTested ? ['mocha', 'chai', 'sinon', 'nyc'] : [],
+    ...unitTested ? ['mocha', 'chai', 'sinon', 'nyc', '@travi/any'] : [],
     ...integrationTested ? ['cucumber', 'chai'] : [],
     ...'Travis' === ci ? ['travis-lint'] : []
   ].filter(Boolean));

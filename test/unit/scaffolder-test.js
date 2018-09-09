@@ -394,7 +394,7 @@ rollup.config.js`)
         'babel-register',
         'ban-sensitive-files'
       ];
-      const unitTestDependencies = ['mocha', 'chai', 'sinon', 'nyc'];
+      const unitTestDependencies = ['mocha', 'chai', 'sinon', 'nyc', '@travi/any'];
 
       suite('scripts', () => {
         test('that scripting tools are installed', async () => {
