@@ -381,11 +381,30 @@ suite('package details builder', () => {
     });
 
     suite('greenkeeper', () => {
-      test('that the lockfile scripts expose the commands for the ci steps', () => {
-        const packageDetails = buildPackageDetails({packageType: 'Application', tests: {}, vcs: {}, author: {}});
+      test('that the lockfile scripts expose the commands for the ci steps on private projects', () => {
+        const packageDetails = buildPackageDetails({
+          packageType: 'Application',
+          tests: {},
+          vcs: {},
+          author: {},
+          visibility: 'Private'
+        });
 
         assert.equal(packageDetails.scripts['greenkeeper:update-lockfile'], 'greenkeeper-lockfile-update');
         assert.equal(packageDetails.scripts['greenkeeper:upload-lockfile'], 'greenkeeper-lockfile-upload');
+      });
+
+      test('that the lockfile scripts are not exposed on public projects', () => {
+        const packageDetails = buildPackageDetails({
+          packageType: 'Application',
+          tests: {},
+          vcs: {},
+          author: {},
+          visibility: 'Public'
+        });
+
+        assert.notProperty(packageDetails.scripts, 'greenkeeper:update-lockfile');
+        assert.notProperty(packageDetails.scripts, 'greenkeeper:upload-lockfile');
       });
     });
   });

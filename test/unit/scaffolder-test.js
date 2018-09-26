@@ -390,7 +390,6 @@ rollup.config.js`)
         'npm-run-all',
         'husky@next',
         'cz-conventional-changelog',
-        'greenkeeper-lockfile',
         'babel-register',
         'ban-sensitive-files'
       ];
@@ -542,7 +541,10 @@ rollup.config.js`)
 
           await scaffold(options);
 
-          assert.calledWith(installer.default, [...defaultDependencies, ...unitTestDependencies]);
+          assert.calledWith(
+            installer.default,
+            [...defaultDependencies, 'greenkeeper-lockfile', ...unitTestDependencies]
+          );
         });
 
         test('that codecov is not installed for projects that are not unit tested', async () => {
@@ -552,6 +554,29 @@ rollup.config.js`)
           await scaffold(options);
 
           assert.calledWith(installer.default, defaultDependencies);
+        });
+
+        test('that greenkeeper-lockfile is not installed for public projects', async () => {
+          optionsValidator.validate.withArgs(options).returns({visibility: 'Public', vcs: {}, configs: {}, ciServices});
+          prompts.prompt.resolves({[questionNames.UNIT_TESTS]: false});
+
+          await scaffold(options);
+
+          assert.calledWith(installer.default, defaultDependencies);
+        });
+
+        test('that greenkeeper-lockfile is installed for private projects', async () => {
+          optionsValidator.validate.withArgs(options).returns({
+            visibility: 'Private',
+            vcs: {},
+            configs: {},
+            ciServices
+          });
+          prompts.prompt.resolves({[questionNames.UNIT_TESTS]: false});
+
+          await scaffold(options);
+
+          assert.calledWith(installer.default, [...defaultDependencies, 'greenkeeper-lockfile']);
         });
       });
     });

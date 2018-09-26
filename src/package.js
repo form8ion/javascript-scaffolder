@@ -40,8 +40,10 @@ export default function ({projectName, visibility, scope, packageType, license, 
         watch: 'run-s \'build:js -- --watch\'',
         prepack: 'run-s build'
       },
-      'greenkeeper:update-lockfile': 'greenkeeper-lockfile-update',
-      'greenkeeper:upload-lockfile': 'greenkeeper-lockfile-upload'
+      ...'Private' === visibility && {
+        'greenkeeper:update-lockfile': 'greenkeeper-lockfile-update',
+        'greenkeeper:upload-lockfile': 'greenkeeper-lockfile-upload'
+      }
     },
     ...('Package' === packageType) && {publishConfig: {access: 'Public' === visibility ? 'public' : 'restricted'}},
     config: {
