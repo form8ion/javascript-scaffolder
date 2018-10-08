@@ -39,7 +39,7 @@ export async function scaffold(options) {
     configs.commitlint && configs.commitlint.packageName,
     configs.babelPreset && configs.babelPreset.packageName,
     'npm-run-all',
-    'husky@next',
+    'husky',
     'cz-conventional-changelog',
     'babel-register',
     'ban-sensitive-files',

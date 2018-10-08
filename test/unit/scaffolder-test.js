@@ -388,7 +388,7 @@ rollup.config.js`)
     suite('dependencies', () => {
       const defaultDependencies = [
         'npm-run-all',
-        'husky@next',
+        'husky',
         'cz-conventional-changelog',
         'babel-register',
         'ban-sensitive-files'
@@ -402,7 +402,7 @@ rollup.config.js`)
 
           await scaffold(options);
 
-          assert.calledWith(installer.default, [...defaultDependencies]);
+          assert.calledWith(installer.default, defaultDependencies);
         });
 
         test('that the appropriate packages are installed for `Package` type projects', async () => {
