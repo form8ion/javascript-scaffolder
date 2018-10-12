@@ -198,6 +198,41 @@ suite('options validator', () => {
         'child "name" fails because ["name" is required]'
       ));
     });
+
+    suite('remark preset', () => {
+      test('that the definition must be a string, when defined', () => assert.throws(
+        () => validate({
+          projectRoot: any.string(),
+          projectName: any.string(),
+          visibility: any.fromList(['Public', 'Private']),
+          license: any.string(),
+          vcs: {host: any.word(), owner: any.word(), name: any.word()},
+          description: any.string(),
+          configs: {remark: {}}
+        }),
+        'child "configs" fails because [child "remark" fails because ["remark" must be a string]]'
+      ));
+
+      test('that the validation passes when a string is provided', () => validate({
+        projectRoot: any.string(),
+        projectName: any.string(),
+        visibility: any.fromList(['Public', 'Private']),
+        license: any.string(),
+        vcs: {host: any.word(), owner: any.word(), name: any.word()},
+        description: any.string(),
+        configs: {remark: any.string()}
+      }));
+
+      test('that the config is optional', () => validate({
+        projectRoot: any.string(),
+        projectName: any.string(),
+        visibility: any.fromList(['Public', 'Private']),
+        license: any.string(),
+        vcs: {host: any.word(), owner: any.word(), name: any.word()},
+        description: any.string(),
+        configs: {}
+      }));
+    });
   });
 
   suite('overrides', () => {

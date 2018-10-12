@@ -25,7 +25,8 @@ export function validate(options) {
       babelPreset: joi.object({
         packageName: joi.string().required(),
         name: joi.string().required()
-      })
+      }),
+      remark: joi.string()
     }).default({}),
     overrides: joi.object({
       npmAccount: joi.string(),
