@@ -8,6 +8,7 @@ before_install: curl ifconfig.co
 install:
 - npm ci
 - gem install travis
+before_script: npm ls >/dev/null
 after_success: npm run coverage:report
 deploy:
   provider: script
