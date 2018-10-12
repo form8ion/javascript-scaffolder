@@ -15,9 +15,7 @@ suite('ci', () => {
     return assert.becomes(scaffoldCi(scaffolders, chosenService, options), scaffolderResult);
   });
 
-  test('that choosing a scaffolder without a defined service does not result in an error', () => scaffoldCi(
-    any.simpleObject(),
-    any.word(),
-    any.simpleObject()
-  ));
+  test('that choosing a scaffolder without a defined service does not result in an error', async () => {
+    assert.deepEqual(scaffoldCi(any.simpleObject(), any.word(), any.simpleObject()), {});
+  });
 });
