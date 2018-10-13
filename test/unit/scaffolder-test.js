@@ -454,6 +454,18 @@ rollup.config.js`)
 
           assert.calledWith(installer.default, [...defaultDependencies, 'travis-lint']);
         });
+
+        test('that remark-cli and the lint preset are installed when the preset is defined', async () => {
+          const remarkPreset = any.word();
+          optionsValidator.validate
+            .withArgs(options)
+            .returns({vcs: {}, configs: {remark: remarkPreset}, overrides, ciServices});
+          prompts.prompt.withArgs(overrides, Object.keys(ciServices)).resolves({});
+
+          await scaffold(options);
+
+          assert.calledWith(installer.default, [remarkPreset, 'remark-cli', ...defaultDependencies]);
+        });
       });
 
       suite('babel', () => {

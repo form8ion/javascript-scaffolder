@@ -38,6 +38,7 @@ export async function scaffold(options) {
     configs.eslint && configs.eslint.packageName,
     configs.commitlint && configs.commitlint.packageName,
     configs.babelPreset && configs.babelPreset.packageName,
+    ...configs.remark ? [configs.remark, 'remark-cli'] : [],
     'npm-run-all',
     'husky',
     'cz-conventional-changelog',
