@@ -50,9 +50,16 @@ suite('javascript project scaffolder', () => {
   suite('config files', () => {
     test('that config files are created', () => {
       const babelPresetName = any.string();
+      const remarkPreset = any.string();
       optionsValidator.validate
         .withArgs(options)
-        .returns({visibility, projectRoot, vcs: {}, configs: {babelPreset: {name: babelPresetName}}, ciServices});
+        .returns({
+          visibility,
+          projectRoot,
+          vcs: {},
+          configs: {babelPreset: {name: babelPresetName}, remark: remarkPreset},
+          ciServices
+        });
 
       prompts.prompt.resolves({[questionNames.NODE_VERSION_CATEGORY]: any.word()});
 
@@ -63,7 +70,21 @@ suite('javascript project scaffolder', () => {
           `${projectRoot}/.huskyrc.json`
         );
         assert.calledWith(fs.writeFile, `${projectRoot}/.babelrc`, JSON.stringify({presets: [babelPresetName]}));
+        assert.calledWith(
+          fs.writeFile,
+          `${projectRoot}/.remarkrc.js`,
+          `exports.plugins = ['${remarkPreset}'];`
+        );
       });
+    });
+
+    test('that no remark config is created if no remark preset is defined', async () => {
+      prompts.prompt.resolves({[questionNames.NODE_VERSION_CATEGORY]: any.word()});
+      optionsValidator.validate.withArgs(options).returns({projectRoot, vcs: {}, configs: {}, ciServices});
+
+      await scaffold(options);
+
+      assert.neverCalledWith(fs.writeFile, `${projectRoot}/.remarkrc.js`);
     });
 
     suite('npm ignore', () => {

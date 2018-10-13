@@ -128,7 +128,8 @@ export async function scaffold(options) {
         writeFile(`${projectRoot}/test/.eslintrc.yml`, `extends: '${configs.eslint.prefix}/rules/tests/base'`),
         writeFile(`${projectRoot}/test/unit/.eslintrc.yml`, `extends: '${configs.eslint.prefix}/rules/tests/mocha'`)
       ])
-    ]))
+    ])),
+    configs.remark && writeFile(`${projectRoot}/.remarkrc.js`, `exports.plugins = ['${configs.remark}'];`)
   ]);
 
   await installNodeVersion(nodeVersionCategory);
