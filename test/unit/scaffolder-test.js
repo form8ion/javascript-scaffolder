@@ -349,9 +349,10 @@ rollup.config.js`)
       const authorUrl = any.url();
       const ciService = any.word();
       const description = any.sentence();
+      const configs = any.simpleObject();
       optionsValidator.validate
         .withArgs(options)
-        .returns({projectRoot, projectName, visibility, license, vcs, description, configs: {}, ciServices});
+        .returns({projectRoot, projectName, visibility, license, vcs, description, configs, ciServices});
       prompts.prompt.resolves({
         [questionNames.SCOPE]: scope,
         [questionNames.PACKAGE_TYPE]: packageType,
@@ -373,7 +374,8 @@ rollup.config.js`)
           vcs,
           author: {name: authorName, email: authorEmail, url: authorUrl},
           ci: ciService,
-          description
+          description,
+          configs
         })
         .returns(packageDetails);
       mkdir.default.resolves();

@@ -8,7 +8,14 @@ suite('package details builder', () => {
 
   suite('name', () => {
     test('that the package name is defined', () => {
-      const packageDetails = buildPackageDetails({projectName, visibility, tests: {}, vcs: {}, author: {}});
+      const packageDetails = buildPackageDetails({
+        projectName,
+        visibility,
+        tests: {},
+        vcs: {},
+        author: {},
+        configs: {}
+      });
 
       assert.equal(packageDetails.name, projectName);
     });
@@ -16,7 +23,15 @@ suite('package details builder', () => {
     test('that the scope is included in the project name when provided', () => {
       const scope = any.word();
 
-      const packageDetails = buildPackageDetails({projectName, visibility, scope, tests: {}, vcs: {}, author: {}});
+      const packageDetails = buildPackageDetails({
+        projectName,
+        visibility,
+        scope,
+        tests: {},
+        vcs: {},
+        author: {},
+        configs: {}
+      });
 
       assert.equal(packageDetails.name, `@${scope}/${projectName}`);
     });
@@ -26,7 +41,14 @@ suite('package details builder', () => {
     test('that the description is included in the package details', () => {
       const description = any.sentence();
 
-      const packageDetails = buildPackageDetails({description, visibility, tests: {}, vcs: {}, author: {}});
+      const packageDetails = buildPackageDetails({
+        description,
+        visibility,
+        tests: {},
+        vcs: {},
+        author: {},
+        configs: {}
+      });
 
       assert.equal(packageDetails.description, description);
     });
@@ -35,7 +57,13 @@ suite('package details builder', () => {
   suite('main/module', () => {
     suite('application', () => {
       test('that these properties aer not defined for applications', () => {
-        const packageDetails = buildPackageDetails({tests: {}, vcs: {}, author: {}, packageType: 'Application'});
+        const packageDetails = buildPackageDetails({
+          tests: {},
+          vcs: {},
+          author: {},
+          packageType: 'Application',
+          configs: {}
+        });
 
         assert.isUndefined(packageDetails.main);
         assert.isUndefined(packageDetails.module);
@@ -44,7 +72,13 @@ suite('package details builder', () => {
 
     suite('package', () => {
       test('that `main` and `module` are defined for package consumers', () => {
-        const packageDetails = buildPackageDetails({tests: {}, vcs: {}, author: {}, packageType: 'Package'});
+        const packageDetails = buildPackageDetails({
+          tests: {},
+          vcs: {},
+          author: {},
+          packageType: 'Package',
+          configs: {}
+        });
 
         assert.equal(packageDetails.main, 'lib/index.cjs.js');
         assert.equal(packageDetails.module, 'lib/index.es.js');
@@ -58,19 +92,19 @@ suite('package details builder', () => {
     const url = any.string();
 
     test('that the author details are provided', () => {
-      const packageDetails = buildPackageDetails({tests: {}, vcs: {}, author: {name, email, url}});
+      const packageDetails = buildPackageDetails({tests: {}, vcs: {}, author: {name, email, url}, configs: {}});
 
       assert.equal(packageDetails.author, `${name} <${email}> (${url})`);
     });
 
     test('that the angle brackets are not included if email is not provided', () => {
-      const packageDetails = buildPackageDetails({tests: {}, vcs: {}, author: {name, url}});
+      const packageDetails = buildPackageDetails({tests: {}, vcs: {}, author: {name, url}, configs: {}});
 
       assert.equal(packageDetails.author, `${name} (${url})`);
     });
 
     test('that the parenthesis are not included if url is not provided', () => {
-      const packageDetails = buildPackageDetails({tests: {}, vcs: {}, author: {name, email}});
+      const packageDetails = buildPackageDetails({tests: {}, vcs: {}, author: {name, email}, configs: {}});
 
       assert.equal(packageDetails.author, `${name} <${email}>`);
     });
@@ -83,14 +117,22 @@ suite('package details builder', () => {
         packageType: 'Application',
         tests: {},
         vcs: {},
-        author: {}
+        author: {},
+        configs: {}
       });
 
       assert.isTrue(packageDetails.private);
     });
 
     test('that the package is not marked as private for a package', () => {
-      const packageDetails = buildPackageDetails({visibility, packageType: 'Package', tests: {}, vcs: {}, author: {}});
+      const packageDetails = buildPackageDetails({
+        visibility,
+        packageType: 'Package',
+        tests: {},
+        vcs: {},
+        author: {},
+        configs: {}
+      });
 
       assert.isUndefined(packageDetails.private);
     });
@@ -100,7 +142,7 @@ suite('package details builder', () => {
     test('that the license is defined as provided', () => {
       const license = any.word();
 
-      const packageDetails = buildPackageDetails({license, tests: {}, vcs: {}, author: {}});
+      const packageDetails = buildPackageDetails({license, tests: {}, vcs: {}, author: {}, configs: {}});
 
       assert.equal(packageDetails.license, license);
     });
@@ -111,7 +153,12 @@ suite('package details builder', () => {
     const owner = any.word();
 
     test('that the repository details are defined', () => {
-      const packageDetails = buildPackageDetails({tests: {}, vcs: {host: 'GitHub', name: repoName, owner}, author: {}});
+      const packageDetails = buildPackageDetails({
+        tests: {},
+        vcs: {host: 'GitHub', name: repoName, owner},
+        author: {},
+        configs: {}
+      });
 
       assert.equal(packageDetails.repository, `${owner}/${repoName}`);
       assert.equal(packageDetails.bugs, `https://github.com/${owner}/${repoName}/issues`);
@@ -124,7 +171,8 @@ suite('package details builder', () => {
         projectName,
         tests: {},
         vcs: {host: 'GitHub', name: repoName, owner},
-        author: {}
+        author: {},
+        configs: {}
       });
 
       assert.equal(packageDetails.homepage, `https://npm.im/${projectName}`);
@@ -139,7 +187,8 @@ suite('package details builder', () => {
         scope,
         tests: {},
         vcs: {host: 'GitHub', name: repoName, owner},
-        author: {}
+        author: {},
+        configs: {}
       });
 
       assert.equal(packageDetails.homepage, `https://npm.im/@${scope}/${projectName}`);
@@ -153,7 +202,8 @@ suite('package details builder', () => {
         visibility,
         tests: {},
         vcs: {host: any.word()},
-        author: {}
+        author: {},
+        configs: {}
       });
 
       assert.isUndefined(packageDetails.repository);
@@ -169,7 +219,8 @@ suite('package details builder', () => {
         packageType: 'Package',
         tests: {},
         vcs: {},
-        author: {}
+        author: {},
+        configs: {}
       });
 
       assert.deepEqual(packageDetails.publishConfig, {access: 'restricted'});
@@ -181,14 +232,15 @@ suite('package details builder', () => {
         packageType: 'Package',
         tests: {},
         vcs: {},
-        author: {}
+        author: {},
+        configs: {}
       });
 
       assert.deepEqual(packageDetails.publishConfig, {access: 'public'});
     });
 
     test('that access is marked as restricted when visibility is omitted for some reason', () => {
-      const packageDetails = buildPackageDetails({packageType: 'Package', tests: {}, vcs: {}, author: {}});
+      const packageDetails = buildPackageDetails({packageType: 'Package', tests: {}, vcs: {}, author: {}, configs: {}});
 
       assert.deepEqual(packageDetails.publishConfig, {access: 'restricted'});
     });
@@ -196,13 +248,19 @@ suite('package details builder', () => {
 
   suite('version', () => {
     test('that `version` is not set for applications', () => {
-      const packageDetails = buildPackageDetails({packageType: 'Application', tests: {}, vcs: {}, author: {}});
+      const packageDetails = buildPackageDetails({
+        packageType: 'Application',
+        tests: {},
+        vcs: {},
+        author: {},
+        configs: {}
+      });
 
       assert.isUndefined(packageDetails.version);
     });
 
     test('that the `version` makes it clear that versioning is handled by semantic-release', () => {
-      const packageDetails = buildPackageDetails({packageType: 'Package', tests: {}, vcs: {}, author: {}});
+      const packageDetails = buildPackageDetails({packageType: 'Package', tests: {}, vcs: {}, author: {}, configs: {}});
 
       assert.equal(packageDetails.version, '0.0.0-semantically-released');
     });
@@ -211,13 +269,25 @@ suite('package details builder', () => {
   suite('scripts', () => {
     suite('start', () => {
       test('that the `start` script is not defined for a package', () => {
-        const packageDetails = buildPackageDetails({packageType: 'Package', tests: {}, vcs: {}, author: {}});
+        const packageDetails = buildPackageDetails({
+          packageType: 'Package',
+          tests: {},
+          vcs: {},
+          author: {},
+          configs: {}
+        });
 
         assert.isUndefined(packageDetails.scripts.start);
       });
 
       test('that the `start` script runs the built version of the app with the `node` executable', () => {
-        const packageDetails = buildPackageDetails({packageType: 'Application', tests: {}, vcs: {}, author: {}});
+        const packageDetails = buildPackageDetails({
+          packageType: 'Application',
+          tests: {},
+          vcs: {},
+          author: {},
+          configs: {}
+        });
 
         assert.equal(packageDetails.scripts.start, './lib/index.js');
       });
@@ -225,32 +295,44 @@ suite('package details builder', () => {
 
     suite('verification', () => {
       test('that the `test` script is defined', () => {
-        const packageDetails = buildPackageDetails({tests: {}, vcs: {}, author: {}});
+        const packageDetails = buildPackageDetails({tests: {}, vcs: {}, author: {}, configs: {}});
 
         assert.equal(packageDetails.scripts.test, 'npm-run-all --print-label --parallel lint:*');
       });
 
       test('that the `test` script includes running tests when the project will be unit tested', () => {
-        const packageDetails = buildPackageDetails({tests: {unit: true}, vcs: {}, author: {}});
+        const packageDetails = buildPackageDetails({tests: {unit: true}, vcs: {}, author: {}, configs: {}});
 
         assert.equal(packageDetails.scripts.test, 'npm-run-all --print-label --parallel lint:* --parallel test:*');
       });
 
       test('that the `test` script includes running tests when the project will be integration tested', () => {
-        const packageDetails = buildPackageDetails({tests: {integration: true}, vcs: {}, author: {}});
+        const packageDetails = buildPackageDetails({tests: {integration: true}, vcs: {}, author: {}, configs: {}});
 
         assert.equal(packageDetails.scripts.test, 'npm-run-all --print-label --parallel lint:* --parallel test:*');
       });
 
       suite('clean', () => {
         test('that no clean script is defined if the package-type is not `Package`', () => {
-          const packageDetails = buildPackageDetails({tests: {}, vcs: {}, author: {}, packageType: any.word()});
+          const packageDetails = buildPackageDetails({
+            tests: {},
+            vcs: {},
+            author: {},
+            packageType: any.word(),
+            configs: {}
+          });
 
           assert.isUndefined(packageDetails.scripts.clean);
         });
 
         test('that the clean script removes the `lib/` directory if the package-type is `Package`', () => {
-          const packageDetails = buildPackageDetails({tests: {}, vcs: {}, author: {}, packageType: 'Package'});
+          const packageDetails = buildPackageDetails({
+            tests: {},
+            vcs: {},
+            author: {},
+            packageType: 'Package',
+            configs: {}
+          });
 
           assert.equal(packageDetails.scripts.clean, 'rimraf lib/');
         });
@@ -259,14 +341,14 @@ suite('package details builder', () => {
       suite('tests', () => {
         suite('unit', () => {
           test('that the script is included if the project will be unit tested', () => {
-            const packageDetails = buildPackageDetails({tests: {unit: true}, vcs: {}, author: {}});
+            const packageDetails = buildPackageDetails({tests: {unit: true}, vcs: {}, author: {}, configs: {}});
 
             assert.equal(packageDetails.scripts['test:unit:base'], 'mocha --recursive test/unit');
             assert.equal(packageDetails.scripts['test:unit'], 'nyc run-s test:unit:base');
           });
 
           test('that the script is not included if the project will not be unit tested', () => {
-            const packageDetails = buildPackageDetails({tests: {unit: false}, vcs: {}, author: {}});
+            const packageDetails = buildPackageDetails({tests: {unit: false}, vcs: {}, author: {}, configs: {}});
 
             assert.isUndefined(packageDetails.scripts['test:unit']);
           });
@@ -274,7 +356,7 @@ suite('package details builder', () => {
 
         suite('integration', () => {
           test('that the script is included if the project will be integration tested', () => {
-            const packageDetails = buildPackageDetails({tests: {integration: true}, vcs: {}, author: {}});
+            const packageDetails = buildPackageDetails({tests: {integration: true}, vcs: {}, author: {}, configs: {}});
 
             assert.equal(
               packageDetails.scripts['test:integration'],
@@ -283,7 +365,7 @@ suite('package details builder', () => {
           });
 
           test('that the script is not included if the project will not be integration tested', () => {
-            const packageDetails = buildPackageDetails({tests: {integration: false}, vcs: {}, author: {}});
+            const packageDetails = buildPackageDetails({tests: {integration: false}, vcs: {}, author: {}, configs: {}});
 
             assert.isUndefined(packageDetails.scripts['integration:unit']);
           });
@@ -291,26 +373,43 @@ suite('package details builder', () => {
       });
 
       suite('lint', () => {
+        test('that markdown is not linted if a preset is not defined', () => {
+          const packageDetails = buildPackageDetails({tests: {}, vcs: {}, author: {}, configs: {}});
+
+          assert.isUndefined(packageDetails.scripts['lint:md']);
+        });
+
+        test('that markdown is linted if a preset is defined', () => {
+          const packageDetails = buildPackageDetails({
+            tests: {},
+            vcs: {},
+            author: {},
+            configs: {remark: any.string()}
+          });
+
+          assert.equal(packageDetails.scripts['lint:md'], 'remark . --silent');
+        });
+
         test('that javascript is linted', () => {
-          const packageDetails = buildPackageDetails({tests: {}, vcs: {}, author: {}});
+          const packageDetails = buildPackageDetails({tests: {}, vcs: {}, author: {}, configs: {}});
 
           assert.equal(packageDetails.scripts['lint:js'], 'eslint . --cache');
         });
 
         test('that sensitive files are prevented from being committed', () => {
-          const packageDetails = buildPackageDetails({tests: {}, vcs: {}, author: {}});
+          const packageDetails = buildPackageDetails({tests: {}, vcs: {}, author: {}, configs: {}});
 
           assert.equal(packageDetails.scripts['lint:sensitive'], 'ban');
         });
 
         test('that the travis config file is linted when the ci service is travis', () => {
-          const packageDetails = buildPackageDetails({tests: {}, vcs: {}, author: {}, ci: 'Travis'});
+          const packageDetails = buildPackageDetails({tests: {}, vcs: {}, author: {}, ci: 'Travis', configs: {}});
 
           assert.equal(packageDetails.scripts['lint:travis'], 'travis-lint .travis.yml');
         });
 
         test('that the travis config file is not linted when the ci service is not travis', () => {
-          const packageDetails = buildPackageDetails({tests: {}, vcs: {}, author: {}});
+          const packageDetails = buildPackageDetails({tests: {}, vcs: {}, author: {}, configs: {}});
 
           assert.isUndefined(packageDetails.scripts['lint:travis']);
         });
@@ -318,7 +417,13 @@ suite('package details builder', () => {
 
       suite('coverage', () => {
         test('that a script is included to report coverage to codecov for public projects', () => {
-          const packageDetails = buildPackageDetails({tests: {unit: true}, vcs: {}, author: {}, visibility: 'Public'});
+          const packageDetails = buildPackageDetails({
+            tests: {unit: true},
+            vcs: {},
+            author: {},
+            visibility: 'Public',
+            configs: {}
+          });
 
           assert.equal(
             packageDetails.scripts['coverage:report'],
@@ -327,13 +432,25 @@ suite('package details builder', () => {
         });
 
         test('that a script is not included to report coverage to codecov for private projects', () => {
-          const packageDetails = buildPackageDetails({tests: {unit: true}, vcs: {}, author: {}, visibility: 'Private'});
+          const packageDetails = buildPackageDetails({
+            tests: {unit: true},
+            vcs: {},
+            author: {},
+            visibility: 'Private',
+            configs: {}
+          });
 
           assert.isUndefined(packageDetails.scripts['coverage:report']);
         });
 
         test('that a script is not included to report coverage to codecov if the project wont be unit tested', () => {
-          const packageDetails = buildPackageDetails({tests: {}, vcs: {}, author: {}, visibility: 'Public'});
+          const packageDetails = buildPackageDetails({
+            tests: {},
+            vcs: {},
+            author: {},
+            visibility: 'Public',
+            configs: {}
+          });
 
           assert.isUndefined(packageDetails.scripts['coverage:report']);
         });
@@ -343,7 +460,13 @@ suite('package details builder', () => {
     suite('build', () => {
       suite('application', () => {
         test('that rollup is not used', () => {
-          const packageDetails = buildPackageDetails({tests: {}, vcs: {}, author: {}, packageType: 'Application'});
+          const packageDetails = buildPackageDetails({
+            tests: {},
+            vcs: {},
+            author: {},
+            packageType: 'Application',
+            configs: {}
+          });
 
           assert.isUndefined(packageDetails.scripts.build);
           assert.isUndefined(packageDetails.scripts['build:js']);
@@ -353,11 +476,17 @@ suite('package details builder', () => {
 
       suite('package', () => {
         test('that the rollup build is scripted', () => {
-          const packageDetails = buildPackageDetails({tests: {}, vcs: {}, author: {}, packageType: 'Package'});
+          const packageDetails = buildPackageDetails({
+            tests: {},
+            vcs: {},
+            author: {},
+            packageType: 'Package',
+            configs: {}
+          });
 
           assert.equal(packageDetails.scripts.build, 'run-s clean build:*');
           assert.equal(packageDetails.scripts['build:js'], 'rollup -c');
-          assert.equal(packageDetails.scripts.watch, "run-s 'build:js -- --watch'");
+          assert.equal(packageDetails.scripts.watch, 'run-s \'build:js -- --watch\'');
         });
       });
     });
@@ -365,7 +494,13 @@ suite('package details builder', () => {
     suite('publish', () => {
       suite('application', () => {
         test('that publishing is not configured', () => {
-          const packageDetails = buildPackageDetails({tests: {}, vcs: {}, author: {}, packageType: 'Application'});
+          const packageDetails = buildPackageDetails({
+            tests: {},
+            vcs: {},
+            author: {},
+            packageType: 'Application',
+            configs: {}
+          });
 
           assert.isUndefined(packageDetails.scripts.prepublishOnly);
         });
@@ -373,7 +508,13 @@ suite('package details builder', () => {
 
       suite('package', () => {
         test('that the build is executed before publishing', () => {
-          const packageDetails = buildPackageDetails({tests: {}, vcs: {}, author: {}, packageType: 'Package'});
+          const packageDetails = buildPackageDetails({
+            tests: {},
+            vcs: {},
+            author: {},
+            packageType: 'Package',
+            configs: {}
+          });
 
           assert.equal(packageDetails.scripts.prepack, 'run-s build');
         });
@@ -387,7 +528,8 @@ suite('package details builder', () => {
           tests: {},
           vcs: {},
           author: {},
-          visibility: 'Private'
+          visibility: 'Private',
+          configs: {}
         });
 
         assert.equal(packageDetails.scripts['greenkeeper:update-lockfile'], 'greenkeeper-lockfile-update');
@@ -400,7 +542,8 @@ suite('package details builder', () => {
           tests: {},
           vcs: {},
           author: {},
-          visibility: 'Public'
+          visibility: 'Public',
+          configs: {}
         });
 
         assert.notProperty(packageDetails.scripts, 'greenkeeper:update-lockfile');
@@ -411,7 +554,7 @@ suite('package details builder', () => {
 
   suite('config', () => {
     test('that commitizen is configured', () => {
-      const packageDetails = buildPackageDetails({tests: {}, vcs: {}, author: {}});
+      const packageDetails = buildPackageDetails({tests: {}, vcs: {}, author: {}, configs: {}});
 
       assert.deepEqual(packageDetails.config.commitizen.path, './node_modules/cz-conventional-changelog');
     });

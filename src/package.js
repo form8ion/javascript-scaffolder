@@ -1,4 +1,16 @@
-export default function ({projectName, visibility, scope, packageType, license, tests, vcs, author, ci, description}) {
+export default function ({
+  projectName,
+  visibility,
+  scope,
+  packageType,
+  license,
+  tests,
+  vcs,
+  author,
+  ci,
+  description,
+  configs
+}) {
   const packageName = `${scope ? `@${scope}/` : ''}${projectName}`;
 
   return {
@@ -22,6 +34,7 @@ export default function ({projectName, visibility, scope, packageType, license, 
     scripts: {
       ...('Package' === packageType) && {clean: 'rimraf lib/'},
       ...('Application' === packageType) && {start: './lib/index.js'},
+      ...configs.remark && {'lint:md': 'remark . --silent'},
       'lint:js': 'eslint . --cache',
       ...('Travis' === ci) && {'lint:travis': 'travis-lint .travis.yml'},
       'lint:sensitive': 'ban',

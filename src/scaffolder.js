@@ -73,7 +73,8 @@ export async function scaffold(options) {
       url: answers[questionNames.AUTHOR_URL]
     },
     ci,
-    description
+    description,
+    configs
   });
 
   const eslintIgnoreDirectories = ['/lib/', ...unitTested ? ['/coverage/'] : []];
