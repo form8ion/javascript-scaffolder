@@ -3,12 +3,11 @@
 opinionated scaffolder for JavaScript projects
 
 <!-- status badges -->
+
 [![Build Status][ci-badge]][ci-link]
 [![Codecov](https://img.shields.io/codecov/c/github/travi/javascript-scaffolder.svg)](https://codecov.io/github/travi/javascript-scaffolder)
 
-<!-- START doctoc generated TOC please keep comment here to allow auto update -->
-<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
-
+## Table of Contents
 
 * [Features](#features)
 * [Usage](#usage)
@@ -16,21 +15,19 @@ opinionated scaffolder for JavaScript projects
   * [As one of the languages for scaffolding a project](#as-one-of-the-languages-for-scaffolding-a-project)
     * [Example](#example)
     * [Options](#options)
-      * [`projectRoot` __string__ (_required_)](#projectroot-__string__-_required_)
-      * [`projectName` __string__ (_required_)](#projectname-__string__-_required_)
-      * [`visibility` __string__ (_required_)](#visibility-__string__-_required_)
-      * [`license` __string__ (_required_)](#license-__string__-_required_)
-      * [`vcs` __object__ (_required_)](#vcs-__object__-_required_)
-      * [`description` __string__ (_optional_)](#description-__string__-_optional_)
-      * [`configs` __object__ (_optional_)](#configs-__object__-_optional_)
-      * [`overrides` __object__ (_optional_)](#overrides-__object__-_optional_)
-      * [`ciServices` __object__ (_optional_)](#ciservices-__object__-_optional_)
+      * [projectRoot string (required)](#projectroot-string-required)
+      * [projectName string (required)](#projectname-string-required)
+      * [visibility string (required)](#visibility-string-required)
+      * [license string (required)](#license-string-required)
+      * [vcs object (required)](#vcs-object-required)
+      * [description string (optional)](#description-string-optional)
+      * [configs object (optional)](#configs-object-optional)
+      * [overrides object (optional)](#overrides-object-optional)
+      * [ciServices object (optional)](#ciservices-object-optional)
 * [Contributing](#contributing)
   * [Dependencies](#dependencies)
   * [Verification](#verification)
 * [Related Projects](#related-projects)
-
-<!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
 ## Features
 
@@ -52,6 +49,7 @@ opinionated scaffolder for JavaScript projects
 ## Usage
 
 <!-- consumer badges -->
+
 [![npm][npm-badge]][npm-link]
 [![MIT license][license-badge]][license-link]
 
@@ -129,17 +127,20 @@ short summary of the project
 * `eslint`: __object__ (_optional_)
   details about the [shareable config](https://eslint.org/docs/developer-guide/shareable-configs)
   to be used for the project
+
   * `packageName` __string__ (_required_)
     name of the `npm` package
   * `prefix` __string__ (_required_)
     name to be used when referring to the config within the `.eslintrc` files
-  
+
   :warning: while i'm not confident that it is the recommended convention, it
   is assumed the defined config has a `rules/` directory exposed from the package
   with rulesets defined for
+
   * `es6.js`
   * `tests/base.js`
   * `tests/mocha.js`
+
 * `commitlint` __object__ (_optional_)
   details about the [shareable config](https://marionebl.github.io/commitlint/#/concepts-shareable-config)
   to be used for the project
@@ -154,7 +155,7 @@ short summary of the project
     name of the `npm` package
   * `name` __string__ (_required_)
     shorthand name to be used when referring to the config
-    
+
 ##### `overrides` __object__ (_optional_)
 
 * `npmAccount` __string__ (_optional_)
@@ -163,10 +164,11 @@ short summary of the project
 * `author` __object__ (_optional_)
   [details](https://docs.npmjs.com/files/package.json#people-fields-author-contributors)
   about the package author
+
   * `name` __string__ (_required_) defaults to `$npm config get init.author.name`
   * `email` __string__ (_optional_) defaults to `$npm config get init.author.email`
-  * `url` __string (_optional_) defaults to `$npm config get init.author.url`
-  
+  * `url` __string__ (_optional_) defaults to `$npm config get init.author.url`
+
 ##### `ciServices` __object__ (_optional_)
 
 * keys: __string__ Name of the service
@@ -180,11 +182,12 @@ short summary of the project
 ## Contributing
 
 <!-- contribution badges -->
+
 [![Conventional Commits][commit-convention-badge]][commit-convention-link]
 [![Commitizen friendly][commitizen-badge]][commitizen-link]
 [![semantic-release](https://img.shields.io/badge/%20%20%F0%9F%93%A6%F0%9F%9A%80-semantic--release-e10079.svg)](https://github.com/semantic-release/semantic-release)
 [![Greenkeeper badge](https://badges.greenkeeper.io/travi/javascript-scaffolder.svg)](https://greenkeeper.io/)
-[![PRs Welcome][PRs-badge]][PRs-link]
+[![PRs Welcome][prs-badge]][prs-link]
 
 ### Dependencies
 
@@ -207,14 +210,25 @@ $ npm test
 * [cli](https://npm.im/@travi/cli)
 
 [npm-link]: https://www.npmjs.com/package/@travi/javascript-scaffolder
+
 [npm-badge]: https://img.shields.io/npm/v/@travi/javascript-scaffolder.svg
+
 [license-link]: LICENSE
+
 [license-badge]: https://img.shields.io/github/license/travi/javascript-scaffolder.svg
+
 [ci-link]: https://travis-ci.org/travi/javascript-scaffolder
+
 [ci-badge]: https://img.shields.io/travis/travi/javascript-scaffolder.svg?branch=master
+
 [commit-convention-link]: https://conventionalcommits.org
+
 [commit-convention-badge]: https://img.shields.io/badge/Conventional%20Commits-1.0.0-yellow.svg
+
 [commitizen-link]: http://commitizen.github.io/cz-cli/
+
 [commitizen-badge]: https://img.shields.io/badge/commitizen-friendly-brightgreen.svg
-[PRs-link]: http://makeapullrequest.com
-[PRs-badge]: https://img.shields.io/badge/PRs-welcome-brightgreen.svg
+
+[prs-link]: http://makeapullrequest.com
+
+[prs-badge]: https://img.shields.io/badge/PRs-welcome-brightgreen.svg
