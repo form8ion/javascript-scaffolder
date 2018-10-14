@@ -34,7 +34,7 @@ export default function ({
     scripts: {
       ...('Package' === packageType) && {clean: 'rimraf lib/'},
       ...('Application' === packageType) && {start: './lib/index.js'},
-      ...configs.remark && {'lint:md': 'remark . --silent'},
+      ...configs.remark && {'lint:md': 'remark . --silent --frail'},
       'lint:js': 'eslint . --cache',
       ...('Travis' === ci) && {'lint:travis': 'travis-lint .travis.yml'},
       'lint:sensitive': 'ban',
