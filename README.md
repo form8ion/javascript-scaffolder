@@ -134,8 +134,8 @@ short summary of the project
     name to be used when referring to the config within the `.eslintrc` files
 
   :warning: while i'm not confident that it is the recommended convention, it
-  is assumed the defined config has a `rules/` directory exposed from the package
-  with rulesets defined for
+  is assumed the defined config has a `rules/` directory exposed from the 
+  package with rulesets defined for
 
   * `es6.js`
   * `tests/base.js`
@@ -147,7 +147,8 @@ short summary of the project
   * `packageName` __string__ (_required_)
     name of the `npm` package
   * `name` __string__ (_required_)
-    name to be used when referring to the config within the `.commitlintrc.js` file
+    name to be used when referring to the config within the `.commitlintrc.js`
+    file
 * `babelPreset` __object__ (_optional_)
   details about the [preset](https://babeljs.io/docs/plugins/#creating-a-preset)
   to be used for the project
