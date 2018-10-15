@@ -387,7 +387,7 @@ suite('package details builder', () => {
             configs: {remark: any.string()}
           });
 
-          assert.equal(packageDetails.scripts['lint:md'], 'remark . --silent --frail');
+          assert.equal(packageDetails.scripts['lint:md'], 'remark . --frail');
         });
 
         test('that javascript is linted', () => {
