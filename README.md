@@ -44,7 +44,7 @@ opinionated scaffolder for JavaScript projects
 * Defines [badges](https://sheilds.io) for inclusion in the `README.md`
 * Defines files to be ignored from `git` and `npm`
 * Scaffolds CI service config from the user choice of the
-  [provided scaffolders](#ciservices-__object__-_optional_)
+  [provided scaffolders](#ciservices-object-optional)
 
 ## Usage
 

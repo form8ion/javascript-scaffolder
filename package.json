@@ -12,7 +12,7 @@
   "scripts": {
     "clean": "rimraf lib/",
     "lint:js": "eslint . --cache",
-    "lint:md": "remark . --silent --frail",
+    "lint:md": "remark . --frail",
     "lint:travis": "travis-lint .travis.yml",
     "lint:sensitive": "ban",
     "test": "npm-run-all --print-label --parallel lint:* --parallel test:*",
