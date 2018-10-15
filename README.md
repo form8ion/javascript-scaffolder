@@ -41,7 +41,7 @@ opinionated scaffolder for JavaScript projects
   * enables updating the lockfile for [Greenkeeper](https://greenkeeper.io) PRs
 * Enables transpilation with [Babel](https://babeljs.io)
 * Defines and enforces the [commit message convention](https://conventionalcommits.org/)
-* Defines [badges](https://sheilds.io) for inclusion in the `README.md`
+* Defines [badges](https://shields.io) for inclusion in the `README.md`
 * Defines files to be ignored from `git` and `npm`
 * Scaffolds CI service config from the user choice of the
   [provided scaffolders](#ciservices-object-optional)
@@ -62,7 +62,7 @@ $ npm install @travi/javascript-scaffolder -S
 ### As one of the languages for scaffolding a project
 
 This scaffolder is intended to be used to scaffold the
-[language specific details](https://github.com/travi/project-scaffolder#languages-_optional_)
+[language specific details](https://github.com/travi/project-scaffolder#languages-optional)
 within the [project-scaffolder](https://github.com/travi/project-scaffolder).
 
 #### Example
