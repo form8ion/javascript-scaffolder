@@ -502,7 +502,8 @@ suite('package details builder', () => {
             configs: {}
           });
 
-          assert.isUndefined(packageDetails.scripts.prepublishOnly);
+          assert.isUndefined(packageDetails.scripts.prepack);
+          assert.isUndefined(packageDetails.files);
         });
       });
 
@@ -517,6 +518,18 @@ suite('package details builder', () => {
           });
 
           assert.equal(packageDetails.scripts.prepack, 'run-s build');
+        });
+
+        test('that the lib/ directory is whitelisted for inclusion in the published package', () => {
+          const packageDetails = buildPackageDetails({
+            tests: {},
+            vcs: {},
+            author: {},
+            packageType: 'Package',
+            configs: {}
+          });
+
+          assert.deepEqual(packageDetails.files, ['lib/']);
         });
       });
     });

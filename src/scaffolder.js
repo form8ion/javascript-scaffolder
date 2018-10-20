@@ -78,28 +78,6 @@ export async function scaffold(options) {
   });
 
   const eslintIgnoreDirectories = ['/lib/', ...unitTested ? ['/coverage/'] : []];
-  const npmIgnoreDirectories = [
-    '/src/',
-    '/test/',
-    '/coverage/',
-    '/.nyc_output/',
-    'GitHub' === vcs.host ? '/.github/' : undefined
-  ].filter(Boolean);
-  const npmIgnoreFiles = [
-    '.babelrc',
-    '.commitlintrc.js',
-    '.editorconfig',
-    '.eslintcache',
-    '.eslintignore',
-    '.eslintrc.yml',
-    '.gitattributes',
-    '.huskyrc.json',
-    '.markdownlintrc',
-    '.nvmrc',
-    ('Travis' === ci) && '.travis.yml',
-    'coverage.lcov',
-    'rollup.config.js'
-  ].filter(Boolean);
 
   const [ciService] = await Promise.all([
     scaffoldCi(ciServices, ci, {projectRoot, vcs, visibility, packageType, nodeVersion}),
@@ -116,10 +94,10 @@ export async function scaffold(options) {
       `${projectRoot}/.commitlintrc.js`,
       `module.exports = {extends: ['${configs.commitlint.name}']};`
     ),
-    ('Package' === packageType) && Promise.all([
-      writeFile(`${projectRoot}/.npmignore`, `${npmIgnoreDirectories.join('\n')}\n\n${npmIgnoreFiles.join('\n')}`),
-      copyFile(resolve(__dirname, '..', 'templates', 'rollup.config.js'), `${projectRoot}/rollup.config.js`)
-    ]),
+    ('Package' === packageType) && copyFile(
+      resolve(__dirname, '..', 'templates', 'rollup.config.js'),
+      `${projectRoot}/rollup.config.js`
+    ),
     unitTested && mkdir(`${projectRoot}/test/unit`).then(path => Promise.all([
       copyFile(resolve(__dirname, '..', 'templates', 'nycrc.json'), `${projectRoot}/.nycrc`),
       copyFile(resolve(__dirname, '..', 'templates', 'canary-test.txt'), `${path}/canary-test.js`),

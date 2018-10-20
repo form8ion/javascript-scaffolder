@@ -58,7 +58,10 @@ export default function ({
         'greenkeeper:upload-lockfile': 'greenkeeper-lockfile-upload'
       }
     },
-    ...('Package' === packageType) && {publishConfig: {access: 'Public' === visibility ? 'public' : 'restricted'}},
+    ...('Package' === packageType) && {
+      publishConfig: {access: 'Public' === visibility ? 'public' : 'restricted'},
+      files: ['lib/']
+    },
     config: {
       commitizen: {
         path: './node_modules/cz-conventional-changelog'
