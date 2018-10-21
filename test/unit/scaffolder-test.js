@@ -166,7 +166,7 @@ suite('javascript project scaffolder', () => {
         }
       );
 
-      test('that the no config is added if the config prefix is not provided', async () => {
+      test('that no config is added if the config prefix is not provided', async () => {
         optionsValidator.validate.withArgs(options).returns({projectRoot, vcs: {}, configs: {}, ciServices});
         prompts.prompt.resolves({[questionNames.UNIT_TESTS]: true});
         mkdir.default.resolves();
