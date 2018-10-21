@@ -9,6 +9,7 @@ import * as installer from '../../src/install';
 import * as mkdir from '../../third-party-wrappers/make-dir';
 import * as optionsValidator from '../../src/options-validator';
 import * as ci from '../../src/ci';
+import * as eslint from '../../src/config/eslint';
 import * as documentation from '../../src/documentation';
 import * as nodeVersionHandler from '../../src/node-version';
 import {scaffold} from '../../src/scaffolder';
@@ -35,6 +36,7 @@ suite('javascript project scaffolder', () => {
     sandbox.stub(mkdir, 'default');
     sandbox.stub(optionsValidator, 'validate');
     sandbox.stub(ci, 'default');
+    sandbox.stub(eslint, 'default');
     sandbox.stub(documentation, 'default');
     sandbox.stub(nodeVersionHandler, 'determineLatestVersionOf');
     sandbox.stub(nodeVersionHandler, 'install');
@@ -51,13 +53,17 @@ suite('javascript project scaffolder', () => {
     test('that config files are created', () => {
       const babelPresetName = any.string();
       const remarkPreset = any.string();
+      const eslintConfig = any.simpleObject();
+      eslint.default
+        .withArgs({config: eslintConfig, projectRoot, unitTested: undefined})
+        .resolves({devDependencies: any.listOf(any.string), vcsIgnore: {files: any.listOf(any.string)}});
       optionsValidator.validate
         .withArgs(options)
         .returns({
           visibility,
           projectRoot,
           vcs: {},
-          configs: {babelPreset: {name: babelPresetName}, remark: remarkPreset},
+          configs: {babelPreset: {name: babelPresetName}, remark: remarkPreset, eslint: eslintConfig},
           ciServices
         });
 
@@ -81,6 +87,9 @@ suite('javascript project scaffolder', () => {
     test('that no remark config is created if no remark preset is defined', async () => {
       prompts.prompt.resolves({[questionNames.NODE_VERSION_CATEGORY]: any.word()});
       optionsValidator.validate.withArgs(options).returns({projectRoot, vcs: {}, configs: {}, ciServices});
+      eslint.default
+        .withArgs({config: undefined, projectRoot, unitTested: undefined})
+        .resolves({devDependencies: any.listOf(any.string), vcsIgnore: {files: any.listOf(any.string)}});
 
       await scaffold(options);
 
@@ -90,8 +99,12 @@ suite('javascript project scaffolder', () => {
     suite('unit test', () => {
       test('that a canary test is included when the project will be unit tested', async () => {
         const pathToCreatedDirectory = any.string();
+        const unitTested = true;
+        prompts.prompt.resolves({[questionNames.UNIT_TESTS]: unitTested});
         optionsValidator.validate.withArgs(options).returns({projectRoot, vcs: {}, configs: {}, ciServices});
-        prompts.prompt.resolves({[questionNames.UNIT_TESTS]: true});
+        eslint.default
+          .withArgs({config: undefined, projectRoot, unitTested})
+          .resolves({devDependencies: any.listOf(any.string), vcsIgnore: {files: any.listOf(any.string)}});
         mkdir.default.withArgs(`${projectRoot}/test/unit`).resolves(pathToCreatedDirectory);
 
         await scaffold(options);
@@ -115,7 +128,11 @@ suite('javascript project scaffolder', () => {
 
       test('that a canary test is not included when the project will be not unit tested', async () => {
         optionsValidator.validate.withArgs(options).returns({projectRoot, vcs: {}, configs: {}, ciServices});
-        prompts.prompt.resolves({[questionNames.UNIT_TESTS]: false});
+        const unitTested = false;
+        prompts.prompt.resolves({[questionNames.UNIT_TESTS]: unitTested});
+        eslint.default
+          .withArgs({config: undefined, projectRoot, unitTested})
+          .resolves({devDependencies: any.listOf(any.string), vcsIgnore: {files: any.listOf(any.string)}});
 
         await scaffold(options);
 
@@ -123,91 +140,6 @@ suite('javascript project scaffolder', () => {
         assert.neverCalledWith(fs.copyFile, path.resolve(__dirname, '../../', 'templates', 'canary-test.txt'));
         assert.neverCalledWith(fs.copyFile, path.resolve(__dirname, '../../', 'templates', 'nycrc.json'));
         assert.neverCalledWith(fs.copyFile, path.resolve(__dirname, '../../', 'templates', 'mocha.opts'));
-      });
-    });
-
-    suite('eslint', () => {
-      const eslintConfigPrefix = any.string();
-
-      test('that the base config is added to the root of the project if the config prefix is provided', async () => {
-        optionsValidator.validate
-          .withArgs(options)
-          .returns({projectRoot, vcs: {}, configs: {eslint: {prefix: eslintConfigPrefix}}, ciServices});
-        prompts.prompt.resolves({[questionNames.UNIT_TESTS]: false});
-
-        await scaffold(options);
-
-        assert.calledWith(fs.writeFile, `${projectRoot}/.eslintrc.yml`, `extends: '${eslintConfigPrefix}/rules/es6'`);
-        assert.neverCalledWith(fs.writeFile, `${projectRoot}/test/.eslintrc.yml`);
-        assert.neverCalledWith(fs.writeFile, `${projectRoot}/test/unit/.eslintrc.yml`);
-      });
-
-      test(
-        'that the test config is added if the config prefix is provided and the project will be unit tested',
-        async () => {
-          optionsValidator.validate
-            .withArgs(options)
-            .returns({projectRoot, vcs: {}, configs: {eslint: {prefix: eslintConfigPrefix}}, ciServices});
-          prompts.prompt.resolves({[questionNames.UNIT_TESTS]: true});
-          mkdir.default.resolves();
-
-          await scaffold(options);
-
-          assert.calledWith(
-            fs.writeFile,
-            `${projectRoot}/test/.eslintrc.yml`,
-            `extends: '${eslintConfigPrefix}/rules/tests/base'`
-          );
-          assert.calledWith(
-            fs.writeFile,
-            `${projectRoot}/test/unit/.eslintrc.yml`,
-            `extends: '${eslintConfigPrefix}/rules/tests/mocha'`
-          );
-        }
-      );
-
-      test('that no config is added if the config prefix is not provided', async () => {
-        optionsValidator.validate.withArgs(options).returns({projectRoot, vcs: {}, configs: {}, ciServices});
-        prompts.prompt.resolves({[questionNames.UNIT_TESTS]: true});
-        mkdir.default.resolves();
-
-        await scaffold(options);
-
-        assert.neverCalledWith(fs.writeFile, `${projectRoot}/.eslintrc.yml`);
-        assert.neverCalledWith(fs.writeFile, `${projectRoot}/.eslintignore`);
-        assert.neverCalledWith(fs.writeFile, `${projectRoot}/test/.eslintrc.yml`);
-        assert.neverCalledWith(fs.writeFile, `${projectRoot}/test/unit/.eslintrc.yml`);
-      });
-
-      suite('eslint-ignore', () => {
-        test('that non-source files are excluded from linting', async () => {
-          optionsValidator.validate
-            .withArgs(options)
-            .returns({projectRoot, vcs: {}, configs: {eslint: {prefix: eslintConfigPrefix}}, ciServices});
-          prompts.prompt.resolves({[questionNames.UNIT_TESTS]: false});
-
-          await scaffold(options);
-
-          assert.calledWith(fs.writeFile, `${projectRoot}/.eslintignore`, sinon.match('/lib/'));
-          assert.neverCalledWith(fs.writeFile, `${projectRoot}/.eslintignore`, sinon.match('/coverage/'));
-        });
-
-        test('that the coverage folder is excluded from linting when the project is unit tested', async () => {
-          optionsValidator.validate
-            .withArgs(options)
-            .returns({projectRoot, vcs: {}, configs: {eslint: {prefix: eslintConfigPrefix}}, ciServices});
-          prompts.prompt.resolves({[questionNames.UNIT_TESTS]: true});
-          mkdir.default.resolves();
-
-          await scaffold(options);
-
-          assert.calledWith(
-            fs.writeFile,
-            `${projectRoot}/.eslintignore`,
-            sinon.match(`
-/coverage/`)
-          );
-        });
       });
     });
 
@@ -219,6 +151,9 @@ suite('javascript project scaffolder', () => {
           .withArgs(options)
           .returns({projectRoot, vcs: {}, configs: {commitlint: {name: commitlintConfigPrefix}}, ciServices});
         prompts.prompt.resolves({});
+        eslint.default
+          .withArgs({config: undefined, projectRoot, unitTested: undefined})
+          .resolves({devDependencies: any.listOf(any.string), vcsIgnore: {files: any.listOf(any.string)}});
 
         await scaffold(options);
 
@@ -232,6 +167,9 @@ suite('javascript project scaffolder', () => {
       test('that the config is not added to the root of the project if the package is not defined', async () => {
         optionsValidator.validate.withArgs(options).returns({projectRoot, vcs: {}, configs: {}, ciServices});
         prompts.prompt.resolves({});
+        eslint.default
+          .withArgs({config: undefined, projectRoot, unitTested: undefined})
+          .resolves({devDependencies: any.listOf(any.string), vcsIgnore: {files: any.listOf(any.string)}});
 
         await scaffold(options);
 
@@ -246,6 +184,9 @@ suite('javascript project scaffolder', () => {
             .withArgs(options)
             .returns({visibility, projectRoot, vcs: {}, configs: {}, ciServices});
           prompts.prompt.resolves({[questionNames.PACKAGE_TYPE]: 'Application'});
+          eslint.default
+            .withArgs({config: undefined, projectRoot, unitTested: undefined})
+            .resolves({devDependencies: any.listOf(any.string), vcsIgnore: {files: any.listOf(any.string)}});
 
           await scaffold(options);
 
@@ -259,6 +200,9 @@ suite('javascript project scaffolder', () => {
             .withArgs(options)
             .returns({visibility, projectRoot, vcs: {}, configs: {}, ciServices});
           prompts.prompt.resolves({[questionNames.PACKAGE_TYPE]: 'Package'});
+          eslint.default
+            .withArgs({config: undefined, projectRoot, unitTested: undefined})
+            .resolves({devDependencies: any.listOf(any.string), vcsIgnore: {files: any.listOf(any.string)}});
 
           await scaffold(options);
 
@@ -299,6 +243,9 @@ suite('javascript project scaffolder', () => {
         [questionNames.AUTHOR_URL]: authorUrl,
         [questionNames.CI_SERVICE]: ciService
       });
+      eslint.default
+        .withArgs({config: undefined, projectRoot, unitTested: tests.unit})
+        .resolves({devDependencies: any.listOf(any.string), vcsIgnore: {files: any.listOf(any.string)}});
       packageBuilder.default
         .withArgs({
           projectName,
@@ -324,7 +271,9 @@ suite('javascript project scaffolder', () => {
     });
 
     suite('dependencies', () => {
+      const eslintDevDependencies = any.listOf(any.string);
       const defaultDependencies = [
+        ...eslintDevDependencies,
         'npm-run-all',
         'husky',
         'cz-conventional-changelog',
@@ -332,6 +281,11 @@ suite('javascript project scaffolder', () => {
         'ban-sensitive-files'
       ];
       const unitTestDependencies = ['mocha', 'chai', 'sinon', 'nyc', '@travi/any'];
+
+      setup(() => {
+        eslint.default
+          .resolves({devDependencies: eslintDevDependencies, vcsIgnore: {files: any.listOf(any.string)}});
+      });
 
       suite('scripts', () => {
         test('that scripting tools are installed', async () => {
@@ -357,19 +311,7 @@ suite('javascript project scaffolder', () => {
       });
 
       suite('lint', () => {
-        const eslintConfigName = any.string();
         const commitlintConfigName = any.string();
-
-        test('that the eslint config is installed when defined', async () => {
-          optionsValidator.validate
-            .withArgs(options)
-            .returns({vcs: {}, configs: {eslint: {packageName: eslintConfigName}}, overrides, ciServices});
-          prompts.prompt.withArgs(overrides, Object.keys(ciServices)).resolves({});
-
-          await scaffold(options);
-
-          assert.calledWith(installer.default, [eslintConfigName, ...defaultDependencies]);
-        });
 
         test('that the commitlint config is installed when defined', async () => {
           optionsValidator.validate
@@ -379,7 +321,7 @@ suite('javascript project scaffolder', () => {
 
           await scaffold(options);
 
-          assert.calledWith(installer.default, [commitlintConfigName, ...defaultDependencies]);
+          assert.calledWith(installer.default, [...defaultDependencies, commitlintConfigName]);
         });
 
         test('that the travis-lint is installed when Travis is the chosen ci-service', async () => {
@@ -402,7 +344,7 @@ suite('javascript project scaffolder', () => {
 
           await scaffold(options);
 
-          assert.calledWith(installer.default, [remarkPreset, 'remark-cli', ...defaultDependencies]);
+          assert.calledWith(installer.default, [...defaultDependencies, remarkPreset, 'remark-cli']);
         });
       });
 
@@ -417,7 +359,7 @@ suite('javascript project scaffolder', () => {
 
           await scaffold(options);
 
-          assert.calledWith(installer.default, [babelPresetName, ...defaultDependencies]);
+          assert.calledWith(installer.default, [...defaultDependencies, babelPresetName]);
         });
       });
 
@@ -540,6 +482,9 @@ suite('javascript project scaffolder', () => {
       prompts.prompt
         .withArgs(overrides, Object.keys(ciServices), visibility)
         .resolves({[questionNames.PACKAGE_TYPE]: 'Application'});
+      eslint.default
+        .resolves({devDependencies: any.listOf(any.string), vcsIgnore: {files: any.listOf(any.string)}});
+
 
       return scaffold(options).then(() => assert.calledWith(
         fs.writeFile,
@@ -553,6 +498,8 @@ suite('javascript project scaffolder', () => {
         .withArgs(options)
         .returns({projectRoot, projectName, visibility: 'Public', vcs: {}, configs: {}, ciServices});
       prompts.prompt.resolves({[questionNames.PACKAGE_TYPE]: 'Package'});
+      eslint.default
+        .resolves({devDependencies: any.listOf(any.string), vcsIgnore: {files: any.listOf(any.string)}});
 
       return scaffold(options).then(() => assert.neverCalledWith(fs.writeFile, `${projectRoot}/.npmrc`));
     });
@@ -567,6 +514,8 @@ suite('javascript project scaffolder', () => {
           .withArgs(options)
           .returns({projectRoot, projectName, visibility: 'Public', vcs: {}, configs: {}, ciServices});
         prompts.prompt.resolves({[questionNames.PACKAGE_TYPE]: 'Package'});
+        eslint.default
+          .resolves({devDependencies: any.listOf(any.string), vcsIgnore: {files: any.listOf(any.string)}});
 
         const {badges} = await scaffold(options);
 
@@ -582,6 +531,8 @@ suite('javascript project scaffolder', () => {
           .withArgs(options)
           .returns({projectRoot, projectName, visibility: 'Private', vcs: {}, configs: {}, ciServices});
         prompts.prompt.resolves({[questionNames.PACKAGE_TYPE]: 'Package'});
+        eslint.default
+          .resolves({devDependencies: any.listOf(any.string), vcsIgnore: {files: any.listOf(any.string)}});
 
         const {badges} = await scaffold(options);
 
@@ -593,6 +544,8 @@ suite('javascript project scaffolder', () => {
           .withArgs(options)
           .returns({projectRoot, projectName, visibility: 'Public', vcs: {}, configs: {}, ciServices});
         prompts.prompt.resolves({[questionNames.PACKAGE_TYPE]: any.word()});
+        eslint.default
+          .resolves({devDependencies: any.listOf(any.string), vcsIgnore: {files: any.listOf(any.string)}});
 
         const {badges} = await scaffold(options);
 
@@ -606,6 +559,8 @@ suite('javascript project scaffolder', () => {
           .returns({projectRoot, projectName, vcs: {}, configs: {}, ciServices});
         packageBuilder.default.returns({name: packageName});
         prompts.prompt.resolves({});
+        eslint.default
+          .resolves({devDependencies: any.listOf(any.string), vcsIgnore: {files: any.listOf(any.string)}});
 
         const {badges} = await scaffold(options);
 
@@ -629,6 +584,8 @@ suite('javascript project scaffolder', () => {
             .returns({projectRoot, projectName, vcs: {}, configs: {}, ciServices});
           packageBuilder.default.returns({name: packageName});
           prompts.prompt.resolves({[questionNames.PACKAGE_TYPE]: 'Package'});
+          eslint.default
+            .resolves({devDependencies: any.listOf(any.string), vcsIgnore: {files: any.listOf(any.string)}});
 
           const {badges} = await scaffold(options);
 
@@ -646,6 +603,8 @@ suite('javascript project scaffolder', () => {
             .returns({projectRoot, projectName, vcs: {}, configs: {}, ciServices});
           packageBuilder.default.returns({name: packageName});
           prompts.prompt.resolves({[questionNames.PACKAGE_TYPE]: any.word()});
+          eslint.default
+            .resolves({devDependencies: any.listOf(any.string), vcsIgnore: {files: any.listOf(any.string)}});
 
           const {badges} = await scaffold(options);
 
@@ -664,6 +623,8 @@ suite('javascript project scaffolder', () => {
           [questionNames.CI_SERVICE]: ciService,
           [questionNames.PACKAGE_TYPE]: packageType
         });
+        eslint.default
+          .resolves({devDependencies: any.listOf(any.string), vcsIgnore: {files: any.listOf(any.string)}});
         nodeVersionHandler.determineLatestVersionOf.withArgs(versionCategory).returns(version);
         optionsValidator.validate
           .withArgs(options)
@@ -685,6 +646,8 @@ suite('javascript project scaffolder', () => {
         optionsValidator.validate
           .withArgs(options)
           .returns({projectRoot, projectName, vcs, configs: {}, ciServices, visibility});
+        eslint.default
+          .resolves({devDependencies: any.listOf(any.string), vcsIgnore: {files: any.listOf(any.string)}});
 
         const {badges} = await scaffold(options);
 
@@ -697,6 +660,8 @@ suite('javascript project scaffolder', () => {
           prompts.prompt.resolves({[questionNames.UNIT_TESTS]: true});
           optionsValidator.validate
             .returns({projectRoot, projectName, vcs, configs: {}, ciServices, visibility: 'Public'});
+          eslint.default
+            .resolves({devDependencies: any.listOf(any.string), vcsIgnore: {files: any.listOf(any.string)}});
           mkdir.default.resolves();
 
           const {badges} = await scaffold(options);
@@ -712,6 +677,8 @@ suite('javascript project scaffolder', () => {
           prompts.prompt.resolves({[questionNames.UNIT_TESTS]: true});
           optionsValidator.validate
             .returns({projectRoot, projectName, vcs: {}, configs: {}, ciServices, visibility: 'Private'});
+          eslint.default
+            .resolves({devDependencies: any.listOf(any.string), vcsIgnore: {files: any.listOf(any.string)}});
           mkdir.default.resolves();
 
           const {badges} = await scaffold(options);
@@ -723,6 +690,8 @@ suite('javascript project scaffolder', () => {
           prompts.prompt.resolves({[questionNames.UNIT_TESTS]: false});
           optionsValidator.validate
             .returns({projectRoot, projectName, vcs: {}, configs: {}, ciServices, visibility: 'Public'});
+          eslint.default
+            .resolves({devDependencies: any.listOf(any.string), vcsIgnore: {files: any.listOf(any.string)}});
 
           const {badges} = await scaffold(options);
 
@@ -735,12 +704,15 @@ suite('javascript project scaffolder', () => {
       test('that files and directories are defined to be ignored from version control', async () => {
         optionsValidator.validate
           .withArgs(options)
-          .returns({projectRoot, projectName, visibility: 'Public', vcs: {}, configs: {}, ciServices});
+          .returns({projectRoot, projectName, visibility: 'Public', vcs: {}, configs: {eslint: {}}, ciServices});
+        const eslintIgnoreFiles = any.listOf(any.string);
+        eslint.default
+          .resolves({devDependencies: any.listOf(any.string), vcsIgnore: {files: eslintIgnoreFiles}});
         prompts.prompt.resolves({});
 
         const {vcsIgnore} = await scaffold(options);
 
-        assert.include(vcsIgnore.files, '.eslintcache');
+        assert.deepEqual(vcsIgnore.files, [...eslintIgnoreFiles]);
 
         assert.include(vcsIgnore.directories, '/node_modules/');
         assert.include(vcsIgnore.directories, '/lib/');
@@ -755,6 +727,8 @@ suite('javascript project scaffolder', () => {
           .withArgs(options)
           .returns({projectRoot, projectName, visibility: any.word(), vcs: {}, configs: {}, ciServices});
         prompts.prompt.resolves({});
+        eslint.default
+          .resolves({devDependencies: any.listOf(any.string), vcsIgnore: {files: any.listOf(any.string)}});
 
         const {verificationCommand} = await scaffold(options);
 
@@ -769,6 +743,8 @@ suite('javascript project scaffolder', () => {
           .withArgs(options)
           .returns({projectRoot, projectName, visibility: any.word(), vcs: {}, configs: {}, ciServices});
         prompts.prompt.resolves({});
+        eslint.default
+          .resolves({devDependencies: any.listOf(any.string), vcsIgnore: {files: any.listOf(any.string)}});
         packageBuilder.default.returns({homepage});
 
         const {projectDetails} = await scaffold(options);
@@ -782,6 +758,8 @@ suite('javascript project scaffolder', () => {
           .returns({projectRoot, projectName, visibility: any.word(), vcs: {}, configs: {}, ciServices});
         prompts.prompt.resolves({});
         packageBuilder.default.returns({});
+        eslint.default
+          .resolves({devDependencies: any.listOf(any.string), vcsIgnore: {files: any.listOf(any.string)}});
 
         const {projectDetails} = await scaffold(options);
 
@@ -803,6 +781,8 @@ suite('javascript project scaffolder', () => {
         documentation.default.withArgs({packageType, packageName, visibility, scope}).returns(docs);
         optionsValidator.validate
           .returns({projectRoot, projectName, visibility, vcs: {}, configs: {}, ciServices, scope});
+        eslint.default
+          .resolves({devDependencies: any.listOf(any.string), vcsIgnore: {files: any.listOf(any.string)}});
 
         const {documentation: documentationContent} = await scaffold(options);
 

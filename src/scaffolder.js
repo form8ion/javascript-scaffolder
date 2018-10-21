@@ -8,6 +8,7 @@ import install from './install';
 import {validate} from './options-validator';
 import {prompt} from './prompts/questions';
 import scaffoldCi from './ci';
+import scaffoldEsLint from './config/eslint';
 import scaffoldDocumentation from './documentation';
 import {determineLatestVersionOf, install as installNodeVersion} from './node-version';
 import {questionNames} from './prompts/question-names';
@@ -34,16 +35,18 @@ export async function scaffold(options) {
   const scope = answers[questionNames.SCOPE];
   const nodeVersionCategory = answers[questionNames.NODE_VERSION_CATEGORY];
 
+  const eslint = await scaffoldEsLint(({config: configs.eslint, projectRoot, unitTested}));
+
   const devDependencies = uniq([
-    configs.eslint && configs.eslint.packageName,
-    configs.commitlint && configs.commitlint.packageName,
-    configs.babelPreset && configs.babelPreset.packageName,
-    ...configs.remark ? [configs.remark, 'remark-cli'] : [],
+    ...eslint.devDependencies,
     'npm-run-all',
     'husky',
     'cz-conventional-changelog',
     'babel-register',
     'ban-sensitive-files',
+    configs.commitlint && configs.commitlint.packageName,
+    configs.babelPreset && configs.babelPreset.packageName,
+    ...configs.remark ? [configs.remark, 'remark-cli'] : [],
     ...'Private' === visibility ? ['greenkeeper-lockfile'] : [],
     ...'Package' === packageType ? ['rimraf', 'rollup', 'rollup-plugin-auto-external'] : [],
     ...'Public' === visibility && unitTested ? ['codecov'] : [],
@@ -77,17 +80,11 @@ export async function scaffold(options) {
     configs
   });
 
-  const eslintIgnoreDirectories = ['/lib/', ...unitTested ? ['/coverage/'] : []];
-
   const [ciService] = await Promise.all([
     scaffoldCi(ciServices, ci, {projectRoot, vcs, visibility, packageType, nodeVersion}),
     writeFile(`${projectRoot}/.nvmrc`, nodeVersion),
     writeFile(`${projectRoot}/package.json`, JSON.stringify(packageData)),
     configs.babelPreset && writeFile(`${projectRoot}/.babelrc`, JSON.stringify({presets: [configs.babelPreset.name]})),
-    configs.eslint && Promise.all([
-      writeFile(`${projectRoot}/.eslintrc.yml`, `extends: '${configs.eslint.prefix}/rules/es6'`),
-      writeFile(`${projectRoot}/.eslintignore`, eslintIgnoreDirectories.join('\n'))
-    ]),
     ('Application' === packageType) && writeFile(`${projectRoot}/.npmrc`, 'save-exact=true\n'),
     copyFile(resolve(__dirname, '..', 'templates', 'huskyrc.json'), `${projectRoot}/.huskyrc.json`),
     configs.commitlint && writeFile(
@@ -101,11 +98,7 @@ export async function scaffold(options) {
     unitTested && mkdir(`${projectRoot}/test/unit`).then(path => Promise.all([
       copyFile(resolve(__dirname, '..', 'templates', 'nycrc.json'), `${projectRoot}/.nycrc`),
       copyFile(resolve(__dirname, '..', 'templates', 'canary-test.txt'), `${path}/canary-test.js`),
-      copyFile(resolve(__dirname, '..', 'templates', 'mocha.opts'), `${path}/../mocha.opts`),
-      configs.eslint && Promise.all([
-        writeFile(`${projectRoot}/test/.eslintrc.yml`, `extends: '${configs.eslint.prefix}/rules/tests/base'`),
-        writeFile(`${projectRoot}/test/unit/.eslintrc.yml`, `extends: '${configs.eslint.prefix}/rules/tests/mocha'`)
-      ])
+      copyFile(resolve(__dirname, '..', 'templates', 'mocha.opts'), `${path}/../mocha.opts`)
     ])),
     configs.remark && writeFile(`${projectRoot}/.remarkrc.js`, `exports.plugins = ['${configs.remark}'];`)
   ]);
@@ -158,7 +151,7 @@ export async function scaffold(options) {
     },
     documentation: scaffoldDocumentation({packageType, packageName: packageData.name, visibility, scope}),
     vcsIgnore: {
-      files: ['.eslintcache'],
+      files: [...eslint.vcsIgnore.files],
       directories: ['/node_modules/', '/lib/', '/coverage/', '/.nyc_output/']
     },
     verificationCommand: 'npm test',
