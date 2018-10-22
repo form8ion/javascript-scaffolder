@@ -5,7 +5,7 @@ import any from '@travi/any';
 import * as exec from '../../../third-party-wrappers/exec-as-promised';
 import * as npmConf from '../../../third-party-wrappers/npm-conf';
 import * as validators from '../../../src/prompts/validators';
-import {scopePromptShouldBePresented, shouldBeScopedPromptShouldBePresented} from '../../../src/prompts/conditionals';
+import * as conditionals from '../../../src/prompts/conditionals';
 import {prompt} from '../../../src/prompts/questions';
 import {questionNames} from '../../../src/prompts/question-names';
 
@@ -19,6 +19,7 @@ suite('prompts', () => {
     sandbox.stub(npmConf, 'default');
     sandbox.stub(exec, 'default');
     sandbox.stub(validators, 'scope');
+    sandbox.stub(conditionals, 'scopePromptShouldBePresentedFactory');
   });
 
   teardown(() => sandbox.restore());
@@ -32,6 +33,7 @@ suite('prompts', () => {
     const get = sinon.stub();
     const ciServices = any.listOf(any.string);
     const scopeValidator = () => undefined;
+    const scopePromptShouldBePresented = () => undefined;
     npmConf.default.returns({get});
     exec.default.withArgs('npm whoami').resolves(`${npmUser}\n`);
     get.withArgs('init.author.name').returns(authorName);
@@ -39,6 +41,7 @@ suite('prompts', () => {
     get.withArgs('init.author.url').returns(authorUrl);
     validators.scope.withArgs(visibility).returns(scopeValidator);
     inquirer.prompt.resolves();
+    conditionals.scopePromptShouldBePresentedFactory.withArgs(visibility).returns(scopePromptShouldBePresented);
 
     return prompt({}, ciServices, visibility).then(() => assert.calledWith(
       inquirer.prompt,
@@ -61,7 +64,7 @@ suite('prompts', () => {
           name: questionNames.SHOULD_BE_SCOPED,
           message: 'Should this package be scoped?',
           type: 'confirm',
-          when: shouldBeScopedPromptShouldBePresented,
+          when: conditionals.shouldBeScopedPromptShouldBePresented,
           default: true
         },
         {
@@ -151,20 +154,6 @@ suite('prompts', () => {
     assert.neverCalledWith(
       inquirer.prompt,
       sinon.match(value => 1 === value.filter(question => questionNames.SHOULD_BE_SCOPED === question.name).length)
-    );
-  });
-
-  test('that private packages are prompted for the scope', async () => {
-    exec.default.withArgs('npm whoami').resolves(any.word());
-    npmConf.default.returns({get: () => undefined});
-
-    await prompt({}, [], 'Private');
-
-    assert.calledWith(
-      inquirer.prompt,
-      sinon.match(value => 1 === value.filter((
-        question => questionNames.SCOPE === question.name && true === question.when
-      )).length)
     );
   });
 });

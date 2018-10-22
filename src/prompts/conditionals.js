@@ -1,9 +1,17 @@
 import {questionNames} from './question-names';
 
-export function shouldBeScopedPromptShouldBePresented(answers) {
+function projectIsPackage(answers) {
   return 'Package' === answers[questionNames.PACKAGE_TYPE];
 }
 
-export function scopePromptShouldBePresented(answers) {
-  return answers[questionNames.SHOULD_BE_SCOPED];
+function packageShouldBeScoped(visibility, answers) {
+  return 'Private' === visibility || answers[questionNames.SHOULD_BE_SCOPED];
+}
+
+export function shouldBeScopedPromptShouldBePresented(answers) {
+  return projectIsPackage(answers);
+}
+
+export function scopePromptShouldBePresentedFactory(visibility) {
+  return answers => projectIsPackage(answers) && packageShouldBeScoped(visibility, answers);
 }

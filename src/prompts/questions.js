@@ -1,6 +1,6 @@
 import {prompt as promptWithInquirer, Separator} from 'inquirer';
 import exec from '../../third-party-wrappers/exec-as-promised';
-import {scopePromptShouldBePresented, shouldBeScopedPromptShouldBePresented} from './conditionals';
+import {scopePromptShouldBePresentedFactory, shouldBeScopedPromptShouldBePresented} from './conditionals';
 import npmConfFactory from '../../third-party-wrappers/npm-conf';
 import {questionNames} from './question-names';
 import {scope as validateScope} from './validators';
@@ -68,7 +68,7 @@ export async function prompt({npmAccount, author}, ciServices, visibility) {
     {
       name: questionNames.SCOPE,
       message: 'What is the scope?',
-      when: 'Private' === visibility || scopePromptShouldBePresented,
+      when: scopePromptShouldBePresentedFactory(visibility),
       validate: validateScope(visibility),
       default: npmAccount || (await exec('npm whoami')).trim()
     },
