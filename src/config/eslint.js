@@ -1,4 +1,5 @@
 import {writeFile} from 'mz/fs';
+import mkdir from '../../third-party-wrappers/make-dir';
 
 export default async function ({config, projectRoot, unitTested}) {
   if (config) {
@@ -10,9 +11,10 @@ export default async function ({config, projectRoot, unitTested}) {
     ]);
 
     if (unitTested) {
+      const pathToCreatedUnitTestDirectory = await mkdir(`${projectRoot}/test/unit`);
       await Promise.all([
-        writeFile(`${projectRoot}/test/.eslintrc.yml`, `extends: '${config.prefix}/rules/tests/base'`),
-        writeFile(`${projectRoot}/test/unit/.eslintrc.yml`, `extends: '${config.prefix}/rules/tests/mocha'`)
+        writeFile(`${pathToCreatedUnitTestDirectory}/../.eslintrc.yml`, `extends: '${config.prefix}/rules/tests/base'`),
+        writeFile(`${pathToCreatedUnitTestDirectory}/.eslintrc.yml`, `extends: '${config.prefix}/rules/tests/mocha'`)
       ]);
     }
   }

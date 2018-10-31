@@ -2,6 +2,7 @@ import fs from 'mz/fs';
 import {assert} from 'chai';
 import any from '@travi/any';
 import sinon from 'sinon';
+import * as mkdir from '../../../third-party-wrappers/make-dir';
 import scaffoldEsLint from '../../../src/config/eslint';
 
 suite('eslint config scaffolder', () => {
@@ -12,6 +13,7 @@ suite('eslint config scaffolder', () => {
     sandbox = sinon.createSandbox();
 
     sandbox.stub(fs, 'writeFile');
+    sandbox.stub(mkdir, 'default');
   });
 
   teardown(() => sandbox.restore());
@@ -54,17 +56,25 @@ suite('eslint config scaffolder', () => {
       assert.calledWith(fs.writeFile, `${projectRoot}/.eslintrc.yml`, `extends: '${prefix}/rules/es6'`);
       assert.neverCalledWith(fs.writeFile, `${projectRoot}/test/.eslintrc.yml`);
       assert.neverCalledWith(fs.writeFile, `${projectRoot}/test/unit/.eslintrc.yml`);
+      assert.neverCalledWith(mkdir.default, `${projectRoot}/test/unit`);
     });
 
     test(
       'that the test config is added if the config prefix is provided and the project will be unit tested',
       async () => {
+        const pathToCreatedDirectory = any.string();
+        mkdir.default.withArgs(`${projectRoot}/test/unit`).resolves(pathToCreatedDirectory);
+
         await scaffoldEsLint({projectRoot, config: {packageName, prefix}, unitTested: true});
 
-        assert.calledWith(fs.writeFile, `${projectRoot}/test/.eslintrc.yml`, `extends: '${prefix}/rules/tests/base'`);
         assert.calledWith(
           fs.writeFile,
-          `${projectRoot}/test/unit/.eslintrc.yml`,
+          `${pathToCreatedDirectory}/../.eslintrc.yml`,
+          `extends: '${prefix}/rules/tests/base'`
+        );
+        assert.calledWith(
+          fs.writeFile,
+          `${pathToCreatedDirectory}/.eslintrc.yml`,
           `extends: '${prefix}/rules/tests/mocha'`
         );
       }
@@ -77,6 +87,7 @@ suite('eslint config scaffolder', () => {
       assert.neverCalledWith(fs.writeFile, `${projectRoot}/.eslintignore`);
       assert.neverCalledWith(fs.writeFile, `${projectRoot}/test/.eslintrc.yml`);
       assert.neverCalledWith(fs.writeFile, `${projectRoot}/test/unit/.eslintrc.yml`);
+      assert.neverCalledWith(mkdir.default, `${projectRoot}/test/unit`);
     });
 
     suite('eslint-ignore', () => {
