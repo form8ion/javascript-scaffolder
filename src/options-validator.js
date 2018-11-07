@@ -40,6 +40,10 @@ export function validate(options) {
       scaffolder: joi.func().arity(1).required(),
       public: joi.boolean(),
       private: joi.boolean()
+    })).default({}),
+    hosts: joi.object().pattern(/^/, joi.object({
+      scaffolder: joi.func().arity(1).required(),
+      projectTypes: joi.array().items(joi.string().only(['static'])).default([])
     })).default({})
   }).required());
 

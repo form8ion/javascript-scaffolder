@@ -347,7 +347,7 @@ suite('options validator', () => {
       ciServices: {[ciServiceName]: {scaffolder: options => options, public: any.boolean()}}
     }));
 
-    test('that a provided ci-service scaffolder can be enabled for public projects', () => validate({
+    test('that a provided ci-service scaffolder can be enabled for private projects', () => validate({
       projectRoot: any.string(),
       projectName: any.string(),
       visibility: any.fromList(['Public', 'Private']),
@@ -358,7 +358,91 @@ suite('options validator', () => {
     }));
   });
 
-  test('that `configs`, `overrides`, and `ciServices` default to empty objects', () => {
+  suite('hosts', () => {
+    const hostName = any.word();
+
+    test('that the scaffolder function is required', () => assert.throws(
+      () => validate({
+        projectRoot: any.string(),
+        projectName: any.string(),
+        visibility: any.fromList(['Public', 'Private']),
+        license: any.string(),
+        vcs: {host: any.word(), owner: any.word(), name: any.word()},
+        description: any.string(),
+        hosts: {[hostName]: {}}
+      }),
+      `child "hosts" fails because [child "${hostName}" fails because ` +
+      '[child "scaffolder" fails because ["scaffolder" is required]]]'
+    ));
+
+    test('that a provided scaffolder must accept a single argument', () => assert.throws(
+      () => validate({
+        projectRoot: any.string(),
+        projectName: any.string(),
+        visibility: any.fromList(['Public', 'Private']),
+        license: any.string(),
+        vcs: {host: any.word(), owner: any.word(), name: any.word()},
+        description: any.string(),
+        hosts: {[hostName]: {scaffolder: () => undefined}}
+      }),
+      `child "hosts" fails because [child "${hostName}" fails because ` +
+      '[child "scaffolder" fails because ["scaffolder" must have an arity of 1]]]'
+    ));
+
+    test('that provided `projectTypes` must be strings', () => assert.throws(
+      () => validate({
+        projectRoot: any.string(),
+        projectName: any.string(),
+        visibility: any.fromList(['Public', 'Private']),
+        license: any.string(),
+        vcs: {host: any.word(), owner: any.word(), name: any.word()},
+        description: any.string(),
+        hosts: {[hostName]: {scaffolder: options => options, projectTypes: [any.integer()]}}
+      }),
+      `child "hosts" fails because [child "${hostName}" fails because ` +
+      '[child "projectTypes" fails because ["projectTypes" at position 0 fails because ["0" must be a string]]]'
+    ));
+
+    test('that `projectTypes` must be valid types', () => assert.throws(
+      () => validate({
+        projectRoot: any.string(),
+        projectName: any.string(),
+        visibility: any.fromList(['Public', 'Private']),
+        license: any.string(),
+        vcs: {host: any.word(), owner: any.word(), name: any.word()},
+        description: any.string(),
+        hosts: {[hostName]: {scaffolder: options => options, projectTypes: [any.word()]}}
+      }),
+      `child "hosts" fails because [child "${hostName}" fails because ` +
+      '[child "projectTypes" fails because ["projectTypes" at position 0 fails because ["0" must be one of [static]]]]'
+    ));
+
+    test('that `static` is a valid option for `projectTypes`', () => validate({
+      projectRoot: any.string(),
+      projectName: any.string(),
+      visibility: any.fromList(['Public', 'Private']),
+      license: any.string(),
+      vcs: {host: any.word(), owner: any.word(), name: any.word()},
+      description: any.string(),
+      hosts: {[hostName]: {scaffolder: options => options, projectTypes: ['static']}}
+    }));
+
+    test('that `projectTypes` defaults to an empty list`', () => {
+      const validated = validate({
+        projectRoot: any.string(),
+        projectName: any.string(),
+        visibility: any.fromList(['Public', 'Private']),
+        license: any.string(),
+        vcs: {host: any.word(), owner: any.word(), name: any.word()},
+        description: any.string(),
+        hosts: {[hostName]: {scaffolder: options => options}}
+      });
+
+      assert.deepEqual(validated.hosts[hostName].projectTypes, []);
+    });
+  });
+
+  test('that `configs`, `overrides`, `hosts`, and `ciServices` default to empty objects', () => {
     const options = {
       projectRoot: any.string(),
       projectName: any.string(),
@@ -370,6 +454,6 @@ suite('options validator', () => {
 
     const validated = validate(options);
 
-    assert.deepEqual(validated, {...options, configs: {}, overrides: {}, ciServices: {}});
+    assert.deepEqual(validated, {...options, configs: {}, overrides: {}, ciServices: {}, hosts: {}});
   });
 });
