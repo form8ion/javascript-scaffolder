@@ -12,6 +12,7 @@ import * as ci from '../../src/ci';
 import * as eslint from '../../src/config/eslint';
 import * as documentation from '../../src/documentation';
 import * as nodeVersionHandler from '../../src/node-version';
+import * as badgeDetailsBuilder from '../../src/badges';
 import {scaffold} from '../../src/scaffolder';
 import {questionNames} from '../../src/prompts/question-names';
 
@@ -40,6 +41,7 @@ suite('javascript project scaffolder', () => {
     sandbox.stub(documentation, 'default');
     sandbox.stub(nodeVersionHandler, 'determineLatestVersionOf');
     sandbox.stub(nodeVersionHandler, 'install');
+    sandbox.stub(badgeDetailsBuilder, 'default');
 
     fs.writeFile.resolves();
     fs.copyFile.resolves();
@@ -485,7 +487,6 @@ suite('javascript project scaffolder', () => {
       eslint.default
         .resolves({devDependencies: any.listOf(any.string), vcsIgnore: {files: any.listOf(any.string)}});
 
-
       return scaffold(options).then(() => assert.calledWith(
         fs.writeFile,
         `${projectRoot}/.npmrc`, 'save-exact=true\n'
@@ -507,196 +508,44 @@ suite('javascript project scaffolder', () => {
 
   suite('data passed downstream', () => {
     suite('badges', () => {
-      test('that the npm badge is defined for public packages', async () => {
-        const packageName = any.word();
-        packageBuilder.default.returns({name: packageName});
-        optionsValidator.validate
-          .withArgs(options)
-          .returns({projectRoot, projectName, visibility: 'Public', vcs: {}, configs: {}, ciServices});
-        prompts.prompt.resolves({[questionNames.PACKAGE_TYPE]: 'Package'});
-        eslint.default
-          .resolves({devDependencies: any.listOf(any.string), vcsIgnore: {files: any.listOf(any.string)}});
-
-        const {badges} = await scaffold(options);
-
-        assert.deepEqual(badges.consumer.npm, {
-          img: `https://img.shields.io/npm/v/${packageName}.svg`,
-          text: 'npm',
-          link: `https://www.npmjs.com/package/${packageName}`
-        });
-      });
-
-      test('that the npm badge is not defined for private packages', async () => {
-        optionsValidator.validate
-          .withArgs(options)
-          .returns({projectRoot, projectName, visibility: 'Private', vcs: {}, configs: {}, ciServices});
-        prompts.prompt.resolves({[questionNames.PACKAGE_TYPE]: 'Package'});
-        eslint.default
-          .resolves({devDependencies: any.listOf(any.string), vcsIgnore: {files: any.listOf(any.string)}});
-
-        const {badges} = await scaffold(options);
-
-        assert.isUndefined(badges.consumer.npm);
-      });
-
-      test('that the npm badge is not defined if the project is not a package', async () => {
-        optionsValidator.validate
-          .withArgs(options)
-          .returns({projectRoot, projectName, visibility: 'Public', vcs: {}, configs: {}, ciServices});
-        prompts.prompt.resolves({[questionNames.PACKAGE_TYPE]: any.word()});
-        eslint.default
-          .resolves({devDependencies: any.listOf(any.string), vcsIgnore: {files: any.listOf(any.string)}});
-
-        const {badges} = await scaffold(options);
-
-        assert.isUndefined(badges.consumer.npm);
-      });
-
-      test('that the commit-convention badges are provided', async () => {
-        const packageName = any.word();
-        optionsValidator.validate
-          .withArgs(options)
-          .returns({projectRoot, projectName, vcs: {}, configs: {}, ciServices});
-        packageBuilder.default.returns({name: packageName});
-        prompts.prompt.resolves({});
-        eslint.default
-          .resolves({devDependencies: any.listOf(any.string), vcsIgnore: {files: any.listOf(any.string)}});
-
-        const {badges} = await scaffold(options);
-
-        assert.deepEqual(badges.contribution['commit-convention'], {
-          img: 'https://img.shields.io/badge/Conventional%20Commits-1.0.0-yellow.svg',
-          text: 'Conventional Commits',
-          link: 'https://conventionalcommits.org'
-        });
-        assert.deepEqual(badges.contribution.commitizen, {
-          img: 'https://img.shields.io/badge/commitizen-friendly-brightgreen.svg',
-          text: 'Commitizen friendly',
-          link: 'http://commitizen.github.io/cz-cli/'
-        });
-      });
-
-      suite('semantic-release', () => {
-        test('that the semantic-release badge is provided for packages', async () => {
-          const packageName = any.word();
-          optionsValidator.validate
-            .withArgs(options)
-            .returns({projectRoot, projectName, vcs: {}, configs: {}, ciServices});
-          packageBuilder.default.returns({name: packageName});
-          prompts.prompt.resolves({[questionNames.PACKAGE_TYPE]: 'Package'});
-          eslint.default
-            .resolves({devDependencies: any.listOf(any.string), vcsIgnore: {files: any.listOf(any.string)}});
-
-          const {badges} = await scaffold(options);
-
-          assert.deepEqual(badges.contribution['semantic-release'], {
-            img: 'https://img.shields.io/badge/%20%20%F0%9F%93%A6%F0%9F%9A%80-semantic--release-e10079.svg',
-            text: 'semantic-release',
-            link: 'https://github.com/semantic-release/semantic-release'
-          });
-        });
-
-        test('that the semantic-release badge is not provided for non-packages', async () => {
-          const packageName = any.word();
-          optionsValidator.validate
-            .withArgs(options)
-            .returns({projectRoot, projectName, vcs: {}, configs: {}, ciServices});
-          packageBuilder.default.returns({name: packageName});
-          prompts.prompt.resolves({[questionNames.PACKAGE_TYPE]: any.word()});
-          eslint.default
-            .resolves({devDependencies: any.listOf(any.string), vcsIgnore: {files: any.listOf(any.string)}});
-
-          const {badges} = await scaffold(options);
-
-          assert.notProperty(badges.contribution, 'semantic-release');
-        });
-      });
-
-      test('that the ci badge is provided', async () => {
-        const vcs = any.simpleObject();
-        const badge = any.simpleObject();
-        const ciService = any.word();
+      test('that badges are provided', async () => {
+        const builtBadges = any.simpleObject();
         const packageType = any.word();
+        const packageDetails = any.simpleObject();
+        const chosenCiService = any.word();
+        const ciService = any.simpleObject();
+        const unitTested = any.boolean();
+        const vcsDetails = any.simpleObject();
         const versionCategory = any.word();
+        optionsValidator.validate
+          .withArgs(options)
+          .returns({projectRoot, projectName, visibility, vcs: vcsDetails, configs: {}, ciServices});
         prompts.prompt.resolves({
-          [questionNames.NODE_VERSION_CATEGORY]: versionCategory,
-          [questionNames.CI_SERVICE]: ciService,
-          [questionNames.PACKAGE_TYPE]: packageType
+          [questionNames.PACKAGE_TYPE]: packageType,
+          [questionNames.CI_SERVICE]: chosenCiService,
+          [questionNames.UNIT_TESTS]: unitTested,
+          [questionNames.NODE_VERSION_CATEGORY]: versionCategory
         });
         eslint.default
           .resolves({devDependencies: any.listOf(any.string), vcsIgnore: {files: any.listOf(any.string)}});
-        nodeVersionHandler.determineLatestVersionOf.withArgs(versionCategory).returns(version);
-        optionsValidator.validate
-          .withArgs(options)
-          .returns({projectRoot, projectName, vcs, configs: {}, ciServices, visibility});
+        packageBuilder.default.returns(packageDetails);
         ci.default
-          .withArgs(ciServices, ciService, {projectRoot, vcs, visibility, packageType, nodeVersion: version})
-          .resolves({badge});
+          .withArgs(
+            ciServices,
+            chosenCiService,
+            {projectRoot, vcs: vcsDetails, visibility, packageType, nodeVersion: version}
+          )
+          .resolves(ciService);
+        badgeDetailsBuilder.default
+          .withArgs(visibility, packageType, packageDetails, ciService, unitTested, vcsDetails)
+          .returns(builtBadges);
+        nodeVersionHandler.determineLatestVersionOf.withArgs(versionCategory).returns(version);
+        mkdir.default.resolves(any.string());
 
         const {badges} = await scaffold(options);
 
-        assert.equal(badges.status.ci, badge);
+        assert.equal(badges, builtBadges);
         assert.calledWith(nodeVersionHandler.install, versionCategory);
-      });
-
-      test('that the ci badge is not provided when not defined', async () => {
-        const vcs = any.simpleObject();
-        const ciService = any.word();
-        prompts.prompt.resolves({[questionNames.CI_SERVICE]: ciService});
-        optionsValidator.validate
-          .withArgs(options)
-          .returns({projectRoot, projectName, vcs, configs: {}, ciServices, visibility});
-        eslint.default
-          .resolves({devDependencies: any.listOf(any.string), vcsIgnore: {files: any.listOf(any.string)}});
-
-        const {badges} = await scaffold(options);
-
-        assert.notProperty(badges.status, 'ci');
-      });
-
-      suite('coverage', () => {
-        test('that the coverage badge is provided', async () => {
-          const vcs = {owner: any.word(), name: any.word()};
-          prompts.prompt.resolves({[questionNames.UNIT_TESTS]: true});
-          optionsValidator.validate
-            .returns({projectRoot, projectName, vcs, configs: {}, ciServices, visibility: 'Public'});
-          eslint.default
-            .resolves({devDependencies: any.listOf(any.string), vcsIgnore: {files: any.listOf(any.string)}});
-          mkdir.default.resolves();
-
-          const {badges} = await scaffold(options);
-
-          assert.deepEqual(badges.status.coverage, {
-            img: `https://img.shields.io/codecov/c/github/${vcs.owner}/${vcs.name}.svg`,
-            link: `https://codecov.io/github/${vcs.owner}/${vcs.name}`,
-            text: 'Codecov'
-          });
-        });
-
-        test('that the coverage badge is not provided for private projects', async () => {
-          prompts.prompt.resolves({[questionNames.UNIT_TESTS]: true});
-          optionsValidator.validate
-            .returns({projectRoot, projectName, vcs: {}, configs: {}, ciServices, visibility: 'Private'});
-          eslint.default
-            .resolves({devDependencies: any.listOf(any.string), vcsIgnore: {files: any.listOf(any.string)}});
-          mkdir.default.resolves();
-
-          const {badges} = await scaffold(options);
-
-          assert.notProperty(badges.status, 'coverage');
-        });
-
-        test('that the coverage badge is not provided when a project is not unit tested', async () => {
-          prompts.prompt.resolves({[questionNames.UNIT_TESTS]: false});
-          optionsValidator.validate
-            .returns({projectRoot, projectName, vcs: {}, configs: {}, ciServices, visibility: 'Public'});
-          eslint.default
-            .resolves({devDependencies: any.listOf(any.string), vcsIgnore: {files: any.listOf(any.string)}});
-
-          const {badges} = await scaffold(options);
-
-          assert.notProperty(badges.status, 'coverage');
-        });
       });
     });
 

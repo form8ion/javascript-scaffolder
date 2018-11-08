@@ -12,6 +12,7 @@ import scaffoldEsLint from './config/eslint';
 import scaffoldDocumentation from './documentation';
 import {determineLatestVersionOf, install as installNodeVersion} from './node-version';
 import {questionNames} from './prompts/question-names';
+import buildBadgesDetails from './badges';
 
 export async function scaffold(options) {
   console.log(chalk.blue('Initializing JavaScript project'));     // eslint-disable-line no-console
@@ -109,46 +110,7 @@ export async function scaffold(options) {
   await install(devDependencies);
 
   return {
-    badges: {
-      consumer: {
-        ...('Public' === visibility && 'Package' === packageType) && {
-          npm: {
-            img: `https://img.shields.io/npm/v/${packageData.name}.svg`,
-            text: 'npm',
-            link: `https://www.npmjs.com/package/${packageData.name}`
-          }
-        }
-      },
-      contribution: {
-        'commit-convention': {
-          img: 'https://img.shields.io/badge/Conventional%20Commits-1.0.0-yellow.svg',
-          text: 'Conventional Commits',
-          link: 'https://conventionalcommits.org'
-        },
-        commitizen: {
-          img: 'https://img.shields.io/badge/commitizen-friendly-brightgreen.svg',
-          text: 'Commitizen friendly',
-          link: 'http://commitizen.github.io/cz-cli/'
-        },
-        ...'Package' === packageType && {
-          'semantic-release': {
-            img: 'https://img.shields.io/badge/%20%20%F0%9F%93%A6%F0%9F%9A%80-semantic--release-e10079.svg',
-            text: 'semantic-release',
-            link: 'https://github.com/semantic-release/semantic-release'
-          }
-        }
-      },
-      status: {
-        ...ciService.badge && {ci: ciService.badge},
-        ...unitTested && 'Public' === visibility && {
-          coverage: {
-            img: `https://img.shields.io/codecov/c/github/${vcs.owner}/${vcs.name}.svg`,
-            link: `https://codecov.io/github/${vcs.owner}/${vcs.name}`,
-            text: 'Codecov'
-          }
-        }
-      }
-    },
+    badges: buildBadgesDetails(visibility, packageType, packageData, ciService, unitTested, vcs),
     documentation: scaffoldDocumentation({packageType, packageName: packageData.name, visibility, scope}),
     vcsIgnore: {
       files: [...eslint.vcsIgnore.files],
