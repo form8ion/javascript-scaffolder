@@ -360,7 +360,7 @@ suite('package details builder', () => {
 
             assert.equal(
               packageDetails.scripts['test:integration'],
-              'cucumber-js test/integration --require-module babel-register --format-options \'{"snippetInterface": "async-await"}\''     // eslint-disable-line max-len
+              'cucumber-js test/integration --require-module @babel/register --format-options \'{"snippetInterface": "async-await"}\''     // eslint-disable-line max-len
             );
           });
 

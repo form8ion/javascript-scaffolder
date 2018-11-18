@@ -43,7 +43,7 @@ export default function ({
         'test:unit:base': 'mocha --recursive test/unit',
         'test:unit': 'nyc run-s test:unit:base'
       },
-      ...tests.integration && {'test:integration': 'cucumber-js test/integration --require-module babel-register --format-options \'{"snippetInterface": "async-await"}\''},     // eslint-disable-line max-len
+      ...tests.integration && {'test:integration': 'cucumber-js test/integration --require-module @babel/register --format-options \'{"snippetInterface": "async-await"}\''},     // eslint-disable-line max-len
       ...tests.unit && ('Public' === visibility) && {
         'coverage:report': 'nyc report --reporter=text-lcov > coverage.lcov && codecov'
       },
