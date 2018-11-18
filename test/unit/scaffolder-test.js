@@ -279,7 +279,7 @@ suite('javascript project scaffolder', () => {
         'npm-run-all',
         'husky',
         'cz-conventional-changelog',
-        'babel-register',
+        '@babel/register',
         'ban-sensitive-files'
       ];
       const unitTestDependencies = ['mocha', 'chai', 'sinon', 'nyc', '@travi/any'];

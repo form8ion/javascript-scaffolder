@@ -43,7 +43,7 @@ export async function scaffold(options) {
     'npm-run-all',
     'husky',
     'cz-conventional-changelog',
-    'babel-register',
+    '@babel/register',
     'ban-sensitive-files',
     configs.commitlint && configs.commitlint.packageName,
     configs.babelPreset && configs.babelPreset.packageName,
