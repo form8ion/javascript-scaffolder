@@ -533,7 +533,7 @@ suite('javascript project scaffolder', () => {
           .withArgs(
             ciServices,
             chosenCiService,
-            {projectRoot, vcs: vcsDetails, visibility, packageType, nodeVersion: version}
+            {projectRoot, vcs: vcsDetails, visibility, packageType, nodeVersion: version, tests: {unit: unitTested}}
           )
           .resolves(ciService);
         badgeDetailsBuilder.default
