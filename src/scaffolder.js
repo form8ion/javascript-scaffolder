@@ -15,7 +15,7 @@ import {questionNames} from './prompts/question-names';
 import buildBadgesDetails from './badges';
 
 export async function scaffold(options) {
-  console.log(chalk.blue('Initializing JavaScript project'));     // eslint-disable-line no-console
+  console.error(chalk.blue('Initializing JavaScript project'));     // eslint-disable-line no-console
 
   const {
     projectRoot,
@@ -58,7 +58,7 @@ export async function scaffold(options) {
 
   const nodeVersion = await determineLatestVersionOf(nodeVersionCategory);
 
-  console.log(chalk.grey('Writing project files'));      // eslint-disable-line no-console
+  console.error(chalk.grey('Writing project files'));      // eslint-disable-line no-console
 
   const packageData = buildPackage({
     projectName,
@@ -106,7 +106,7 @@ export async function scaffold(options) {
 
   await installNodeVersion(nodeVersionCategory);
 
-  console.log(chalk.grey('Installing devDependencies'));          // eslint-disable-line no-console
+  console.error(chalk.grey('Installing devDependencies'));          // eslint-disable-line no-console
   await install(devDependencies);
 
   return {
