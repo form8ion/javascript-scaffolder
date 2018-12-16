@@ -60,7 +60,7 @@
     "remark-cli": "^6.0.0",
     "remark-preset-lint-travi": "1.1.0",
     "remark-toc": "^5.0.0",
-    "rollup": "^0.67.0",
+    "rollup": "^0.68.0",
     "sinon": "^6.3.4",
     "travis-lint": "^1.0.0"
   },
