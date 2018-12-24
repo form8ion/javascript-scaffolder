@@ -9,6 +9,7 @@ import {validate} from './options-validator';
 import {prompt} from './prompts/questions';
 import scaffoldCi from './ci';
 import scaffoldEsLint from './config/eslint';
+import scaffoldCommitizen from './commitizen';
 import scaffoldDocumentation from './documentation';
 import {determineLatestVersionOf, install as installNodeVersion} from './node-version';
 import {questionNames} from './prompts/question-names';
@@ -36,13 +37,16 @@ export async function scaffold(options) {
   const scope = answers[questionNames.SCOPE];
   const nodeVersionCategory = answers[questionNames.NODE_VERSION_CATEGORY];
 
-  const eslint = await scaffoldEsLint(({config: configs.eslint, projectRoot, unitTested}));
+  const [eslint, commitizen] = await Promise.all([
+    scaffoldEsLint(({config: configs.eslint, projectRoot, unitTested})),
+    scaffoldCommitizen({projectRoot})
+  ]);
 
   const devDependencies = uniq([
     ...eslint.devDependencies,
+    ...commitizen.devDependencies,
     'npm-run-all',
     'husky',
-    'cz-conventional-changelog',
     '@babel/register',
     'ban-sensitive-files',
     configs.commitlint && configs.commitlint.packageName,

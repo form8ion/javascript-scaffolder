@@ -10,6 +10,7 @@ import * as mkdir from '../../third-party-wrappers/make-dir';
 import * as optionsValidator from '../../src/options-validator';
 import * as ci from '../../src/ci';
 import * as eslint from '../../src/config/eslint';
+import * as commitizen from '../../src/commitizen';
 import * as documentation from '../../src/documentation';
 import * as nodeVersionHandler from '../../src/node-version';
 import * as badgeDetailsBuilder from '../../src/badges';
@@ -38,6 +39,7 @@ suite('javascript project scaffolder', () => {
     sandbox.stub(optionsValidator, 'validate');
     sandbox.stub(ci, 'default');
     sandbox.stub(eslint, 'default');
+    sandbox.stub(commitizen, 'default');
     sandbox.stub(documentation, 'default');
     sandbox.stub(nodeVersionHandler, 'determineLatestVersionOf');
     sandbox.stub(nodeVersionHandler, 'install');
@@ -47,6 +49,7 @@ suite('javascript project scaffolder', () => {
     fs.copyFile.resolves();
     packageBuilder.default.returns({});
     ci.default.resolves({});
+    commitizen.default.withArgs({projectRoot}).resolves({devDependencies: []});
   });
 
   teardown(() => sandbox.restore());
@@ -274,11 +277,12 @@ suite('javascript project scaffolder', () => {
 
     suite('dependencies', () => {
       const eslintDevDependencies = any.listOf(any.string);
+      const commitizenDevDependencies = any.listOf(any.string);
       const defaultDependencies = [
         ...eslintDevDependencies,
+        ...commitizenDevDependencies,
         'npm-run-all',
         'husky',
-        'cz-conventional-changelog',
         '@babel/register',
         'ban-sensitive-files'
       ];
@@ -287,6 +291,7 @@ suite('javascript project scaffolder', () => {
       setup(() => {
         eslint.default
           .resolves({devDependencies: eslintDevDependencies, vcsIgnore: {files: any.listOf(any.string)}});
+        commitizen.default.resolves({devDependencies: commitizenDevDependencies});
       });
 
       suite('scripts', () => {
