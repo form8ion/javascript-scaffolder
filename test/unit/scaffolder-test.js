@@ -129,6 +129,11 @@ suite('javascript project scaffolder', () => {
           path.resolve(__dirname, '../../', 'templates', 'mocha.opts'),
           `${pathToCreatedDirectory}/../mocha.opts`
         );
+        assert.calledWith(
+          fs.copyFile,
+          path.resolve(__dirname, '../../', 'templates', 'mocha-setup.txt'),
+          `${pathToCreatedDirectory}/../mocha-setup.js`
+        );
       });
 
       test('that a canary test is not included when the project will be not unit tested', async () => {
