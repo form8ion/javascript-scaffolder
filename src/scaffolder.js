@@ -27,9 +27,11 @@ export async function scaffold(options) {
     description,
     configs,
     overrides,
-    ciServices
+    ciServices,
+    hosts
   } = validate(options);
-  const answers = await prompt(overrides, Object.keys(ciServices), visibility);
+
+  const answers = await prompt(overrides, Object.keys(ciServices), hosts, visibility);
   const unitTested = answers[questionNames.UNIT_TESTS];
   const integrationTested = answers[questionNames.INTEGRATION_TESTS];
   const packageType = answers[questionNames.PACKAGE_TYPE];

@@ -40,7 +40,7 @@ function authorQuestions({name, email, url}) {
   ];
 }
 
-export async function prompt({npmAccount, author}, ciServices, visibility) {
+export async function prompt({npmAccount, author}, ciServices, hosts, visibility) {
   const npmConf = npmConfFactory();
 
   return promptWithInquirer([
@@ -83,6 +83,12 @@ export async function prompt({npmAccount, author}, ciServices, visibility) {
       type: 'list',
       message: 'Which continuous integration service will be used?',
       choices: [...ciServices, new Separator(), 'Other']
+    },
+    {
+      name: questionNames.HOST,
+      type: 'list',
+      message: 'Where will the application be hosted?',
+      choices: [...Object.keys(hosts), new Separator(), 'Other']
     }
   ]);
 }

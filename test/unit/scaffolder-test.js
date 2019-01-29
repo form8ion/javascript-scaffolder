@@ -22,6 +22,7 @@ suite('javascript project scaffolder', () => {
   const options = any.simpleObject();
   const overrides = any.simpleObject();
   const ciServices = any.simpleObject();
+  const hosts = any.simpleObject();
   const projectRoot = any.string();
   const projectName = any.string();
   const visibility = any.fromList(['Private', 'Public']);
@@ -328,8 +329,14 @@ suite('javascript project scaffolder', () => {
         test('that the commitlint config is installed when defined', async () => {
           optionsValidator.validate
             .withArgs(options)
-            .returns({vcs: {}, configs: {commitlint: {packageName: commitlintConfigName}}, overrides, ciServices});
-          prompts.prompt.withArgs(overrides, Object.keys(ciServices)).resolves({});
+            .returns({
+              vcs: {},
+              configs: {commitlint: {packageName: commitlintConfigName}},
+              overrides,
+              ciServices,
+              hosts
+            });
+          prompts.prompt.withArgs(overrides, Object.keys(ciServices), hosts).resolves({});
 
           await scaffold(options);
 
@@ -490,9 +497,9 @@ suite('javascript project scaffolder', () => {
     test('that the project is configured to use exact dependency versions if it is an application', () => {
       optionsValidator.validate
         .withArgs(options)
-        .returns({projectRoot, projectName, visibility, vcs: {}, configs: {}, overrides, ciServices});
+        .returns({projectRoot, projectName, visibility, vcs: {}, configs: {}, overrides, ciServices, hosts});
       prompts.prompt
-        .withArgs(overrides, Object.keys(ciServices), visibility)
+        .withArgs(overrides, Object.keys(ciServices), hosts, visibility)
         .resolves({[questionNames.PACKAGE_TYPE]: 'Application'});
       eslint.default
         .resolves({devDependencies: any.listOf(any.string), vcsIgnore: {files: any.listOf(any.string)}});
