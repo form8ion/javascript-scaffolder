@@ -8,6 +8,7 @@ import install from './install';
 import {validate} from './options-validator';
 import {prompt} from './prompts/questions';
 import scaffoldCi from './ci';
+import scaffoldHost from './host';
 import scaffoldEsLint from './config/eslint';
 import scaffoldCommitizen from './commitizen';
 import scaffoldDocumentation from './documentation';
@@ -36,6 +37,7 @@ export async function scaffold(options) {
     [questionNames.INTEGRATION_TESTS]: integrationTested,
     [questionNames.PACKAGE_TYPE]: packageType,
     [questionNames.CI_SERVICE]: ci,
+    [questionNames.HOST]: chosenHost,
     [questionNames.SCOPE]: scope,
     [questionNames.NODE_VERSION_CATEGORY]: nodeVersionCategory,
     [questionNames.AUTHOR_NAME]: authorName,
@@ -43,9 +45,10 @@ export async function scaffold(options) {
     [questionNames.AUTHOR_URL]: authorUrl
   } = await prompt(overrides, Object.keys(ciServices), hosts, visibility);
 
-  const [eslint, commitizen] = await Promise.all([
+  const [eslint, commitizen, host] = await Promise.all([
     scaffoldEsLint(({config: configs.eslint, projectRoot, unitTested})),
-    scaffoldCommitizen({projectRoot})
+    scaffoldCommitizen({projectRoot}),
+    scaffoldHost(hosts, chosenHost)
   ]);
 
   const devDependencies = uniq([
@@ -63,7 +66,8 @@ export async function scaffold(options) {
     ...'Public' === visibility && unitTested ? ['codecov'] : [],
     ...unitTested ? ['mocha', 'chai', 'sinon', 'nyc', '@travi/any'] : [],
     ...integrationTested ? ['cucumber', 'chai'] : [],
-    ...'Travis' === ci ? ['travis-lint'] : []
+    ...'Travis' === ci ? ['travis-lint'] : [],
+    ...host.devDependencies ? host.devDependencies : []
   ].filter(Boolean));
 
   const nodeVersion = await determineLatestVersionOf(nodeVersionCategory);
@@ -127,12 +131,15 @@ export async function scaffold(options) {
   console.error(chalk.grey('Installing devDependencies'));          // eslint-disable-line no-console
   await install(devDependencies);
 
+  const defaultDirectoriesToIgnore = ['/node_modules/', '/lib/', '/coverage/', '/.nyc_output/'];
+  const hostDirectoriesToIgnore = host.vcsIgnore ? host.vcsIgnore.directories : [];
+
   return {
     badges: buildBadgesDetails(visibility, packageType, packageData, ciService, unitTested, vcs),
     documentation: scaffoldDocumentation({packageType, packageName: packageData.name, visibility, scope}),
     vcsIgnore: {
       files: [...eslint.vcsIgnore.files],
-      directories: ['/node_modules/', '/lib/', '/coverage/', '/.nyc_output/']
+      directories: [...defaultDirectoriesToIgnore, ...hostDirectoriesToIgnore]
     },
     verificationCommand: 'npm test',
     projectDetails: {...packageData.homepage && {homepage: packageData.homepage}}
