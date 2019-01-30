@@ -31,13 +31,17 @@ export async function scaffold(options) {
     hosts
   } = validate(options);
 
-  const answers = await prompt(overrides, Object.keys(ciServices), hosts, visibility);
-  const unitTested = answers[questionNames.UNIT_TESTS];
-  const integrationTested = answers[questionNames.INTEGRATION_TESTS];
-  const packageType = answers[questionNames.PACKAGE_TYPE];
-  const ci = answers[questionNames.CI_SERVICE];
-  const scope = answers[questionNames.SCOPE];
-  const nodeVersionCategory = answers[questionNames.NODE_VERSION_CATEGORY];
+  const {
+    [questionNames.UNIT_TESTS]: unitTested,
+    [questionNames.INTEGRATION_TESTS]: integrationTested,
+    [questionNames.PACKAGE_TYPE]: packageType,
+    [questionNames.CI_SERVICE]: ci,
+    [questionNames.SCOPE]: scope,
+    [questionNames.NODE_VERSION_CATEGORY]: nodeVersionCategory,
+    [questionNames.AUTHOR_NAME]: authorName,
+    [questionNames.AUTHOR_EMAIL]: authorEmail,
+    [questionNames.AUTHOR_URL]: authorUrl
+  } = await prompt(overrides, Object.keys(ciServices), hosts, visibility);
 
   const [eslint, commitizen] = await Promise.all([
     scaffoldEsLint(({config: configs.eslint, projectRoot, unitTested})),
@@ -78,9 +82,9 @@ export async function scaffold(options) {
       integration: integrationTested
     },
     author: {
-      name: answers[questionNames.AUTHOR_NAME],
-      email: answers[questionNames.AUTHOR_EMAIL],
-      url: answers[questionNames.AUTHOR_URL]
+      name: authorName,
+      email: authorEmail,
+      url: authorUrl
     },
     ci,
     description,
