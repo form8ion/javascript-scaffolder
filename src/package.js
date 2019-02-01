@@ -61,6 +61,7 @@ function definePackagingDetails(visibility) {
     version: '0.0.0-semantically-released',
     main: 'lib/index.cjs.js',
     module: 'lib/index.es.js',
+    sideEffects: false,
     publishConfig: {access: 'Public' === visibility ? 'public' : 'restricted'},
     files: ['lib/']
   };

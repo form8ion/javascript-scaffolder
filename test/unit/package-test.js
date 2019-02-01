@@ -520,6 +520,18 @@ suite('package details builder', () => {
           assert.equal(packageDetails.scripts.prepack, 'run-s build');
         });
 
+        test('that the package is marked as side-effects free', () => {
+          const packageDetails = buildPackageDetails({
+            tests: {},
+            vcs: {},
+            author: {},
+            packageType: 'Package',
+            configs: {}
+          });
+
+          assert.isFalse(packageDetails.sideEffects);
+        });
+
         test('that the lib/ directory is whitelisted for inclusion in the published package', () => {
           const packageDetails = buildPackageDetails({
             tests: {},
