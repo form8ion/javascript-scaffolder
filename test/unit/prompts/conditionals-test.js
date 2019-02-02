@@ -1,6 +1,7 @@
 import any from '@travi/any';
 import {assert} from 'chai';
 import {
+  packageTypeIsApplication,
   shouldBeScopedPromptShouldBePresented,
   scopePromptShouldBePresentedFactory
 } from '../../../src/prompts/conditionals';
@@ -39,6 +40,16 @@ suite('javascript prompt conditionals', () => {
 
     test('that a scope is not presented for non-packages', () => {
       assert.isFalse(scopePromptShouldBePresentedFactory()({[questionNames.SHOULD_BE_SCOPED]: false}));
+    });
+  });
+
+  suite('application', () => {
+    test('that `true` is returned when the package-type is `Application`', () => {
+      assert.isTrue(packageTypeIsApplication({[questionNames.PACKAGE_TYPE]: 'Application'}));
+    });
+
+    test('that `false` is returned when the package-type is not `Application`', () => {
+      assert.isFalse(packageTypeIsApplication({[questionNames.PACKAGE_TYPE]: any.word()}));
     });
   });
 });

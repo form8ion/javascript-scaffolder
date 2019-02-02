@@ -1,6 +1,10 @@
 import {prompt as promptWithInquirer, Separator} from 'inquirer';
 import exec from '../../third-party-wrappers/exec-as-promised';
-import {scopePromptShouldBePresentedFactory, shouldBeScopedPromptShouldBePresented} from './conditionals';
+import {
+  packageTypeIsApplication,
+  scopePromptShouldBePresentedFactory,
+  shouldBeScopedPromptShouldBePresented
+} from './conditionals';
 import npmConfFactory from '../../third-party-wrappers/npm-conf';
 import {questionNames} from './question-names';
 import {scope as validateScope} from './validators';
@@ -88,6 +92,7 @@ export async function prompt({npmAccount, author}, ciServices, hosts, visibility
       name: questionNames.HOST,
       type: 'list',
       message: 'Where will the application be hosted?',
+      when: packageTypeIsApplication,
       choices: [...Object.keys(hosts), new Separator(), 'Other']
     }
   ]);

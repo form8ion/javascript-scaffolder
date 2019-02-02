@@ -112,6 +112,7 @@ suite('prompts', () => {
           name: questionNames.HOST,
           type: 'list',
           message: 'Where will the application be hosted?',
+          when: conditionals.packageTypeIsApplication,
           choices: [...Object.keys(hosts), new inquirer.Separator(), 'Other']
         }
       ]
