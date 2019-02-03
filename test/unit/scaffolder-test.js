@@ -578,6 +578,20 @@ suite('javascript project scaffolder', () => {
         assert.include(vcsIgnore.directories, '/coverage/');
         assert.include(vcsIgnore.directories, '/.nyc_output/');
       });
+
+      test('that the `.env` file is ignored for applications', async () => {
+        optionsValidator.validate
+          .withArgs(options)
+          .returns({projectRoot, projectName, visibility: 'Public', vcs: {}, configs: {eslint: {}}, ciServices});
+        const eslintIgnoreFiles = any.listOf(any.string);
+        eslint.default
+          .resolves({devDependencies: any.listOf(any.string), vcsIgnore: {files: eslintIgnoreFiles}});
+        prompts.prompt.resolves({[questionNames.PACKAGE_TYPE]: 'Application'});
+
+        const {vcsIgnore} = await scaffold(options);
+
+        assert.include(vcsIgnore.files, '.env');
+      });
     });
 
     suite('verification', () => {

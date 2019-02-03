@@ -125,7 +125,7 @@ export async function scaffold(options) {
     badges: buildBadgesDetails(visibility, packageType, packageData, ciService, unitTested, vcs),
     documentation: scaffoldDocumentation({packageType, packageName: packageData.name, visibility, scope}),
     vcsIgnore: {
-      files: [...eslint.vcsIgnore.files],
+      files: [...eslint.vcsIgnore.files, ...('Application' === packageType) ? ['.env'] : []],
       directories: ['/node_modules/', '/lib/', '/coverage/', '/.nyc_output/']
     },
     verificationCommand: 'npm test',
