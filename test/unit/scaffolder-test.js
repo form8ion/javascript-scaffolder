@@ -9,6 +9,7 @@ import * as installer from '../../src/install';
 import * as mkdir from '../../third-party-wrappers/make-dir';
 import * as optionsValidator from '../../src/options-validator';
 import * as ci from '../../src/ci';
+import * as host from '../../src/host';
 import * as eslint from '../../src/config/eslint';
 import * as commitizen from '../../src/commitizen';
 import * as documentation from '../../src/documentation';
@@ -22,6 +23,7 @@ suite('javascript project scaffolder', () => {
   const options = any.simpleObject();
   const overrides = any.simpleObject();
   const ciServices = any.simpleObject();
+  const hosts = any.simpleObject();
   const projectRoot = any.string();
   const projectName = any.string();
   const visibility = any.fromList(['Private', 'Public']);
@@ -38,6 +40,7 @@ suite('javascript project scaffolder', () => {
     sandbox.stub(mkdir, 'default');
     sandbox.stub(optionsValidator, 'validate');
     sandbox.stub(ci, 'default');
+    sandbox.stub(host, 'default');
     sandbox.stub(eslint, 'default');
     sandbox.stub(commitizen, 'default');
     sandbox.stub(documentation, 'default');
@@ -49,6 +52,7 @@ suite('javascript project scaffolder', () => {
     fs.copyFile.resolves();
     packageBuilder.default.returns({});
     ci.default.resolves({});
+    host.default.resolves({});
     commitizen.default.withArgs({projectRoot}).resolves({devDependencies: []});
   });
 
@@ -150,6 +154,7 @@ suite('javascript project scaffolder', () => {
         assert.neverCalledWith(fs.copyFile, path.resolve(__dirname, '../../', 'templates', 'canary-test.txt'));
         assert.neverCalledWith(fs.copyFile, path.resolve(__dirname, '../../', 'templates', 'nycrc.json'));
         assert.neverCalledWith(fs.copyFile, path.resolve(__dirname, '../../', 'templates', 'mocha.opts'));
+        assert.neverCalledWith(fs.copyFile, path.resolve(__dirname, '../../', 'templates', 'mocha-setup.txt'));
       });
     });
 
@@ -328,8 +333,14 @@ suite('javascript project scaffolder', () => {
         test('that the commitlint config is installed when defined', async () => {
           optionsValidator.validate
             .withArgs(options)
-            .returns({vcs: {}, configs: {commitlint: {packageName: commitlintConfigName}}, overrides, ciServices});
-          prompts.prompt.withArgs(overrides, Object.keys(ciServices)).resolves({});
+            .returns({
+              vcs: {},
+              configs: {commitlint: {packageName: commitlintConfigName}},
+              overrides,
+              ciServices,
+              hosts
+            });
+          prompts.prompt.withArgs(overrides, Object.keys(ciServices), hosts).resolves({});
 
           await scaffold(options);
 
@@ -470,17 +481,28 @@ suite('javascript project scaffolder', () => {
         });
 
         test('that greenkeeper-lockfile is installed for private projects', async () => {
-          optionsValidator.validate.withArgs(options).returns({
-            visibility: 'Private',
-            vcs: {},
-            configs: {},
-            ciServices
-          });
+          optionsValidator.validate
+            .withArgs(options)
+            .returns({visibility: 'Private', vcs: {}, configs: {}, ciServices});
           prompts.prompt.resolves({[questionNames.UNIT_TESTS]: false});
 
           await scaffold(options);
 
           assert.calledWith(installer.default, [...defaultDependencies, 'greenkeeper-lockfile']);
+        });
+      });
+
+      suite('host', () => {
+        test('that the host devDependencies are installed when provided', async () => {
+          const chosenHost = any.word();
+          const hostDevDependencies = any.listOf(any.string);
+          optionsValidator.validate.returns({vcs: {}, configs: {}, overrides, ciServices, hosts});
+          prompts.prompt.withArgs(overrides, Object.keys(ciServices)).resolves({[questionNames.HOST]: chosenHost});
+          host.default.withArgs(hosts, chosenHost).resolves({devDependencies: hostDevDependencies});
+
+          await scaffold(options);
+
+          assert.calledWith(installer.default, [...defaultDependencies, ...hostDevDependencies]);
         });
       });
     });
@@ -490,9 +512,9 @@ suite('javascript project scaffolder', () => {
     test('that the project is configured to use exact dependency versions if it is an application', () => {
       optionsValidator.validate
         .withArgs(options)
-        .returns({projectRoot, projectName, visibility, vcs: {}, configs: {}, overrides, ciServices});
+        .returns({projectRoot, projectName, visibility, vcs: {}, configs: {}, overrides, ciServices, hosts});
       prompts.prompt
-        .withArgs(overrides, Object.keys(ciServices), visibility)
+        .withArgs(overrides, Object.keys(ciServices), hosts, visibility)
         .resolves({[questionNames.PACKAGE_TYPE]: 'Application'});
       eslint.default
         .resolves({devDependencies: any.listOf(any.string), vcsIgnore: {files: any.listOf(any.string)}});
@@ -591,6 +613,20 @@ suite('javascript project scaffolder', () => {
         const {vcsIgnore} = await scaffold(options);
 
         assert.include(vcsIgnore.files, '.env');
+      });
+
+      test('that host directories are ignored when the host scaffolder defines them', async () => {
+        const hostDirectoriesToIgnore = any.listOf(any.string);
+        optionsValidator.validate
+          .withArgs(options)
+          .returns({projectRoot, projectName, visibility: 'Public', vcs: {}, configs: {eslint: {}}, ciServices});
+        eslint.default.resolves({devDependencies: [], vcsIgnore: {files: []}});
+        prompts.prompt.resolves({});
+        host.default.resolves({vcsIgnore: {directories: hostDirectoriesToIgnore}});
+
+        const {vcsIgnore} = await scaffold(options);
+
+        assert.includeMembers(vcsIgnore.directories, hostDirectoriesToIgnore);
       });
     });
 

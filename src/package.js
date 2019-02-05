@@ -46,7 +46,7 @@ function defineScripts(packageType, configs, ci, tests, visibility) {
   };
 }
 
-function defineHostDetails(vcs, packageType, packageName) {
+function defineVcsHostDetails(vcs, packageType, packageName) {
   return ('GitHub' === vcs.host) && {
     repository: `${vcs.owner}/${vcs.name}`,
     bugs: `https://github.com/${vcs.owner}/${vcs.name}/issues`,
@@ -88,7 +88,7 @@ export default function ({
     license,
     ...('Package' === packageType) && definePackagingDetails(visibility),
     ...('Application' === packageType) && {private: true},
-    ...defineHostDetails(vcs, packageType, packageName),
+    ...defineVcsHostDetails(vcs, packageType, packageName),
     author: `${author.name}${author.email ? ` <${author.email}>` : ''}${author.url ? ` (${author.url})` : ''}`,
     scripts: defineScripts(packageType, configs, ci, tests, visibility)
   };

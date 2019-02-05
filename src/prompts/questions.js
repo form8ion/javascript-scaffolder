@@ -1,6 +1,10 @@
 import {prompt as promptWithInquirer, Separator} from 'inquirer';
 import exec from '../../third-party-wrappers/exec-as-promised';
-import {scopePromptShouldBePresentedFactory, shouldBeScopedPromptShouldBePresented} from './conditionals';
+import {
+  packageTypeIsApplication,
+  scopePromptShouldBePresentedFactory,
+  shouldBeScopedPromptShouldBePresented
+} from './conditionals';
 import npmConfFactory from '../../third-party-wrappers/npm-conf';
 import {questionNames} from './question-names';
 import {scope as validateScope} from './validators';
@@ -40,7 +44,7 @@ function authorQuestions({name, email, url}) {
   ];
 }
 
-export async function prompt({npmAccount, author}, ciServices, visibility) {
+export async function prompt({npmAccount, author}, ciServices, hosts, visibility) {
   const npmConf = npmConfFactory();
 
   return promptWithInquirer([
@@ -83,6 +87,13 @@ export async function prompt({npmAccount, author}, ciServices, visibility) {
       type: 'list',
       message: 'Which continuous integration service will be used?',
       choices: [...ciServices, new Separator(), 'Other']
+    },
+    {
+      name: questionNames.HOST,
+      type: 'list',
+      message: 'Where will the application be hosted?',
+      when: packageTypeIsApplication,
+      choices: [...Object.keys(hosts), new Separator(), 'Other']
     }
   ]);
 }

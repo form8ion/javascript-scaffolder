@@ -8,5 +8,6 @@ export const questionNames = {
   AUTHOR_NAME: 'authorName',
   AUTHOR_EMAIL: 'authorEmail',
   AUTHOR_URL: 'authorUrl',
-  CI_SERVICE: 'ciService'
+  CI_SERVICE: 'ciService',
+  HOST: 'host'
 };

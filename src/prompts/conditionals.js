@@ -15,3 +15,7 @@ export function shouldBeScopedPromptShouldBePresented(answers) {
 export function scopePromptShouldBePresentedFactory(visibility) {
   return answers => projectIsPackage(answers) && packageShouldBeScoped(visibility, answers);
 }
+
+export function packageTypeIsApplication(answers) {
+  return 'Application' === answers[questionNames.PACKAGE_TYPE];
+}
