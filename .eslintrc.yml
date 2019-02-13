@@ -1,1 +1,7 @@
 extends: '@travi/travi/rules/es6'
+
+overrides:
+  files: example.js
+  rules:
+    import/no-extraneous-dependencies: off
+    no-console: off

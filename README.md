@@ -11,10 +11,13 @@ opinionated scaffolder for JavaScript projects
 
 * [Features](#features)
 * [Usage](#usage)
+
   * [Installation](#installation)
   * [As one of the languages for scaffolding a project](#as-one-of-the-languages-for-scaffolding-a-project)
+
     * [Example](#example)
     * [Options](#options)
+
       * [projectRoot string (required)](#projectroot-string-required)
       * [projectName string (required)](#projectname-string-required)
       * [visibility string (required)](#visibility-string-required)
@@ -25,6 +28,7 @@ opinionated scaffolder for JavaScript projects
       * [overrides object (optional)](#overrides-object-optional)
       * [ciServices object (optional)](#ciservices-object-optional)
 * [Contributing](#contributing)
+
   * [Dependencies](#dependencies)
   * [Verification](#verification)
 * [Related Projects](#related-projects)
@@ -67,11 +71,17 @@ within the [project-scaffolder](https://github.com/travi/project-scaffolder).
 
 #### Example
 
-```js
-import program from 'commander';
-import {scaffold} from '@travi/project-scaffolder';
-import {scaffold as scaffoldJavaScript} from '@travi/javascript-scaffolder';
+##### Dependencies:
 
+```javascript
+const program = require('commander');
+const {scaffold} = require('@travi/project-scaffolder');
+const {scaffold: scaffoldJavaScript} = require('@travi/javascript-scaffolder');
+```
+
+##### Register with commander
+
+```javascript
 program
   .command('scaffold')
   .description('scaffold a new project')
@@ -82,10 +92,10 @@ program
         configs: {
           eslint: {prefix: '@travi/travi', packageName: '@travi/eslint-config-travi'},
           commitlint: {name: 'travi', packageName: 'commitlint-config-travi'},
-          babelPreset: {name: 'travi', packageName: 'babel-preset-travi'}
+          babelPreset: {name: '@travi', packageName: '@travi/babel-preset'}
         }
       })
-    }, 
+    },
     overrides: {copyrightHolder: 'Matt Travi'}
   }).catch(err => {
     console.error(err);
@@ -149,6 +159,7 @@ short summary of the project
   * `name` __string__ (_required_)
     name to be used when referring to the config within the `.commitlintrc.js`
     file
+
 * `babelPreset` __object__ (_optional_)
   details about the [preset](https://babeljs.io/docs/plugins/#creating-a-preset)
   to be used for the project
