@@ -12,6 +12,7 @@
   "scripts": {
     "clean": "rimraf lib/",
     "lint:js": "eslint . --cache",
+    "prelint:md": "run-s build:js",
     "lint:md": "remark . --frail --quiet",
     "lint:travis": "travis lint --no-interactive",
     "lint:sensitive": "ban",
@@ -23,6 +24,7 @@
     "test:integration:debug": "DEBUG=test run-s test:integration",
     "test:integration:wip": "run-s test:integration:base -- --tags @wip",
     "coverage:report": "nyc report --reporter=text-lcov > coverage.lcov && codecov",
+    "pregenerate:md": "run-s build:js",
     "generate:md": "remark . --output",
     "build:js": "rollup -c",
     "build": "run-s clean build:*",
