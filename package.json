@@ -13,7 +13,7 @@
     "clean": "rimraf lib/",
     "lint:js": "eslint . --cache",
     "lint:md": "remark . --frail --quiet",
-    "lint:travis": "travis-lint .travis.yml",
+    "lint:travis": "travis lint --no-interactive",
     "lint:sensitive": "ban",
     "test": "npm-run-all --print-label --parallel lint:* --parallel test:*",
     "test:unit": "nyc run-s test:unit:base",
