@@ -10,6 +10,7 @@ import {prompt} from './prompts/questions';
 import scaffoldCi from './ci';
 import scaffoldHost from './host';
 import scaffoldEsLint from './config/eslint';
+import scaffoldNpmConfig from './config/npm';
 import scaffoldCommitizen from './commitizen';
 import scaffoldDocumentation from './documentation';
 import {determineLatestVersionOf, install as installNodeVersion} from './node-version';
@@ -107,7 +108,7 @@ export async function scaffold(options) {
     writeFile(`${projectRoot}/.nvmrc`, nodeVersion),
     writeFile(`${projectRoot}/package.json`, JSON.stringify(packageData)),
     configs.babelPreset && writeFile(`${projectRoot}/.babelrc`, JSON.stringify({presets: [configs.babelPreset.name]})),
-    ('Application' === packageType) && writeFile(`${projectRoot}/.npmrc`, 'save-exact=true\n'),
+    scaffoldNpmConfig({packageType, projectRoot}),
     copyFile(resolve(__dirname, '..', 'templates', 'huskyrc.json'), `${projectRoot}/.huskyrc.json`),
     configs.commitlint && writeFile(
       `${projectRoot}/.commitlintrc.js`,

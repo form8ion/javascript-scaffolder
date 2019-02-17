@@ -11,6 +11,7 @@ import * as optionsValidator from '../../src/options-validator';
 import * as ci from '../../src/ci';
 import * as host from '../../src/host';
 import * as eslint from '../../src/config/eslint';
+import * as npmConfig from '../../src/config/npm';
 import * as commitizen from '../../src/commitizen';
 import * as documentation from '../../src/documentation';
 import * as nodeVersionHandler from '../../src/node-version';
@@ -42,6 +43,7 @@ suite('javascript project scaffolder', () => {
     sandbox.stub(ci, 'default');
     sandbox.stub(host, 'default');
     sandbox.stub(eslint, 'default');
+    sandbox.stub(npmConfig, 'default');
     sandbox.stub(commitizen, 'default');
     sandbox.stub(documentation, 'default');
     sandbox.stub(nodeVersionHandler, 'determineLatestVersionOf');
@@ -63,9 +65,11 @@ suite('javascript project scaffolder', () => {
       const babelPresetName = any.string();
       const remarkPreset = any.string();
       const eslintConfig = any.simpleObject();
+      const packageType = any.word();
       eslint.default
         .withArgs({config: eslintConfig, projectRoot, unitTested: undefined})
         .resolves({devDependencies: any.listOf(any.string), vcsIgnore: {files: any.listOf(any.string)}});
+      npmConfig.default.resolves();
       optionsValidator.validate
         .withArgs(options)
         .returns({
@@ -76,7 +80,10 @@ suite('javascript project scaffolder', () => {
           ciServices
         });
 
-      prompts.prompt.resolves({[questionNames.NODE_VERSION_CATEGORY]: any.word()});
+      prompts.prompt.resolves({
+        [questionNames.NODE_VERSION_CATEGORY]: any.word(),
+        [questionNames.PACKAGE_TYPE]: packageType
+      });
 
       return scaffold(options).then(() => {
         assert.calledWith(
@@ -90,6 +97,7 @@ suite('javascript project scaffolder', () => {
           `${projectRoot}/.remarkrc.js`,
           `exports.plugins = ['${remarkPreset}'];`
         );
+        assert.calledWith(npmConfig.default, {projectRoot, packageType});
       });
     });
 
@@ -505,36 +513,6 @@ suite('javascript project scaffolder', () => {
           assert.calledWith(installer.default, [...defaultDependencies, ...hostDevDependencies]);
         });
       });
-    });
-  });
-
-  suite('save-exact', () => {
-    test('that the project is configured to use exact dependency versions if it is an application', () => {
-      optionsValidator.validate
-        .withArgs(options)
-        .returns({projectRoot, projectName, visibility, vcs: {}, configs: {}, overrides, ciServices, hosts});
-      prompts.prompt
-        .withArgs(overrides, Object.keys(ciServices), hosts, visibility)
-        .resolves({[questionNames.PACKAGE_TYPE]: 'Application'});
-      eslint.default
-        .resolves({devDependencies: any.listOf(any.string), vcsIgnore: {files: any.listOf(any.string)}});
-
-      return scaffold(options).then(() => assert.calledWith(
-        fs.writeFile,
-        `${projectRoot}/.npmrc`, 'save-exact=true\n'
-      ));
-    });
-
-    test('that the project is allowed to use semver ranges if it is a package', () => {
-      packageBuilder.default.returns({name: any.word()});
-      optionsValidator.validate
-        .withArgs(options)
-        .returns({projectRoot, projectName, visibility: 'Public', vcs: {}, configs: {}, ciServices});
-      prompts.prompt.resolves({[questionNames.PACKAGE_TYPE]: 'Package'});
-      eslint.default
-        .resolves({devDependencies: any.listOf(any.string), vcsIgnore: {files: any.listOf(any.string)}});
-
-      return scaffold(options).then(() => assert.neverCalledWith(fs.writeFile, `${projectRoot}/.npmrc`));
     });
   });
 
