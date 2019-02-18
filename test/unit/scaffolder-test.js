@@ -466,7 +466,7 @@ suite('javascript project scaffolder', () => {
 
           assert.calledWith(
             installer.default,
-            [...defaultDependencies, 'greenkeeper-lockfile', ...unitTestDependencies]
+            [...defaultDependencies, ...unitTestDependencies]
           );
         });
 
@@ -486,17 +486,6 @@ suite('javascript project scaffolder', () => {
           await scaffold(options);
 
           assert.calledWith(installer.default, defaultDependencies);
-        });
-
-        test('that greenkeeper-lockfile is installed for private projects', async () => {
-          optionsValidator.validate
-            .withArgs(options)
-            .returns({visibility: 'Private', vcs: {}, configs: {}, ciServices});
-          prompts.prompt.resolves({[questionNames.UNIT_TESTS]: false});
-
-          await scaffold(options);
-
-          assert.calledWith(installer.default, [...defaultDependencies, 'greenkeeper-lockfile']);
         });
       });
 

@@ -62,7 +62,6 @@ export async function scaffold(options) {
     configs.commitlint && configs.commitlint.packageName,
     configs.babelPreset && configs.babelPreset.packageName,
     ...configs.remark ? [configs.remark, 'remark-cli'] : [],
-    ...'Private' === visibility ? ['greenkeeper-lockfile'] : [],
     ...'Package' === packageType ? ['rimraf', 'rollup', 'rollup-plugin-auto-external'] : [],
     ...'Public' === visibility && unitTested ? ['codecov'] : [],
     ...unitTested ? ['mocha', 'chai', 'sinon', 'nyc', '@travi/any'] : [],
