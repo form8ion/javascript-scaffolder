@@ -2,7 +2,7 @@ import fs from 'mz/fs';
 import sinon from 'sinon';
 import {assert} from 'chai';
 import any from '@travi/any';
-import scaffold from '../../src/commitizen';
+import scaffold from '../../../src/config/commitizen';
 
 suite('commitizen', () => {
   let sandbox;

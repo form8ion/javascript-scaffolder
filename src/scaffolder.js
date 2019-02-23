@@ -11,7 +11,7 @@ import scaffoldCi from './ci';
 import scaffoldHost from './host';
 import scaffoldEsLint from './config/eslint';
 import scaffoldNpmConfig from './config/npm';
-import scaffoldCommitizen from './commitizen';
+import scaffoldCommitizen from './config/commitizen';
 import scaffoldDocumentation from './documentation';
 import {determineLatestVersionOf, install as installNodeVersion} from './node-version';
 import {questionNames} from './prompts/question-names';

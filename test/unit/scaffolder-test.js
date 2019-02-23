@@ -12,7 +12,7 @@ import * as ci from '../../src/ci';
 import * as host from '../../src/host';
 import * as eslint from '../../src/config/eslint';
 import * as npmConfig from '../../src/config/npm';
-import * as commitizen from '../../src/commitizen';
+import * as commitizen from '../../src/config/commitizen';
 import * as documentation from '../../src/documentation';
 import * as nodeVersionHandler from '../../src/node-version';
 import * as badgeDetailsBuilder from '../../src/badges';
