@@ -1,6 +1,6 @@
-export default function ({packageType, packageName, visibility, scope}) {
+export default function ({projectType, packageName, visibility, scope}) {
   return {
-    ...'Package' === packageType && {
+    ...'Package' === projectType && {
       usage: `### Installation
 ${'Private' === visibility ? `
 :warning: this is a private package, so you will need to use an npm token with

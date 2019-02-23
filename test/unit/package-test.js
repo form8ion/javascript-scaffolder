@@ -61,7 +61,7 @@ suite('package details builder', () => {
           tests: {},
           vcs: {},
           author: {},
-          packageType: 'Application',
+          projectType: 'Application',
           configs: {}
         });
 
@@ -76,7 +76,7 @@ suite('package details builder', () => {
           tests: {},
           vcs: {},
           author: {},
-          packageType: 'Package',
+          projectType: 'Package',
           configs: {}
         });
 
@@ -114,7 +114,7 @@ suite('package details builder', () => {
     test('that the package is marked as private for an application', () => {
       const packageDetails = buildPackageDetails({
         visibility,
-        packageType: 'Application',
+        projectType: 'Application',
         tests: {},
         vcs: {},
         author: {},
@@ -127,7 +127,7 @@ suite('package details builder', () => {
     test('that the package is not marked as private for a package', () => {
       const packageDetails = buildPackageDetails({
         visibility,
-        packageType: 'Package',
+        projectType: 'Package',
         tests: {},
         vcs: {},
         author: {},
@@ -167,7 +167,7 @@ suite('package details builder', () => {
 
     test('that the homepage is set to npm for packages', () => {
       const packageDetails = buildPackageDetails({
-        packageType: 'Package',
+        projectType: 'Package',
         projectName,
         tests: {},
         vcs: {host: 'GitHub', name: repoName, owner},
@@ -182,7 +182,7 @@ suite('package details builder', () => {
       const scope = any.word();
 
       const packageDetails = buildPackageDetails({
-        packageType: 'Package',
+        projectType: 'Package',
         projectName,
         scope,
         tests: {},
@@ -216,7 +216,7 @@ suite('package details builder', () => {
     test('that access is marked as restricted for private projects', () => {
       const packageDetails = buildPackageDetails({
         visibility: 'Private',
-        packageType: 'Package',
+        projectType: 'Package',
         tests: {},
         vcs: {},
         author: {},
@@ -229,7 +229,7 @@ suite('package details builder', () => {
     test('that access is marked as public for public projects', () => {
       const packageDetails = buildPackageDetails({
         visibility: 'Public',
-        packageType: 'Package',
+        projectType: 'Package',
         tests: {},
         vcs: {},
         author: {},
@@ -240,7 +240,7 @@ suite('package details builder', () => {
     });
 
     test('that access is marked as restricted when visibility is omitted for some reason', () => {
-      const packageDetails = buildPackageDetails({packageType: 'Package', tests: {}, vcs: {}, author: {}, configs: {}});
+      const packageDetails = buildPackageDetails({projectType: 'Package', tests: {}, vcs: {}, author: {}, configs: {}});
 
       assert.deepEqual(packageDetails.publishConfig, {access: 'restricted'});
     });
@@ -249,7 +249,7 @@ suite('package details builder', () => {
   suite('version', () => {
     test('that `version` is not set for applications', () => {
       const packageDetails = buildPackageDetails({
-        packageType: 'Application',
+        projectType: 'Application',
         tests: {},
         vcs: {},
         author: {},
@@ -260,7 +260,7 @@ suite('package details builder', () => {
     });
 
     test('that the `version` makes it clear that versioning is handled by semantic-release', () => {
-      const packageDetails = buildPackageDetails({packageType: 'Package', tests: {}, vcs: {}, author: {}, configs: {}});
+      const packageDetails = buildPackageDetails({projectType: 'Package', tests: {}, vcs: {}, author: {}, configs: {}});
 
       assert.equal(packageDetails.version, '0.0.0-semantically-released');
     });
@@ -270,7 +270,7 @@ suite('package details builder', () => {
     suite('start', () => {
       test('that the `start` script is not defined for a package', () => {
         const packageDetails = buildPackageDetails({
-          packageType: 'Package',
+          projectType: 'Package',
           tests: {},
           vcs: {},
           author: {},
@@ -282,7 +282,7 @@ suite('package details builder', () => {
 
       test('that the `start` script runs the built version of the app with the `node` executable', () => {
         const packageDetails = buildPackageDetails({
-          packageType: 'Application',
+          projectType: 'Application',
           tests: {},
           vcs: {},
           author: {},
@@ -318,7 +318,7 @@ suite('package details builder', () => {
             tests: {},
             vcs: {},
             author: {},
-            packageType: any.word(),
+            projectType: any.word(),
             configs: {}
           });
 
@@ -330,7 +330,7 @@ suite('package details builder', () => {
             tests: {},
             vcs: {},
             author: {},
-            packageType: 'Package',
+            projectType: 'Package',
             configs: {}
           });
 
@@ -464,7 +464,7 @@ suite('package details builder', () => {
             tests: {},
             vcs: {},
             author: {},
-            packageType: 'Application',
+            projectType: 'Application',
             configs: {}
           });
 
@@ -480,7 +480,7 @@ suite('package details builder', () => {
             tests: {},
             vcs: {},
             author: {},
-            packageType: 'Package',
+            projectType: 'Package',
             configs: {}
           });
 
@@ -498,7 +498,7 @@ suite('package details builder', () => {
             tests: {},
             vcs: {},
             author: {},
-            packageType: 'Application',
+            projectType: 'Application',
             configs: {}
           });
 
@@ -513,7 +513,7 @@ suite('package details builder', () => {
             tests: {},
             vcs: {},
             author: {},
-            packageType: 'Package',
+            projectType: 'Package',
             configs: {}
           });
 
@@ -525,7 +525,7 @@ suite('package details builder', () => {
             tests: {},
             vcs: {},
             author: {},
-            packageType: 'Package',
+            projectType: 'Package',
             configs: {}
           });
 
@@ -537,7 +537,7 @@ suite('package details builder', () => {
             tests: {},
             vcs: {},
             author: {},
-            packageType: 'Package',
+            projectType: 'Package',
             configs: {}
           });
 
@@ -549,7 +549,7 @@ suite('package details builder', () => {
     suite('greenkeeper', () => {
       test('that the lockfile scripts expose the commands for the ci steps on private projects', () => {
         const packageDetails = buildPackageDetails({
-          packageType: 'Application',
+          projectType: 'Application',
           tests: {},
           vcs: {},
           author: {},
@@ -563,7 +563,7 @@ suite('package details builder', () => {
 
       test('that the lockfile scripts are not exposed on public projects', () => {
         const packageDetails = buildPackageDetails({
-          packageType: 'Application',
+          projectType: 'Application',
           tests: {},
           vcs: {},
           author: {},

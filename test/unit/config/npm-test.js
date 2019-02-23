@@ -17,13 +17,13 @@ suite('npm config scaffolder', () => {
   teardown(() => sandbox.restore());
 
   test('that applications save exact versions of dependencies', async () => {
-    await scaffoldNpmConfig({projectRoot, packageType: 'Application'});
+    await scaffoldNpmConfig({projectRoot, projectType: 'Application'});
 
     assert.calledWith(fs.writeFile, `${projectRoot}/.npmrc`, 'update-notifier=false\nsave-exact=true\n');
   });
 
   test('that packages are allowed to use semver ranges', async () => {
-    await scaffoldNpmConfig({projectRoot, packageType: 'Package'});
+    await scaffoldNpmConfig({projectRoot, projectType: 'Package'});
 
     assert.calledWith(fs.writeFile, `${projectRoot}/.npmrc`, 'update-notifier=false\n');
   });

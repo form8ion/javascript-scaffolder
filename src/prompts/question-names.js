@@ -1,6 +1,6 @@
 export const questionNames = {
   NODE_VERSION_CATEGORY: 'nodeVersionCategory',
-  PACKAGE_TYPE: 'packageType',
+  PROJECT_TYPE: 'projectType',
   SHOULD_BE_SCOPED: 'shouldBeScoped',
   SCOPE: 'scope',
   UNIT_TESTS: 'unitTests',

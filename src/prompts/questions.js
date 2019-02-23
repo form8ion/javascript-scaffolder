@@ -56,7 +56,7 @@ export async function prompt({npmAccount, author}, ciServices, hosts, visibility
       default: 'LTS'
     },
     {
-      name: questionNames.PACKAGE_TYPE,
+      name: questionNames.PROJECT_TYPE,
       message: 'What type of JavaScript project is this?',
       type: 'list',
       choices: ['Application', 'Package'],

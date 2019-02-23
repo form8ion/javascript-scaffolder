@@ -71,7 +71,7 @@ export default function ({
   projectName,
   visibility,
   scope,
-  packageType,
+  projectType,
   license,
   tests,
   vcs,
@@ -86,10 +86,10 @@ export default function ({
     name: packageName,
     description,
     license,
-    ...('Package' === packageType) && definePackagingDetails(visibility),
-    ...('Application' === packageType) && {private: true},
-    ...defineVcsHostDetails(vcs, packageType, packageName),
+    ...('Package' === projectType) && definePackagingDetails(visibility),
+    ...('Application' === projectType) && {private: true},
+    ...defineVcsHostDetails(vcs, projectType, packageName),
     author: `${author.name}${author.email ? ` <${author.email}>` : ''}${author.url ? ` (${author.url})` : ''}`,
-    scripts: defineScripts(packageType, configs, ci, tests, visibility)
+    scripts: defineScripts(projectType, configs, ci, tests, visibility)
   };
 }

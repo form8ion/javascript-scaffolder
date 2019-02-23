@@ -36,7 +36,7 @@ export async function scaffold(options) {
   const {
     [questionNames.UNIT_TESTS]: unitTested,
     [questionNames.INTEGRATION_TESTS]: integrationTested,
-    [questionNames.PACKAGE_TYPE]: packageType,
+    [questionNames.PROJECT_TYPE]: projectType,
     [questionNames.CI_SERVICE]: ci,
     [questionNames.HOST]: chosenHost,
     [questionNames.SCOPE]: scope,
@@ -62,7 +62,7 @@ export async function scaffold(options) {
     configs.commitlint && configs.commitlint.packageName,
     configs.babelPreset && configs.babelPreset.packageName,
     ...configs.remark ? [configs.remark, 'remark-cli'] : [],
-    ...'Package' === packageType ? ['rimraf', 'rollup', 'rollup-plugin-auto-external'] : [],
+    ...'Package' === projectType ? ['rimraf', 'rollup', 'rollup-plugin-auto-external'] : [],
     ...'Public' === visibility && unitTested ? ['codecov'] : [],
     ...unitTested ? ['mocha', 'chai', 'sinon', 'nyc', '@travi/any'] : [],
     ...integrationTested ? ['cucumber', 'chai'] : [],
@@ -78,7 +78,7 @@ export async function scaffold(options) {
     projectName,
     visibility,
     scope,
-    packageType,
+    projectType,
     license,
     vcs,
     tests: {
@@ -100,20 +100,20 @@ export async function scaffold(options) {
       projectRoot,
       vcs,
       visibility,
-      packageType,
+      packageType: projectType,
       nodeVersion,
       tests: {unit: unitTested}
     }),
     writeFile(`${projectRoot}/.nvmrc`, nodeVersion),
     writeFile(`${projectRoot}/package.json`, JSON.stringify(packageData)),
     configs.babelPreset && writeFile(`${projectRoot}/.babelrc`, JSON.stringify({presets: [configs.babelPreset.name]})),
-    scaffoldNpmConfig({packageType, projectRoot}),
+    scaffoldNpmConfig({projectType, projectRoot}),
     copyFile(resolve(__dirname, '..', 'templates', 'huskyrc.json'), `${projectRoot}/.huskyrc.json`),
     configs.commitlint && writeFile(
       `${projectRoot}/.commitlintrc.js`,
       `module.exports = {extends: ['${configs.commitlint.name}']};`
     ),
-    ('Package' === packageType) && copyFile(
+    ('Package' === projectType) && copyFile(
       resolve(__dirname, '..', 'templates', 'rollup.config.js'),
       `${projectRoot}/rollup.config.js`
     ),
@@ -135,10 +135,10 @@ export async function scaffold(options) {
   const hostDirectoriesToIgnore = host.vcsIgnore ? host.vcsIgnore.directories : [];
 
   return {
-    badges: buildBadgesDetails(visibility, packageType, packageData, ciService, unitTested, vcs),
-    documentation: scaffoldDocumentation({packageType, packageName: packageData.name, visibility, scope}),
+    badges: buildBadgesDetails(visibility, projectType, packageData, ciService, unitTested, vcs),
+    documentation: scaffoldDocumentation({projectType, packageName: packageData.name, visibility, scope}),
     vcsIgnore: {
-      files: [...eslint.vcsIgnore.files, ...('Application' === packageType) ? ['.env'] : []],
+      files: [...eslint.vcsIgnore.files, ...('Application' === projectType) ? ['.env'] : []],
       directories: [...defaultDirectoriesToIgnore, ...hostDirectoriesToIgnore]
     },
     verificationCommand: 'npm test',

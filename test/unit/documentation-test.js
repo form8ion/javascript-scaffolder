@@ -6,7 +6,7 @@ suite('documentation', () => {
   suite('usage', () => {
     suite('apps', () => {
       test('that usage document is not provided (yet) for apps', () => {
-        const documentation = scaffoldDocumentation({packageType: any.string()});
+        const documentation = scaffoldDocumentation({projectType: any.string()});
 
         assert.notProperty(documentation, 'usage');
       });
@@ -16,7 +16,7 @@ suite('documentation', () => {
       test('that npm install instructions are provided for packages', () => {
         const packageName = any.string();
 
-        const documentation = scaffoldDocumentation({packageType: 'Package', packageName});
+        const documentation = scaffoldDocumentation({projectType: 'Package', packageName});
 
         assert.equal(documentation.usage, `### Installation
 
@@ -30,7 +30,7 @@ $ npm install ${packageName}
         const scope = any.word();
 
         const documentation = scaffoldDocumentation({
-          packageType: 'Package',
+          projectType: 'Package',
           packageName,
           visibility: 'Private',
           scope

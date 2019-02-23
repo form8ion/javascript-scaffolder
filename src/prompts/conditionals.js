@@ -1,7 +1,7 @@
 import {questionNames} from './question-names';
 
 function projectIsPackage(answers) {
-  return 'Package' === answers[questionNames.PACKAGE_TYPE];
+  return 'Package' === answers[questionNames.PROJECT_TYPE];
 }
 
 function packageShouldBeScoped(visibility, answers) {
@@ -17,5 +17,5 @@ export function scopePromptShouldBePresentedFactory(visibility) {
 }
 
 export function packageTypeIsApplication(answers) {
-  return 'Application' === answers[questionNames.PACKAGE_TYPE];
+  return 'Application' === answers[questionNames.PROJECT_TYPE];
 }

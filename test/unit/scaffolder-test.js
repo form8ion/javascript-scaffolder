@@ -65,7 +65,7 @@ suite('javascript project scaffolder', () => {
       const babelPresetName = any.string();
       const remarkPreset = any.string();
       const eslintConfig = any.simpleObject();
-      const packageType = any.word();
+      const projectType = any.word();
       eslint.default
         .withArgs({config: eslintConfig, projectRoot, unitTested: undefined})
         .resolves({devDependencies: any.listOf(any.string), vcsIgnore: {files: any.listOf(any.string)}});
@@ -82,7 +82,7 @@ suite('javascript project scaffolder', () => {
 
       prompts.prompt.resolves({
         [questionNames.NODE_VERSION_CATEGORY]: any.word(),
-        [questionNames.PACKAGE_TYPE]: packageType
+        [questionNames.PROJECT_TYPE]: projectType
       });
 
       return scaffold(options).then(() => {
@@ -97,7 +97,7 @@ suite('javascript project scaffolder', () => {
           `${projectRoot}/.remarkrc.js`,
           `exports.plugins = ['${remarkPreset}'];`
         );
-        assert.calledWith(npmConfig.default, {projectRoot, packageType});
+        assert.calledWith(npmConfig.default, {projectRoot, projectType});
       });
     });
 
@@ -206,7 +206,7 @@ suite('javascript project scaffolder', () => {
           optionsValidator.validate
             .withArgs(options)
             .returns({visibility, projectRoot, vcs: {}, configs: {}, ciServices});
-          prompts.prompt.resolves({[questionNames.PACKAGE_TYPE]: 'Application'});
+          prompts.prompt.resolves({[questionNames.PROJECT_TYPE]: 'Application'});
           eslint.default
             .withArgs({config: undefined, projectRoot, unitTested: undefined})
             .resolves({devDependencies: any.listOf(any.string), vcsIgnore: {files: any.listOf(any.string)}});
@@ -222,7 +222,7 @@ suite('javascript project scaffolder', () => {
           optionsValidator.validate
             .withArgs(options)
             .returns({visibility, projectRoot, vcs: {}, configs: {}, ciServices});
-          prompts.prompt.resolves({[questionNames.PACKAGE_TYPE]: 'Package'});
+          prompts.prompt.resolves({[questionNames.PROJECT_TYPE]: 'Package'});
           eslint.default
             .withArgs({config: undefined, projectRoot, unitTested: undefined})
             .resolves({devDependencies: any.listOf(any.string), vcsIgnore: {files: any.listOf(any.string)}});
@@ -243,7 +243,7 @@ suite('javascript project scaffolder', () => {
     test('that the package file is defined', () => {
       const packageDetails = any.simpleObject();
       const scope = any.word();
-      const packageType = any.word();
+      const projectType = any.word();
       const license = any.string();
       const tests = {unit: any.boolean(), integration: any.boolean()};
       const vcs = any.simpleObject();
@@ -258,7 +258,7 @@ suite('javascript project scaffolder', () => {
         .returns({projectRoot, projectName, visibility, license, vcs, description, configs, ciServices});
       prompts.prompt.resolves({
         [questionNames.SCOPE]: scope,
-        [questionNames.PACKAGE_TYPE]: packageType,
+        [questionNames.PROJECT_TYPE]: projectType,
         [questionNames.UNIT_TESTS]: tests.unit,
         [questionNames.INTEGRATION_TESTS]: tests.integration,
         [questionNames.AUTHOR_NAME]: authorName,
@@ -274,7 +274,7 @@ suite('javascript project scaffolder', () => {
           projectName,
           visibility,
           scope,
-          packageType,
+          projectType,
           license,
           tests,
           vcs,
@@ -324,7 +324,7 @@ suite('javascript project scaffolder', () => {
 
         test('that the appropriate packages are installed for `Package` type projects', async () => {
           optionsValidator.validate.withArgs(options).returns({vcs: {}, configs: {}, ciServices});
-          prompts.prompt.resolves({[questionNames.PACKAGE_TYPE]: 'Package'});
+          prompts.prompt.resolves({[questionNames.PROJECT_TYPE]: 'Package'});
 
           await scaffold(options);
 
@@ -509,7 +509,7 @@ suite('javascript project scaffolder', () => {
     suite('badges', () => {
       test('that badges are provided', async () => {
         const builtBadges = any.simpleObject();
-        const packageType = any.word();
+        const projectType = any.word();
         const packageDetails = any.simpleObject();
         const chosenCiService = any.word();
         const ciService = any.simpleObject();
@@ -520,7 +520,7 @@ suite('javascript project scaffolder', () => {
           .withArgs(options)
           .returns({projectRoot, projectName, visibility, vcs: vcsDetails, configs: {}, ciServices});
         prompts.prompt.resolves({
-          [questionNames.PACKAGE_TYPE]: packageType,
+          [questionNames.PROJECT_TYPE]: projectType,
           [questionNames.CI_SERVICE]: chosenCiService,
           [questionNames.UNIT_TESTS]: unitTested,
           [questionNames.NODE_VERSION_CATEGORY]: versionCategory
@@ -532,11 +532,18 @@ suite('javascript project scaffolder', () => {
           .withArgs(
             ciServices,
             chosenCiService,
-            {projectRoot, vcs: vcsDetails, visibility, packageType, nodeVersion: version, tests: {unit: unitTested}}
+            {
+              projectRoot,
+              vcs: vcsDetails,
+              visibility,
+              packageType: projectType,
+              nodeVersion: version,
+              tests: {unit: unitTested}
+            }
           )
           .resolves(ciService);
         badgeDetailsBuilder.default
-          .withArgs(visibility, packageType, packageDetails, ciService, unitTested, vcsDetails)
+          .withArgs(visibility, projectType, packageDetails, ciService, unitTested, vcsDetails)
           .returns(builtBadges);
         nodeVersionHandler.determineLatestVersionOf.withArgs(versionCategory).returns(version);
         mkdir.default.resolves(any.string());
@@ -575,7 +582,7 @@ suite('javascript project scaffolder', () => {
         const eslintIgnoreFiles = any.listOf(any.string);
         eslint.default
           .resolves({devDependencies: any.listOf(any.string), vcsIgnore: {files: eslintIgnoreFiles}});
-        prompts.prompt.resolves({[questionNames.PACKAGE_TYPE]: 'Application'});
+        prompts.prompt.resolves({[questionNames.PROJECT_TYPE]: 'Application'});
 
         const {vcsIgnore} = await scaffold(options);
 
@@ -647,14 +654,14 @@ suite('javascript project scaffolder', () => {
       test('that appropriate documentation is passed along', async () => {
         const docs = any.simpleObject();
         const scope = any.word();
-        const packageType = any.word();
+        const projectType = any.word();
         const packageName = any.string();
         prompts.prompt.resolves({
-          [questionNames.PACKAGE_TYPE]: packageType,
+          [questionNames.PROJECT_TYPE]: projectType,
           [questionNames.SCOPE]: scope
         });
         packageBuilder.default.returns({name: packageName});
-        documentation.default.withArgs({packageType, packageName, visibility, scope}).returns(docs);
+        documentation.default.withArgs({projectType, packageName, visibility, scope}).returns(docs);
         optionsValidator.validate
           .returns({projectRoot, projectName, visibility, vcs: {}, configs: {}, ciServices, scope});
         eslint.default
