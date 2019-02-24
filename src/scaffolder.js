@@ -48,12 +48,22 @@ export async function scaffold(options) {
     [questionNames.AUTHOR_URL]: authorUrl
   } = await prompt(overrides, Object.keys(ciServices), hosts, visibility);
 
-  const [babel, eslint, commitizen, husky, host] = await Promise.all([
+  const nodeVersion = await determineLatestVersionOf(nodeVersionCategory);
+
+  const [babel, eslint, commitizen, husky, host, ciService] = await Promise.all([
     scaffoldBabel({preset: configs.babelPreset, projectRoot}),
     scaffoldEsLint(({config: configs.eslint, projectRoot, unitTested})),
     scaffoldCommitizen({projectRoot}),
     scaffoldHusky({projectRoot}),
-    scaffoldHost(hosts, chosenHost)
+    scaffoldHost(hosts, chosenHost),
+    scaffoldCi(ciServices, ci, {
+      projectRoot,
+      vcs,
+      visibility,
+      packageType: projectType,
+      nodeVersion,
+      tests: {unit: unitTested}
+    })
   ]);
 
   const devDependencies = uniq([
@@ -61,6 +71,7 @@ export async function scaffold(options) {
     ...babel.devDependencies,
     ...commitizen.devDependencies,
     ...husky.devDependencies,
+    ...ciService.devDependencies,
     'npm-run-all',
     'ban-sensitive-files',
     configs.commitlint && configs.commitlint.packageName,
@@ -69,11 +80,8 @@ export async function scaffold(options) {
     ...'Public' === visibility && unitTested ? ['codecov'] : [],
     ...unitTested ? ['mocha', 'chai', 'sinon', 'nyc', '@travi/any'] : [],
     ...integrationTested ? ['cucumber', 'chai'] : [],
-    ...'Travis' === ci ? ['travis-lint'] : [],
     ...host.devDependencies ? host.devDependencies : []
   ].filter(Boolean));
-
-  const nodeVersion = await determineLatestVersionOf(nodeVersionCategory);
 
   console.error(chalk.grey('Writing project files'));      // eslint-disable-line no-console
 
@@ -98,15 +106,7 @@ export async function scaffold(options) {
     configs
   });
 
-  const [ciService] = await Promise.all([
-    scaffoldCi(ciServices, ci, {
-      projectRoot,
-      vcs,
-      visibility,
-      packageType: projectType,
-      nodeVersion,
-      tests: {unit: unitTested}
-    }),
+  await Promise.all([
     writeFile(`${projectRoot}/.nvmrc`, nodeVersion),
     writeFile(`${projectRoot}/package.json`, JSON.stringify(packageData)),
     scaffoldNpmConfig({projectType, projectRoot}),

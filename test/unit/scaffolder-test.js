@@ -34,6 +34,7 @@ suite('javascript project scaffolder', () => {
   const babelDevDependencies = any.listOf(any.string);
   const huskyDevDependencies = any.listOf(any.string);
   const commitizenDevDependencies = any.listOf(any.string);
+  const travisDevDepndencies = any.listOf(any.string);
 
   setup(() => {
     sandbox = sinon.createSandbox();
@@ -60,7 +61,7 @@ suite('javascript project scaffolder', () => {
     fs.writeFile.resolves();
     fs.copyFile.resolves();
     packageBuilder.default.returns({});
-    ci.default.resolves({});
+    ci.default.resolves({devDependencies: []});
     host.default.resolves({});
     commitizen.default.withArgs({projectRoot}).resolves({devDependencies: commitizenDevDependencies});
     babel.default.withArgs({projectRoot, preset: undefined}).resolves({devDependencies: babelDevDependencies});
@@ -355,17 +356,6 @@ suite('javascript project scaffolder', () => {
           assert.calledWith(installer.default, [...defaultDependencies, commitlintConfigName]);
         });
 
-        test('that the travis-lint is installed when Travis is the chosen ci-service', async () => {
-          optionsValidator.validate
-            .withArgs(options)
-            .returns({vcs: {}, configs: {}, overrides, ciServices, projectRoot});
-          prompts.prompt.withArgs(overrides, Object.keys(ciServices)).resolves({[questionNames.CI_SERVICE]: 'Travis'});
-
-          await scaffold(options);
-
-          assert.calledWith(installer.default, [...defaultDependencies, 'travis-lint']);
-        });
-
         test('that remark-cli and the lint preset are installed when the preset is defined', async () => {
           const remarkPreset = any.word();
           optionsValidator.validate
@@ -503,7 +493,7 @@ suite('javascript project scaffolder', () => {
         const projectType = any.word();
         const packageDetails = any.simpleObject();
         const chosenCiService = any.word();
-        const ciService = any.simpleObject();
+        const ciService = {...any.simpleObject(), devDependencies: travisDevDepndencies};
         const unitTested = any.boolean();
         const vcsDetails = any.simpleObject();
         const versionCategory = any.word();
