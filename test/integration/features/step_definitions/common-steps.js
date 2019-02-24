@@ -18,7 +18,6 @@ Before(async function () {
 
   stubbedFs({
     templates: {
-      'huskyrc.json': await readFile(resolve(__dirname, '../../../../', 'templates/huskyrc.json')),
       'rollup.config.js': await readFile(resolve(__dirname, '../../../../', 'templates/rollup.config.js')),
       'nycrc.json': await readFile(resolve(__dirname, '../../../../', 'templates/nycrc.json')),
       'canary-test.txt': await readFile(resolve(__dirname, '../../../../', 'templates/canary-test.txt')),

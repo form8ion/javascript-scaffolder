@@ -12,6 +12,7 @@ import * as ci from '../../src/ci';
 import * as host from '../../src/host';
 import * as babel from '../../src/config/babel';
 import * as eslint from '../../src/config/eslint';
+import * as husky from '../../src/config/husky';
 import * as npmConfig from '../../src/config/npm';
 import * as commitizen from '../../src/config/commitizen';
 import * as documentation from '../../src/documentation';
@@ -31,6 +32,8 @@ suite('javascript project scaffolder', () => {
   const visibility = any.fromList(['Private', 'Public']);
   const version = any.string();
   const babelDevDependencies = any.listOf(any.string);
+  const huskyDevDependencies = any.listOf(any.string);
+  const commitizenDevDependencies = any.listOf(any.string);
 
   setup(() => {
     sandbox = sinon.createSandbox();
@@ -46,6 +49,7 @@ suite('javascript project scaffolder', () => {
     sandbox.stub(host, 'default');
     sandbox.stub(babel, 'default');
     sandbox.stub(eslint, 'default');
+    sandbox.stub(husky, 'default');
     sandbox.stub(npmConfig, 'default');
     sandbox.stub(commitizen, 'default');
     sandbox.stub(documentation, 'default');
@@ -58,8 +62,9 @@ suite('javascript project scaffolder', () => {
     packageBuilder.default.returns({});
     ci.default.resolves({});
     host.default.resolves({});
-    commitizen.default.withArgs({projectRoot}).resolves({devDependencies: []});
-    babel.default.resolves({devDependencies: babelDevDependencies});
+    commitizen.default.withArgs({projectRoot}).resolves({devDependencies: commitizenDevDependencies});
+    babel.default.withArgs({projectRoot, preset: undefined}).resolves({devDependencies: babelDevDependencies});
+    husky.default.withArgs({projectRoot}).resolves({devDependencies: huskyDevDependencies});
   });
 
   teardown(() => sandbox.restore());
@@ -67,14 +72,15 @@ suite('javascript project scaffolder', () => {
   suite('config files', () => {
     test('that config files are created', () => {
       const babelPresetName = any.string();
+      const babelPreset = {name: babelPresetName};
       const remarkPreset = any.string();
       const eslintConfig = any.simpleObject();
       const projectType = any.word();
       eslint.default
         .withArgs({config: eslintConfig, projectRoot, unitTested: undefined})
         .resolves({devDependencies: any.listOf(any.string), vcsIgnore: {files: any.listOf(any.string)}});
+      babel.default.withArgs({projectRoot, preset: babelPreset}).resolves({devDependencies: babelDevDependencies});
       npmConfig.default.resolves();
-      const babelPreset = {name: babelPresetName};
       optionsValidator.validate
         .withArgs(options)
         .returns({
@@ -91,11 +97,6 @@ suite('javascript project scaffolder', () => {
       });
 
       return scaffold(options).then(() => {
-        assert.calledWith(
-          fs.copyFile,
-          path.resolve(__dirname, '../../', 'templates', 'huskyrc.json'),
-          `${projectRoot}/.huskyrc.json`
-        );
         assert.calledWith(babel.default, {preset: babelPreset, projectRoot});
         assert.calledWith(fs.writeFile, `${projectRoot}/.remarkrc.js`, `exports.plugins = ['${remarkPreset}'];`);
         assert.calledWith(npmConfig.default, {projectRoot, projectType});
@@ -296,25 +297,23 @@ suite('javascript project scaffolder', () => {
 
     suite('dependencies', () => {
       const eslintDevDependencies = any.listOf(any.string);
-      const commitizenDevDependencies = any.listOf(any.string);
       const defaultDependencies = [
         ...eslintDevDependencies,
         ...babelDevDependencies,
         ...commitizenDevDependencies,
+        ...huskyDevDependencies,
         'npm-run-all',
-        'husky',
         'ban-sensitive-files'
       ];
       const unitTestDependencies = ['mocha', 'chai', 'sinon', 'nyc', '@travi/any'];
 
       setup(() => {
         eslint.default.resolves({devDependencies: eslintDevDependencies, vcsIgnore: {files: any.listOf(any.string)}});
-        commitizen.default.resolves({devDependencies: commitizenDevDependencies});
       });
 
       suite('scripts', () => {
         test('that scripting tools are installed', async () => {
-          optionsValidator.validate.withArgs(options).returns({vcs: {}, configs: {}, ciServices});
+          optionsValidator.validate.withArgs(options).returns({vcs: {}, configs: {}, ciServices, projectRoot});
           prompts.prompt.resolves({});
 
           await scaffold(options);
@@ -323,7 +322,7 @@ suite('javascript project scaffolder', () => {
         });
 
         test('that the appropriate packages are installed for `Package` type projects', async () => {
-          optionsValidator.validate.withArgs(options).returns({vcs: {}, configs: {}, ciServices});
+          optionsValidator.validate.withArgs(options).returns({vcs: {}, configs: {}, ciServices, projectRoot});
           prompts.prompt.resolves({[questionNames.PROJECT_TYPE]: 'Package'});
 
           await scaffold(options);
@@ -346,6 +345,7 @@ suite('javascript project scaffolder', () => {
               configs: {commitlint: {packageName: commitlintConfigName}},
               overrides,
               ciServices,
+              projectRoot,
               hosts
             });
           prompts.prompt.withArgs(overrides, Object.keys(ciServices), hosts).resolves({});
@@ -358,7 +358,7 @@ suite('javascript project scaffolder', () => {
         test('that the travis-lint is installed when Travis is the chosen ci-service', async () => {
           optionsValidator.validate
             .withArgs(options)
-            .returns({vcs: {}, configs: {}, overrides, ciServices});
+            .returns({vcs: {}, configs: {}, overrides, ciServices, projectRoot});
           prompts.prompt.withArgs(overrides, Object.keys(ciServices)).resolves({[questionNames.CI_SERVICE]: 'Travis'});
 
           await scaffold(options);
@@ -370,7 +370,7 @@ suite('javascript project scaffolder', () => {
           const remarkPreset = any.word();
           optionsValidator.validate
             .withArgs(options)
-            .returns({vcs: {}, configs: {remark: remarkPreset}, overrides, ciServices});
+            .returns({vcs: {}, configs: {remark: remarkPreset}, overrides, ciServices, projectRoot});
           prompts.prompt.withArgs(overrides, Object.keys(ciServices)).resolves({});
 
           await scaffold(options);
@@ -381,7 +381,7 @@ suite('javascript project scaffolder', () => {
 
       suite('testing', () => {
         test('that mocha, chai, and sinon are installed when the project will be unit tested', async () => {
-          optionsValidator.validate.withArgs(options).returns({vcs: {}, configs: {}, ciServices});
+          optionsValidator.validate.withArgs(options).returns({vcs: {}, configs: {}, ciServices, projectRoot});
           prompts.prompt.resolves({[questionNames.UNIT_TESTS]: true});
           mkdir.default.resolves();
 
@@ -391,7 +391,7 @@ suite('javascript project scaffolder', () => {
         });
 
         test('that mocha, chai, and sinon are not installed when the project will not be unit tested', async () => {
-          optionsValidator.validate.withArgs(options).returns({vcs: {}, configs: {}, ciServices});
+          optionsValidator.validate.withArgs(options).returns({vcs: {}, configs: {}, ciServices, projectRoot});
           prompts.prompt.resolves({[questionNames.UNIT_TESTS]: false});
 
           await scaffold(options);
@@ -400,7 +400,7 @@ suite('javascript project scaffolder', () => {
         });
 
         test('that cucumber and chai are installed when the project will be integration tested', async () => {
-          optionsValidator.validate.withArgs(options).returns({vcs: {}, configs: {}, ciServices});
+          optionsValidator.validate.withArgs(options).returns({vcs: {}, configs: {}, ciServices, projectRoot});
           prompts.prompt.resolves({[questionNames.INTEGRATION_TESTS]: true});
 
           await scaffold(options);
@@ -409,7 +409,7 @@ suite('javascript project scaffolder', () => {
         });
 
         test('that cucumber and chai are not installed when the project will not be integration tested', async () => {
-          optionsValidator.validate.withArgs(options).returns({vcs: {}, configs: {}, ciServices});
+          optionsValidator.validate.withArgs(options).returns({vcs: {}, configs: {}, ciServices, projectRoot});
           prompts.prompt.resolves({[questionNames.INTEGRATION_TESTS]: false});
 
           await scaffold(options);
@@ -418,7 +418,7 @@ suite('javascript project scaffolder', () => {
         });
 
         test('that unique dependencies are requested when various reasons overlap', async () => {
-          optionsValidator.validate.withArgs(options).returns({vcs: {}, configs: {}, ciServices});
+          optionsValidator.validate.withArgs(options).returns({vcs: {}, configs: {}, ciServices, projectRoot});
           prompts.prompt.resolves({
             [questionNames.UNIT_TESTS]: true,
             [questionNames.INTEGRATION_TESTS]: true
@@ -431,7 +431,9 @@ suite('javascript project scaffolder', () => {
         });
 
         test('that codecov is installed for public projects', async () => {
-          optionsValidator.validate.withArgs(options).returns({visibility: 'Public', vcs: {}, configs: {}, ciServices});
+          optionsValidator.validate
+            .withArgs(options)
+            .returns({visibility: 'Public', vcs: {}, configs: {}, ciServices, projectRoot});
           prompts.prompt.resolves({[questionNames.UNIT_TESTS]: true});
           mkdir.default.resolves();
 
@@ -443,7 +445,7 @@ suite('javascript project scaffolder', () => {
         test('that codecov is not installed for private projects', async () => {
           optionsValidator.validate
             .withArgs(options)
-            .returns({visibility: 'Private', vcs: {}, configs: {}, ciServices});
+            .returns({visibility: 'Private', vcs: {}, configs: {}, ciServices, projectRoot});
           prompts.prompt.resolves({[questionNames.UNIT_TESTS]: true});
           mkdir.default.resolves();
 
@@ -456,7 +458,9 @@ suite('javascript project scaffolder', () => {
         });
 
         test('that codecov is not installed for projects that are not unit tested', async () => {
-          optionsValidator.validate.withArgs(options).returns({visibility: 'Public', vcs: {}, configs: {}, ciServices});
+          optionsValidator.validate
+            .withArgs(options)
+            .returns({visibility: 'Public', vcs: {}, configs: {}, ciServices, projectRoot});
           prompts.prompt.resolves({[questionNames.UNIT_TESTS]: false});
 
           await scaffold(options);
@@ -465,7 +469,9 @@ suite('javascript project scaffolder', () => {
         });
 
         test('that greenkeeper-lockfile is not installed for public projects', async () => {
-          optionsValidator.validate.withArgs(options).returns({visibility: 'Public', vcs: {}, configs: {}, ciServices});
+          optionsValidator.validate
+            .withArgs(options)
+            .returns({visibility: 'Public', vcs: {}, configs: {}, ciServices, projectRoot});
           prompts.prompt.resolves({[questionNames.UNIT_TESTS]: false});
 
           await scaffold(options);
@@ -478,7 +484,7 @@ suite('javascript project scaffolder', () => {
         test('that the host devDependencies are installed when provided', async () => {
           const chosenHost = any.word();
           const hostDevDependencies = any.listOf(any.string);
-          optionsValidator.validate.returns({vcs: {}, configs: {}, overrides, ciServices, hosts});
+          optionsValidator.validate.returns({vcs: {}, configs: {}, overrides, ciServices, hosts, projectRoot});
           prompts.prompt.withArgs(overrides, Object.keys(ciServices)).resolves({[questionNames.HOST]: chosenHost});
           host.default.withArgs(hosts, chosenHost).resolves({devDependencies: hostDevDependencies});
 

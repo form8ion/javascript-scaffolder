@@ -11,6 +11,7 @@ import scaffoldCi from './ci';
 import scaffoldHost from './host';
 import scaffoldBabel from './config/babel';
 import scaffoldEsLint from './config/eslint';
+import scaffoldHusky from './config/husky';
 import scaffoldNpmConfig from './config/npm';
 import scaffoldCommitizen from './config/commitizen';
 import scaffoldDocumentation from './documentation';
@@ -47,10 +48,11 @@ export async function scaffold(options) {
     [questionNames.AUTHOR_URL]: authorUrl
   } = await prompt(overrides, Object.keys(ciServices), hosts, visibility);
 
-  const [babel, eslint, commitizen, host] = await Promise.all([
+  const [babel, eslint, commitizen, husky, host] = await Promise.all([
     scaffoldBabel({preset: configs.babelPreset, projectRoot}),
     scaffoldEsLint(({config: configs.eslint, projectRoot, unitTested})),
     scaffoldCommitizen({projectRoot}),
+    scaffoldHusky({projectRoot}),
     scaffoldHost(hosts, chosenHost)
   ]);
 
@@ -58,8 +60,8 @@ export async function scaffold(options) {
     ...eslint.devDependencies,
     ...babel.devDependencies,
     ...commitizen.devDependencies,
+    ...husky.devDependencies,
     'npm-run-all',
-    'husky',
     'ban-sensitive-files',
     configs.commitlint && configs.commitlint.packageName,
     ...configs.remark ? [configs.remark, 'remark-cli'] : [],
@@ -108,7 +110,6 @@ export async function scaffold(options) {
     writeFile(`${projectRoot}/.nvmrc`, nodeVersion),
     writeFile(`${projectRoot}/package.json`, JSON.stringify(packageData)),
     scaffoldNpmConfig({projectType, projectRoot}),
-    copyFile(resolve(__dirname, '..', 'templates', 'huskyrc.json'), `${projectRoot}/.huskyrc.json`),
     configs.commitlint && writeFile(
       `${projectRoot}/.commitlintrc.js`,
       `module.exports = {extends: ['${configs.commitlint.name}']};`
