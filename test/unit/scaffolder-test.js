@@ -10,6 +10,7 @@ import * as mkdir from '../../third-party-wrappers/make-dir';
 import * as optionsValidator from '../../src/options-validator';
 import * as ci from '../../src/ci';
 import * as host from '../../src/host';
+import * as babel from '../../src/config/babel';
 import * as eslint from '../../src/config/eslint';
 import * as npmConfig from '../../src/config/npm';
 import * as commitizen from '../../src/config/commitizen';
@@ -29,6 +30,7 @@ suite('javascript project scaffolder', () => {
   const projectName = any.string();
   const visibility = any.fromList(['Private', 'Public']);
   const version = any.string();
+  const babelDevDependencies = any.listOf(any.string);
 
   setup(() => {
     sandbox = sinon.createSandbox();
@@ -42,6 +44,7 @@ suite('javascript project scaffolder', () => {
     sandbox.stub(optionsValidator, 'validate');
     sandbox.stub(ci, 'default');
     sandbox.stub(host, 'default');
+    sandbox.stub(babel, 'default');
     sandbox.stub(eslint, 'default');
     sandbox.stub(npmConfig, 'default');
     sandbox.stub(commitizen, 'default');
@@ -56,6 +59,7 @@ suite('javascript project scaffolder', () => {
     ci.default.resolves({});
     host.default.resolves({});
     commitizen.default.withArgs({projectRoot}).resolves({devDependencies: []});
+    babel.default.resolves({devDependencies: babelDevDependencies});
   });
 
   teardown(() => sandbox.restore());
@@ -70,13 +74,14 @@ suite('javascript project scaffolder', () => {
         .withArgs({config: eslintConfig, projectRoot, unitTested: undefined})
         .resolves({devDependencies: any.listOf(any.string), vcsIgnore: {files: any.listOf(any.string)}});
       npmConfig.default.resolves();
+      const babelPreset = {name: babelPresetName};
       optionsValidator.validate
         .withArgs(options)
         .returns({
           visibility,
           projectRoot,
           vcs: {},
-          configs: {babelPreset: {name: babelPresetName}, remark: remarkPreset, eslint: eslintConfig},
+          configs: {babelPreset, remark: remarkPreset, eslint: eslintConfig},
           ciServices
         });
 
@@ -91,12 +96,8 @@ suite('javascript project scaffolder', () => {
           path.resolve(__dirname, '../../', 'templates', 'huskyrc.json'),
           `${projectRoot}/.huskyrc.json`
         );
-        assert.calledWith(fs.writeFile, `${projectRoot}/.babelrc`, JSON.stringify({presets: [babelPresetName]}));
-        assert.calledWith(
-          fs.writeFile,
-          `${projectRoot}/.remarkrc.js`,
-          `exports.plugins = ['${remarkPreset}'];`
-        );
+        assert.calledWith(babel.default, {preset: babelPreset, projectRoot});
+        assert.calledWith(fs.writeFile, `${projectRoot}/.remarkrc.js`, `exports.plugins = ['${remarkPreset}'];`);
         assert.calledWith(npmConfig.default, {projectRoot, projectType});
       });
     });
@@ -298,17 +299,16 @@ suite('javascript project scaffolder', () => {
       const commitizenDevDependencies = any.listOf(any.string);
       const defaultDependencies = [
         ...eslintDevDependencies,
+        ...babelDevDependencies,
         ...commitizenDevDependencies,
         'npm-run-all',
         'husky',
-        '@babel/register',
         'ban-sensitive-files'
       ];
       const unitTestDependencies = ['mocha', 'chai', 'sinon', 'nyc', '@travi/any'];
 
       setup(() => {
-        eslint.default
-          .resolves({devDependencies: eslintDevDependencies, vcsIgnore: {files: any.listOf(any.string)}});
+        eslint.default.resolves({devDependencies: eslintDevDependencies, vcsIgnore: {files: any.listOf(any.string)}});
         commitizen.default.resolves({devDependencies: commitizenDevDependencies});
       });
 
@@ -376,21 +376,6 @@ suite('javascript project scaffolder', () => {
           await scaffold(options);
 
           assert.calledWith(installer.default, [...defaultDependencies, remarkPreset, 'remark-cli']);
-        });
-      });
-
-      suite('babel', () => {
-        const babelPresetName = any.string();
-
-        test('that the babel-preset is installed when defined', async () => {
-          optionsValidator.validate
-            .withArgs(options)
-            .returns({vcs: {}, configs: {babelPreset: {packageName: babelPresetName}}, overrides, ciServices});
-          prompts.prompt.withArgs(overrides, Object.keys(ciServices)).resolves({});
-
-          await scaffold(options);
-
-          assert.calledWith(installer.default, [...defaultDependencies, babelPresetName]);
         });
       });
 

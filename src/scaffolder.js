@@ -9,6 +9,7 @@ import {validate} from './options-validator';
 import {prompt} from './prompts/questions';
 import scaffoldCi from './ci';
 import scaffoldHost from './host';
+import scaffoldBabel from './config/babel';
 import scaffoldEsLint from './config/eslint';
 import scaffoldNpmConfig from './config/npm';
 import scaffoldCommitizen from './config/commitizen';
@@ -46,7 +47,8 @@ export async function scaffold(options) {
     [questionNames.AUTHOR_URL]: authorUrl
   } = await prompt(overrides, Object.keys(ciServices), hosts, visibility);
 
-  const [eslint, commitizen, host] = await Promise.all([
+  const [babel, eslint, commitizen, host] = await Promise.all([
+    scaffoldBabel({preset: configs.babelPreset, projectRoot}),
     scaffoldEsLint(({config: configs.eslint, projectRoot, unitTested})),
     scaffoldCommitizen({projectRoot}),
     scaffoldHost(hosts, chosenHost)
@@ -54,13 +56,12 @@ export async function scaffold(options) {
 
   const devDependencies = uniq([
     ...eslint.devDependencies,
+    ...babel.devDependencies,
     ...commitizen.devDependencies,
     'npm-run-all',
     'husky',
-    '@babel/register',
     'ban-sensitive-files',
     configs.commitlint && configs.commitlint.packageName,
-    configs.babelPreset && configs.babelPreset.packageName,
     ...configs.remark ? [configs.remark, 'remark-cli'] : [],
     ...'Package' === projectType ? ['rimraf', 'rollup', 'rollup-plugin-auto-external'] : [],
     ...'Public' === visibility && unitTested ? ['codecov'] : [],
@@ -106,7 +107,6 @@ export async function scaffold(options) {
     }),
     writeFile(`${projectRoot}/.nvmrc`, nodeVersion),
     writeFile(`${projectRoot}/package.json`, JSON.stringify(packageData)),
-    configs.babelPreset && writeFile(`${projectRoot}/.babelrc`, JSON.stringify({presets: [configs.babelPreset.name]})),
     scaffoldNpmConfig({projectType, projectRoot}),
     copyFile(resolve(__dirname, '..', 'templates', 'huskyrc.json'), `${projectRoot}/.huskyrc.json`),
     configs.commitlint && writeFile(
