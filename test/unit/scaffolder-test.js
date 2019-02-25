@@ -70,7 +70,7 @@ suite('javascript project scaffolder', () => {
     ci.default.resolves({devDependencies: []});
     host.default.resolves({});
     testing.default
-      .withArgs({projectRoot, tests: {unit: undefined}})
+      .withArgs({projectRoot, tests: {unit: undefined, integration: undefined}})
       .resolves({devDependencies: testingDevDependencies});
     commitizen.default.withArgs({projectRoot}).resolves({devDependencies: commitizenDevDependencies});
     babel.default.withArgs({projectRoot, preset: undefined}).resolves({devDependencies: babelDevDependencies});
@@ -130,7 +130,7 @@ suite('javascript project scaffolder', () => {
         const pathToCreatedDirectory = any.string();
         const unitTested = true;
         testing.default
-          .withArgs({projectRoot, tests: {unit: unitTested}})
+          .withArgs({projectRoot, tests: {unit: unitTested, integration: undefined}})
           .resolves({devDependencies: testingDevDependencies});
         prompts.prompt.resolves({[questionNames.UNIT_TESTS]: unitTested});
         optionsValidator.validate.withArgs(options).returns({projectRoot, vcs: {}, configs: {}, ciServices});
@@ -167,7 +167,7 @@ suite('javascript project scaffolder', () => {
         optionsValidator.validate.withArgs(options).returns({projectRoot, vcs: {}, configs: {}, ciServices});
         const unitTested = false;
         testing.default
-          .withArgs({projectRoot, tests: {unit: unitTested}})
+          .withArgs({projectRoot, tests: {unit: unitTested, integration: undefined}})
           .resolves({devDependencies: testingDevDependencies});
         prompts.prompt.resolves({[questionNames.UNIT_TESTS]: unitTested});
         eslint.default
@@ -272,7 +272,7 @@ suite('javascript project scaffolder', () => {
       const description = any.sentence();
       const configs = any.simpleObject();
       testing.default
-        .withArgs({projectRoot, tests: {unit: tests.unit}})
+        .withArgs({projectRoot, tests: {unit: tests.unit, integration: tests.integration}})
         .resolves({devDependencies: testingDevDependencies});
       optionsValidator.validate
         .withArgs(options)
@@ -388,34 +388,14 @@ suite('javascript project scaffolder', () => {
         });
       });
 
-      suite('testing', () => {
-        test('that cucumber and chai are installed when the project will be integration tested', async () => {
-          optionsValidator.validate.withArgs(options).returns({vcs: {}, configs: {}, ciServices, projectRoot});
-          prompts.prompt.resolves({[questionNames.INTEGRATION_TESTS]: true});
+      test('that unique dependencies are requested when various reasons overlap', async () => {
+        optionsValidator.validate.withArgs(options).returns({vcs: {}, configs: {}, ciServices, projectRoot});
+        prompts.prompt.resolves({});
+        mkdir.default.resolves();
 
-          await scaffold(options);
+        await scaffold(options);
 
-          assert.calledWith(installer.default, [...defaultDependencies, 'cucumber', 'chai']);
-        });
-
-        test('that cucumber and chai are not installed when the project will not be integration tested', async () => {
-          optionsValidator.validate.withArgs(options).returns({vcs: {}, configs: {}, ciServices, projectRoot});
-          prompts.prompt.resolves({[questionNames.INTEGRATION_TESTS]: false});
-
-          await scaffold(options);
-
-          assert.calledWith(installer.default, [...defaultDependencies]);
-        });
-
-        test('that unique dependencies are requested when various reasons overlap', async () => {
-          optionsValidator.validate.withArgs(options).returns({vcs: {}, configs: {}, ciServices, projectRoot});
-          prompts.prompt.resolves({});
-          mkdir.default.resolves();
-
-          await scaffold(options);
-
-          assert.calledWith(installer.default, defaultDependencies);
-        });
+        assert.calledWith(installer.default, defaultDependencies);
       });
 
       suite('host', () => {
@@ -446,7 +426,7 @@ suite('javascript project scaffolder', () => {
         const vcsDetails = any.simpleObject();
         const versionCategory = any.word();
         testing.default
-          .withArgs({projectRoot, tests: {unit: unitTested}})
+          .withArgs({projectRoot, tests: {unit: unitTested, integration: undefined}})
           .resolves({devDependencies: testingDevDependencies});
         optionsValidator.validate
           .withArgs(options)
@@ -470,7 +450,7 @@ suite('javascript project scaffolder', () => {
               visibility,
               packageType: projectType,
               nodeVersion: version,
-              tests: {unit: unitTested}
+              tests: {unit: unitTested, integration: undefined}
             }
           )
           .resolves(ciService);

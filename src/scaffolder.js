@@ -53,7 +53,7 @@ export async function scaffold(options) {
 
   console.error(chalk.grey('Writing project files'));      // eslint-disable-line no-console
 
-  const tests = {unit: unitTested};
+  const tests = {unit: unitTested, integration: integrationTested};
   const [babel, testing, eslint, commitizen, husky, host, ciService] = await Promise.all([
     scaffoldBabel({preset: configs.babelPreset, projectRoot}),
     scaffoldTesting({projectRoot, tests}),
@@ -76,7 +76,6 @@ export async function scaffold(options) {
     configs.commitlint && configs.commitlint.packageName,
     ...configs.remark ? [configs.remark, 'remark-cli'] : [],
     ...'Package' === projectType ? ['rimraf', 'rollup', 'rollup-plugin-auto-external'] : [],
-    ...integrationTested ? ['cucumber', 'chai'] : [],
     ...host.devDependencies ? host.devDependencies : []
   ].filter(Boolean));
 
@@ -87,10 +86,7 @@ export async function scaffold(options) {
     projectType,
     license,
     vcs,
-    tests: {
-      unit: unitTested,
-      integration: integrationTested
-    },
+    tests,
     author: {
       name: authorName,
       email: authorEmail,
