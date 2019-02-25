@@ -26,7 +26,7 @@ suite('unit testing scaffolder', () => {
   test('that codecov is installed for public projects', async () => {
     assert.deepEqual(
       await scaffoldUnitTesting({projectRoot, visibility: 'Public'}),
-      {devDependencies: [...mochaDevDependencies, 'codecov']}
+      {devDependencies: [...mochaDevDependencies, 'codecov', 'nyc', '@travi/any']}
     );
   });
 });

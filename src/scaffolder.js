@@ -76,7 +76,6 @@ export async function scaffold(options) {
     configs.commitlint && configs.commitlint.packageName,
     ...configs.remark ? [configs.remark, 'remark-cli'] : [],
     ...'Package' === projectType ? ['rimraf', 'rollup', 'rollup-plugin-auto-external'] : [],
-    ...'Public' === visibility && unitTested ? ['codecov'] : [],
     ...integrationTested ? ['cucumber', 'chai'] : [],
     ...host.devDependencies ? host.devDependencies : []
   ].filter(Boolean));
