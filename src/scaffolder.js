@@ -50,6 +50,8 @@ export async function scaffold(options) {
 
   const nodeVersion = await determineLatestVersionOf(nodeVersionCategory);
 
+  console.error(chalk.grey('Writing project files'));      // eslint-disable-line no-console
+
   const [babel, eslint, commitizen, husky, host, ciService] = await Promise.all([
     scaffoldBabel({preset: configs.babelPreset, projectRoot}),
     scaffoldEsLint(({config: configs.eslint, projectRoot, unitTested})),
@@ -82,8 +84,6 @@ export async function scaffold(options) {
     ...integrationTested ? ['cucumber', 'chai'] : [],
     ...host.devDependencies ? host.devDependencies : []
   ].filter(Boolean));
-
-  console.error(chalk.grey('Writing project files'));      // eslint-disable-line no-console
 
   const packageData = buildPackage({
     projectName,
