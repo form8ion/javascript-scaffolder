@@ -22,6 +22,14 @@ suite('testing scaffolder', () => {
       .withArgs({projectRoot})
       .resolves({...any.simpleObject(), devDependencies: unitTestingDevDependencies});
 
-    assert.deepEqual(await scaffoldTesting({projectRoot}), {devDependencies: unitTestingDevDependencies});
+    assert.deepEqual(
+      await scaffoldTesting({projectRoot, tests: {unit: true}}),
+      {devDependencies: unitTestingDevDependencies}
+    );
+  });
+
+  test('that unit testing is not if the project will not be unit tested', async () => {
+    assert.deepEqual(await scaffoldTesting({projectRoot, tests: {unit: false}}), {devDependencies: []});
+    assert.notCalled(unitTestingScaffolder.default);
   });
 });
