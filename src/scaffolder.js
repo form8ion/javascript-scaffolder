@@ -7,6 +7,7 @@ import buildPackage from './package';
 import install from './install';
 import {validate} from './options-validator';
 import {prompt} from './prompts/questions';
+import scaffoldTesting from './testing';
 import scaffoldCi from './ci';
 import scaffoldHost from './host';
 import scaffoldBabel from './config/babel';
@@ -52,23 +53,19 @@ export async function scaffold(options) {
 
   console.error(chalk.grey('Writing project files'));      // eslint-disable-line no-console
 
-  const [babel, eslint, commitizen, husky, host, ciService] = await Promise.all([
+  const tests = {unit: unitTested};
+  const [babel, testing, eslint, commitizen, husky, host, ciService] = await Promise.all([
     scaffoldBabel({preset: configs.babelPreset, projectRoot}),
+    scaffoldTesting({projectRoot, tests}),
     scaffoldEsLint(({config: configs.eslint, projectRoot, unitTested})),
     scaffoldCommitizen({projectRoot}),
     scaffoldHusky({projectRoot}),
     scaffoldHost(hosts, chosenHost),
-    scaffoldCi(ciServices, ci, {
-      projectRoot,
-      vcs,
-      visibility,
-      packageType: projectType,
-      nodeVersion,
-      tests: {unit: unitTested}
-    })
+    scaffoldCi(ciServices, ci, {projectRoot, vcs, visibility, packageType: projectType, nodeVersion, tests})
   ]);
 
   const devDependencies = uniq([
+    ...testing.devDependencies,
     ...eslint.devDependencies,
     ...babel.devDependencies,
     ...commitizen.devDependencies,
@@ -80,7 +77,6 @@ export async function scaffold(options) {
     ...configs.remark ? [configs.remark, 'remark-cli'] : [],
     ...'Package' === projectType ? ['rimraf', 'rollup', 'rollup-plugin-auto-external'] : [],
     ...'Public' === visibility && unitTested ? ['codecov'] : [],
-    ...unitTested ? ['mocha', 'chai', 'sinon', 'nyc', '@travi/any'] : [],
     ...integrationTested ? ['cucumber', 'chai'] : [],
     ...host.devDependencies ? host.devDependencies : []
   ].filter(Boolean));

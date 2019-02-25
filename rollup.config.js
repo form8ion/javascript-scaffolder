@@ -1,18 +1,17 @@
 /* eslint import/no-extraneous-dependencies: ['error', {'devDependencies': true}] */
+import nodeResolve from 'rollup-plugin-node-resolve';
+import autoExternal from 'rollup-plugin-auto-external';
 
 export default {
   input: 'src/index.js',
-  external: [
-    'path',
-    'mz/fs',
-    'chalk',
-    'inquirer',
-    'lodash.uniq',
-    'shelljs',
-    'make-dir',
-    'joi',
-    'hoek'
+  plugins: [
+    autoExternal(),
+    nodeResolve({
+      module: true,
+      jsnext: true
+    })
   ],
+  external: ['mz/fs'],
   output: [
     {file: 'lib/index.cjs.js', format: 'cjs', sourcemap: true},
     {file: 'lib/index.es.js', format: 'es', sourcemap: true}

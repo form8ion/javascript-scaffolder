@@ -7,6 +7,7 @@ import scaffoldTesting from '../../../src/testing/scaffolder';
 suite('testing scaffolder', () => {
   let sandbox;
   const projectRoot = any.string();
+  const visibility = any.word();
 
   setup(() => {
     sandbox = sinon.createSandbox();
@@ -19,11 +20,11 @@ suite('testing scaffolder', () => {
   test('that unit testing is scaffolded if the project will be unit tested', async () => {
     const unitTestingDevDependencies = any.listOf(any.string);
     unitTestingScaffolder.default
-      .withArgs({projectRoot})
+      .withArgs({projectRoot, visibility})
       .resolves({...any.simpleObject(), devDependencies: unitTestingDevDependencies});
 
     assert.deepEqual(
-      await scaffoldTesting({projectRoot, tests: {unit: true}}),
+      await scaffoldTesting({projectRoot, visibility, tests: {unit: true}}),
       {devDependencies: unitTestingDevDependencies}
     );
   });

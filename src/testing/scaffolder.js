@@ -1,9 +1,9 @@
 import scaffoldUnitTesting from './unit';
 
-export default async function ({projectRoot, tests: {unit}}) {
+export default async function ({projectRoot, visibility, tests: {unit}}) {
   return {
     devDependencies: [
-      ...unit ? (await scaffoldUnitTesting({projectRoot})).devDependencies : []
+      ...unit ? (await scaffoldUnitTesting({projectRoot, visibility})).devDependencies : []
     ]
   };
 }
