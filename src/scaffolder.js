@@ -64,6 +64,7 @@ export async function scaffold(options) {
   ]);
 
   const devDependencies = uniq([
+    ...host.devDependencies,
     ...testing.devDependencies,
     ...eslint.devDependencies,
     ...babel.devDependencies,
@@ -74,8 +75,7 @@ export async function scaffold(options) {
     'ban-sensitive-files',
     configs.commitlint && configs.commitlint.packageName,
     ...configs.remark ? [configs.remark, 'remark-cli'] : [],
-    ...'Package' === projectType ? ['rimraf', 'rollup', 'rollup-plugin-auto-external'] : [],
-    ...host.devDependencies ? host.devDependencies : []
+    ...'Package' === projectType ? ['rimraf', 'rollup', 'rollup-plugin-auto-external'] : []
   ].filter(Boolean));
 
   const packageData = buildPackage({
@@ -116,15 +116,20 @@ export async function scaffold(options) {
   console.error(chalk.grey('Installing devDependencies'));          // eslint-disable-line no-console
   await install(devDependencies);
 
-  const defaultDirectoriesToIgnore = ['/node_modules/', '/lib/', '/coverage/', '/.nyc_output/'];
-  const hostDirectoriesToIgnore = host.vcsIgnore ? host.vcsIgnore.directories : [];
+  const directoriesToIgnore = [
+    '/node_modules/',
+    '/lib/',
+    '/coverage/',
+    '/.nyc_output/',
+    ...host.vcsIgnore.directories
+  ];
 
   return {
     badges: buildBadgesDetails(visibility, projectType, packageData, ciService, unitTested, vcs),
     documentation: scaffoldDocumentation({projectType, packageName: packageData.name, visibility, scope}),
     vcsIgnore: {
       files: [...eslint.vcsIgnore.files, ...('Application' === projectType) ? ['.env'] : []],
-      directories: [...defaultDirectoriesToIgnore, ...hostDirectoriesToIgnore]
+      directories: directoriesToIgnore
     },
     verificationCommand: 'npm test',
     projectDetails: {...packageData.homepage && {homepage: packageData.homepage}}

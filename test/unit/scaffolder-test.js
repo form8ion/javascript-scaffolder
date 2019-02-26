@@ -68,7 +68,7 @@ suite('javascript project scaffolder', () => {
     fs.copyFile.resolves();
     packageBuilder.default.returns({});
     ci.default.resolves({devDependencies: []});
-    host.default.resolves({});
+    host.default.resolves({vcsIgnore: {directories: []}, devDependencies: []});
     testing.default
       .withArgs({projectRoot, tests: {unit: undefined, integration: undefined}})
       .resolves({devDependencies: testingDevDependencies});
@@ -345,11 +345,13 @@ suite('javascript project scaffolder', () => {
           const hostDevDependencies = any.listOf(any.string);
           optionsValidator.validate.returns({vcs: {}, configs: {}, overrides, ciServices, hosts, projectRoot});
           prompts.prompt.withArgs(overrides, Object.keys(ciServices)).resolves({[questionNames.HOST]: chosenHost});
-          host.default.withArgs(hosts, chosenHost).resolves({devDependencies: hostDevDependencies});
+          host.default
+            .withArgs(hosts, chosenHost)
+            .resolves({devDependencies: hostDevDependencies, vcsIgnore: {directories: []}});
 
           await scaffold(options);
 
-          assert.calledWith(installer.default, [...defaultDependencies, ...hostDevDependencies]);
+          assert.calledWith(installer.default, [...hostDevDependencies, ...defaultDependencies]);
         });
       });
     });
@@ -449,7 +451,7 @@ suite('javascript project scaffolder', () => {
           .returns({projectRoot, projectName, visibility: 'Public', vcs: {}, configs: {eslint: {}}, ciServices});
         eslint.default.resolves({devDependencies: [], vcsIgnore: {files: []}});
         prompts.prompt.resolves({});
-        host.default.resolves({vcsIgnore: {directories: hostDirectoriesToIgnore}});
+        host.default.resolves({vcsIgnore: {directories: hostDirectoriesToIgnore}, devDependencies: []});
 
         const {vcsIgnore} = await scaffold(options);
 

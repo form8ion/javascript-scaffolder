@@ -16,6 +16,9 @@ suite('host', () => {
   });
 
   test('that choosing a scaffolder without a defined host does not result in an error', async () => {
-    assert.deepEqual(scaffoldHost(any.simpleObject(), any.word(), any.simpleObject()), {});
+    assert.deepEqual(
+      scaffoldHost(any.simpleObject(), any.word(), any.simpleObject()),
+      {devDependencies: [], vcsIgnore: {directories: []}}
+    );
   });
 });
