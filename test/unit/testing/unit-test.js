@@ -1,3 +1,4 @@
+import fs from 'mz/fs';
 import sinon from 'sinon';
 import {assert} from 'chai';
 import any from '@travi/any';
@@ -13,6 +14,7 @@ suite('unit testing scaffolder', () => {
     sandbox = sinon.createSandbox();
 
     sandbox.stub(mocha, 'default');
+    sandbox.stub(fs, 'writeFile');
 
     mocha.default.withArgs({projectRoot}).resolves({...any.simpleObject(), devDependencies: mochaDevDependencies});
   });
@@ -21,6 +23,11 @@ suite('unit testing scaffolder', () => {
 
   test('that mocha is scaffolded', async () => {
     assert.deepEqual(await scaffoldUnitTesting({projectRoot}), {devDependencies: mochaDevDependencies});
+    assert.calledWith(
+      fs.writeFile,
+      `${projectRoot}/.nycrc`,
+      JSON.stringify({reporter: ['lcov', 'text-summary'], exclude: ['test/']})
+    );
   });
 
   test('that codecov is installed for public projects', async () => {

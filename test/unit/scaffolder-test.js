@@ -148,11 +148,6 @@ suite('javascript project scaffolder', () => {
         );
         assert.calledWith(
           fs.copyFile,
-          path.resolve(__dirname, '../../', 'templates', 'nycrc.json'),
-          `${projectRoot}/.nycrc`
-        );
-        assert.calledWith(
-          fs.copyFile,
           path.resolve(__dirname, '../../', 'templates', 'mocha.opts'),
           `${pathToCreatedDirectory}/../mocha.opts`
         );
@@ -178,7 +173,6 @@ suite('javascript project scaffolder', () => {
 
         assert.neverCalledWith(mkdir.default, `${projectRoot}/test/unit`);
         assert.neverCalledWith(fs.copyFile, path.resolve(__dirname, '../../', 'templates', 'canary-test.txt'));
-        assert.neverCalledWith(fs.copyFile, path.resolve(__dirname, '../../', 'templates', 'nycrc.json'));
         assert.neverCalledWith(fs.copyFile, path.resolve(__dirname, '../../', 'templates', 'mocha.opts'));
         assert.neverCalledWith(fs.copyFile, path.resolve(__dirname, '../../', 'templates', 'mocha-setup.txt'));
       });
