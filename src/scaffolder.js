@@ -2,7 +2,6 @@ import {resolve} from 'path';
 import {copyFile, writeFile} from 'mz/fs';
 import chalk from 'chalk';
 import uniq from 'lodash.uniq';
-import mkdir from '../third-party-wrappers/make-dir';
 import buildPackage from './package';
 import install from './install';
 import {validate} from './options-validator';
@@ -109,11 +108,6 @@ export async function scaffold(options) {
       resolve(__dirname, '..', 'templates', 'rollup.config.js'),
       `${projectRoot}/rollup.config.js`
     ),
-    unitTested && mkdir(`${projectRoot}/test/unit`).then(path => Promise.all([
-      copyFile(resolve(__dirname, '..', 'templates', 'canary-test.txt'), `${path}/canary-test.js`),
-      copyFile(resolve(__dirname, '..', 'templates', 'mocha.opts'), `${path}/../mocha.opts`),
-      copyFile(resolve(__dirname, '..', 'templates', 'mocha-setup.txt'), `${path}/../mocha-setup.js`)
-    ])),
     configs.remark && writeFile(`${projectRoot}/.remarkrc.js`, `exports.plugins = ['${configs.remark}'];`)
   ]);
 

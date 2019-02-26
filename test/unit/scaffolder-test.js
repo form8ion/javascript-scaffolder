@@ -125,59 +125,6 @@ suite('javascript project scaffolder', () => {
       assert.neverCalledWith(fs.writeFile, `${projectRoot}/.remarkrc.js`);
     });
 
-    suite('unit test', () => {
-      test('that a canary test is included when the project will be unit tested', async () => {
-        const pathToCreatedDirectory = any.string();
-        const unitTested = true;
-        testing.default
-          .withArgs({projectRoot, tests: {unit: unitTested, integration: undefined}})
-          .resolves({devDependencies: testingDevDependencies});
-        prompts.prompt.resolves({[questionNames.UNIT_TESTS]: unitTested});
-        optionsValidator.validate.withArgs(options).returns({projectRoot, vcs: {}, configs: {}, ciServices});
-        eslint.default
-          .withArgs({config: undefined, projectRoot, unitTested})
-          .resolves({devDependencies: any.listOf(any.string), vcsIgnore: {files: any.listOf(any.string)}});
-        mkdir.default.withArgs(`${projectRoot}/test/unit`).resolves(pathToCreatedDirectory);
-
-        await scaffold(options);
-
-        assert.calledWith(
-          fs.copyFile,
-          path.resolve(__dirname, '../../', 'templates', 'canary-test.txt'),
-          `${pathToCreatedDirectory}/canary-test.js`
-        );
-        assert.calledWith(
-          fs.copyFile,
-          path.resolve(__dirname, '../../', 'templates', 'mocha.opts'),
-          `${pathToCreatedDirectory}/../mocha.opts`
-        );
-        assert.calledWith(
-          fs.copyFile,
-          path.resolve(__dirname, '../../', 'templates', 'mocha-setup.txt'),
-          `${pathToCreatedDirectory}/../mocha-setup.js`
-        );
-      });
-
-      test('that a canary test is not included when the project will be not unit tested', async () => {
-        optionsValidator.validate.withArgs(options).returns({projectRoot, vcs: {}, configs: {}, ciServices});
-        const unitTested = false;
-        testing.default
-          .withArgs({projectRoot, tests: {unit: unitTested, integration: undefined}})
-          .resolves({devDependencies: testingDevDependencies});
-        prompts.prompt.resolves({[questionNames.UNIT_TESTS]: unitTested});
-        eslint.default
-          .withArgs({config: undefined, projectRoot, unitTested})
-          .resolves({devDependencies: any.listOf(any.string), vcsIgnore: {files: any.listOf(any.string)}});
-
-        await scaffold(options);
-
-        assert.neverCalledWith(mkdir.default, `${projectRoot}/test/unit`);
-        assert.neverCalledWith(fs.copyFile, path.resolve(__dirname, '../../', 'templates', 'canary-test.txt'));
-        assert.neverCalledWith(fs.copyFile, path.resolve(__dirname, '../../', 'templates', 'mocha.opts'));
-        assert.neverCalledWith(fs.copyFile, path.resolve(__dirname, '../../', 'templates', 'mocha-setup.txt'));
-      });
-    });
-
     suite('commitlint', () => {
       const commitlintConfigPrefix = any.word();
 
