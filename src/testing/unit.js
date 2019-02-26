@@ -1,13 +1,15 @@
-import {writeFile} from 'mz/fs';
 import scaffoldMocha from './mocha';
+import scaffoldNyc from '../config/nyc';
 
 export default async function ({projectRoot, visibility}) {
-  const [mocha] = await Promise.all([
-    scaffoldMocha({projectRoot}),
-    writeFile(`${projectRoot}/.nycrc`, JSON.stringify({reporter: ['lcov', 'text-summary'], exclude: ['test/']}))
-  ]);
+  const [mocha, nyc] = await Promise.all([scaffoldMocha({projectRoot}), scaffoldNyc({projectRoot})]);
 
   return {
-    devDependencies: [...mocha.devDependencies, ...'Public' === visibility ? ['codecov', 'nyc', '@travi/any'] : []]
+    devDependencies: [
+      ...mocha.devDependencies,
+      ...nyc.devDependencies,
+      '@travi/any',
+      ...'Public' === visibility ? ['codecov'] : []
+    ]
   };
 }
