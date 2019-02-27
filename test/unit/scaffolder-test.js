@@ -19,6 +19,7 @@ import * as commitizen from '../../src/config/commitizen';
 import * as documentation from '../../src/documentation';
 import * as nodeVersionHandler from '../../src/node-version';
 import * as badgeDetailsBuilder from '../../src/badges';
+import * as vcsIgnoresBuilder from '../../src/vcs-ignore';
 import {scaffold} from '../../src/scaffolder';
 import {questionNames} from '../../src/prompts/question-names';
 
@@ -63,6 +64,7 @@ suite('javascript project scaffolder', () => {
     sandbox.stub(nodeVersionHandler, 'determineLatestVersionOf');
     sandbox.stub(nodeVersionHandler, 'install');
     sandbox.stub(badgeDetailsBuilder, 'default');
+    sandbox.stub(vcsIgnoresBuilder, 'default');
 
     fs.writeFile.resolves();
     fs.copyFile.resolves();
@@ -411,51 +413,23 @@ suite('javascript project scaffolder', () => {
     });
 
     suite('vcs ignore', () => {
-      test('that files and directories are defined to be ignored from version control', async () => {
-        optionsValidator.validate
-          .withArgs(options)
-          .returns({projectRoot, projectName, visibility: 'Public', vcs: {}, configs: {eslint: {}}, ciServices});
-        const eslintIgnoreFiles = any.listOf(any.string);
-        eslint.default
-          .resolves({devDependencies: any.listOf(any.string), vcsIgnore: {files: eslintIgnoreFiles}});
-        prompts.prompt.resolves({});
-
-        const {vcsIgnore} = await scaffold(options);
-
-        assert.deepEqual(vcsIgnore.files, [...eslintIgnoreFiles]);
-
-        assert.include(vcsIgnore.directories, '/node_modules/');
-        assert.include(vcsIgnore.directories, '/lib/');
-        assert.include(vcsIgnore.directories, '/coverage/');
-        assert.include(vcsIgnore.directories, '/.nyc_output/');
-      });
-
-      test('that the `.env` file is ignored for applications', async () => {
-        optionsValidator.validate
-          .withArgs(options)
-          .returns({projectRoot, projectName, visibility: 'Public', vcs: {}, configs: {eslint: {}}, ciServices});
-        const eslintIgnoreFiles = any.listOf(any.string);
-        eslint.default
-          .resolves({devDependencies: any.listOf(any.string), vcsIgnore: {files: eslintIgnoreFiles}});
-        prompts.prompt.resolves({[questionNames.PROJECT_TYPE]: 'Application'});
-
-        const {vcsIgnore} = await scaffold(options);
-
-        assert.include(vcsIgnore.files, '.env');
-      });
-
-      test('that host directories are ignored when the host scaffolder defines them', async () => {
+      test('that ignores are defined', async () => {
         const hostDirectoriesToIgnore = any.listOf(any.string);
+        const hostResults = {vcsIgnore: {directories: hostDirectoriesToIgnore}, devDependencies: []};
+        const eslintResults = {devDependencies: [], vcsIgnore: {files: []}};
+        const ignores = any.simpleObject();
+        const projectType = any.word();
+        prompts.prompt.resolves({[questionNames.PROJECT_TYPE]: projectType});
         optionsValidator.validate
           .withArgs(options)
           .returns({projectRoot, projectName, visibility: 'Public', vcs: {}, configs: {eslint: {}}, ciServices});
-        eslint.default.resolves({devDependencies: [], vcsIgnore: {files: []}});
-        prompts.prompt.resolves({});
-        host.default.resolves({vcsIgnore: {directories: hostDirectoriesToIgnore}, devDependencies: []});
+        eslint.default.resolves(eslintResults);
+        host.default.resolves(hostResults);
+        vcsIgnoresBuilder.default.withArgs({host: hostResults, eslint: eslintResults, projectType}).returns(ignores);
 
         const {vcsIgnore} = await scaffold(options);
 
-        assert.includeMembers(vcsIgnore.directories, hostDirectoriesToIgnore);
+        assert.equal(vcsIgnore, ignores);
       });
     });
 

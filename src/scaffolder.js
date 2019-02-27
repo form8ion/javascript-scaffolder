@@ -18,6 +18,7 @@ import scaffoldDocumentation from './documentation';
 import {determineLatestVersionOf, install as installNodeVersion} from './node-version';
 import {questionNames} from './prompts/question-names';
 import buildBadgesDetails from './badges';
+import buildVcsIgnoreLists from './vcs-ignore';
 
 export async function scaffold(options) {
   console.error(chalk.blue('Initializing JavaScript project'));     // eslint-disable-line no-console
@@ -63,21 +64,6 @@ export async function scaffold(options) {
     scaffoldCi(ciServices, ci, {projectRoot, vcs, visibility, packageType: projectType, nodeVersion, tests})
   ]);
 
-  const devDependencies = uniq([
-    ...host.devDependencies,
-    ...testing.devDependencies,
-    ...eslint.devDependencies,
-    ...babel.devDependencies,
-    ...commitizen.devDependencies,
-    ...husky.devDependencies,
-    ...ciService.devDependencies,
-    'npm-run-all',
-    'ban-sensitive-files',
-    configs.commitlint && configs.commitlint.packageName,
-    ...configs.remark ? [configs.remark, 'remark-cli'] : [],
-    ...'Package' === projectType ? ['rimraf', 'rollup', 'rollup-plugin-auto-external'] : []
-  ].filter(Boolean));
-
   const packageData = buildPackage({
     projectName,
     visibility,
@@ -114,23 +100,25 @@ export async function scaffold(options) {
   await installNodeVersion(nodeVersionCategory);
 
   console.error(chalk.grey('Installing devDependencies'));          // eslint-disable-line no-console
-  await install(devDependencies);
-
-  const directoriesToIgnore = [
-    '/node_modules/',
-    '/lib/',
-    '/coverage/',
-    '/.nyc_output/',
-    ...host.vcsIgnore.directories
-  ];
+  await install(uniq([
+    ...host.devDependencies,
+    ...testing.devDependencies,
+    ...eslint.devDependencies,
+    ...babel.devDependencies,
+    ...commitizen.devDependencies,
+    ...husky.devDependencies,
+    ...ciService.devDependencies,
+    'npm-run-all',
+    'ban-sensitive-files',
+    configs.commitlint && configs.commitlint.packageName,
+    ...configs.remark ? [configs.remark, 'remark-cli'] : [],
+    ...'Package' === projectType ? ['rimraf', 'rollup', 'rollup-plugin-auto-external'] : []
+  ].filter(Boolean)));
 
   return {
     badges: buildBadgesDetails(visibility, projectType, packageData, ciService, unitTested, vcs),
     documentation: scaffoldDocumentation({projectType, packageName: packageData.name, visibility, scope}),
-    vcsIgnore: {
-      files: [...eslint.vcsIgnore.files, ...('Application' === projectType) ? ['.env'] : []],
-      directories: directoriesToIgnore
-    },
+    vcsIgnore: buildVcsIgnoreLists({host, eslint, projectType}),
     verificationCommand: 'npm test',
     projectDetails: {...packageData.homepage && {homepage: packageData.homepage}}
   };
