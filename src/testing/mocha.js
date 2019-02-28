@@ -14,5 +14,11 @@ export default async function ({projectRoot}) {
     )
   ]);
 
-  return {devDependencies: ['mocha', 'chai', 'sinon']};
+  return {
+    devDependencies: ['mocha', 'chai', 'sinon'],
+    scripts: {
+      'test:unit': 'nyc run-s test:unit:base',
+      'test:unit:base': 'DEBUG=any mocha --recursive test/unit'
+    }
+  };
 }

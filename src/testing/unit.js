@@ -8,8 +8,11 @@ export default async function ({projectRoot, visibility}) {
     devDependencies: [
       ...mocha.devDependencies,
       ...nyc.devDependencies,
-      '@travi/any',
       ...'Public' === visibility ? ['codecov'] : []
-    ]
+    ],
+    scripts: {
+      'test:unit': 'nyc run-s test:unit:base',
+      ...mocha.scripts
+    }
   };
 }

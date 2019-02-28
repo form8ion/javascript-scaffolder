@@ -7,7 +7,6 @@ import scaffoldIntegrationTesting from '../../../src/testing/integration';
 suite('unit testing scaffolder', () => {
   let sandbox;
   const projectRoot = any.string();
-  const cucumberDevDependencies = any.listOf(any.string);
 
   setup(() => {
     sandbox = sinon.createSandbox();
@@ -18,10 +17,9 @@ suite('unit testing scaffolder', () => {
   teardown(() => sandbox.restore());
 
   test('that cucumber is scaffolded', async () => {
-    cucumber.default
-      .withArgs({projectRoot})
-      .resolves({...any.simpleObject(), devDependencies: cucumberDevDependencies});
+    const cucumberResult = any.simpleObject();
+    cucumber.default.withArgs({projectRoot}).resolves(cucumberResult);
 
-    assert.deepEqual(await scaffoldIntegrationTesting({projectRoot}), {devDependencies: cucumberDevDependencies});
+    assert.deepEqual(await scaffoldIntegrationTesting({projectRoot}), cucumberResult);
   });
 });

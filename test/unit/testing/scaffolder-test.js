@@ -11,43 +11,50 @@ suite('testing scaffolder', () => {
   const visibility = any.word();
   const unitTestingDevDependencies = any.listOf(any.string);
   const integrationTestingDevDependencies = any.listOf(any.string);
+  const unitTestScripts = any.simpleObject();
+  const integrationTestScripts = any.simpleObject();
 
   setup(() => {
     sandbox = sinon.createSandbox();
 
     sandbox.stub(unitTestingScaffolder, 'default');
     sandbox.stub(integrationTestingScaffolder, 'default');
+
+    unitTestingScaffolder.default
+      .withArgs({projectRoot, visibility})
+      .resolves({...any.simpleObject(), devDependencies: unitTestingDevDependencies, scripts: unitTestScripts});
+    integrationTestingScaffolder.default
+      .withArgs({projectRoot})
+      .resolves({
+        ...any.simpleObject(),
+        devDependencies: integrationTestingDevDependencies,
+        scripts: integrationTestScripts
+      });
   });
 
   teardown(() => sandbox.restore());
 
   test('that unit testing is scaffolded if the project will be unit tested', async () => {
-    unitTestingScaffolder.default
-      .withArgs({projectRoot, visibility})
-      .resolves({...any.simpleObject(), devDependencies: unitTestingDevDependencies});
-
     assert.deepEqual(
-      await scaffoldTesting({projectRoot, visibility, tests: {unit: true}}),
-      {devDependencies: unitTestingDevDependencies}
+      await scaffoldTesting({projectRoot, visibility, tests: {unit: true, integration: true}}),
+      {
+        devDependencies: ['@travi/any', ...unitTestingDevDependencies, ...integrationTestingDevDependencies],
+        scripts: {...unitTestScripts, ...integrationTestScripts}
+      }
     );
   });
 
-  test('that integration testing is scaffolded if the project will be integration tested', async () => {
-    integrationTestingScaffolder.default
-      .withArgs({projectRoot})
-      .resolves({...any.simpleObject(), devDependencies: integrationTestingDevDependencies});
-
+  test('that integration testing is not scaffolded if the project will not be integration tested', async () => {
     assert.deepEqual(
-      await scaffoldTesting({projectRoot, visibility, tests: {integration: true}}),
-      {devDependencies: integrationTestingDevDependencies}
+      await scaffoldTesting({projectRoot, visibility, tests: {unit: true, integration: false}}),
+      {devDependencies: ['@travi/any', ...unitTestingDevDependencies], scripts: unitTestScripts}
     );
   });
 
-  test('that scaffolding is not performed if the project will not be tested', async () => {
+  test('that unit testing is not scaffolded if the project will not be unit tested', async () => {
     assert.deepEqual(
-      await scaffoldTesting({projectRoot, tests: {unit: false, integration: false}}),
-      {devDependencies: []}
+      await scaffoldTesting({projectRoot, visibility, tests: {unit: false, integration: true}}),
+      {devDependencies: ['@travi/any', ...integrationTestingDevDependencies], scripts: integrationTestScripts}
     );
-    assert.notCalled(unitTestingScaffolder.default);
   });
 });

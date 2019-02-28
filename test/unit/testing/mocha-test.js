@@ -23,7 +23,16 @@ suite('mocha scaffolder', () => {
     const pathToCreatedDirectory = any.string();
     mkdir.default.withArgs(`${projectRoot}/test/unit`).resolves(pathToCreatedDirectory);
 
-    assert.deepEqual(await scaffoldMocha({projectRoot}), {devDependencies: ['mocha', 'chai', 'sinon']});
+    assert.deepEqual(
+      await scaffoldMocha({projectRoot}),
+      {
+        devDependencies: ['mocha', 'chai', 'sinon'],
+        scripts: {
+          'test:unit': 'nyc run-s test:unit:base',
+          'test:unit:base': 'DEBUG=any mocha --recursive test/unit'
+        }
+      }
+    );
     assert.calledWith(
       fs.copyFile,
       path.resolve(__dirname, '../../../', 'templates', 'canary-test.txt'),
