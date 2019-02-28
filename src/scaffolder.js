@@ -79,7 +79,8 @@ export async function scaffold(options) {
     },
     ci,
     description,
-    configs
+    configs,
+    scripts: testing.scripts
   });
 
   await Promise.all([

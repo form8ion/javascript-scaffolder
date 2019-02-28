@@ -36,6 +36,7 @@ suite('javascript project scaffolder', () => {
   const commonDependency = any.word();
   const testingDevDependenciesWithoutCommon = any.listOf(any.string);
   const testingDevDependencies = [...testingDevDependenciesWithoutCommon, commonDependency];
+  const testingScripts = any.simpleObject();
   const babelDevDependenciesWithoutCommon = any.listOf(any.string);
   const babelDevDependencies = [...babelDevDependenciesWithoutCommon, commonDependency];
   const huskyDevDependencies = any.listOf(any.string);
@@ -216,7 +217,7 @@ suite('javascript project scaffolder', () => {
       const configs = any.simpleObject();
       testing.default
         .withArgs({projectRoot, tests: {unit: tests.unit, integration: tests.integration}})
-        .resolves({devDependencies: testingDevDependencies});
+        .resolves({devDependencies: testingDevDependencies, scripts: testingScripts});
       optionsValidator.validate
         .withArgs(options)
         .returns({projectRoot, projectName, visibility, license, vcs, description, configs, ciServices});
@@ -245,7 +246,8 @@ suite('javascript project scaffolder', () => {
           author: {name: authorName, email: authorEmail, url: authorUrl},
           ci: ciService,
           description,
-          configs
+          configs,
+          scripts: testingScripts
         })
         .returns(packageDetails);
       mkdir.default.resolves();
