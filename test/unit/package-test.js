@@ -545,35 +545,5 @@ suite('package details builder', () => {
         });
       });
     });
-
-    suite('greenkeeper', () => {
-      test('that the lockfile scripts expose the commands for the ci steps on private projects', () => {
-        const packageDetails = buildPackageDetails({
-          projectType: 'Application',
-          tests: {},
-          vcs: {},
-          author: {},
-          visibility: 'Private',
-          configs: {}
-        });
-
-        assert.equal(packageDetails.scripts['greenkeeper:update-lockfile'], 'greenkeeper-lockfile-update');
-        assert.equal(packageDetails.scripts['greenkeeper:upload-lockfile'], 'greenkeeper-lockfile-upload');
-      });
-
-      test('that the lockfile scripts are not exposed on public projects', () => {
-        const packageDetails = buildPackageDetails({
-          projectType: 'Application',
-          tests: {},
-          vcs: {},
-          author: {},
-          visibility: 'Public',
-          configs: {}
-        });
-
-        assert.notProperty(packageDetails.scripts, 'greenkeeper:update-lockfile');
-        assert.notProperty(packageDetails.scripts, 'greenkeeper:upload-lockfile');
-      });
-    });
   });
 });

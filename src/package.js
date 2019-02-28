@@ -37,12 +37,7 @@ function defineScripts(packageType, configs, ci, tests, visibility) {
     test: `npm-run-all --print-label --parallel lint:*${(tests.unit || tests.integration) ? ' --parallel test:*' : ''}`,
 
     ...('Application' === packageType) && {start: './lib/index.js'},
-    ...('Package' === packageType) && definePackageBuildScripts(),
-
-    ...'Private' === visibility && {
-      'greenkeeper:update-lockfile': 'greenkeeper-lockfile-update',
-      'greenkeeper:upload-lockfile': 'greenkeeper-lockfile-upload'
-    }
+    ...('Package' === packageType) && definePackageBuildScripts()
   };
 }
 
