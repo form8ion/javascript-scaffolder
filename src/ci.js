@@ -3,5 +3,5 @@ export default function (services, chosenService, options) {
 
   if (service) return service.scaffolder(options);
 
-  return {devDependencies: []};
+  return {devDependencies: [], scripts: {}};
 }

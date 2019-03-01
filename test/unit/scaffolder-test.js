@@ -41,7 +41,7 @@ suite('javascript project scaffolder', () => {
   const babelDevDependencies = [...babelDevDependenciesWithoutCommon, commonDependency];
   const huskyDevDependencies = any.listOf(any.string);
   const commitizenDevDependencies = any.listOf(any.string);
-  const travisDevDependencies = any.listOf(any.string);
+  const ciServiceDevDependencies = any.listOf(any.string);
 
   setup(() => {
     sandbox = sinon.createSandbox();
@@ -212,7 +212,13 @@ suite('javascript project scaffolder', () => {
       const authorName = any.string();
       const authorEmail = any.string();
       const authorUrl = any.url();
-      const ciService = any.word();
+      const ciServiceScripts = any.simpleObject();
+      const ciServiceResults = {
+        ...any.simpleObject(),
+        devDependencies: ciServiceDevDependencies,
+        scripts: ciServiceScripts
+      };
+      const chosenCiService = any.word();
       const description = any.sentence();
       const configs = any.simpleObject();
       testing.default
@@ -229,8 +235,9 @@ suite('javascript project scaffolder', () => {
         [questionNames.AUTHOR_NAME]: authorName,
         [questionNames.AUTHOR_EMAIL]: authorEmail,
         [questionNames.AUTHOR_URL]: authorUrl,
-        [questionNames.CI_SERVICE]: ciService
+        [questionNames.CI_SERVICE]: chosenCiService
       });
+      ci.default.resolves(ciServiceResults);
       eslint.default
         .withArgs({config: undefined, projectRoot, unitTested: tests.unit})
         .resolves({devDependencies: any.listOf(any.string), vcsIgnore: {files: any.listOf(any.string)}});
@@ -244,10 +251,10 @@ suite('javascript project scaffolder', () => {
           tests,
           vcs,
           author: {name: authorName, email: authorEmail, url: authorUrl},
-          ci: ciService,
+          ci: chosenCiService,
           description,
           configs,
-          scripts: testingScripts
+          scripts: {...testingScripts, ...ciServiceScripts}
         })
         .returns(packageDetails);
       mkdir.default.resolves();
@@ -368,7 +375,7 @@ suite('javascript project scaffolder', () => {
         const projectType = any.word();
         const packageDetails = any.simpleObject();
         const chosenCiService = any.word();
-        const ciService = {...any.simpleObject(), devDependencies: travisDevDependencies};
+        const ciService = {...any.simpleObject(), devDependencies: ciServiceDevDependencies};
         const unitTested = any.boolean();
         const vcsDetails = any.simpleObject();
         const versionCategory = any.word();

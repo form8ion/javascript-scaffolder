@@ -80,7 +80,7 @@ export async function scaffold(options) {
     ci,
     description,
     configs,
-    scripts: testing.scripts
+    scripts: {...testing.scripts, ...ciService.scripts}
   });
 
   await Promise.all([
