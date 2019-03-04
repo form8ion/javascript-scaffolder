@@ -43,7 +43,7 @@ export function validate(options) {
     })).default({}),
     hosts: joi.object().pattern(/^/, joi.object({
       scaffolder: joi.func().arity(1).required(),
-      projectTypes: joi.array().items(joi.string().only(['static'])).default([])
+      projectTypes: joi.array().items(joi.string().only(['static', 'node'])).default([])
     })).default({})
   }).required());
 

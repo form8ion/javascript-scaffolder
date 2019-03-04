@@ -414,7 +414,8 @@ suite('options validator', () => {
         hosts: {[hostName]: {scaffolder: options => options, projectTypes: [any.word()]}}
       }),
       `child "hosts" fails because [child "${hostName}" fails because ` +
-      '[child "projectTypes" fails because ["projectTypes" at position 0 fails because ["0" must be one of [static]]]]'
+      '[child "projectTypes" fails because ["projectTypes" at position 0 fails because ' +
+      '["0" must be one of [static, node]]]]'
     ));
 
     test('that `static` is a valid option for `projectTypes`', () => validate({
@@ -425,6 +426,16 @@ suite('options validator', () => {
       vcs: {host: any.word(), owner: any.word(), name: any.word()},
       description: any.string(),
       hosts: {[hostName]: {scaffolder: options => options, projectTypes: ['static']}}
+    }));
+
+    test('that `node` is a valid option for `projectTypes`', () => validate({
+      projectRoot: any.string(),
+      projectName: any.string(),
+      visibility: any.fromList(['Public', 'Private']),
+      license: any.string(),
+      vcs: {host: any.word(), owner: any.word(), name: any.word()},
+      description: any.string(),
+      hosts: {[hostName]: {scaffolder: options => options, projectTypes: ['node']}}
     }));
 
     test('that `projectTypes` defaults to an empty list`', () => {
