@@ -1,17 +1,14 @@
 import {copyFile} from 'mz/fs';
-import {resolve} from 'path';
 import mkdir from '../../third-party-wrappers/make-dir';
+import determinePathToTemplateFile from '../template-path';
 
 export default async function ({projectRoot}) {
   const createdUnitTestDirectory = await mkdir(`${projectRoot}/test/unit`);
 
   await Promise.all([
-    copyFile(resolve(__dirname, '../..', 'templates', 'canary-test.txt'), `${createdUnitTestDirectory}/canary-test.js`),
-    copyFile(resolve(__dirname, '../..', 'templates', 'mocha.opts'), `${createdUnitTestDirectory}/../mocha.opts`),
-    copyFile(
-      resolve(__dirname, '../..', 'templates', 'mocha-setup.txt'),
-      `${createdUnitTestDirectory}/../mocha-setup.js`
-    )
+    copyFile(determinePathToTemplateFile('canary-test.txt'), `${createdUnitTestDirectory}/canary-test.js`),
+    copyFile(determinePathToTemplateFile('mocha.opts'), `${createdUnitTestDirectory}/../mocha.opts`),
+    copyFile(determinePathToTemplateFile('mocha-setup.txt'), `${createdUnitTestDirectory}/../mocha-setup.js`)
   ]);
 
   return {
