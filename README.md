@@ -42,7 +42,6 @@ opinionated scaffolder for JavaScript projects
     * JavaScript with [ESLint](https://eslint.org/)
     * The `.travis.yml` using [`travis.rb`](https://github.com/travis-ci/travis.rb#lint),
       when [Travis](https://travis-ci.com) is the chosen CI
-  * enables updating the lockfile for [Greenkeeper](https://greenkeeper.io) PRs
 * Enables transpilation with [Babel](https://babeljs.io)
 * Defines and enforces the [commit message convention](https://conventionalcommits.org/)
 * Defines [badges](https://shields.io) for inclusion in the `README.md`
