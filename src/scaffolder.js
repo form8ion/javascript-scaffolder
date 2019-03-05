@@ -56,7 +56,7 @@ export async function scaffold(options) {
   const tests = {unit: unitTested, integration: integrationTested};
   const [babel, testing, eslint, commitizen, husky, host, ciService] = await Promise.all([
     scaffoldBabel({preset: configs.babelPreset, projectRoot}),
-    scaffoldTesting({projectRoot, tests}),
+    scaffoldTesting({projectRoot, tests, visibility}),
     scaffoldEsLint(({config: configs.eslint, projectRoot, unitTested})),
     scaffoldCommitizen({projectRoot}),
     scaffoldHusky({projectRoot}),

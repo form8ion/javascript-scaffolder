@@ -73,7 +73,7 @@ suite('javascript project scaffolder', () => {
     ci.default.resolves({devDependencies: []});
     host.default.resolves({vcsIgnore: {directories: []}, devDependencies: []});
     testing.default
-      .withArgs({projectRoot, tests: {unit: undefined, integration: undefined}})
+      .withArgs({projectRoot, tests: {unit: undefined, integration: undefined}, visibility: undefined})
       .resolves({devDependencies: testingDevDependencies});
     commitizen.default.withArgs({projectRoot}).resolves({devDependencies: commitizenDevDependencies});
     babel.default.withArgs({projectRoot, preset: undefined}).resolves({devDependencies: babelDevDependencies});
@@ -94,6 +94,9 @@ suite('javascript project scaffolder', () => {
         .resolves({devDependencies: any.listOf(any.string), vcsIgnore: {files: any.listOf(any.string)}});
       babel.default.withArgs({projectRoot, preset: babelPreset}).resolves({devDependencies: babelDevDependencies});
       npmConfig.default.resolves();
+      testing.default
+        .withArgs({projectRoot, tests: {unit: undefined, integration: undefined}, visibility})
+        .resolves({devDependencies: testingDevDependencies});
       optionsValidator.validate
         .withArgs(options)
         .returns({
@@ -172,6 +175,9 @@ suite('javascript project scaffolder', () => {
           eslint.default
             .withArgs({config: undefined, projectRoot, unitTested: undefined})
             .resolves({devDependencies: any.listOf(any.string), vcsIgnore: {files: any.listOf(any.string)}});
+          testing.default
+            .withArgs({projectRoot, tests: {unit: undefined, integration: undefined}, visibility})
+            .resolves({devDependencies: testingDevDependencies});
 
           await scaffold(options);
 
@@ -188,6 +194,9 @@ suite('javascript project scaffolder', () => {
           eslint.default
             .withArgs({config: undefined, projectRoot, unitTested: undefined})
             .resolves({devDependencies: any.listOf(any.string), vcsIgnore: {files: any.listOf(any.string)}});
+          testing.default
+            .withArgs({projectRoot, tests: {unit: undefined, integration: undefined}, visibility})
+            .resolves({devDependencies: testingDevDependencies});
 
           await scaffold(options);
 
@@ -222,7 +231,7 @@ suite('javascript project scaffolder', () => {
       const description = any.sentence();
       const configs = any.simpleObject();
       testing.default
-        .withArgs({projectRoot, tests: {unit: tests.unit, integration: tests.integration}})
+        .withArgs({projectRoot, tests: {unit: tests.unit, integration: tests.integration}, visibility})
         .resolves({devDependencies: testingDevDependencies, scripts: testingScripts});
       optionsValidator.validate
         .withArgs(options)
@@ -393,6 +402,9 @@ suite('javascript project scaffolder', () => {
         });
         eslint.default
           .resolves({devDependencies: any.listOf(any.string), vcsIgnore: {files: any.listOf(any.string)}});
+        testing.default
+          .withArgs({projectRoot, tests: {unit: unitTested, integration: undefined}, visibility})
+          .resolves({devDependencies: testingDevDependencies});
         packageBuilder.default.returns(packageDetails);
         ci.default
           .withArgs(
@@ -432,6 +444,9 @@ suite('javascript project scaffolder', () => {
         optionsValidator.validate
           .withArgs(options)
           .returns({projectRoot, projectName, visibility: 'Public', vcs: {}, configs: {eslint: {}}, ciServices});
+        testing.default
+          .withArgs({projectRoot, tests: {unit: undefined, integration: undefined}, visibility: 'Public'})
+          .resolves({devDependencies: testingDevDependencies});
         eslint.default.resolves(eslintResults);
         host.default.resolves(hostResults);
         vcsIgnoresBuilder.default.withArgs({host: hostResults, eslint: eslintResults, projectType}).returns(ignores);
@@ -446,10 +461,13 @@ suite('javascript project scaffolder', () => {
       test('that `npm test` is defined as the verification command', async () => {
         optionsValidator.validate
           .withArgs(options)
-          .returns({projectRoot, projectName, visibility: any.word(), vcs: {}, configs: {}, ciServices});
+          .returns({projectRoot, projectName, visibility, vcs: {}, configs: {}, ciServices});
         prompts.prompt.resolves({});
         eslint.default
           .resolves({devDependencies: any.listOf(any.string), vcsIgnore: {files: any.listOf(any.string)}});
+        testing.default
+          .withArgs({projectRoot, tests: {unit: undefined, integration: undefined}, visibility})
+          .resolves({devDependencies: testingDevDependencies});
 
         const {verificationCommand} = await scaffold(options);
 
@@ -462,11 +480,14 @@ suite('javascript project scaffolder', () => {
         const homepage = any.url();
         optionsValidator.validate
           .withArgs(options)
-          .returns({projectRoot, projectName, visibility: any.word(), vcs: {}, configs: {}, ciServices});
+          .returns({projectRoot, projectName, visibility, vcs: {}, configs: {}, ciServices});
         prompts.prompt.resolves({});
         eslint.default
           .resolves({devDependencies: any.listOf(any.string), vcsIgnore: {files: any.listOf(any.string)}});
         packageBuilder.default.returns({homepage});
+        testing.default
+          .withArgs({projectRoot, tests: {unit: undefined, integration: undefined}, visibility})
+          .resolves({devDependencies: testingDevDependencies});
 
         const {projectDetails} = await scaffold(options);
 
@@ -476,11 +497,14 @@ suite('javascript project scaffolder', () => {
       test('that details are not passed along if not defined', async () => {
         optionsValidator.validate
           .withArgs(options)
-          .returns({projectRoot, projectName, visibility: any.word(), vcs: {}, configs: {}, ciServices});
+          .returns({projectRoot, projectName, visibility, vcs: {}, configs: {}, ciServices});
         prompts.prompt.resolves({});
         packageBuilder.default.returns({});
         eslint.default
           .resolves({devDependencies: any.listOf(any.string), vcsIgnore: {files: any.listOf(any.string)}});
+        testing.default
+          .withArgs({projectRoot, tests: {unit: undefined, integration: undefined}, visibility})
+          .resolves({devDependencies: testingDevDependencies});
 
         const {projectDetails} = await scaffold(options);
 
@@ -504,6 +528,9 @@ suite('javascript project scaffolder', () => {
           .returns({projectRoot, projectName, visibility, vcs: {}, configs: {}, ciServices, scope});
         eslint.default
           .resolves({devDependencies: any.listOf(any.string), vcsIgnore: {files: any.listOf(any.string)}});
+        testing.default
+          .withArgs({projectRoot, tests: {unit: undefined, integration: undefined}, visibility})
+          .resolves({devDependencies: testingDevDependencies});
 
         const {documentation: documentationContent} = await scaffold(options);
 
