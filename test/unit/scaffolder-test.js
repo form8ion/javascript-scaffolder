@@ -329,7 +329,7 @@ suite('javascript project scaffolder', () => {
               projectRoot,
               hosts
             });
-          prompts.prompt.withArgs(overrides, Object.keys(ciServices), hosts).resolves({});
+          prompts.prompt.withArgs(overrides, ciServices, hosts).resolves({});
 
           await scaffold(options);
 
@@ -341,7 +341,7 @@ suite('javascript project scaffolder', () => {
           optionsValidator.validate
             .withArgs(options)
             .returns({vcs: {}, configs: {remark: remarkPreset}, overrides, ciServices, projectRoot});
-          prompts.prompt.withArgs(overrides, Object.keys(ciServices)).resolves({});
+          prompts.prompt.withArgs(overrides, ciServices).resolves({});
 
           await scaffold(options);
 
@@ -364,7 +364,7 @@ suite('javascript project scaffolder', () => {
           const chosenHost = any.word();
           const hostDevDependencies = any.listOf(any.string);
           optionsValidator.validate.returns({vcs: {}, configs: {}, overrides, ciServices, hosts, projectRoot});
-          prompts.prompt.withArgs(overrides, Object.keys(ciServices)).resolves({[questionNames.HOST]: chosenHost});
+          prompts.prompt.withArgs(overrides, ciServices).resolves({[questionNames.HOST]: chosenHost});
           host.default
             .withArgs(hosts, chosenHost)
             .resolves({devDependencies: hostDevDependencies, vcsIgnore: {directories: []}});

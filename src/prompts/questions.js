@@ -8,6 +8,7 @@ import {
 import npmConfFactory from '../../third-party-wrappers/npm-conf';
 import {questionNames} from './question-names';
 import {scope as validateScope} from './validators';
+import filterChoicesByVisibility from './filter-by-visibility';
 
 const testingQuestions = [
   {
@@ -86,7 +87,7 @@ export async function prompt({npmAccount, author}, ciServices, hosts, visibility
       name: questionNames.CI_SERVICE,
       type: 'list',
       message: 'Which continuous integration service will be used?',
-      choices: [...ciServices, new Separator(), 'Other']
+      choices: [...Object.keys(filterChoicesByVisibility(ciServices, visibility)), new Separator(), 'Other']
     },
     {
       name: questionNames.HOST,

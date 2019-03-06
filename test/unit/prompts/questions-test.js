@@ -6,6 +6,7 @@ import * as exec from '../../../third-party-wrappers/exec-as-promised';
 import * as npmConf from '../../../third-party-wrappers/npm-conf';
 import * as validators from '../../../src/prompts/validators';
 import * as conditionals from '../../../src/prompts/conditionals';
+import * as visibilityFilterForChoices from '../../../src/prompts/filter-by-visibility';
 import {prompt} from '../../../src/prompts/questions';
 import {questionNames} from '../../../src/prompts/question-names';
 
@@ -20,6 +21,9 @@ suite('prompts', () => {
     sandbox.stub(exec, 'default');
     sandbox.stub(validators, 'scope');
     sandbox.stub(conditionals, 'scopePromptShouldBePresentedFactory');
+    sandbox.stub(visibilityFilterForChoices, 'default');
+
+    visibilityFilterForChoices.default.withArgs({}).returns({});
   });
 
   teardown(() => sandbox.restore());
@@ -31,7 +35,9 @@ suite('prompts', () => {
     const npmUser = any.word();
     const visibility = any.word();
     const get = sinon.stub();
-    const ciServices = any.listOf(any.string);
+    const ciServices = any.simpleObject();
+    const filteredCiServiceNames = any.listOf(any.word);
+    const filteredCiServices = any.objectWithKeys(filteredCiServiceNames);
     const hosts = any.simpleObject();
     const scopeValidator = () => undefined;
     const scopePromptShouldBePresented = () => undefined;
@@ -43,6 +49,7 @@ suite('prompts', () => {
     validators.scope.withArgs(visibility).returns(scopeValidator);
     inquirer.prompt.resolves();
     conditionals.scopePromptShouldBePresentedFactory.withArgs(visibility).returns(scopePromptShouldBePresented);
+    visibilityFilterForChoices.default.withArgs(ciServices, visibility).returns(filteredCiServices);
 
     return prompt({}, ciServices, hosts, visibility).then(() => assert.calledWith(
       inquirer.prompt,
@@ -106,7 +113,7 @@ suite('prompts', () => {
           name: questionNames.CI_SERVICE,
           type: 'list',
           message: 'Which continuous integration service will be used?',
-          choices: [...ciServices, new inquirer.Separator(), 'Other']
+          choices: [...filteredCiServiceNames, new inquirer.Separator(), 'Other']
         },
         {
           name: questionNames.HOST,
@@ -125,7 +132,7 @@ suite('prompts', () => {
     const get = sinon.stub();
     npmConf.default.returns({get});
 
-    return prompt({npmAccount, author}, [], {}).then(() => {
+    return prompt({npmAccount, author}, {}, {}).then(() => {
       assert.calledWith(
         inquirer.prompt,
         sinon.match(value => 1 === value.filter((
@@ -157,7 +164,7 @@ suite('prompts', () => {
     exec.default.withArgs('npm whoami').resolves(any.word());
     npmConf.default.returns({get: () => undefined});
 
-    await prompt({}, [], {}, 'Private');
+    await prompt({}, {}, {}, 'Private');
 
     assert.neverCalledWith(
       inquirer.prompt,
