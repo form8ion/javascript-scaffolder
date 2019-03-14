@@ -1,4 +1,4 @@
-import exec from '../third-party-wrappers/exec-as-promised';
+import exec from '../../third-party-wrappers/exec-as-promised';
 
 export default async function (dependencies) {
   if (dependencies.length) {

@@ -3,7 +3,7 @@ import {copyFile, writeFile} from 'mz/fs';
 import chalk from 'chalk';
 import uniq from 'lodash.uniq';
 import buildPackage from './package';
-import install from './install';
+import install from './package/install';
 import {validate} from './options-validator';
 import {prompt} from './prompts/questions';
 import scaffoldTesting from './testing';
