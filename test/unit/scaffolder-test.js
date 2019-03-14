@@ -4,7 +4,7 @@ import {assert} from 'chai';
 import any from '@travi/any';
 import sinon from 'sinon';
 import * as prompts from '../../src/prompts/questions';
-import * as packageBuilder from '../../src/package';
+import * as packageBuilder from '../../src/package/details';
 import * as installer from '../../src/install';
 import * as mkdir from '../../third-party-wrappers/make-dir';
 import * as optionsValidator from '../../src/options-validator';
