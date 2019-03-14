@@ -117,7 +117,7 @@ export async function scaffold(options) {
   ].filter(Boolean)));
 
   return {
-    badges: buildBadgesDetails(visibility, projectType, packageData, ciService, unitTested, vcs),
+    badges: buildBadgesDetails(visibility, projectType, packageData.name, ciService, unitTested, vcs),
     documentation: scaffoldDocumentation({projectType, packageName: packageData.name, visibility, scope}),
     vcsIgnore: buildVcsIgnoreLists({host, eslint, projectType}),
     verificationCommand: 'npm test',

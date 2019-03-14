@@ -1,11 +1,11 @@
-export default function (visibility, packageType, packageData, ciService, unitTested, vcs) {
+export default function (visibility, packageType, packageName, ciService, unitTested, vcs) {
   return {
     consumer: {
       ...('Public' === visibility && 'Package' === packageType) && {
         npm: {
-          img: `https://img.shields.io/npm/v/${packageData.name}.svg`,
+          img: `https://img.shields.io/npm/v/${packageName}.svg`,
           text: 'npm',
-          link: `https://www.npmjs.com/package/${packageData.name}`
+          link: `https://www.npmjs.com/package/${packageName}`
         }
       }
     },

@@ -6,7 +6,7 @@ suite('badges', () => {
   test('that the npm badge is defined for public packages', async () => {
     const packageName = any.word();
 
-    const badges = badgeDetailsBuilder('Public', 'Package', {name: packageName}, {});
+    const badges = badgeDetailsBuilder('Public', 'Package', packageName, {});
 
     assert.deepEqual(badges.consumer.npm, {
       img: `https://img.shields.io/npm/v/${packageName}.svg`,

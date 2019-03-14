@@ -382,7 +382,8 @@ suite('javascript project scaffolder', () => {
       test('that badges are provided', async () => {
         const builtBadges = any.simpleObject();
         const projectType = any.word();
-        const packageDetails = any.simpleObject();
+        const packageName = any.string();
+        const packageDetails = {...any.simpleObject(), name: packageName};
         const chosenCiService = any.word();
         const ciService = {...any.simpleObject(), devDependencies: ciServiceDevDependencies};
         const unitTested = any.boolean();
@@ -421,7 +422,7 @@ suite('javascript project scaffolder', () => {
           )
           .resolves(ciService);
         badgeDetailsBuilder.default
-          .withArgs(visibility, projectType, packageDetails, ciService, unitTested, vcsDetails)
+          .withArgs(visibility, projectType, packageName, ciService, unitTested, vcsDetails)
           .returns(builtBadges);
         nodeVersionHandler.determineLatestVersionOf.withArgs(versionCategory).returns(version);
         mkdir.default.resolves(any.string());
