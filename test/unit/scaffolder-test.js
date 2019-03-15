@@ -447,6 +447,7 @@ suite('javascript project scaffolder', () => {
         const hostDirectoriesToIgnore = any.listOf(any.string);
         const hostResults = {vcsIgnore: {directories: hostDirectoriesToIgnore}, devDependencies: []};
         const lintingResults = {devDependencies: [], vcsIgnore: {files: []}};
+        const testingResults = {devDependencies: testingDevDependencies};
         const ignores = any.simpleObject();
         const projectType = any.word();
         prompts.prompt.resolves({[questionNames.PROJECT_TYPE]: projectType});
@@ -455,10 +456,12 @@ suite('javascript project scaffolder', () => {
           .returns({projectRoot, projectName, visibility: 'Public', vcs: {}, configs: {eslint: {}}, ciServices});
         testing.default
           .withArgs({projectRoot, tests: {unit: undefined, integration: undefined}, visibility: 'Public'})
-          .resolves({devDependencies: testingDevDependencies});
+          .resolves(testingResults);
         linting.default.resolves(lintingResults);
         host.default.resolves(hostResults);
-        vcsIgnoresBuilder.default.withArgs({host: hostResults, linting: lintingResults, projectType}).returns(ignores);
+        vcsIgnoresBuilder.default
+          .withArgs({host: hostResults, linting: lintingResults, testing: testingResults, projectType})
+          .returns(ignores);
 
         const {vcsIgnore} = await scaffold(options);
 

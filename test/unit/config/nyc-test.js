@@ -17,7 +17,10 @@ suite('nyc scaffolder', () => {
   teardown(() => sandbox.restore());
 
   test('that nyc is scaffolded', async () => {
-    assert.deepEqual(await scaffoldNyc({projectRoot}), {devDependencies: ['nyc']});
+    assert.deepEqual(
+      await scaffoldNyc({projectRoot}),
+      {devDependencies: ['nyc'], vcsIgnore: {files: [], directories: ['/coverage/', '/.nyc_output/']}}
+    );
     assert.calledWith(
       fs.writeFile,
       `${projectRoot}/.nycrc`,

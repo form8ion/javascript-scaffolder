@@ -13,6 +13,7 @@ export default async function ({projectRoot, visibility}) {
     scripts: {
       'test:unit': 'nyc run-s test:unit:base',
       ...mocha.scripts
-    }
+    },
+    vcsIgnore: nyc.vcsIgnore
   };
 }

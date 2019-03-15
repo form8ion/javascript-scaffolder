@@ -11,6 +11,8 @@ suite('unit testing scaffolder', () => {
   const mochaDevDependencies = any.listOf(any.string);
   const mochaScripts = any.simpleObject();
   const nycDevDependencies = any.listOf(any.string);
+  const nycFilesToIgnoreFromVcs = any.listOf(any.string);
+  const nycDirectoriesToIgnoreFromVcs = any.listOf(any.string);
 
   setup(() => {
     sandbox = sinon.createSandbox();
@@ -21,7 +23,13 @@ suite('unit testing scaffolder', () => {
     mocha.default
       .withArgs({projectRoot})
       .resolves({...any.simpleObject(), devDependencies: mochaDevDependencies, scripts: mochaScripts});
-    nyc.default.withArgs({projectRoot}).resolves({...any.simpleObject(), devDependencies: nycDevDependencies});
+    nyc.default
+      .withArgs({projectRoot})
+      .resolves({
+        ...any.simpleObject(),
+        devDependencies: nycDevDependencies,
+        vcsIgnore: {files: nycFilesToIgnoreFromVcs, directories: nycDirectoriesToIgnoreFromVcs}
+      });
   });
 
   teardown(() => sandbox.restore());
@@ -34,7 +42,8 @@ suite('unit testing scaffolder', () => {
         scripts: {
           'test:unit': 'nyc run-s test:unit:base',
           ...mochaScripts
-        }
+        },
+        vcsIgnore: {files: nycFilesToIgnoreFromVcs, directories: nycDirectoriesToIgnoreFromVcs}
       }
     );
   });
@@ -47,7 +56,8 @@ suite('unit testing scaffolder', () => {
         scripts: {
           'test:unit': 'nyc run-s test:unit:base',
           ...mochaScripts
-        }
+        },
+        vcsIgnore: {files: nycFilesToIgnoreFromVcs, directories: nycDirectoriesToIgnoreFromVcs}
       }
     );
   });

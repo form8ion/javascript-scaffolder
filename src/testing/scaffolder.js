@@ -16,6 +16,10 @@ export default async function ({projectRoot, visibility, tests: {unit, integrati
     scripts: {
       ...unitResults && unitResults.scripts,
       ...integrationResults && integrationResults.scripts
+    },
+    vcsIgnore: {
+      files: [...unitResults ? unitResults.vcsIgnore.files : []],
+      directories: [...unitResults ? unitResults.vcsIgnore.directories : []]
     }
   };
 }
