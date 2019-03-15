@@ -10,7 +10,7 @@ import scaffoldTesting from './testing';
 import scaffoldCi from './ci';
 import scaffoldHost from './host';
 import scaffoldBabel from './config/babel';
-import scaffoldEsLint from './lint/eslint';
+import scaffoldEsLint from './linting/eslint';
 import scaffoldHusky from './config/husky';
 import scaffoldNpmConfig from './config/npm';
 import scaffoldCommitizen from './config/commitizen';
