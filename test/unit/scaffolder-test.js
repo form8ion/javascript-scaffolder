@@ -12,7 +12,7 @@ import * as ci from '../../src/ci';
 import * as testing from '../../src/testing/scaffolder';
 import * as host from '../../src/host';
 import * as babel from '../../src/config/babel';
-import * as eslint from '../../src/linting/eslint';
+import * as linting from '../../src/linting/scaffolder';
 import * as husky from '../../src/config/husky';
 import * as npmConfig from '../../src/config/npm';
 import * as commitizen from '../../src/config/commitizen';
@@ -57,7 +57,7 @@ suite('javascript project scaffolder', () => {
     sandbox.stub(testing, 'default');
     sandbox.stub(host, 'default');
     sandbox.stub(babel, 'default');
-    sandbox.stub(eslint, 'default');
+    sandbox.stub(linting, 'default');
     sandbox.stub(husky, 'default');
     sandbox.stub(npmConfig, 'default');
     sandbox.stub(commitizen, 'default');
@@ -89,13 +89,15 @@ suite('javascript project scaffolder', () => {
       const remarkPreset = any.string();
       const eslintConfig = any.simpleObject();
       const projectType = any.word();
-      eslint.default
-        .withArgs({config: eslintConfig, projectRoot, unitTested: undefined})
+      const tests = {unit: undefined, integration: undefined};
+      const configs = {babelPreset, remark: remarkPreset, eslint: eslintConfig};
+      linting.default
+        .withArgs({configs, projectRoot, tests})
         .resolves({devDependencies: any.listOf(any.string), vcsIgnore: {files: any.listOf(any.string)}});
       babel.default.withArgs({projectRoot, preset: babelPreset}).resolves({devDependencies: babelDevDependencies});
       npmConfig.default.resolves();
       testing.default
-        .withArgs({projectRoot, tests: {unit: undefined, integration: undefined}, visibility})
+        .withArgs({projectRoot, tests, visibility})
         .resolves({devDependencies: testingDevDependencies});
       optionsValidator.validate
         .withArgs(options)
@@ -103,7 +105,7 @@ suite('javascript project scaffolder', () => {
           visibility,
           projectRoot,
           vcs: {},
-          configs: {babelPreset, remark: remarkPreset, eslint: eslintConfig},
+          configs,
           ciServices
         });
 
@@ -120,11 +122,22 @@ suite('javascript project scaffolder', () => {
     });
 
     test('that no remark config is created if no remark preset is defined', async () => {
-      prompts.prompt.resolves({[questionNames.NODE_VERSION_CATEGORY]: any.word()});
-      optionsValidator.validate.withArgs(options).returns({projectRoot, vcs: {}, configs: {}, ciServices});
-      eslint.default
-        .withArgs({config: undefined, projectRoot, unitTested: undefined})
+      const integrationTested = any.boolean();
+      const unitTested = any.boolean();
+      const configs = any.simpleObject();
+      const tests = {unit: unitTested, integration: integrationTested};
+      prompts.prompt.resolves({
+        [questionNames.NODE_VERSION_CATEGORY]: any.word(),
+        [questionNames.UNIT_TESTS]: unitTested,
+        [questionNames.INTEGRATION_TESTS]: integrationTested
+      });
+      optionsValidator.validate.withArgs(options).returns({projectRoot, vcs: {}, configs, ciServices, visibility});
+      linting.default
+        .withArgs({configs, projectRoot, tests})
         .resolves({devDependencies: any.listOf(any.string), vcsIgnore: {files: any.listOf(any.string)}});
+      testing.default
+        .withArgs({projectRoot, tests, visibility})
+        .resolves({devDependencies: []});
 
       await scaffold(options);
 
@@ -139,8 +152,7 @@ suite('javascript project scaffolder', () => {
           .withArgs(options)
           .returns({projectRoot, vcs: {}, configs: {commitlint: {name: commitlintConfigPrefix}}, ciServices});
         prompts.prompt.resolves({});
-        eslint.default
-          .withArgs({config: undefined, projectRoot, unitTested: undefined})
+        linting.default
           .resolves({devDependencies: any.listOf(any.string), vcsIgnore: {files: any.listOf(any.string)}});
 
         await scaffold(options);
@@ -155,8 +167,7 @@ suite('javascript project scaffolder', () => {
       test('that the config is not added to the root of the project if the package is not defined', async () => {
         optionsValidator.validate.withArgs(options).returns({projectRoot, vcs: {}, configs: {}, ciServices});
         prompts.prompt.resolves({});
-        eslint.default
-          .withArgs({config: undefined, projectRoot, unitTested: undefined})
+        linting.default
           .resolves({devDependencies: any.listOf(any.string), vcsIgnore: {files: any.listOf(any.string)}});
 
         await scaffold(options);
@@ -172,8 +183,7 @@ suite('javascript project scaffolder', () => {
             .withArgs(options)
             .returns({visibility, projectRoot, vcs: {}, configs: {}, ciServices});
           prompts.prompt.resolves({[questionNames.PROJECT_TYPE]: 'Application'});
-          eslint.default
-            .withArgs({config: undefined, projectRoot, unitTested: undefined})
+          linting.default
             .resolves({devDependencies: any.listOf(any.string), vcsIgnore: {files: any.listOf(any.string)}});
           testing.default
             .withArgs({projectRoot, tests: {unit: undefined, integration: undefined}, visibility})
@@ -191,8 +201,7 @@ suite('javascript project scaffolder', () => {
             .withArgs(options)
             .returns({visibility, projectRoot, vcs: {}, configs: {}, ciServices});
           prompts.prompt.resolves({[questionNames.PROJECT_TYPE]: 'Package'});
-          eslint.default
-            .withArgs({config: undefined, projectRoot, unitTested: undefined})
+          linting.default
             .resolves({devDependencies: any.listOf(any.string), vcsIgnore: {files: any.listOf(any.string)}});
           testing.default
             .withArgs({projectRoot, tests: {unit: undefined, integration: undefined}, visibility})
@@ -247,8 +256,7 @@ suite('javascript project scaffolder', () => {
         [questionNames.CI_SERVICE]: chosenCiService
       });
       ci.default.resolves(ciServiceResults);
-      eslint.default
-        .withArgs({config: undefined, projectRoot, unitTested: tests.unit})
+      linting.default
         .resolves({devDependencies: any.listOf(any.string), vcsIgnore: {files: any.listOf(any.string)}});
       packageBuilder.default
         .withArgs({
@@ -276,11 +284,11 @@ suite('javascript project scaffolder', () => {
     });
 
     suite('dependencies', () => {
-      const eslintDevDependencies = any.listOf(any.string);
+      const lintingDevDependencies = any.listOf(any.string);
       const defaultDependencies = [
         ...testingDevDependenciesWithoutCommon,
         commonDependency,
-        ...eslintDevDependencies,
+        ...lintingDevDependencies,
         ...babelDevDependenciesWithoutCommon,
         ...commitizenDevDependencies,
         ...huskyDevDependencies,
@@ -289,7 +297,7 @@ suite('javascript project scaffolder', () => {
       ];
 
       setup(() => {
-        eslint.default.resolves({devDependencies: eslintDevDependencies, vcsIgnore: {files: any.listOf(any.string)}});
+        linting.default.resolves({devDependencies: lintingDevDependencies, vcsIgnore: {files: any.listOf(any.string)}});
       });
 
       suite('scripts', () => {
@@ -401,7 +409,7 @@ suite('javascript project scaffolder', () => {
           [questionNames.UNIT_TESTS]: unitTested,
           [questionNames.NODE_VERSION_CATEGORY]: versionCategory
         });
-        eslint.default
+        linting.default
           .resolves({devDependencies: any.listOf(any.string), vcsIgnore: {files: any.listOf(any.string)}});
         testing.default
           .withArgs({projectRoot, tests: {unit: unitTested, integration: undefined}, visibility})
@@ -438,7 +446,7 @@ suite('javascript project scaffolder', () => {
       test('that ignores are defined', async () => {
         const hostDirectoriesToIgnore = any.listOf(any.string);
         const hostResults = {vcsIgnore: {directories: hostDirectoriesToIgnore}, devDependencies: []};
-        const eslintResults = {devDependencies: [], vcsIgnore: {files: []}};
+        const lintingResults = {devDependencies: [], vcsIgnore: {files: []}};
         const ignores = any.simpleObject();
         const projectType = any.word();
         prompts.prompt.resolves({[questionNames.PROJECT_TYPE]: projectType});
@@ -448,9 +456,9 @@ suite('javascript project scaffolder', () => {
         testing.default
           .withArgs({projectRoot, tests: {unit: undefined, integration: undefined}, visibility: 'Public'})
           .resolves({devDependencies: testingDevDependencies});
-        eslint.default.resolves(eslintResults);
+        linting.default.resolves(lintingResults);
         host.default.resolves(hostResults);
-        vcsIgnoresBuilder.default.withArgs({host: hostResults, eslint: eslintResults, projectType}).returns(ignores);
+        vcsIgnoresBuilder.default.withArgs({host: hostResults, linting: lintingResults, projectType}).returns(ignores);
 
         const {vcsIgnore} = await scaffold(options);
 
@@ -464,7 +472,7 @@ suite('javascript project scaffolder', () => {
           .withArgs(options)
           .returns({projectRoot, projectName, visibility, vcs: {}, configs: {}, ciServices});
         prompts.prompt.resolves({});
-        eslint.default
+        linting.default
           .resolves({devDependencies: any.listOf(any.string), vcsIgnore: {files: any.listOf(any.string)}});
         testing.default
           .withArgs({projectRoot, tests: {unit: undefined, integration: undefined}, visibility})
@@ -483,7 +491,7 @@ suite('javascript project scaffolder', () => {
           .withArgs(options)
           .returns({projectRoot, projectName, visibility, vcs: {}, configs: {}, ciServices});
         prompts.prompt.resolves({});
-        eslint.default
+        linting.default
           .resolves({devDependencies: any.listOf(any.string), vcsIgnore: {files: any.listOf(any.string)}});
         packageBuilder.default.returns({homepage});
         testing.default
@@ -500,8 +508,8 @@ suite('javascript project scaffolder', () => {
           .withArgs(options)
           .returns({projectRoot, projectName, visibility, vcs: {}, configs: {}, ciServices});
         prompts.prompt.resolves({});
-        packageBuilder.default.returns({});
-        eslint.default
+        packageBuilder.default.resolves({});
+        linting.default
           .resolves({devDependencies: any.listOf(any.string), vcsIgnore: {files: any.listOf(any.string)}});
         testing.default
           .withArgs({projectRoot, tests: {unit: undefined, integration: undefined}, visibility})
@@ -527,7 +535,7 @@ suite('javascript project scaffolder', () => {
         documentation.default.withArgs({projectType, packageName, visibility, scope}).returns(docs);
         optionsValidator.validate
           .returns({projectRoot, projectName, visibility, vcs: {}, configs: {}, ciServices, scope});
-        eslint.default
+        linting.default
           .resolves({devDependencies: any.listOf(any.string), vcsIgnore: {files: any.listOf(any.string)}});
         testing.default
           .withArgs({projectRoot, tests: {unit: undefined, integration: undefined}, visibility})

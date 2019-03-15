@@ -1,6 +1,6 @@
-export default function ({eslint, host, projectType}) {
+export default function ({linting, host, projectType}) {
   return {
-    files: [...eslint.vcsIgnore.files, ...'Application' === projectType ? ['.env'] : []],
+    files: [...linting.vcsIgnore.files, ...'Application' === projectType ? ['.env'] : []],
     directories: [
       '/node_modules/',
       '/lib/',

@@ -10,7 +10,7 @@ import scaffoldTesting from './testing';
 import scaffoldCi from './ci';
 import scaffoldHost from './host';
 import scaffoldBabel from './config/babel';
-import scaffoldEsLint from './linting/eslint';
+import scaffoldLinting from './linting';
 import scaffoldHusky from './config/husky';
 import scaffoldNpmConfig from './config/npm';
 import scaffoldCommitizen from './config/commitizen';
@@ -54,10 +54,10 @@ export async function scaffold(options) {
   console.error(chalk.grey('Writing project files'));      // eslint-disable-line no-console
 
   const tests = {unit: unitTested, integration: integrationTested};
-  const [babel, testing, eslint, commitizen, husky, host, ciService] = await Promise.all([
+  const [babel, testing, linting, commitizen, husky, host, ciService] = await Promise.all([
     scaffoldBabel({preset: configs.babelPreset, projectRoot}),
     scaffoldTesting({projectRoot, tests, visibility}),
-    scaffoldEsLint(({config: configs.eslint, projectRoot, unitTested})),
+    scaffoldLinting(({configs, projectRoot, tests})),
     scaffoldCommitizen({projectRoot}),
     scaffoldHusky({projectRoot}),
     scaffoldHost(hosts, chosenHost),
@@ -104,7 +104,7 @@ export async function scaffold(options) {
   await install(uniq([
     ...host.devDependencies,
     ...testing.devDependencies,
-    ...eslint.devDependencies,
+    ...linting.devDependencies,
     ...babel.devDependencies,
     ...commitizen.devDependencies,
     ...husky.devDependencies,
@@ -119,7 +119,7 @@ export async function scaffold(options) {
   return {
     badges: buildBadgesDetails(visibility, projectType, packageData.name, ciService, unitTested, vcs),
     documentation: scaffoldDocumentation({projectType, packageName: packageData.name, visibility, scope}),
-    vcsIgnore: buildVcsIgnoreLists({host, eslint, projectType}),
+    vcsIgnore: buildVcsIgnoreLists({host, linting, projectType}),
     verificationCommand: 'npm test',
     projectDetails: {...packageData.homepage && {homepage: packageData.homepage}}
   };

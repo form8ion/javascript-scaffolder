@@ -4,15 +4,15 @@ import buildVcsIgnoreLists from '../../src/vcs-ignore';
 
 suite('vcs-ignore lists builder', () => {
   const hostDirectories = any.listOf(any.string);
-  const eslintFiles = any.listOf(any.string);
+  const lintingFiles = any.listOf(any.string);
   const host = {vcsIgnore: {directories: hostDirectories}};
-  const eslint = {vcsIgnore: {files: eslintFiles}};
+  const linting = {vcsIgnore: {files: lintingFiles}};
 
   test('that default lists are defined', () => {
     assert.deepEqual(
-      buildVcsIgnoreLists({host, eslint}),
+      buildVcsIgnoreLists({host, linting}),
       {
-        files: [...eslintFiles],
+        files: [...lintingFiles],
         directories: [
           '/node_modules/',
           '/lib/',
@@ -25,7 +25,7 @@ suite('vcs-ignore lists builder', () => {
   });
 
   test('that application-specific exclusions are defined for application projects', () => {
-    const ignores = buildVcsIgnoreLists({host, eslint, projectType: 'Application'});
+    const ignores = buildVcsIgnoreLists({host, linting, projectType: 'Application'});
 
     assert.include(ignores.files, '.env');
   });
