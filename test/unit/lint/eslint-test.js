@@ -3,7 +3,7 @@ import {assert} from 'chai';
 import any from '@travi/any';
 import sinon from 'sinon';
 import * as mkdir from '../../../third-party-wrappers/make-dir';
-import scaffoldEsLint from '../../../src/config/eslint';
+import scaffoldEsLint from '../../../src/lint/eslint';
 
 suite('eslint config scaffolder', () => {
   let sandbox;

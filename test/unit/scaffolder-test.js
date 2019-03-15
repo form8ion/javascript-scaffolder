@@ -12,7 +12,7 @@ import * as ci from '../../src/ci';
 import * as testing from '../../src/testing/scaffolder';
 import * as host from '../../src/host';
 import * as babel from '../../src/config/babel';
-import * as eslint from '../../src/config/eslint';
+import * as eslint from '../../src/lint/eslint';
 import * as husky from '../../src/config/husky';
 import * as npmConfig from '../../src/config/npm';
 import * as commitizen from '../../src/config/commitizen';
