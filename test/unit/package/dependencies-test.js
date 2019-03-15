@@ -15,8 +15,17 @@ suite('dependencies', () => {
   teardown(() => sandbox.restore());
 
   test('that devDependencies get installed', async () => {
-    await installDependencies();
+    await installDependencies({});
 
     assert.calledWith(dependencyInstaller.default, ['npm-run-all', 'ban-sensitive-files']);
+  });
+
+  test('that additional devDependencies get installed for package type projects', async () => {
+    await installDependencies({projectType: 'Package'});
+
+    assert.calledWith(
+      dependencyInstaller.default,
+      ['npm-run-all', 'ban-sensitive-files', 'rimraf', 'rollup', 'rollup-plugin-auto-external']
+    );
   });
 });
