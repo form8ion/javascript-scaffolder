@@ -94,8 +94,7 @@ export async function scaffold(options) {
     ('Package' === projectType) && copyFile(
       resolve(__dirname, '..', 'templates', 'rollup.config.js'),
       `${projectRoot}/rollup.config.js`
-    ),
-    configs.remark && writeFile(`${projectRoot}/.remarkrc.js`, `exports.plugins = ['${configs.remark}'];`)
+    )
   ]);
 
   await installNodeVersion(nodeVersionCategory);

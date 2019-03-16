@@ -116,7 +116,6 @@ suite('javascript project scaffolder', () => {
 
       return scaffold(options).then(() => {
         assert.calledWith(babel.default, {preset: babelPreset, projectRoot});
-        assert.calledWith(fs.writeFile, `${projectRoot}/.remarkrc.js`, `exports.plugins = ['${remarkPreset}'];`);
         assert.calledWith(npmConfig.default, {projectRoot, projectType});
       });
     });
