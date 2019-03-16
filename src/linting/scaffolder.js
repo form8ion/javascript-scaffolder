@@ -1,10 +1,14 @@
 import scaffoldEslint from './eslint';
+import scaffoldRemark from './remark';
 
 export default async function ({projectRoot, tests, configs}) {
-  const eslintResult = await scaffoldEslint({projectRoot, unitTested: tests.unit, config: configs.eslint});
+  const [eslintResult, remarkResult] = await Promise.all([
+    scaffoldEslint({projectRoot, unitTested: tests.unit, config: configs.eslint}),
+    ...configs.remark ? [scaffoldRemark({projectRoot, config: configs.remark})] : []
+  ]);
 
   return {
-    devDependencies: eslintResult.devDependencies,
+    devDependencies: [...eslintResult.devDependencies, ...remarkResult ? remarkResult.devDependencies : []],
     vcsIgnore: {files: eslintResult.vcsIgnore.files}
   };
 }

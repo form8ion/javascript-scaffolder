@@ -112,7 +112,6 @@ export async function scaffold(options) {
     'npm-run-all',
     'ban-sensitive-files',
     configs.commitlint && configs.commitlint.packageName,
-    ...configs.remark ? [configs.remark, 'remark-cli'] : [],
     ...'Package' === projectType ? ['rimraf', 'rollup', 'rollup-plugin-auto-external'] : []
   ].filter(Boolean)));
 

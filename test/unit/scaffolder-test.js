@@ -343,18 +343,6 @@ suite('javascript project scaffolder', () => {
 
           assert.calledWith(installer.default, [...defaultDependencies, commitlintConfigName]);
         });
-
-        test('that remark-cli and the lint preset are installed when the preset is defined', async () => {
-          const remarkPreset = any.word();
-          optionsValidator.validate
-            .withArgs(options)
-            .returns({vcs: {}, configs: {remark: remarkPreset}, overrides, ciServices, projectRoot});
-          prompts.prompt.withArgs(overrides, ciServices).resolves({});
-
-          await scaffold(options);
-
-          assert.calledWith(installer.default, [...defaultDependencies, remarkPreset, 'remark-cli']);
-        });
       });
 
       test('that unique dependencies are requested when various reasons overlap', async () => {
