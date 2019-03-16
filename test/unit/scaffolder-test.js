@@ -20,6 +20,7 @@ import * as documentation from '../../src/documentation';
 import * as nodeVersionHandler from '../../src/node-version';
 import * as badgeDetailsBuilder from '../../src/badges';
 import * as vcsIgnoresBuilder from '../../src/vcs-ignore';
+import * as commitConvention from '../../src/commit-convention/scaffolder';
 import {scaffold} from '../../src/scaffolder';
 import {questionNames} from '../../src/prompts/question-names';
 
@@ -42,6 +43,7 @@ suite('javascript project scaffolder', () => {
   const huskyDevDependencies = any.listOf(any.string);
   const commitizenDevDependencies = any.listOf(any.string);
   const ciServiceDevDependencies = any.listOf(any.string);
+  const commitConventionDevDependencies = any.listOf(any.string);
 
   setup(() => {
     sandbox = sinon.createSandbox();
@@ -66,6 +68,7 @@ suite('javascript project scaffolder', () => {
     sandbox.stub(nodeVersionHandler, 'install');
     sandbox.stub(badgeDetailsBuilder, 'default');
     sandbox.stub(vcsIgnoresBuilder, 'default');
+    sandbox.stub(commitConvention, 'default');
 
     fs.writeFile.resolves();
     fs.copyFile.resolves();
@@ -99,6 +102,9 @@ suite('javascript project scaffolder', () => {
       testing.default
         .withArgs({projectRoot, tests, visibility})
         .resolves({devDependencies: testingDevDependencies});
+      commitConvention.default
+        .withArgs({projectRoot, configs})
+        .resolves({devDependencies: commitConventionDevDependencies});
       optionsValidator.validate
         .withArgs(options)
         .returns({
@@ -137,6 +143,9 @@ suite('javascript project scaffolder', () => {
       testing.default
         .withArgs({projectRoot, tests, visibility})
         .resolves({devDependencies: []});
+      commitConvention.default
+        .withArgs({projectRoot, configs})
+        .resolves({devDependencies: commitConventionDevDependencies});
 
       await scaffold(options);
 
@@ -147,12 +156,16 @@ suite('javascript project scaffolder', () => {
       const commitlintConfigPrefix = any.word();
 
       test('that the config is added to the root of the project if the package is defined', async () => {
+        const configs = {commitlint: {name: commitlintConfigPrefix}};
         optionsValidator.validate
           .withArgs(options)
-          .returns({projectRoot, vcs: {}, configs: {commitlint: {name: commitlintConfigPrefix}}, ciServices});
+          .returns({projectRoot, vcs: {}, configs, ciServices});
         prompts.prompt.resolves({});
         linting.default
           .resolves({devDependencies: any.listOf(any.string), vcsIgnore: {files: any.listOf(any.string)}});
+        commitConvention.default
+          .withArgs({projectRoot, configs})
+          .resolves({devDependencies: commitConventionDevDependencies});
 
         await scaffold(options);
 
@@ -164,10 +177,14 @@ suite('javascript project scaffolder', () => {
       });
 
       test('that the config is not added to the root of the project if the package is not defined', async () => {
-        optionsValidator.validate.withArgs(options).returns({projectRoot, vcs: {}, configs: {}, ciServices});
+        const configs = any.simpleObject();
+        optionsValidator.validate.withArgs(options).returns({projectRoot, vcs: {}, configs, ciServices});
         prompts.prompt.resolves({});
         linting.default
           .resolves({devDependencies: any.listOf(any.string), vcsIgnore: {files: any.listOf(any.string)}});
+        commitConvention.default
+          .withArgs({projectRoot, configs})
+          .resolves({devDependencies: commitConventionDevDependencies});
 
         await scaffold(options);
 
@@ -178,15 +195,19 @@ suite('javascript project scaffolder', () => {
     suite('build', () => {
       suite('application', () => {
         test('that rollup is not configured', async () => {
+          const configs = any.simpleObject();
           optionsValidator.validate
             .withArgs(options)
-            .returns({visibility, projectRoot, vcs: {}, configs: {}, ciServices});
+            .returns({visibility, projectRoot, vcs: {}, configs, ciServices});
           prompts.prompt.resolves({[questionNames.PROJECT_TYPE]: 'Application'});
           linting.default
             .resolves({devDependencies: any.listOf(any.string), vcsIgnore: {files: any.listOf(any.string)}});
           testing.default
             .withArgs({projectRoot, tests: {unit: undefined, integration: undefined}, visibility})
             .resolves({devDependencies: testingDevDependencies});
+          commitConvention.default
+            .withArgs({projectRoot, configs})
+            .resolves({devDependencies: commitConventionDevDependencies});
 
           await scaffold(options);
 
@@ -196,15 +217,19 @@ suite('javascript project scaffolder', () => {
 
       suite('package', () => {
         test('that the package gets bundled with rollup', async () => {
+          const configs = any.simpleObject();
           optionsValidator.validate
             .withArgs(options)
-            .returns({visibility, projectRoot, vcs: {}, configs: {}, ciServices});
+            .returns({visibility, projectRoot, vcs: {}, configs, ciServices});
           prompts.prompt.resolves({[questionNames.PROJECT_TYPE]: 'Package'});
           linting.default
             .resolves({devDependencies: any.listOf(any.string), vcsIgnore: {files: any.listOf(any.string)}});
           testing.default
             .withArgs({projectRoot, tests: {unit: undefined, integration: undefined}, visibility})
             .resolves({devDependencies: testingDevDependencies});
+          commitConvention.default
+            .withArgs({projectRoot, configs})
+            .resolves({devDependencies: commitConventionDevDependencies});
 
           await scaffold(options);
 
@@ -257,6 +282,9 @@ suite('javascript project scaffolder', () => {
       ci.default.resolves(ciServiceResults);
       linting.default
         .resolves({devDependencies: any.listOf(any.string), vcsIgnore: {files: any.listOf(any.string)}});
+      commitConvention.default
+        .withArgs({projectRoot, configs})
+        .resolves({devDependencies: commitConventionDevDependencies});
       packageBuilder.default
         .withArgs({
           projectName,
@@ -291,12 +319,14 @@ suite('javascript project scaffolder', () => {
         ...babelDevDependenciesWithoutCommon,
         ...commitizenDevDependencies,
         ...huskyDevDependencies,
+        ...commitConventionDevDependencies,
         'npm-run-all',
         'ban-sensitive-files'
       ];
 
       setup(() => {
         linting.default.resolves({devDependencies: lintingDevDependencies, vcsIgnore: {files: any.listOf(any.string)}});
+        commitConvention.default.resolves({devDependencies: commitConventionDevDependencies});
       });
 
       suite('scripts', () => {
@@ -319,28 +349,6 @@ suite('javascript project scaffolder', () => {
             installer.default,
             [...defaultDependencies, 'rimraf', 'rollup', 'rollup-plugin-auto-external']
           );
-        });
-      });
-
-      suite('lint', () => {
-        const commitlintConfigName = any.string();
-
-        test('that the commitlint config is installed when defined', async () => {
-          optionsValidator.validate
-            .withArgs(options)
-            .returns({
-              vcs: {},
-              configs: {commitlint: {packageName: commitlintConfigName}},
-              overrides,
-              ciServices,
-              projectRoot,
-              hosts
-            });
-          prompts.prompt.withArgs(overrides, ciServices, hosts).resolves({});
-
-          await scaffold(options);
-
-          assert.calledWith(installer.default, [...defaultDependencies, commitlintConfigName]);
         });
       });
 
@@ -402,6 +410,7 @@ suite('javascript project scaffolder', () => {
           .withArgs({projectRoot, tests: {unit: unitTested, integration: undefined}, visibility})
           .resolves({devDependencies: testingDevDependencies});
         packageBuilder.default.returns(packageDetails);
+        commitConvention.default.resolves({devDependencies: commitConventionDevDependencies});
         ci.default
           .withArgs(
             ciServices,
@@ -449,6 +458,7 @@ suite('javascript project scaffolder', () => {
         vcsIgnoresBuilder.default
           .withArgs({host: hostResults, linting: lintingResults, testing: testingResults, projectType})
           .returns(ignores);
+        commitConvention.default.resolves({devDependencies: commitConventionDevDependencies});
 
         const {vcsIgnore} = await scaffold(options);
 
@@ -467,6 +477,7 @@ suite('javascript project scaffolder', () => {
         testing.default
           .withArgs({projectRoot, tests: {unit: undefined, integration: undefined}, visibility})
           .resolves({devDependencies: testingDevDependencies});
+        commitConvention.default.resolves({devDependencies: commitConventionDevDependencies});
 
         const {verificationCommand} = await scaffold(options);
 
@@ -487,6 +498,7 @@ suite('javascript project scaffolder', () => {
         testing.default
           .withArgs({projectRoot, tests: {unit: undefined, integration: undefined}, visibility})
           .resolves({devDependencies: testingDevDependencies});
+        commitConvention.default.resolves({devDependencies: commitConventionDevDependencies});
 
         const {projectDetails} = await scaffold(options);
 
@@ -504,6 +516,7 @@ suite('javascript project scaffolder', () => {
         testing.default
           .withArgs({projectRoot, tests: {unit: undefined, integration: undefined}, visibility})
           .resolves({devDependencies: testingDevDependencies});
+        commitConvention.default.resolves({devDependencies: commitConventionDevDependencies});
 
         const {projectDetails} = await scaffold(options);
 
@@ -530,6 +543,7 @@ suite('javascript project scaffolder', () => {
         testing.default
           .withArgs({projectRoot, tests: {unit: undefined, integration: undefined}, visibility})
           .resolves({devDependencies: testingDevDependencies});
+        commitConvention.default.resolves({devDependencies: commitConventionDevDependencies});
 
         const {documentation: documentationContent} = await scaffold(options);
 

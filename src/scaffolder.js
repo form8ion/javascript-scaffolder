@@ -14,6 +14,7 @@ import scaffoldLinting from './linting';
 import scaffoldHusky from './config/husky';
 import scaffoldNpmConfig from './config/npm';
 import scaffoldCommitizen from './config/commitizen';
+import scaffoldCommitConvention from './commit-convention';
 import scaffoldDocumentation from './documentation';
 import {determineLatestVersionOf, install as installNodeVersion} from './node-version';
 import {questionNames} from './prompts/question-names';
@@ -54,14 +55,15 @@ export async function scaffold(options) {
   console.error(chalk.grey('Writing project files'));      // eslint-disable-line no-console
 
   const tests = {unit: unitTested, integration: integrationTested};
-  const [babel, testing, linting, commitizen, husky, host, ciService] = await Promise.all([
+  const [babel, testing, linting, commitizen, husky, host, ciService, commitConvention] = await Promise.all([
     scaffoldBabel({preset: configs.babelPreset, projectRoot}),
     scaffoldTesting({projectRoot, tests, visibility}),
     scaffoldLinting(({configs, projectRoot, tests})),
     scaffoldCommitizen({projectRoot}),
     scaffoldHusky({projectRoot}),
     scaffoldHost(hosts, chosenHost),
-    scaffoldCi(ciServices, ci, {projectRoot, vcs, visibility, packageType: projectType, nodeVersion, tests})
+    scaffoldCi(ciServices, ci, {projectRoot, vcs, visibility, packageType: projectType, nodeVersion, tests}),
+    scaffoldCommitConvention({projectRoot, configs})
   ]);
 
   const packageData = buildPackage({
@@ -108,9 +110,9 @@ export async function scaffold(options) {
     ...commitizen.devDependencies,
     ...husky.devDependencies,
     ...ciService.devDependencies,
+    ...commitConvention.devDependencies,
     'npm-run-all',
     'ban-sensitive-files',
-    configs.commitlint && configs.commitlint.packageName,
     ...'Package' === projectType ? ['rimraf', 'rollup', 'rollup-plugin-auto-external'] : []
   ].filter(Boolean)));
 
