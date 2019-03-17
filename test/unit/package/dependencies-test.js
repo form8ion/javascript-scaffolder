@@ -6,13 +6,21 @@ import installDependencies from '../../../src/package/dependencies';
 
 suite('dependencies', () => {
   let sandbox;
-  const devDependenciesLists = any.listOf(() => any.listOf(any.string));
+  const devDependenciesLists = any.listOf(() => any.listOf(any.string), {min: 5});
   const devDependenciesFromAllContributors = devDependenciesLists.reduce((acc, list) => ([...acc, ...list]), []);
+  const commonDependency = any.string();
+  devDependenciesLists[0].unshift(commonDependency);
+  devDependenciesLists[4].unshift(commonDependency);
   const contributors = any.listOf(
     index => ({...any.simpleObject(), devDependencies: devDependenciesLists[index]}),
     {size: devDependenciesLists.length}
   );
-  const defaultDevDependencies = ['npm-run-all', 'ban-sensitive-files', ...devDependenciesFromAllContributors];
+  const defaultDevDependencies = [
+    'npm-run-all',
+    'ban-sensitive-files',
+    commonDependency,
+    ...devDependenciesFromAllContributors
+  ];
 
   setup(() => {
     sandbox = sinon.createSandbox();

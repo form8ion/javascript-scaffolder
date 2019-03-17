@@ -21,13 +21,13 @@ import * as nodeVersionHandler from '../../src/node-version';
 import * as badgeDetailsBuilder from '../../src/badges';
 import * as vcsIgnoresBuilder from '../../src/vcs-ignore';
 import * as commitConvention from '../../src/commit-convention/scaffolder';
+import * as dependencyInstaller from '../../src/package/dependencies';
 import {scaffold} from '../../src/scaffolder';
 import {questionNames} from '../../src/prompts/question-names';
 
 suite('javascript project scaffolder', () => {
   let sandbox;
   const options = any.simpleObject();
-  const overrides = any.simpleObject();
   const ciServices = any.simpleObject();
   const hosts = any.simpleObject();
   const projectRoot = any.string();
@@ -40,10 +40,14 @@ suite('javascript project scaffolder', () => {
   const testingScripts = any.simpleObject();
   const babelDevDependenciesWithoutCommon = any.listOf(any.string);
   const babelDevDependencies = [...babelDevDependenciesWithoutCommon, commonDependency];
-  const huskyDevDependencies = any.listOf(any.string);
-  const commitizenDevDependencies = any.listOf(any.string);
   const ciServiceDevDependencies = any.listOf(any.string);
   const commitConventionDevDependencies = any.listOf(any.string);
+  const hostDirectoriesToIgnore = any.listOf(any.string);
+  const hostResults = {vcsIgnore: {directories: hostDirectoriesToIgnore}, devDependencies: []};
+  const babelResults = {devDependencies: babelDevDependencies};
+  const commitizenResults = any.simpleObject();
+  const huskyResults = any.simpleObject();
+  const chosenHost = any.word();
 
   setup(() => {
     sandbox = sinon.createSandbox();
@@ -69,18 +73,19 @@ suite('javascript project scaffolder', () => {
     sandbox.stub(badgeDetailsBuilder, 'default');
     sandbox.stub(vcsIgnoresBuilder, 'default');
     sandbox.stub(commitConvention, 'default');
+    sandbox.stub(dependencyInstaller, 'default');
 
     fs.writeFile.resolves();
     fs.copyFile.resolves();
     packageBuilder.default.returns({});
     ci.default.resolves({devDependencies: []});
-    host.default.resolves({vcsIgnore: {directories: []}, devDependencies: []});
+    host.default.withArgs(hosts, chosenHost).resolves(hostResults);
     testing.default
       .withArgs({projectRoot, tests: {unit: undefined, integration: undefined}, visibility: undefined})
       .resolves({devDependencies: testingDevDependencies});
-    commitizen.default.withArgs({projectRoot}).resolves({devDependencies: commitizenDevDependencies});
+    commitizen.default.withArgs({projectRoot}).resolves(commitizenResults);
     babel.default.withArgs({projectRoot, preset: undefined}).resolves({devDependencies: babelDevDependencies});
-    husky.default.withArgs({projectRoot}).resolves({devDependencies: huskyDevDependencies});
+    husky.default.withArgs({projectRoot}).resolves(huskyResults);
   });
 
   teardown(() => sandbox.restore());
@@ -97,7 +102,7 @@ suite('javascript project scaffolder', () => {
       linting.default
         .withArgs({configs, projectRoot, tests})
         .resolves({devDependencies: any.listOf(any.string), vcsIgnore: {files: any.listOf(any.string)}});
-      babel.default.withArgs({projectRoot, preset: babelPreset}).resolves({devDependencies: babelDevDependencies});
+      babel.default.withArgs({projectRoot, preset: babelPreset}).resolves(babelResults);
       npmConfig.default.resolves();
       testing.default
         .withArgs({projectRoot, tests, visibility})
@@ -244,7 +249,7 @@ suite('javascript project scaffolder', () => {
   });
 
   suite('package', () => {
-    test('that the package file is defined', () => {
+    test('that the package file is defined', async () => {
       const packageDetails = any.simpleObject();
       const scope = any.word();
       const projectType = any.word();
@@ -255,20 +260,23 @@ suite('javascript project scaffolder', () => {
       const authorEmail = any.string();
       const authorUrl = any.url();
       const ciServiceScripts = any.simpleObject();
+      const chosenCiService = any.word();
+      const description = any.sentence();
+      const configs = any.simpleObject();
       const ciServiceResults = {
         ...any.simpleObject(),
         devDependencies: ciServiceDevDependencies,
         scripts: ciServiceScripts
       };
-      const chosenCiService = any.word();
-      const description = any.sentence();
-      const configs = any.simpleObject();
+      const commitConventionResults = any.simpleObject();
+      const testingResults = {devDependencies: testingDevDependencies, scripts: testingScripts};
+      const lintingResults = {devDependencies: any.listOf(any.string), vcsIgnore: {files: any.listOf(any.string)}};
       testing.default
         .withArgs({projectRoot, tests: {unit: tests.unit, integration: tests.integration}, visibility})
-        .resolves({devDependencies: testingDevDependencies, scripts: testingScripts});
+        .resolves(testingResults);
       optionsValidator.validate
         .withArgs(options)
-        .returns({projectRoot, projectName, visibility, license, vcs, description, configs, ciServices});
+        .returns({projectRoot, projectName, visibility, license, vcs, description, configs, ciServices, hosts});
       prompts.prompt.resolves({
         [questionNames.SCOPE]: scope,
         [questionNames.PROJECT_TYPE]: projectType,
@@ -277,14 +285,12 @@ suite('javascript project scaffolder', () => {
         [questionNames.AUTHOR_NAME]: authorName,
         [questionNames.AUTHOR_EMAIL]: authorEmail,
         [questionNames.AUTHOR_URL]: authorUrl,
-        [questionNames.CI_SERVICE]: chosenCiService
+        [questionNames.CI_SERVICE]: chosenCiService,
+        [questionNames.HOST]: chosenHost
       });
       ci.default.resolves(ciServiceResults);
-      linting.default
-        .resolves({devDependencies: any.listOf(any.string), vcsIgnore: {files: any.listOf(any.string)}});
-      commitConvention.default
-        .withArgs({projectRoot, configs})
-        .resolves({devDependencies: commitConventionDevDependencies});
+      linting.default.resolves(lintingResults);
+      commitConvention.default.withArgs({projectRoot, configs}).resolves(commitConventionResults);
       packageBuilder.default
         .withArgs({
           projectName,
@@ -303,80 +309,25 @@ suite('javascript project scaffolder', () => {
         .returns(packageDetails);
       mkdir.default.resolves();
 
-      return scaffold(options).then(() => assert.calledWith(
-        fs.writeFile,
-        `${projectRoot}/package.json`,
-        JSON.stringify(packageDetails)
-      ));
-    });
+      await scaffold(options);
 
-    suite('dependencies', () => {
-      const lintingDevDependencies = any.listOf(any.string);
-      const defaultDependencies = [
-        ...testingDevDependenciesWithoutCommon,
-        commonDependency,
-        ...lintingDevDependencies,
-        ...babelDevDependenciesWithoutCommon,
-        ...commitizenDevDependencies,
-        ...huskyDevDependencies,
-        ...commitConventionDevDependencies,
-        'npm-run-all',
-        'ban-sensitive-files'
-      ];
-
-      setup(() => {
-        linting.default.resolves({devDependencies: lintingDevDependencies, vcsIgnore: {files: any.listOf(any.string)}});
-        commitConvention.default.resolves({devDependencies: commitConventionDevDependencies});
-      });
-
-      suite('scripts', () => {
-        test('that scripting tools are installed', async () => {
-          optionsValidator.validate.withArgs(options).returns({vcs: {}, configs: {}, ciServices, projectRoot});
-          prompts.prompt.resolves({});
-
-          await scaffold(options);
-
-          assert.calledWith(installer.default, defaultDependencies);
-        });
-
-        test('that the appropriate packages are installed for `Package` type projects', async () => {
-          optionsValidator.validate.withArgs(options).returns({vcs: {}, configs: {}, ciServices, projectRoot});
-          prompts.prompt.resolves({[questionNames.PROJECT_TYPE]: 'Package'});
-
-          await scaffold(options);
-
-          assert.calledWith(
-            installer.default,
-            [...defaultDependencies, 'rimraf', 'rollup', 'rollup-plugin-auto-external']
-          );
-        });
-      });
-
-      test('that unique dependencies are requested when various reasons overlap', async () => {
-        optionsValidator.validate.withArgs(options).returns({vcs: {}, configs: {}, ciServices, projectRoot});
-        prompts.prompt.resolves({});
-        mkdir.default.resolves();
-
-        await scaffold(options);
-
-        assert.calledWith(installer.default, defaultDependencies);
-      });
-
-      suite('host', () => {
-        test('that the host devDependencies are installed when provided', async () => {
-          const chosenHost = any.word();
-          const hostDevDependencies = any.listOf(any.string);
-          optionsValidator.validate.returns({vcs: {}, configs: {}, overrides, ciServices, hosts, projectRoot});
-          prompts.prompt.withArgs(overrides, ciServices).resolves({[questionNames.HOST]: chosenHost});
-          host.default
-            .withArgs(hosts, chosenHost)
-            .resolves({devDependencies: hostDevDependencies, vcsIgnore: {directories: []}});
-
-          await scaffold(options);
-
-          assert.calledWith(installer.default, [...hostDevDependencies, ...defaultDependencies]);
-        });
-      });
+      assert.calledWith(fs.writeFile, `${projectRoot}/package.json`, JSON.stringify(packageDetails));
+      assert.calledWith(
+        dependencyInstaller.default,
+        {
+          projectType,
+          contributors: [
+            hostResults,
+            testingResults,
+            lintingResults,
+            babelResults,
+            commitizenResults,
+            commitConventionResults,
+            huskyResults,
+            ciServiceResults
+          ]
+        }
+      );
     });
   });
 
@@ -440,8 +391,6 @@ suite('javascript project scaffolder', () => {
 
     suite('vcs ignore', () => {
       test('that ignores are defined', async () => {
-        const hostDirectoriesToIgnore = any.listOf(any.string);
-        const hostResults = {vcsIgnore: {directories: hostDirectoriesToIgnore}, devDependencies: []};
         const lintingResults = {devDependencies: [], vcsIgnore: {files: []}};
         const testingResults = {devDependencies: testingDevDependencies};
         const ignores = any.simpleObject();

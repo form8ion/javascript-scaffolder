@@ -1,9 +1,7 @@
 import {resolve} from 'path';
 import {copyFile, writeFile} from 'mz/fs';
 import chalk from 'chalk';
-import uniq from 'lodash.uniq';
 import buildPackage from './package';
-import install from './package/install';
 import {validate} from './options-validator';
 import {prompt} from './prompts/questions';
 import scaffoldTesting from './testing';
@@ -20,6 +18,7 @@ import {determineLatestVersionOf, install as installNodeVersion} from './node-ve
 import {questionNames} from './prompts/question-names';
 import buildBadgesDetails from './badges';
 import buildVcsIgnoreLists from './vcs-ignore';
+import installDependencies from './package/dependencies';
 
 export async function scaffold(options) {
   console.error(chalk.blue('Initializing JavaScript project'));     // eslint-disable-line no-console
@@ -101,20 +100,10 @@ export async function scaffold(options) {
 
   await installNodeVersion(nodeVersionCategory);
 
-  console.error(chalk.grey('Installing devDependencies'));          // eslint-disable-line no-console
-  await install(uniq([
-    ...host.devDependencies,
-    ...testing.devDependencies,
-    ...linting.devDependencies,
-    ...babel.devDependencies,
-    ...commitizen.devDependencies,
-    ...husky.devDependencies,
-    ...ciService.devDependencies,
-    ...commitConvention.devDependencies,
-    'npm-run-all',
-    'ban-sensitive-files',
-    ...'Package' === projectType ? ['rimraf', 'rollup', 'rollup-plugin-auto-external'] : []
-  ].filter(Boolean)));
+  await installDependencies({
+    projectType,
+    contributors: [host, testing, linting, babel, commitizen, commitConvention, husky, ciService]
+  });
 
   return {
     badges: buildBadgesDetails(visibility, projectType, packageData.name, ciService, unitTested, vcs),
