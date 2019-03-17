@@ -88,10 +88,6 @@ export async function scaffold(options) {
     writeFile(`${projectRoot}/.nvmrc`, nodeVersion),
     writeFile(`${projectRoot}/package.json`, JSON.stringify(packageData)),
     scaffoldNpmConfig({projectType, projectRoot}),
-    configs.commitlint && writeFile(
-      `${projectRoot}/.commitlintrc.js`,
-      `module.exports = {extends: ['${configs.commitlint.name}']};`
-    ),
     ('Package' === projectType) && copyFile(
       resolve(__dirname, '..', 'templates', 'rollup.config.js'),
       `${projectRoot}/rollup.config.js`

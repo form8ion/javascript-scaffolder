@@ -157,46 +157,6 @@ suite('javascript project scaffolder', () => {
       assert.neverCalledWith(fs.writeFile, `${projectRoot}/.remarkrc.js`);
     });
 
-    suite('commitlint', () => {
-      const commitlintConfigPrefix = any.word();
-
-      test('that the config is added to the root of the project if the package is defined', async () => {
-        const configs = {commitlint: {name: commitlintConfigPrefix}};
-        optionsValidator.validate
-          .withArgs(options)
-          .returns({projectRoot, vcs: {}, configs, ciServices});
-        prompts.prompt.resolves({});
-        linting.default
-          .resolves({devDependencies: any.listOf(any.string), vcsIgnore: {files: any.listOf(any.string)}});
-        commitConvention.default
-          .withArgs({projectRoot, configs})
-          .resolves({devDependencies: commitConventionDevDependencies});
-
-        await scaffold(options);
-
-        assert.calledWith(
-          fs.writeFile,
-          `${projectRoot}/.commitlintrc.js`,
-          `module.exports = {extends: ['${commitlintConfigPrefix}']};`
-        );
-      });
-
-      test('that the config is not added to the root of the project if the package is not defined', async () => {
-        const configs = any.simpleObject();
-        optionsValidator.validate.withArgs(options).returns({projectRoot, vcs: {}, configs, ciServices});
-        prompts.prompt.resolves({});
-        linting.default
-          .resolves({devDependencies: any.listOf(any.string), vcsIgnore: {files: any.listOf(any.string)}});
-        commitConvention.default
-          .withArgs({projectRoot, configs})
-          .resolves({devDependencies: commitConventionDevDependencies});
-
-        await scaffold(options);
-
-        assert.neverCalledWith(fs.writeFile, `${projectRoot}/.commitlintrc.js`);
-      });
-    });
-
     suite('build', () => {
       suite('application', () => {
         test('that rollup is not configured', async () => {
