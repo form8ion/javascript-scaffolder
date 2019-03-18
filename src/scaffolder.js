@@ -64,6 +64,7 @@ export async function scaffold(options) {
     scaffoldCi(ciServices, ci, {projectRoot, vcs, visibility, packageType: projectType, nodeVersion, tests}),
     scaffoldCommitConvention({projectRoot, configs})
   ]);
+  const contributors = [host, testing, linting, babel, commitizen, commitConvention, husky, ciService];
 
   const packageData = buildPackage({
     projectName,
@@ -73,15 +74,11 @@ export async function scaffold(options) {
     license,
     vcs,
     tests,
-    author: {
-      name: authorName,
-      email: authorEmail,
-      url: authorUrl
-    },
+    author: {name: authorName, email: authorEmail, url: authorUrl},
     ci,
     description,
     configs,
-    scripts: {...testing.scripts, ...ciService.scripts}
+    contributors
   });
 
   await Promise.all([
@@ -96,10 +93,7 @@ export async function scaffold(options) {
 
   await installNodeVersion(nodeVersionCategory);
 
-  await installDependencies({
-    projectType,
-    contributors: [host, testing, linting, babel, commitizen, commitConvention, husky, ciService]
-  });
+  await installDependencies({projectType, contributors});
 
   return {
     badges: buildBadgesDetails(visibility, projectType, packageData.name, ciService, unitTested, vcs),

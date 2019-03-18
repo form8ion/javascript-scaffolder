@@ -231,6 +231,16 @@ suite('javascript project scaffolder', () => {
       const commitConventionResults = any.simpleObject();
       const testingResults = {devDependencies: testingDevDependencies, scripts: testingScripts};
       const lintingResults = {devDependencies: any.listOf(any.string), vcsIgnore: {files: any.listOf(any.string)}};
+      const contributors = [
+        hostResults,
+        testingResults,
+        lintingResults,
+        babelResults,
+        commitizenResults,
+        commitConventionResults,
+        huskyResults,
+        ciServiceResults
+      ];
       testing.default
         .withArgs({projectRoot, tests: {unit: tests.unit, integration: tests.integration}, visibility})
         .resolves(testingResults);
@@ -264,7 +274,7 @@ suite('javascript project scaffolder', () => {
           ci: chosenCiService,
           description,
           configs,
-          scripts: {...testingScripts, ...ciServiceScripts}
+          contributors
         })
         .returns(packageDetails);
       mkdir.default.resolves();
@@ -272,22 +282,7 @@ suite('javascript project scaffolder', () => {
       await scaffold(options);
 
       assert.calledWith(fs.writeFile, `${projectRoot}/package.json`, JSON.stringify(packageDetails));
-      assert.calledWith(
-        dependencyInstaller.default,
-        {
-          projectType,
-          contributors: [
-            hostResults,
-            testingResults,
-            lintingResults,
-            babelResults,
-            commitizenResults,
-            commitConventionResults,
-            huskyResults,
-            ciServiceResults
-          ]
-        }
-      );
+      assert.calledWith(dependencyInstaller.default, {projectType, contributors});
     });
   });
 
