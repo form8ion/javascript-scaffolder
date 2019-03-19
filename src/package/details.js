@@ -1,25 +1,3 @@
-function defineLintScripts(configs, ci) {
-  return {
-    ...configs.remark && {'lint:md': 'remark . --frail'},
-    'lint:js': 'eslint . --cache',
-    ...('Travis' === ci) && {'lint:travis': 'travis-lint .travis.yml'},
-    'lint:sensitive': 'ban'
-  };
-}
-
-function defineTestScripts(tests, visibility) {
-  return {
-    ...tests.unit && {
-      'test:unit:base': 'mocha --recursive test/unit',
-      'test:unit': 'nyc run-s test:unit:base'
-    },
-    ...tests.integration && {'test:integration': 'cucumber-js test/integration --require-module @babel/register --format-options \'{"snippetInterface": "async-await"}\''},     // eslint-disable-line max-len
-    ...tests.unit && ('Public' === visibility) && {
-      'coverage:report': 'nyc report --reporter=text-lcov > coverage.lcov && codecov'
-    }
-  };
-}
-
 function definePackageBuildScripts() {
   return {
     clean: 'rimraf lib/',
@@ -30,11 +8,11 @@ function definePackageBuildScripts() {
   };
 }
 
-function defineScripts(packageType, configs, ci, tests, visibility) {
+function defineScripts(packageType, configs, ci, tests, contributors) {
   return {
-    ...defineLintScripts(configs, ci),
-    ...defineTestScripts(tests, visibility),
     test: `npm-run-all --print-label --parallel lint:*${(tests.unit || tests.integration) ? ' --parallel test:*' : ''}`,
+    'lint:sensitive': 'ban',
+    ...contributors.map(contributor => contributor.scripts).reduce((acc, scripts) => ({...acc, ...scripts}), {}),
 
     ...('Application' === packageType) && {start: './lib/index.js'},
     ...('Package' === packageType) && definePackageBuildScripts()
@@ -73,7 +51,8 @@ export default function ({
   author,
   ci,
   description,
-  configs
+  configs,
+  contributors
 }) {
   const packageName = `${scope ? `@${scope}/` : ''}${projectName}`;
 
@@ -85,6 +64,6 @@ export default function ({
     ...('Application' === projectType) && {private: true},
     ...defineVcsHostDetails(vcs, projectType, packageName),
     author: `${author.name}${author.email ? ` <${author.email}>` : ''}${author.url ? ` (${author.url})` : ''}`,
-    scripts: defineScripts(projectType, configs, ci, tests, visibility)
+    scripts: defineScripts(projectType, configs, ci, tests, contributors)
   };
 }

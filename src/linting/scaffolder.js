@@ -9,6 +9,7 @@ export default async function ({projectRoot, tests, configs}) {
 
   return {
     devDependencies: [...eslintResult.devDependencies, ...remarkResult ? remarkResult.devDependencies : []],
-    vcsIgnore: {files: eslintResult.vcsIgnore.files}
+    scripts: {...eslintResult.scripts, ...remarkResult && remarkResult.scripts},
+    vcsIgnore: {files: eslintResult.vcsIgnore.files, directories: []}
   };
 }

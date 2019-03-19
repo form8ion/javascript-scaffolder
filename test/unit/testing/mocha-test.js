@@ -27,10 +27,7 @@ suite('mocha scaffolder', () => {
       await scaffoldMocha({projectRoot}),
       {
         devDependencies: ['mocha', 'chai', 'sinon'],
-        scripts: {
-          'test:unit': 'nyc run-s test:unit:base',
-          'test:unit:base': 'DEBUG=any mocha --recursive test/unit'
-        }
+        scripts: {'test:unit:base': 'DEBUG=any mocha --recursive test/unit'}
       }
     );
     assert.calledWith(

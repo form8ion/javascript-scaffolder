@@ -23,17 +23,21 @@ suite('babel config', () => {
 
     assert.deepEqual(
       await scaffoldBabel({preset: babelPreset, projectRoot}),
-      {devDependencies: ['@babel/register', babelPresetPackageName]}
+      {
+        devDependencies: ['@babel/register', babelPresetPackageName],
+        scripts: {},
+        vcsIgnore: {files: [], directories: []}
+      }
     );
 
     assert.calledWith(fs.writeFile, `${projectRoot}/.babelrc`, JSON.stringify({presets: [babelPresetName]}));
   });
 
   test('that the babelrc is not written if a preset is not defined', async () => {
-    assert.deepEqual(await scaffoldBabel({
-      preset: undefined,
-      projectRoot
-    }), {devDependencies: ['@babel/register']});
+    assert.deepEqual(
+      await scaffoldBabel({preset: undefined, projectRoot}),
+      {devDependencies: ['@babel/register'], scripts: {}, vcsIgnore: {files: [], directories: []}}
+    );
 
     assert.notCalled(fs.writeFile);
   });

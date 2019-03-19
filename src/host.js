@@ -3,5 +3,5 @@ export default function (hosts, chosenHost, options) {
 
   if (host) return host.scaffolder(options);
 
-  return {devDependencies: [], vcsIgnore: {directories: []}};
+  return {devDependencies: [], vcsIgnore: {files: [], directories: []}, scripts: {}};
 }

@@ -21,6 +21,7 @@ export default async function ({config, projectRoot, unitTested}) {
 
   return {
     devDependencies: [config ? config.packageName : undefined].filter(Boolean),
+    scripts: {'lint:js': 'eslint . --cache'},
     vcsIgnore: {files: [config ? '.eslintcache' : undefined].filter(Boolean)}
   };
 }

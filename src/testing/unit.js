@@ -12,7 +12,8 @@ export default async function ({projectRoot, visibility}) {
     ],
     scripts: {
       'test:unit': 'nyc run-s test:unit:base',
-      ...mocha.scripts
+      ...mocha.scripts,
+      ...'Public' === visibility && {'coverage:report': 'nyc report --reporter=text-lcov > coverage.lcov && codecov'}
     },
     vcsIgnore: nyc.vcsIgnore
   };

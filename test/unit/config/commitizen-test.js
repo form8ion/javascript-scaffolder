@@ -18,13 +18,16 @@ suite('commitizen', () => {
   test('that the config file is written and dependencies are returned', async () => {
     const projectRoot = any.string();
 
-    const {devDependencies} = await scaffold({projectRoot});
+    const result = await scaffold({projectRoot});
 
     assert.calledWith(
       fs.writeFile,
       `${projectRoot}/.czrc`,
       JSON.stringify({path: './node_modules/cz-conventional-changelog'})
     );
-    assert.deepEqual(devDependencies, ['cz-conventional-changelog']);
+    assert.deepEqual(
+      result,
+      {devDependencies: ['cz-conventional-changelog'], scripts: {}, vcsIgnore: {files: [], directories: []}}
+    );
   });
 });

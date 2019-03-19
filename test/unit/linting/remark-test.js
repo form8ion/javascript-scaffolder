@@ -19,7 +19,10 @@ suite('remark config scaffolder', () => {
     const config = any.string();
     const projectRoot = any.string();
 
-    assert.deepEqual(await scaffoldRemark({config, projectRoot}), {devDependencies: [config, 'remark-cli']});
+    assert.deepEqual(
+      await scaffoldRemark({config, projectRoot}),
+      {devDependencies: [config, 'remark-cli'], scripts: {'lint:md': 'remark . --frail'}}
+    );
     assert.calledWith(fs.writeFile, `${projectRoot}/.remarkrc.js`, `exports.plugins = ['${config}'];`);
   });
 });

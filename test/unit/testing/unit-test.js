@@ -55,7 +55,8 @@ suite('unit testing scaffolder', () => {
         devDependencies: [...mochaDevDependencies, ...nycDevDependencies, 'codecov'],
         scripts: {
           'test:unit': 'nyc run-s test:unit:base',
-          ...mochaScripts
+          ...mochaScripts,
+          'coverage:report': 'nyc report --reporter=text-lcov > coverage.lcov && codecov'
         },
         vcsIgnore: {files: nycFilesToIgnoreFromVcs, directories: nycDirectoriesToIgnoreFromVcs}
       }

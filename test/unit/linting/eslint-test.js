@@ -32,6 +32,12 @@ suite('eslint config scaffolder', () => {
     });
   });
 
+  suite('scripts', () => {
+    test('that the script is defined', async () => {
+      assert.deepEqual((await scaffoldEsLint({})).scripts, {'lint:js': 'eslint . --cache'});
+    });
+  });
+
   suite('ignore', () => {
     test('that the cache file is ignored from version control', async () => {
       const result = await scaffoldEsLint({config: {packageName}});

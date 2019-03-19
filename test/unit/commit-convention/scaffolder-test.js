@@ -25,12 +25,15 @@ suite('commit-convention scaffolder', () => {
 
     assert.deepEqual(
       await scaffoldCommitConvention({projectRoot, configs: {commitlint: commitlintConfig}}),
-      {devDependencies: commitlintDevDependencies}
+      {devDependencies: commitlintDevDependencies, scripts: {}, vcsIgnore: {files: [], directories: []}}
     );
   });
 
   test('that commitlint is not configured if no config is provided', async () => {
-    assert.deepEqual(await scaffoldCommitConvention({projectRoot, configs: {}}), {devDependencies: []});
+    assert.deepEqual(
+      await scaffoldCommitConvention({projectRoot, configs: {}}),
+      {devDependencies: [], scripts: {}, vcsIgnore: {files: [], directories: []}}
+    );
     assert.notCalled(commitlintScaffolder.default);
   });
 });

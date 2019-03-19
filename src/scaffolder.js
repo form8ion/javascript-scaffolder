@@ -54,17 +54,17 @@ export async function scaffold(options) {
   console.error(chalk.grey('Writing project files'));      // eslint-disable-line no-console
 
   const tests = {unit: unitTested, integration: integrationTested};
-  const [babel, testing, linting, commitizen, husky, host, ciService, commitConvention] = await Promise.all([
-    scaffoldBabel({preset: configs.babelPreset, projectRoot}),
+  const contributors = await Promise.all([
+    scaffoldHost(hosts, chosenHost),
     scaffoldTesting({projectRoot, tests, visibility}),
     scaffoldLinting(({configs, projectRoot, tests})),
+    scaffoldBabel({preset: configs.babelPreset, projectRoot}),
     scaffoldCommitizen({projectRoot}),
+    scaffoldCommitConvention({projectRoot, configs}),
     scaffoldHusky({projectRoot}),
-    scaffoldHost(hosts, chosenHost),
-    scaffoldCi(ciServices, ci, {projectRoot, vcs, visibility, packageType: projectType, nodeVersion, tests}),
-    scaffoldCommitConvention({projectRoot, configs})
+    scaffoldCi(ciServices, ci, {projectRoot, vcs, visibility, packageType: projectType, nodeVersion, tests})
   ]);
-  const contributors = [host, testing, linting, babel, commitizen, commitConvention, husky, ciService];
+  const [host, testing, linting, , , , , ciService] = contributors;
 
   const packageData = buildPackage({
     projectName,

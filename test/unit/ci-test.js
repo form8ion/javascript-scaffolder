@@ -18,7 +18,7 @@ suite('ci', () => {
   test('that choosing a scaffolder without a defined service does not result in an error', async () => {
     assert.deepEqual(
       scaffoldCi(any.simpleObject(), any.word(), any.simpleObject()),
-      {devDependencies: [], scripts: {}}
+      {devDependencies: [], scripts: {}, vcsIgnore: {files: [], directories: []}}
     );
   });
 });

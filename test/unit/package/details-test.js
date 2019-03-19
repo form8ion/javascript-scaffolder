@@ -14,7 +14,8 @@ suite('package details builder', () => {
         tests: {},
         vcs: {},
         author: {},
-        configs: {}
+        configs: {},
+        contributors: []
       });
 
       assert.equal(packageDetails.name, projectName);
@@ -30,7 +31,8 @@ suite('package details builder', () => {
         tests: {},
         vcs: {},
         author: {},
-        configs: {}
+        configs: {},
+        contributors: []
       });
 
       assert.equal(packageDetails.name, `@${scope}/${projectName}`);
@@ -47,7 +49,8 @@ suite('package details builder', () => {
         tests: {},
         vcs: {},
         author: {},
-        configs: {}
+        configs: {},
+        contributors: []
       });
 
       assert.equal(packageDetails.description, description);
@@ -62,7 +65,8 @@ suite('package details builder', () => {
           vcs: {},
           author: {},
           projectType: 'Application',
-          configs: {}
+          configs: {},
+          contributors: []
         });
 
         assert.isUndefined(packageDetails.main);
@@ -77,7 +81,8 @@ suite('package details builder', () => {
           vcs: {},
           author: {},
           projectType: 'Package',
-          configs: {}
+          configs: {},
+          contributors: []
         });
 
         assert.equal(packageDetails.main, 'lib/index.cjs.js');
@@ -92,19 +97,37 @@ suite('package details builder', () => {
     const url = any.string();
 
     test('that the author details are provided', () => {
-      const packageDetails = buildPackageDetails({tests: {}, vcs: {}, author: {name, email, url}, configs: {}});
+      const packageDetails = buildPackageDetails({
+        tests: {},
+        vcs: {},
+        author: {name, email, url},
+        configs: {},
+        contributors: []
+      });
 
       assert.equal(packageDetails.author, `${name} <${email}> (${url})`);
     });
 
     test('that the angle brackets are not included if email is not provided', () => {
-      const packageDetails = buildPackageDetails({tests: {}, vcs: {}, author: {name, url}, configs: {}});
+      const packageDetails = buildPackageDetails({
+        tests: {},
+        vcs: {},
+        author: {name, url},
+        configs: {},
+        contributors: []
+      });
 
       assert.equal(packageDetails.author, `${name} (${url})`);
     });
 
     test('that the parenthesis are not included if url is not provided', () => {
-      const packageDetails = buildPackageDetails({tests: {}, vcs: {}, author: {name, email}, configs: {}});
+      const packageDetails = buildPackageDetails({
+        tests: {},
+        vcs: {},
+        author: {name, email},
+        configs: {},
+        contributors: []
+      });
 
       assert.equal(packageDetails.author, `${name} <${email}>`);
     });
@@ -118,7 +141,8 @@ suite('package details builder', () => {
         tests: {},
         vcs: {},
         author: {},
-        configs: {}
+        configs: {},
+        contributors: []
       });
 
       assert.isTrue(packageDetails.private);
@@ -131,7 +155,8 @@ suite('package details builder', () => {
         tests: {},
         vcs: {},
         author: {},
-        configs: {}
+        configs: {},
+        contributors: []
       });
 
       assert.isUndefined(packageDetails.private);
@@ -142,7 +167,14 @@ suite('package details builder', () => {
     test('that the license is defined as provided', () => {
       const license = any.word();
 
-      const packageDetails = buildPackageDetails({license, tests: {}, vcs: {}, author: {}, configs: {}});
+      const packageDetails = buildPackageDetails({
+        license,
+        tests: {},
+        vcs: {},
+        author: {},
+        configs: {},
+        contributors: []
+      });
 
       assert.equal(packageDetails.license, license);
     });
@@ -157,7 +189,8 @@ suite('package details builder', () => {
         tests: {},
         vcs: {host: 'GitHub', name: repoName, owner},
         author: {},
-        configs: {}
+        configs: {},
+        contributors: []
       });
 
       assert.equal(packageDetails.repository, `${owner}/${repoName}`);
@@ -172,7 +205,8 @@ suite('package details builder', () => {
         tests: {},
         vcs: {host: 'GitHub', name: repoName, owner},
         author: {},
-        configs: {}
+        configs: {},
+        contributors: []
       });
 
       assert.equal(packageDetails.homepage, `https://npm.im/${projectName}`);
@@ -188,7 +222,8 @@ suite('package details builder', () => {
         tests: {},
         vcs: {host: 'GitHub', name: repoName, owner},
         author: {},
-        configs: {}
+        configs: {},
+        contributors: []
       });
 
       assert.equal(packageDetails.homepage, `https://npm.im/@${scope}/${projectName}`);
@@ -203,7 +238,8 @@ suite('package details builder', () => {
         tests: {},
         vcs: {host: any.word()},
         author: {},
-        configs: {}
+        configs: {},
+        contributors: []
       });
 
       assert.isUndefined(packageDetails.repository);
@@ -220,7 +256,8 @@ suite('package details builder', () => {
         tests: {},
         vcs: {},
         author: {},
-        configs: {}
+        configs: {},
+        contributors: []
       });
 
       assert.deepEqual(packageDetails.publishConfig, {access: 'restricted'});
@@ -233,14 +270,22 @@ suite('package details builder', () => {
         tests: {},
         vcs: {},
         author: {},
-        configs: {}
+        configs: {},
+        contributors: []
       });
 
       assert.deepEqual(packageDetails.publishConfig, {access: 'public'});
     });
 
     test('that access is marked as restricted when visibility is omitted for some reason', () => {
-      const packageDetails = buildPackageDetails({projectType: 'Package', tests: {}, vcs: {}, author: {}, configs: {}});
+      const packageDetails = buildPackageDetails({
+        projectType: 'Package',
+        tests: {},
+        vcs: {},
+        author: {},
+        configs: {},
+        contributors: []
+      });
 
       assert.deepEqual(packageDetails.publishConfig, {access: 'restricted'});
     });
@@ -253,20 +298,53 @@ suite('package details builder', () => {
         tests: {},
         vcs: {},
         author: {},
-        configs: {}
+        configs: {},
+        contributors: []
       });
 
       assert.isUndefined(packageDetails.version);
     });
 
     test('that the `version` makes it clear that versioning is handled by semantic-release', () => {
-      const packageDetails = buildPackageDetails({projectType: 'Package', tests: {}, vcs: {}, author: {}, configs: {}});
+      const packageDetails = buildPackageDetails({
+        projectType: 'Package',
+        tests: {},
+        vcs: {},
+        author: {},
+        configs: {},
+        contributors: []
+      });
 
       assert.equal(packageDetails.version, '0.0.0-semantically-released');
     });
   });
 
   suite('scripts', () => {
+    test('that scripts from each contributor are included', () => {
+      const contributors = any.listOf(() => ({...any.simpleObject(), scripts: any.simpleObject()}));
+      const scriptsFromAllContributors = contributors
+        .map(contributor => contributor.scripts)
+        .reduce((acc, scripts) => ({...acc, ...scripts}), {});
+
+      const packageDetails = buildPackageDetails({
+        projectType: any.word(),
+        tests: {},
+        vcs: {},
+        author: {},
+        configs: {},
+        contributors
+      });
+
+      assert.deepEqual(
+        packageDetails.scripts,
+        {
+          test: 'npm-run-all --print-label --parallel lint:*',
+          'lint:sensitive': 'ban',
+          ...scriptsFromAllContributors
+        }
+      );
+    });
+
     suite('start', () => {
       test('that the `start` script is not defined for a package', () => {
         const packageDetails = buildPackageDetails({
@@ -274,7 +352,8 @@ suite('package details builder', () => {
           tests: {},
           vcs: {},
           author: {},
-          configs: {}
+          configs: {},
+          contributors: []
         });
 
         assert.isUndefined(packageDetails.scripts.start);
@@ -286,7 +365,8 @@ suite('package details builder', () => {
           tests: {},
           vcs: {},
           author: {},
-          configs: {}
+          configs: {},
+          contributors: []
         });
 
         assert.equal(packageDetails.scripts.start, './lib/index.js');
@@ -295,19 +375,31 @@ suite('package details builder', () => {
 
     suite('verification', () => {
       test('that the `test` script is defined', () => {
-        const packageDetails = buildPackageDetails({tests: {}, vcs: {}, author: {}, configs: {}});
+        const packageDetails = buildPackageDetails({tests: {}, vcs: {}, author: {}, configs: {}, contributors: []});
 
         assert.equal(packageDetails.scripts.test, 'npm-run-all --print-label --parallel lint:*');
       });
 
       test('that the `test` script includes running tests when the project will be unit tested', () => {
-        const packageDetails = buildPackageDetails({tests: {unit: true}, vcs: {}, author: {}, configs: {}});
+        const packageDetails = buildPackageDetails({
+          tests: {unit: true},
+          vcs: {},
+          author: {},
+          configs: {},
+          contributors: []
+        });
 
         assert.equal(packageDetails.scripts.test, 'npm-run-all --print-label --parallel lint:* --parallel test:*');
       });
 
       test('that the `test` script includes running tests when the project will be integration tested', () => {
-        const packageDetails = buildPackageDetails({tests: {integration: true}, vcs: {}, author: {}, configs: {}});
+        const packageDetails = buildPackageDetails({
+          tests: {integration: true},
+          vcs: {},
+          author: {},
+          configs: {},
+          contributors: []
+        });
 
         assert.equal(packageDetails.scripts.test, 'npm-run-all --print-label --parallel lint:* --parallel test:*');
       });
@@ -319,7 +411,8 @@ suite('package details builder', () => {
             vcs: {},
             author: {},
             projectType: any.word(),
-            configs: {}
+            configs: {},
+            contributors: []
           });
 
           assert.isUndefined(packageDetails.scripts.clean);
@@ -331,128 +424,19 @@ suite('package details builder', () => {
             vcs: {},
             author: {},
             projectType: 'Package',
-            configs: {}
+            configs: {},
+            contributors: []
           });
 
           assert.equal(packageDetails.scripts.clean, 'rimraf lib/');
         });
       });
 
-      suite('tests', () => {
-        suite('unit', () => {
-          test('that the script is included if the project will be unit tested', () => {
-            const packageDetails = buildPackageDetails({tests: {unit: true}, vcs: {}, author: {}, configs: {}});
-
-            assert.equal(packageDetails.scripts['test:unit:base'], 'mocha --recursive test/unit');
-            assert.equal(packageDetails.scripts['test:unit'], 'nyc run-s test:unit:base');
-          });
-
-          test('that the script is not included if the project will not be unit tested', () => {
-            const packageDetails = buildPackageDetails({tests: {unit: false}, vcs: {}, author: {}, configs: {}});
-
-            assert.isUndefined(packageDetails.scripts['test:unit']);
-          });
-        });
-
-        suite('integration', () => {
-          test('that the script is included if the project will be integration tested', () => {
-            const packageDetails = buildPackageDetails({tests: {integration: true}, vcs: {}, author: {}, configs: {}});
-
-            assert.equal(
-              packageDetails.scripts['test:integration'],
-              'cucumber-js test/integration --require-module @babel/register --format-options \'{"snippetInterface": "async-await"}\''     // eslint-disable-line max-len
-            );
-          });
-
-          test('that the script is not included if the project will not be integration tested', () => {
-            const packageDetails = buildPackageDetails({tests: {integration: false}, vcs: {}, author: {}, configs: {}});
-
-            assert.isUndefined(packageDetails.scripts['integration:unit']);
-          });
-        });
-      });
-
       suite('lint', () => {
-        test('that markdown is not linted if a preset is not defined', () => {
-          const packageDetails = buildPackageDetails({tests: {}, vcs: {}, author: {}, configs: {}});
-
-          assert.isUndefined(packageDetails.scripts['lint:md']);
-        });
-
-        test('that markdown is linted if a preset is defined', () => {
-          const packageDetails = buildPackageDetails({
-            tests: {},
-            vcs: {},
-            author: {},
-            configs: {remark: any.string()}
-          });
-
-          assert.equal(packageDetails.scripts['lint:md'], 'remark . --frail');
-        });
-
-        test('that javascript is linted', () => {
-          const packageDetails = buildPackageDetails({tests: {}, vcs: {}, author: {}, configs: {}});
-
-          assert.equal(packageDetails.scripts['lint:js'], 'eslint . --cache');
-        });
-
         test('that sensitive files are prevented from being committed', () => {
-          const packageDetails = buildPackageDetails({tests: {}, vcs: {}, author: {}, configs: {}});
+          const packageDetails = buildPackageDetails({tests: {}, vcs: {}, author: {}, configs: {}, contributors: []});
 
           assert.equal(packageDetails.scripts['lint:sensitive'], 'ban');
-        });
-
-        test('that the travis config file is linted when the ci service is travis', () => {
-          const packageDetails = buildPackageDetails({tests: {}, vcs: {}, author: {}, ci: 'Travis', configs: {}});
-
-          assert.equal(packageDetails.scripts['lint:travis'], 'travis-lint .travis.yml');
-        });
-
-        test('that the travis config file is not linted when the ci service is not travis', () => {
-          const packageDetails = buildPackageDetails({tests: {}, vcs: {}, author: {}, configs: {}});
-
-          assert.isUndefined(packageDetails.scripts['lint:travis']);
-        });
-      });
-
-      suite('coverage', () => {
-        test('that a script is included to report coverage to codecov for public projects', () => {
-          const packageDetails = buildPackageDetails({
-            tests: {unit: true},
-            vcs: {},
-            author: {},
-            visibility: 'Public',
-            configs: {}
-          });
-
-          assert.equal(
-            packageDetails.scripts['coverage:report'],
-            'nyc report --reporter=text-lcov > coverage.lcov && codecov'
-          );
-        });
-
-        test('that a script is not included to report coverage to codecov for private projects', () => {
-          const packageDetails = buildPackageDetails({
-            tests: {unit: true},
-            vcs: {},
-            author: {},
-            visibility: 'Private',
-            configs: {}
-          });
-
-          assert.isUndefined(packageDetails.scripts['coverage:report']);
-        });
-
-        test('that a script is not included to report coverage to codecov if the project wont be unit tested', () => {
-          const packageDetails = buildPackageDetails({
-            tests: {},
-            vcs: {},
-            author: {},
-            visibility: 'Public',
-            configs: {}
-          });
-
-          assert.isUndefined(packageDetails.scripts['coverage:report']);
         });
       });
     });
@@ -465,7 +449,8 @@ suite('package details builder', () => {
             vcs: {},
             author: {},
             projectType: 'Application',
-            configs: {}
+            configs: {},
+            contributors: []
           });
 
           assert.isUndefined(packageDetails.scripts.build);
@@ -481,7 +466,8 @@ suite('package details builder', () => {
             vcs: {},
             author: {},
             projectType: 'Package',
-            configs: {}
+            configs: {},
+            contributors: []
           });
 
           assert.equal(packageDetails.scripts.build, 'run-s clean build:*');
@@ -499,7 +485,8 @@ suite('package details builder', () => {
             vcs: {},
             author: {},
             projectType: 'Application',
-            configs: {}
+            configs: {},
+            contributors: []
           });
 
           assert.isUndefined(packageDetails.scripts.prepack);
@@ -514,7 +501,8 @@ suite('package details builder', () => {
             vcs: {},
             author: {},
             projectType: 'Package',
-            configs: {}
+            configs: {},
+            contributors: []
           });
 
           assert.equal(packageDetails.scripts.prepack, 'run-s build');
@@ -526,7 +514,8 @@ suite('package details builder', () => {
             vcs: {},
             author: {},
             projectType: 'Package',
-            configs: {}
+            configs: {},
+            contributors: []
           });
 
           assert.isFalse(packageDetails.sideEffects);
@@ -538,7 +527,8 @@ suite('package details builder', () => {
             vcs: {},
             author: {},
             projectType: 'Package',
-            configs: {}
+            configs: {},
+            contributors: []
           });
 
           assert.deepEqual(packageDetails.files, ['lib/']);

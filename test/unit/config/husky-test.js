@@ -17,7 +17,10 @@ suite('husky config', () => {
   teardown(() => sandbox.restore());
 
   test('that the config file is created', async () => {
-    assert.deepEqual(await scaffoldHusky({projectRoot}), {devDependencies: ['husky']});
+    assert.deepEqual(
+      await scaffoldHusky({projectRoot}),
+      {devDependencies: ['husky'], scripts: {}, vcsIgnore: {files: [], directories: []}}
+    );
 
     assert.calledWith(
       fs.writeFile,
