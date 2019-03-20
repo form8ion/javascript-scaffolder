@@ -1,7 +1,6 @@
 import {resolve} from 'path';
 import {copyFile, writeFile} from 'mz/fs';
 import chalk from 'chalk';
-import buildPackage from './package';
 import {validate} from './options-validator';
 import {prompt} from './prompts/questions';
 import scaffoldTesting from './testing';
@@ -18,7 +17,7 @@ import {determineLatestVersionOf, install as installNodeVersion} from './node-ve
 import {questionNames} from './prompts/question-names';
 import buildBadgesDetails from './badges';
 import buildVcsIgnoreLists from './vcs-ignore';
-import installDependencies from './package/dependencies';
+import scaffoldPackage from './package';
 
 export async function scaffold(options) {
   console.error(chalk.blue('Initializing JavaScript project'));     // eslint-disable-line no-console
@@ -58,32 +57,16 @@ export async function scaffold(options) {
     scaffoldHost(hosts, chosenHost),
     scaffoldTesting({projectRoot, tests, visibility}),
     scaffoldLinting(({configs, projectRoot, tests})),
+    scaffoldCi(ciServices, ci, {projectRoot, vcs, visibility, packageType: projectType, nodeVersion, tests}),
     scaffoldBabel({preset: configs.babelPreset, projectRoot}),
     scaffoldCommitizen({projectRoot}),
     scaffoldCommitConvention({projectRoot, configs}),
-    scaffoldHusky({projectRoot}),
-    scaffoldCi(ciServices, ci, {projectRoot, vcs, visibility, packageType: projectType, nodeVersion, tests})
+    scaffoldHusky({projectRoot})
   ]);
-  const [host, testing, linting, , , , , ciService] = contributors;
-
-  const packageData = buildPackage({
-    projectName,
-    visibility,
-    scope,
-    projectType,
-    license,
-    vcs,
-    tests,
-    author: {name: authorName, email: authorEmail, url: authorUrl},
-    ci,
-    description,
-    configs,
-    contributors
-  });
+  const [host, testing, linting, ciService] = contributors;
 
   await Promise.all([
     writeFile(`${projectRoot}/.nvmrc`, nodeVersion),
-    writeFile(`${projectRoot}/package.json`, JSON.stringify(packageData)),
     scaffoldNpmConfig({projectType, projectRoot}),
     ('Package' === projectType) && copyFile(
       resolve(__dirname, '..', 'templates', 'rollup.config.js'),
@@ -93,13 +76,27 @@ export async function scaffold(options) {
 
   await installNodeVersion(nodeVersionCategory);
 
-  await installDependencies({projectType, contributors});
+  const {name: packageName, homepage: projectHomepage} = await scaffoldPackage({
+    projectRoot,
+    projectType,
+    contributors,
+    projectName,
+    visibility,
+    scope,
+    license,
+    vcs,
+    tests,
+    author: {name: authorName, email: authorEmail, url: authorUrl},
+    ci,
+    description,
+    configs
+  });
 
   return {
-    badges: buildBadgesDetails(visibility, projectType, packageData.name, ciService, unitTested, vcs),
-    documentation: scaffoldDocumentation({projectType, packageName: packageData.name, visibility, scope}),
+    badges: buildBadgesDetails(visibility, projectType, packageName, ciService, unitTested, vcs),
+    documentation: scaffoldDocumentation({projectType, packageName, visibility, scope}),
     vcsIgnore: buildVcsIgnoreLists({host, linting, testing, projectType}),
     verificationCommand: 'npm test',
-    projectDetails: {...packageData.homepage && {homepage: packageData.homepage}}
+    projectDetails: {...projectHomepage && {homepage: projectHomepage}}
   };
 }

@@ -1,6 +1,6 @@
 import any from '@travi/any';
 import {assert} from 'chai';
-import buildPackageDetails from '../../../src/package';
+import buildPackageDetails from '../../../src/package/details';
 
 suite('package details builder', () => {
   const projectName = any.string();

@@ -1,1 +1,1 @@
-export {default} from './details';
+export {default} from './scaffolder';
