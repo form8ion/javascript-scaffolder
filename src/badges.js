@@ -30,7 +30,7 @@ export default function (visibility, packageType, packageName, ciService, unitTe
     },
     status: {
       ...ciService.badge && {ci: ciService.badge},
-      ...unitTested && 'Public' === visibility && {
+      ...unitTested && 'Public' === visibility && vcs && 'GitHub' === vcs.host && {
         coverage: {
           img: `https://img.shields.io/codecov/c/github/${vcs.owner}/${vcs.name}.svg`,
           link: `https://codecov.io/github/${vcs.owner}/${vcs.name}`,

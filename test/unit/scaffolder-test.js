@@ -132,7 +132,7 @@ suite('javascript project scaffolder', () => {
     packageScaffolder.default
       .withArgs(packageScaffoldingInputs)
       .resolves({...any.simpleObject(), name: packageName, homepage});
-    prompts.prompt.withArgs(overrides, ciServices, hosts, visibility).resolves(commonPromptAnswers);
+    prompts.prompt.withArgs(overrides, ciServices, hosts, visibility, vcsDetails).resolves(commonPromptAnswers);
     ci.default
       .withArgs(
         ciServices,
@@ -188,7 +188,7 @@ suite('javascript project scaffolder', () => {
         test('that rollup is not configured', async () => {
           const applicationProjectType = 'Application';
           prompts.prompt
-            .withArgs(overrides, ciServices, hosts, visibility)
+            .withArgs(overrides, ciServices, hosts, visibility, vcsDetails)
             .resolves({...commonPromptAnswers, [questionNames.PROJECT_TYPE]: applicationProjectType});
           packageScaffolder.default
             .withArgs({...packageScaffoldingInputs, projectType: applicationProjectType})
@@ -218,7 +218,7 @@ suite('javascript project scaffolder', () => {
         test('that the package gets bundled with rollup', async () => {
           const packageProjectType = 'Package';
           prompts.prompt
-            .withArgs(overrides, ciServices, hosts, visibility)
+            .withArgs(overrides, ciServices, hosts, visibility, vcsDetails)
             .resolves({...commonPromptAnswers, [questionNames.PROJECT_TYPE]: packageProjectType});
           packageScaffolder.default
             .withArgs({...packageScaffoldingInputs, projectType: packageProjectType})

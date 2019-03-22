@@ -60,23 +60,25 @@ suite('badges', () => {
     });
   });
 
-  test('that the ci badge is provided', async () => {
-    const badge = any.simpleObject();
+  suite('ci', () => {
+    test('that the ci badge is provided', async () => {
+      const badge = any.simpleObject();
 
-    const badges = badgeDetailsBuilder(null, null, null, {badge});
+      const badges = badgeDetailsBuilder(null, null, null, {badge});
 
-    assert.equal(badges.status.ci, badge);
-  });
+      assert.equal(badges.status.ci, badge);
+    });
 
-  test('that the ci badge is not provided when not defined', async () => {
-    const badges = badgeDetailsBuilder(null, null, null, {});
+    test('that the ci badge is not provided when not defined', async () => {
+      const badges = badgeDetailsBuilder(null, null, null, {});
 
-    assert.notProperty(badges.status, 'ci');
+      assert.notProperty(badges.status, 'ci');
+    });
   });
 
   suite('coverage', () => {
     test('that the coverage badge is provided', async () => {
-      const vcs = {owner: any.word(), name: any.word()};
+      const vcs = {host: 'GitHub', owner: any.word(), name: any.word()};
       const unitTested = true;
 
       const badges = badgeDetailsBuilder('Public', null, null, {}, unitTested, vcs);
@@ -98,6 +100,24 @@ suite('badges', () => {
       const unitTested = false;
 
       const badges = badgeDetailsBuilder('Public', null, null, {}, unitTested);
+
+      assert.notProperty(badges.status, 'coverage');
+    });
+
+    test('that the coverage badge is not provided when a project is not hosted on github', async () => {
+      const vcs = {host: any.word(), owner: any.word(), name: any.word()};
+      const unitTested = true;
+
+      const badges = badgeDetailsBuilder('Public', null, null, {}, unitTested, vcs);
+
+      assert.notProperty(badges.status, 'coverage');
+    });
+
+    test('that the coverage badge is not provided when a project is not versioned', async () => {
+      const vcs = undefined;
+      const unitTested = true;
+
+      const badges = badgeDetailsBuilder('Public', null, null, {}, unitTested, vcs);
 
       assert.notProperty(badges.status, 'coverage');
     });

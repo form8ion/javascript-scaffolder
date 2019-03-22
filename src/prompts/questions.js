@@ -45,7 +45,7 @@ function authorQuestions({name, email, url}) {
   ];
 }
 
-export async function prompt({npmAccount, author}, ciServices, hosts, visibility) {
+export async function prompt({npmAccount, author}, ciServices, hosts, visibility, vcs) {
   const npmConf = npmConfFactory();
 
   return promptWithInquirer([
@@ -83,12 +83,14 @@ export async function prompt({npmAccount, author}, ciServices, hosts, visibility
       url: npmConf.get('init.author.url')
     }),
     ...testingQuestions,
-    {
-      name: questionNames.CI_SERVICE,
-      type: 'list',
-      message: 'Which continuous integration service will be used?',
-      choices: [...Object.keys(filterChoicesByVisibility(ciServices, visibility)), new Separator(), 'Other']
-    },
+    ...vcs
+      ? [{
+        name: questionNames.CI_SERVICE,
+        type: 'list',
+        message: 'Which continuous integration service will be used?',
+        choices: [...Object.keys(filterChoicesByVisibility(ciServices, visibility)), new Separator(), 'Other']
+      }]
+      : [],
     {
       name: questionNames.HOST,
       type: 'list',
@@ -96,5 +98,5 @@ export async function prompt({npmAccount, author}, ciServices, hosts, visibility
       when: packageTypeIsApplication,
       choices: [...Object.keys(hosts), new Separator(), 'Other']
     }
-  ]);
+  ].filter(Boolean));
 }

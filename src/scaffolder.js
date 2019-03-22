@@ -46,7 +46,7 @@ export async function scaffold(options) {
     [questionNames.AUTHOR_NAME]: authorName,
     [questionNames.AUTHOR_EMAIL]: authorEmail,
     [questionNames.AUTHOR_URL]: authorUrl
-  } = await prompt(overrides, ciServices, hosts, visibility);
+  } = await prompt(overrides, ciServices, hosts, visibility, vcs);
 
   const nodeVersion = await determineLatestVersionOf(nodeVersionCategory);
 

@@ -64,16 +64,6 @@ suite('options validator', () => {
   ));
 
   suite('vcs', () => {
-    test('that `vcs` is required', () => assert.throws(
-      () => validate({
-        projectRoot: any.string(),
-        projectName: any.string(),
-        visibility: any.fromList(['Public', 'Private']),
-        license: any.string()
-      }),
-      'child "vcs" fails because ["vcs" is required]'
-    ));
-
     test('that `vcs.host` is required', () => assert.throws(
       () => validate({
         projectRoot: any.string(),

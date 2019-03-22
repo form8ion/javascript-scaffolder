@@ -12,7 +12,7 @@ suite('package details builder', () => {
         projectName,
         visibility,
         tests: {},
-        vcs: {},
+        vcs: undefined,
         author: {},
         configs: {},
         contributors: []
@@ -29,7 +29,7 @@ suite('package details builder', () => {
         visibility,
         scope,
         tests: {},
-        vcs: {},
+        vcs: undefined,
         author: {},
         configs: {},
         contributors: []

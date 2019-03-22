@@ -28,7 +28,7 @@ suite('prompts', () => {
 
   teardown(() => sandbox.restore());
 
-  test('that the user is prompted for the necessary details', () => {
+  test('that the user is prompted for the necessary details', async () => {
     const authorName = any.string();
     const authorEmail = any.string();
     const authorUrl = any.url();
@@ -41,19 +41,17 @@ suite('prompts', () => {
     const hosts = any.simpleObject();
     const scopeValidator = () => undefined;
     const scopePromptShouldBePresented = () => undefined;
+    const answers = any.simpleObject();
     npmConf.default.returns({get});
     exec.default.withArgs('npm whoami').resolves(`${npmUser}\n`);
     get.withArgs('init.author.name').returns(authorName);
     get.withArgs('init.author.email').returns(authorEmail);
     get.withArgs('init.author.url').returns(authorUrl);
     validators.scope.withArgs(visibility).returns(scopeValidator);
-    inquirer.prompt.resolves();
     conditionals.scopePromptShouldBePresentedFactory.withArgs(visibility).returns(scopePromptShouldBePresented);
     visibilityFilterForChoices.default.withArgs(ciServices, visibility).returns(filteredCiServices);
-
-    return prompt({}, ciServices, hosts, visibility).then(() => assert.calledWith(
-      inquirer.prompt,
-      [
+    inquirer.prompt
+      .withArgs([
         {
           name: questionNames.NODE_VERSION_CATEGORY,
           message: 'What node.js version should be used?',
@@ -122,8 +120,102 @@ suite('prompts', () => {
           when: conditionals.packageTypeIsApplication,
           choices: [...Object.keys(hosts), new inquirer.Separator(), 'Other']
         }
-      ]
-    ));
+      ])
+      .resolves(answers);
+
+    assert.equal(await prompt({}, ciServices, hosts, visibility, any.simpleObject()), answers);
+  });
+
+  test('that the ci-service question is skipped when the project will not be versioned', async () => {
+    const authorName = any.string();
+    const authorEmail = any.string();
+    const authorUrl = any.url();
+    const npmUser = any.word();
+    const visibility = any.word();
+    const get = sinon.stub();
+    const ciServices = any.simpleObject();
+    const filteredCiServiceNames = any.listOf(any.word);
+    const filteredCiServices = any.objectWithKeys(filteredCiServiceNames);
+    const hosts = any.simpleObject();
+    const scopeValidator = () => undefined;
+    const scopePromptShouldBePresented = () => undefined;
+    const answers = any.simpleObject();
+    npmConf.default.returns({get});
+    exec.default.withArgs('npm whoami').resolves(`${npmUser}\n`);
+    get.withArgs('init.author.name').returns(authorName);
+    get.withArgs('init.author.email').returns(authorEmail);
+    get.withArgs('init.author.url').returns(authorUrl);
+    validators.scope.withArgs(visibility).returns(scopeValidator);
+    conditionals.scopePromptShouldBePresentedFactory.withArgs(visibility).returns(scopePromptShouldBePresented);
+    visibilityFilterForChoices.default.withArgs(ciServices, visibility).returns(filteredCiServices);
+    inquirer.prompt
+      .withArgs([
+        {
+          name: questionNames.NODE_VERSION_CATEGORY,
+          message: 'What node.js version should be used?',
+          type: 'list',
+          choices: ['LTS', 'Latest'],
+          default: 'LTS'
+        },
+        {
+          name: questionNames.PROJECT_TYPE,
+          message: 'What type of JavaScript project is this?',
+          type: 'list',
+          choices: ['Application', 'Package'],
+          default: 'Package'
+        },
+        {
+          name: questionNames.SHOULD_BE_SCOPED,
+          message: 'Should this package be scoped?',
+          type: 'confirm',
+          when: conditionals.shouldBeScopedPromptShouldBePresented,
+          default: true
+        },
+        {
+          name: questionNames.SCOPE,
+          message: 'What is the scope?',
+          when: scopePromptShouldBePresented,
+          validate: scopeValidator,
+          default: npmUser
+        },
+        {
+          name: questionNames.AUTHOR_NAME,
+          message: 'What is the author\'s name?',
+          default: authorName
+        },
+        {
+          name: questionNames.AUTHOR_EMAIL,
+          message: 'What is the author\'s email?',
+          default: authorEmail
+        },
+        {
+          name: questionNames.AUTHOR_URL,
+          message: 'What is the author\'s website url?',
+          default: authorUrl
+        },
+        {
+          name: questionNames.UNIT_TESTS,
+          message: 'Will this project be unit tested?',
+          type: 'confirm',
+          default: true
+        },
+        {
+          name: questionNames.INTEGRATION_TESTS,
+          message: 'Will this project be integration tested?',
+          type: 'confirm',
+          default: true
+        },
+        {
+          name: questionNames.HOST,
+          type: 'list',
+          message: 'Where will the application be hosted?',
+          when: conditionals.packageTypeIsApplication,
+          choices: [...Object.keys(hosts), new inquirer.Separator(), 'Other']
+        }
+      ])
+      .resolves(answers);
+
+    assert.equal(await prompt({}, ciServices, hosts, visibility, undefined), answers);
   });
 
   test('that defaults are overridden by the provided options', () => {
@@ -132,7 +224,7 @@ suite('prompts', () => {
     const get = sinon.stub();
     npmConf.default.returns({get});
 
-    return prompt({npmAccount, author}, {}, {}).then(() => {
+    return prompt({npmAccount, author}, {}, {}, null, any.simpleObject()).then(() => {
       assert.calledWith(
         inquirer.prompt,
         sinon.match(value => 1 === value.filter((
@@ -164,7 +256,7 @@ suite('prompts', () => {
     exec.default.withArgs('npm whoami').resolves(any.word());
     npmConf.default.returns({get: () => undefined});
 
-    await prompt({}, {}, {}, 'Private');
+    await prompt({}, {}, {}, 'Private', any.simpleObject());
 
     assert.neverCalledWith(
       inquirer.prompt,

@@ -11,7 +11,7 @@ export function validate(options) {
       host: joi.string().required(),
       owner: joi.string().required(),
       name: joi.string().required()
-    }).required(),
+    }),
     description: joi.string(),
     configs: joi.object({
       eslint: joi.object({

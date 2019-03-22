@@ -20,7 +20,7 @@ function defineScripts(packageType, configs, ci, tests, contributors) {
 }
 
 function defineVcsHostDetails(vcs, packageType, packageName) {
-  return ('GitHub' === vcs.host) && {
+  return vcs && 'GitHub' === vcs.host && {
     repository: `${vcs.owner}/${vcs.name}`,
     bugs: `https://github.com/${vcs.owner}/${vcs.name}/issues`,
     homepage: ('Package' === packageType)
