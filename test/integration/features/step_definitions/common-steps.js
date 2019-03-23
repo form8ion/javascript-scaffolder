@@ -28,7 +28,10 @@ Before(async function () {
   this.sinonSandbox = sinon.createSandbox();
 });
 
-After(() => stubbedFs.restore());
+After(function () {
+  stubbedFs.restore();
+  this.sinonSandbox.restore();
+});
 
 Given(/^the default answers are chosen$/, async function () {
   bddStdIn(
@@ -52,7 +55,7 @@ When(/^the project is scaffolded$/, async function () {
     projectName: any.string(),
     visibility: any.fromList(['Public', 'Private']),
     license: any.string(),
-    vcs: {host: any.word(), owner: any.word(), name: any.word()}
+    vcs: this.vcs
   });
 });
 
