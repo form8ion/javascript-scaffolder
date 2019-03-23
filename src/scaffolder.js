@@ -56,7 +56,7 @@ export async function scaffold(options) {
   const contributors = await Promise.all([
     scaffoldHost(hosts, chosenHost),
     scaffoldTesting({projectRoot, tests, visibility}),
-    scaffoldLinting(({configs, projectRoot, tests})),
+    scaffoldLinting(({configs, projectRoot, tests, vcs})),
     scaffoldCi(ciServices, ci, {projectRoot, vcs, visibility, packageType: projectType, nodeVersion, tests}),
     scaffoldBabel({preset: configs.babelPreset, projectRoot}),
     scaffoldCommitizen({projectRoot}),

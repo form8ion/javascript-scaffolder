@@ -8,10 +8,9 @@ function definePackageBuildScripts() {
   };
 }
 
-function defineScripts(packageType, configs, ci, tests, contributors, vcs) {
+function defineScripts(packageType, configs, ci, tests, contributors) {
   return {
     test: `npm-run-all --print-label --parallel lint:*${(tests.unit || tests.integration) ? ' --parallel test:*' : ''}`,
-    ...vcs && {'lint:sensitive': 'ban'},
     ...contributors.map(contributor => contributor.scripts).reduce((acc, scripts) => ({...acc, ...scripts}), {}),
 
     ...('Application' === packageType) && {start: './lib/index.js'},
@@ -64,6 +63,6 @@ export default function ({
     ...('Application' === projectType) && {private: true},
     ...defineVcsHostDetails(vcs, projectType, packageName),
     author: `${author.name}${author.email ? ` <${author.email}>` : ''}${author.url ? ` (${author.url})` : ''}`,
-    scripts: defineScripts(projectType, configs, ci, tests, contributors, vcs)
+    scripts: defineScripts(projectType, configs, ci, tests, contributors)
   };
 }

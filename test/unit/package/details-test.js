@@ -339,7 +339,6 @@ suite('package details builder', () => {
         packageDetails.scripts,
         {
           test: 'npm-run-all --print-label --parallel lint:*',
-          'lint:sensitive': 'ban',
           ...scriptsFromAllContributors
         }
       );
@@ -429,26 +428,6 @@ suite('package details builder', () => {
           });
 
           assert.equal(packageDetails.scripts.clean, 'rimraf lib/');
-        });
-      });
-
-      suite('lint', () => {
-        test('that sensitive files are prevented from being committed', () => {
-          const packageDetails = buildPackageDetails({tests: {}, vcs: {}, author: {}, configs: {}, contributors: []});
-
-          assert.equal(packageDetails.scripts['lint:sensitive'], 'ban');
-        });
-
-        test('that linting for sensitive files is not included when the project is not versioned', () => {
-          const packageDetails = buildPackageDetails({
-            tests: {},
-            vcs: undefined,
-            author: {},
-            configs: {},
-            contributors: []
-          });
-
-          assert.isUndefined(packageDetails.scripts['lint:sensitive']);
         });
       });
     });

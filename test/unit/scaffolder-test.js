@@ -149,7 +149,7 @@ suite('javascript project scaffolder', () => {
       .resolves(ciServiceResults);
     host.default.withArgs(hosts, chosenHost).resolves(hostResults);
     testing.default.withArgs({projectRoot, tests, visibility}).resolves(testingResults);
-    linting.default.withArgs({configs, projectRoot, tests}).resolves(lintingResults);
+    linting.default.withArgs({configs, projectRoot, tests, vcs: vcsDetails}).resolves(lintingResults);
     commitizen.default.withArgs({projectRoot}).resolves(commitizenResults);
     babel.default.withArgs({projectRoot, preset: babelPreset}).resolves(babelResults);
     husky.default.withArgs({projectRoot}).resolves(huskyResults);
