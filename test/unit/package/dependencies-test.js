@@ -17,7 +17,6 @@ suite('dependencies', () => {
   );
   const defaultDevDependencies = [
     'npm-run-all',
-    'ban-sensitive-files',
     commonDependency,
     ...devDependenciesFromAllContributors
   ];
@@ -34,6 +33,12 @@ suite('dependencies', () => {
     await installDependencies({contributors});
 
     assert.calledWith(dependencyInstaller.default, defaultDevDependencies);
+  });
+
+  test('that ban-sensitive-files gets installed when the project will be versioned', async () => {
+    await installDependencies({contributors, vcs: any.simpleObject()});
+
+    assert.calledWith(dependencyInstaller.default, [...defaultDevDependencies, 'ban-sensitive-files']);
   });
 
   test('that additional devDependencies get installed for package type projects', async () => {

@@ -438,6 +438,18 @@ suite('package details builder', () => {
 
           assert.equal(packageDetails.scripts['lint:sensitive'], 'ban');
         });
+
+        test('that linting for sensitive files is not included when the project is not versioned', () => {
+          const packageDetails = buildPackageDetails({
+            tests: {},
+            vcs: undefined,
+            author: {},
+            configs: {},
+            contributors: []
+          });
+
+          assert.isUndefined(packageDetails.scripts['lint:sensitive']);
+        });
       });
     });
 
