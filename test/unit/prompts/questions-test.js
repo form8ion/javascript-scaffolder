@@ -100,12 +100,6 @@ suite('prompts', () => {
           message: 'What is the author\'s website url?',
           default: authorUrl
         },
-        {
-          name: questionNames.INTEGRATION_TESTS,
-          message: 'Will this project be integration tested?',
-          type: 'confirm',
-          default: true
-        },
         ...commonQuestions,
         {
           name: questionNames.HOST,

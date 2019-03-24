@@ -10,15 +10,6 @@ import npmConfFactory from '../../third-party-wrappers/npm-conf';
 import {questionNames} from './question-names';
 import {scope as validateScope} from './validators';
 
-const testingQuestions = [
-  {
-    name: questionNames.INTEGRATION_TESTS,
-    message: 'Will this project be integration tested?',
-    type: 'confirm',
-    default: true
-  }
-];
-
 function authorQuestions({name, email, url}) {
   return [
     {
@@ -76,7 +67,6 @@ export async function prompt({npmAccount, author}, ciServices, hosts, visibility
       email: npmConf.get('init.author.email'),
       url: npmConf.get('init.author.url')
     }),
-    ...testingQuestions,
     ...commonQuestions(({vcs, ciServices, visibility})),
     {
       name: questionNames.HOST,
