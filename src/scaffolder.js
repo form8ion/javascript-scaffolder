@@ -38,7 +38,7 @@ export async function scaffold(options) {
 
   const {
     [commonQuestionNames.UNIT_TESTS]: unitTested,
-    [questionNames.INTEGRATION_TESTS]: integrationTested,
+    [commonQuestionNames.INTEGRATION_TESTS]: integrationTested,
     [questionNames.PROJECT_TYPE]: projectType,
     [commonQuestionNames.CI_SERVICE]: ci,
     [questionNames.HOST]: chosenHost,

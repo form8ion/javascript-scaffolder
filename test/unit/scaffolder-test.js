@@ -95,7 +95,7 @@ suite('javascript project scaffolder', () => {
     [questionNames.SCOPE]: scope,
     [questionNames.PROJECT_TYPE]: projectType,
     [commonQuestionNames.UNIT_TESTS]: tests.unit,
-    [questionNames.INTEGRATION_TESTS]: tests.integration,
+    [commonQuestionNames.INTEGRATION_TESTS]: tests.integration,
     [questionNames.AUTHOR_NAME]: authorName,
     [questionNames.AUTHOR_EMAIL]: authorEmail,
     [questionNames.AUTHOR_URL]: authorUrl,
