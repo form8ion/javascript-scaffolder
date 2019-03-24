@@ -1,5 +1,6 @@
 import path from 'path';
 import fs from 'mz/fs';
+import {questionNames as commonQuestionNames} from '@travi/language-scaffolder-prompts';
 import {assert} from 'chai';
 import any from '@travi/any';
 import sinon from 'sinon';
@@ -93,12 +94,12 @@ suite('javascript project scaffolder', () => {
     [questionNames.INTEGRATION_TESTS]: integrationTested,
     [questionNames.SCOPE]: scope,
     [questionNames.PROJECT_TYPE]: projectType,
-    [questionNames.UNIT_TESTS]: tests.unit,
+    [commonQuestionNames.UNIT_TESTS]: tests.unit,
     [questionNames.INTEGRATION_TESTS]: tests.integration,
     [questionNames.AUTHOR_NAME]: authorName,
     [questionNames.AUTHOR_EMAIL]: authorEmail,
     [questionNames.AUTHOR_URL]: authorUrl,
-    [questionNames.CI_SERVICE]: chosenCiService,
+    [commonQuestionNames.CI_SERVICE]: chosenCiService,
     [questionNames.HOST]: chosenHost,
     [questionNames.NODE_VERSION_CATEGORY]: versionCategory
   };

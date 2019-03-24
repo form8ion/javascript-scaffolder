@@ -1,6 +1,7 @@
 import {resolve} from 'path';
 import {copyFile, writeFile} from 'mz/fs';
 import chalk from 'chalk';
+import {questionNames as commonQuestionNames} from '@travi/language-scaffolder-prompts';
 import {validate} from './options-validator';
 import {prompt} from './prompts/questions';
 import scaffoldTesting from './testing';
@@ -36,10 +37,10 @@ export async function scaffold(options) {
   } = validate(options);
 
   const {
-    [questionNames.UNIT_TESTS]: unitTested,
+    [commonQuestionNames.UNIT_TESTS]: unitTested,
     [questionNames.INTEGRATION_TESTS]: integrationTested,
     [questionNames.PROJECT_TYPE]: projectType,
-    [questionNames.CI_SERVICE]: ci,
+    [commonQuestionNames.CI_SERVICE]: ci,
     [questionNames.HOST]: chosenHost,
     [questionNames.SCOPE]: scope,
     [questionNames.NODE_VERSION_CATEGORY]: nodeVersionCategory,

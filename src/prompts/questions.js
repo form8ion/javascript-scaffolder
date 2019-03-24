@@ -1,4 +1,5 @@
 import {prompt as promptWithInquirer, Separator} from 'inquirer';
+import {questions as commonQuestions} from '@travi/language-scaffolder-prompts';
 import exec from '../../third-party-wrappers/exec-as-promised';
 import {
   packageTypeIsApplication,
@@ -8,15 +9,8 @@ import {
 import npmConfFactory from '../../third-party-wrappers/npm-conf';
 import {questionNames} from './question-names';
 import {scope as validateScope} from './validators';
-import filterChoicesByVisibility from './filter-by-visibility';
 
 const testingQuestions = [
-  {
-    name: questionNames.UNIT_TESTS,
-    message: 'Will this project be unit tested?',
-    type: 'confirm',
-    default: true
-  },
   {
     name: questionNames.INTEGRATION_TESTS,
     message: 'Will this project be integration tested?',
@@ -83,14 +77,7 @@ export async function prompt({npmAccount, author}, ciServices, hosts, visibility
       url: npmConf.get('init.author.url')
     }),
     ...testingQuestions,
-    ...vcs
-      ? [{
-        name: questionNames.CI_SERVICE,
-        type: 'list',
-        message: 'Which continuous integration service will be used?',
-        choices: [...Object.keys(filterChoicesByVisibility(ciServices, visibility)), new Separator(), 'Other']
-      }]
-      : [],
+    ...commonQuestions(({vcs, ciServices, visibility})),
     {
       name: questionNames.HOST,
       type: 'list',
