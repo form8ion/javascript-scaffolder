@@ -1,3 +1,4 @@
+import {questionNames as commonQuestionNames} from '@travi/language-scaffolder-prompts';
 import {questionNames} from './question-names';
 
 function projectIsPackage(answers) {
@@ -18,4 +19,11 @@ export function scopePromptShouldBePresentedFactory(visibility) {
 
 export function packageTypeIsApplication(answers) {
   return 'Application' === answers[questionNames.PROJECT_TYPE];
+}
+
+export function transpilationAndLintingPromptShouldBePresented({
+  [commonQuestionNames.UNIT_TESTS]: unitTested,
+  [commonQuestionNames.INTEGRATION_TESTS]: integrationTested
+}) {
+  return !unitTested && !integrationTested;
 }

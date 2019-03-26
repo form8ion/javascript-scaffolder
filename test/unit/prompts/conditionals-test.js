@@ -1,9 +1,11 @@
+import {questionNames as commonQuestionNames} from '@travi/language-scaffolder-prompts';
 import any from '@travi/any';
 import {assert} from 'chai';
 import {
   packageTypeIsApplication,
   shouldBeScopedPromptShouldBePresented,
-  scopePromptShouldBePresentedFactory
+  scopePromptShouldBePresentedFactory,
+  transpilationAndLintingPromptShouldBePresented
 } from '../../../src/prompts/conditionals';
 import {questionNames} from '../../../src/prompts/question-names';
 
@@ -50,6 +52,23 @@ suite('javascript prompt conditionals', () => {
 
     test('that `false` is returned when the package-type is not `Application`', () => {
       assert.isFalse(packageTypeIsApplication({[questionNames.PROJECT_TYPE]: any.word()}));
+    });
+  });
+
+  suite('transpilation/linting', () => {
+    test('that the prompt is not shown if the project is unit tested', () => {
+      assert.isFalse(transpilationAndLintingPromptShouldBePresented({[commonQuestionNames.UNIT_TESTS]: true}));
+    });
+
+    test('that the prompt is not shown if the project is integration tested', () => {
+      assert.isFalse(transpilationAndLintingPromptShouldBePresented({[commonQuestionNames.INTEGRATION_TESTS]: true}));
+    });
+
+    test('that the prompt is shown if the project is not tested', () => {
+      assert.isTrue(transpilationAndLintingPromptShouldBePresented({
+        [commonQuestionNames.INTEGRATION_TESTS]: false,
+        [commonQuestionNames.UNIT_TESTS]: false
+      }));
     });
   });
 });
