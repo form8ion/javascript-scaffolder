@@ -4,7 +4,8 @@ import exec from '../../third-party-wrappers/exec-as-promised';
 import {
   packageTypeIsApplication,
   scopePromptShouldBePresentedFactory,
-  shouldBeScopedPromptShouldBePresented
+  shouldBeScopedPromptShouldBePresented,
+  transpilationAndLintingPromptShouldBePresented
 } from './conditionals';
 import npmConfFactory from '../../third-party-wrappers/npm-conf';
 import {questionNames} from './question-names';
@@ -69,11 +70,17 @@ export async function prompt({npmAccount, author}, ciServices, hosts, visibility
     }),
     ...commonQuestions(({vcs, ciServices, visibility})),
     {
+      name: questionNames.TRANSPILE_LINT,
+      message: 'Will there be source code that should be transpiled or linted?',
+      type: 'confirm',
+      when: transpilationAndLintingPromptShouldBePresented
+    },
+    {
       name: questionNames.HOST,
       type: 'list',
       message: 'Where will the application be hosted?',
       when: packageTypeIsApplication,
       choices: [...Object.keys(hosts), new Separator(), 'Other']
     }
-  ].filter(Boolean));
+  ]);
 }

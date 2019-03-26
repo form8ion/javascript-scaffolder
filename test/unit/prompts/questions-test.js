@@ -102,6 +102,12 @@ suite('prompts', () => {
         },
         ...commonQuestions,
         {
+          name: questionNames.TRANSPILE_LINT,
+          message: 'Will there be source code that should be transpiled or linted?',
+          type: 'confirm',
+          when: conditionals.transpilationAndLintingPromptShouldBePresented
+        },
+        {
           name: questionNames.HOST,
           type: 'list',
           message: 'Where will the application be hosted?',
