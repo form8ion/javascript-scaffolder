@@ -41,4 +41,13 @@ suite('babel config', () => {
 
     assert.notCalled(fs.writeFile);
   });
+
+  test('that scaffolding is skipped if `transpileLint` is false', async () => {
+    assert.deepEqual(
+      await scaffoldBabel({preset: any.simpleObject(), projectRoot, transpileLint: false}),
+      {devDependencies: [], scripts: {}, vcsIgnore: {files: [], directories: []}}
+    );
+
+    assert.notCalled(fs.writeFile);
+  });
 });

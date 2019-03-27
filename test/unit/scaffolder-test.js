@@ -62,6 +62,7 @@ suite('javascript project scaffolder', () => {
   const lintingResults = any.simpleObject();
   const ciServiceResults = any.simpleObject();
   const commitConventionResults = any.simpleObject();
+  const transpileLint = any.boolean();
   const contributors = [
     hostResults,
     testingResults,
@@ -101,7 +102,8 @@ suite('javascript project scaffolder', () => {
     [questionNames.AUTHOR_URL]: authorUrl,
     [commonQuestionNames.CI_SERVICE]: chosenCiService,
     [questionNames.HOST]: chosenHost,
-    [questionNames.NODE_VERSION_CATEGORY]: versionCategory
+    [questionNames.NODE_VERSION_CATEGORY]: versionCategory,
+    [questionNames.TRANSPILE_LINT]: transpileLint
   };
 
   setup(() => {
@@ -150,9 +152,9 @@ suite('javascript project scaffolder', () => {
       .resolves(ciServiceResults);
     host.default.withArgs(hosts, chosenHost).resolves(hostResults);
     testing.default.withArgs({projectRoot, tests, visibility}).resolves(testingResults);
-    linting.default.withArgs({configs, projectRoot, tests, vcs: vcsDetails}).resolves(lintingResults);
+    linting.default.withArgs({configs, projectRoot, tests, vcs: vcsDetails, transpileLint}).resolves(lintingResults);
     commitizen.default.withArgs({projectRoot}).resolves(commitizenResults);
-    babel.default.withArgs({projectRoot, preset: babelPreset}).resolves(babelResults);
+    babel.default.withArgs({projectRoot, preset: babelPreset, transpileLint}).resolves(babelResults);
     husky.default.withArgs({projectRoot}).resolves(huskyResults);
     npmConfig.default.resolves();
     commitConvention.default.withArgs({projectRoot, configs}).resolves(commitConventionResults);
@@ -179,7 +181,7 @@ suite('javascript project scaffolder', () => {
     test('that config files are created', async () => {
       await scaffold(options);
 
-      assert.calledWith(babel.default, {preset: babelPreset, projectRoot});
+      assert.calledWith(babel.default, {preset: babelPreset, projectRoot, transpileLint});
       assert.calledWith(npmConfig.default, {projectRoot, projectType});
       assert.calledWith(nodeVersionHandler.install, versionCategory);
     });

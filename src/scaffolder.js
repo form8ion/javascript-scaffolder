@@ -46,7 +46,8 @@ export async function scaffold(options) {
     [questionNames.NODE_VERSION_CATEGORY]: nodeVersionCategory,
     [questionNames.AUTHOR_NAME]: authorName,
     [questionNames.AUTHOR_EMAIL]: authorEmail,
-    [questionNames.AUTHOR_URL]: authorUrl
+    [questionNames.AUTHOR_URL]: authorUrl,
+    [questionNames.TRANSPILE_LINT]: transpileLint
   } = await prompt(overrides, ciServices, hosts, visibility, vcs);
 
   const nodeVersion = await determineLatestVersionOf(nodeVersionCategory);
@@ -57,9 +58,9 @@ export async function scaffold(options) {
   const contributors = await Promise.all([
     scaffoldHost(hosts, chosenHost),
     scaffoldTesting({projectRoot, tests, visibility}),
-    scaffoldLinting(({configs, projectRoot, tests, vcs})),
+    scaffoldLinting(({configs, projectRoot, tests, vcs, transpileLint})),
     scaffoldCi(ciServices, ci, {projectRoot, vcs, visibility, packageType: projectType, nodeVersion, tests}),
-    scaffoldBabel({preset: configs.babelPreset, projectRoot}),
+    scaffoldBabel({preset: configs.babelPreset, projectRoot, transpileLint}),
     scaffoldCommitizen({projectRoot}),
     scaffoldCommitConvention({projectRoot, configs}),
     scaffoldHusky({projectRoot})

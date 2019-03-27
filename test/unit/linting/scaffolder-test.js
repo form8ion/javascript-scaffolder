@@ -78,6 +78,24 @@ suite('linting scaffolder', () => {
     assert.deepEqual(result.scripts, {...remarkScripts, ...banSensitiveFilesScripts});
   });
 
+  test('that eslint is not scaffolded when `transpileLint` is false', async () => {
+    const result = await scaffold({
+      projectRoot,
+      tests: {unit: unitTested},
+      configs: {eslint: configForEslint, remark: configForRemark},
+      vcs,
+      transpileLint: false
+    });
+
+    assert.deepEqual(
+      result.devDependencies,
+      [...remarkDevDependencies, ...banSensitiveFilesDevDependencies]
+    );
+    assert.deepEqual(result.vcsIgnore.files, []);
+    assert.deepEqual(result.vcsIgnore.directories, []);
+    assert.deepEqual(result.scripts, {...remarkScripts, ...banSensitiveFilesScripts});
+  });
+
   test('that remark is not scaffolded when a config is not defined', async () => {
     const result = await scaffold({projectRoot, tests: {unit: unitTested}, configs: {eslint: configForEslint}, vcs});
 

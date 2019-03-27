@@ -1,4 +1,5 @@
 import {readFile} from 'mz/fs';
+import {existsSync} from 'fs';
 import {resolve} from 'path';
 import {After, Before, Given, setWorldConstructor, Then, When} from 'cucumber';
 import stubbedFs from 'mock-fs';
@@ -34,28 +35,38 @@ After(function () {
 });
 
 Given(/^the default answers are chosen$/, async function () {
-  bddStdIn(
-    '\n',
-    '\n',
-    '\n',
-    '\n',
-    '\n',
-    '\n',
-    '\n',
-    '\n',
-    '\n',
-    '\n',
-    '\n'
-  );
+  this.unitTestAnswer = ['\n'];
+  this.integrationTestAnswer = ['\n'];
+  this.transpilationLintAnswer = null;
 });
 
 When(/^the project is scaffolded$/, async function () {
+  const visibility = any.fromList(['Public', 'Private']);
+
+  bddStdIn(...[
+    '\n',
+    '\n',
+    ...'Public' === visibility ? ['\n'] : [],
+    '\n',
+    '\n',
+    '\n',
+    '\n',
+    ...this.unitTestAnswer,
+    ...this.integrationTestAnswer,
+    ...this.ciAnswer ? this.ciAnswer : [],
+    ...this.transpilationLintAnswer ? this.transpilationLintAnswer : []
+  ]);
+
   await scaffold({
     projectRoot: process.cwd(),
     projectName: any.string(),
-    visibility: any.fromList(['Public', 'Private']),
+    visibility,
     license: any.string(),
-    vcs: this.vcs
+    vcs: this.vcs,
+    configs: {
+      eslint: {prefix: any.word(), packageName: any.word()},
+      babelPreset: {name: any.word(), packageName: any.word()}
+    }
   });
 });
 
@@ -63,4 +74,6 @@ Then(/^the expected files are generated$/, async function () {
   const nvmRc = await readFile(`${process.cwd()}/.nvmrc`);
 
   assert.equal(nvmRc.toString(), this.latestLtsVersion);
+  assert.isTrue(existsSync(`${process.cwd()}/.eslintrc.yml`));
+  assert.isTrue(existsSync(`${process.cwd()}/.babelrc`));
 });
