@@ -12,9 +12,7 @@ import * as testing from '../../src/testing/scaffolder';
 import * as host from '../../src/host';
 import * as babel from '../../src/config/babel';
 import * as linting from '../../src/linting/scaffolder';
-import * as husky from '../../src/config/husky';
 import * as npmConfig from '../../src/config/npm';
-import * as commitizen from '../../src/config/commitizen';
 import * as documentation from '../../src/documentation';
 import * as nodeVersionHandler from '../../src/node-version';
 import * as badgeDetailsBuilder from '../../src/badges';
@@ -38,8 +36,6 @@ suite('javascript project scaffolder', () => {
   const commitConventionDevDependencies = any.listOf(any.string);
   const hostResults = any.simpleObject();
   const babelResults = any.simpleObject();
-  const commitizenResults = any.simpleObject();
-  const huskyResults = any.simpleObject();
   const chosenHost = any.word();
   const projectType = any.word();
   const scope = any.word();
@@ -69,9 +65,7 @@ suite('javascript project scaffolder', () => {
     lintingResults,
     ciServiceResults,
     babelResults,
-    commitizenResults,
-    commitConventionResults,
-    huskyResults
+    commitConventionResults
   ];
   const packageScaffoldingInputs = {
     projectRoot,
@@ -119,9 +113,7 @@ suite('javascript project scaffolder', () => {
     sandbox.stub(host, 'default');
     sandbox.stub(babel, 'default');
     sandbox.stub(linting, 'default');
-    sandbox.stub(husky, 'default');
     sandbox.stub(npmConfig, 'default');
-    sandbox.stub(commitizen, 'default');
     sandbox.stub(documentation, 'default');
     sandbox.stub(nodeVersionHandler, 'determineLatestVersionOf');
     sandbox.stub(nodeVersionHandler, 'install');
@@ -153,9 +145,7 @@ suite('javascript project scaffolder', () => {
     host.default.withArgs(hosts, chosenHost).resolves(hostResults);
     testing.default.withArgs({projectRoot, tests, visibility}).resolves(testingResults);
     linting.default.withArgs({configs, projectRoot, tests, vcs: vcsDetails, transpileLint}).resolves(lintingResults);
-    commitizen.default.withArgs({projectRoot}).resolves(commitizenResults);
     babel.default.withArgs({projectRoot, preset: babelPreset, transpileLint}).resolves(babelResults);
-    husky.default.withArgs({projectRoot}).resolves(huskyResults);
     npmConfig.default.resolves();
     commitConvention.default.withArgs({projectRoot, configs}).resolves(commitConventionResults);
     nodeVersionHandler.determineLatestVersionOf.withArgs(versionCategory).returns(version);

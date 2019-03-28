@@ -9,9 +9,7 @@ import scaffoldCi from './ci';
 import scaffoldHost from './host';
 import scaffoldBabel from './config/babel';
 import scaffoldLinting from './linting';
-import scaffoldHusky from './config/husky';
 import scaffoldNpmConfig from './config/npm';
-import scaffoldCommitizen from './config/commitizen';
 import scaffoldCommitConvention from './commit-convention';
 import scaffoldDocumentation from './documentation';
 import {determineLatestVersionOf, install as installNodeVersion} from './node-version';
@@ -61,9 +59,7 @@ export async function scaffold(options) {
     scaffoldLinting(({configs, projectRoot, tests, vcs, transpileLint})),
     scaffoldCi(ciServices, ci, {projectRoot, vcs, visibility, packageType: projectType, nodeVersion, tests}),
     scaffoldBabel({preset: configs.babelPreset, projectRoot, transpileLint}),
-    scaffoldCommitizen({projectRoot}),
-    scaffoldCommitConvention({projectRoot, configs}),
-    scaffoldHusky({projectRoot})
+    scaffoldCommitConvention({projectRoot, configs})
   ]);
   const [host, testing, linting, ciService] = contributors;
 

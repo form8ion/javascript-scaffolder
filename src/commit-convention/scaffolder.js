@@ -1,11 +1,21 @@
+import scaffoldCommitizen from '../config/commitizen';
+import scaffoldHusky from '../config/husky';
 import scaffoldCommitlint from './commitlint';
 
 export default async function ({projectRoot, configs}) {
-  if (configs.commitlint) {
-    const commitlintResult = await scaffoldCommitlint({projectRoot, config: configs.commitlint});
+  const [huskyResults, commitizenResults, commitlintResults] = await Promise.all([
+    scaffoldHusky({projectRoot}),
+    scaffoldCommitizen({projectRoot}),
+    configs.commitlint && scaffoldCommitlint({projectRoot, config: configs.commitlint})
+  ]);
 
-    return {devDependencies: commitlintResult.devDependencies, scripts: {}, vcsIgnore: {files: [], directories: []}};
-  }
-
-  return {devDependencies: [], scripts: {}, vcsIgnore: {files: [], directories: []}};
+  return {
+    devDependencies: [
+      ...commitizenResults.devDependencies,
+      ...huskyResults.devDependencies,
+      ...commitlintResults ? commitlintResults.devDependencies : []
+    ],
+    scripts: {...commitizenResults.scripts, ...huskyResults.scripts},
+    vcsIgnore: {files: [], directories: []}
+  };
 }

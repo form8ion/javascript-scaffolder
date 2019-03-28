@@ -34,7 +34,7 @@ export default async function ({
 
   await writeFile(`${projectRoot}/package.json`, JSON.stringify(packageData));
 
-  await installDependencies({projectType, contributors, vcs});
+  await installDependencies({projectType, contributors});
 
   return {name: packageData.name, homepage: packageData.homepage};
 }
