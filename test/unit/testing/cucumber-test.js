@@ -1,17 +1,40 @@
+import fs from 'mz/fs';
 import {assert} from 'chai';
 import any from '@travi/any';
+import sinon from 'sinon';
+import * as templatePath from '../../../src/template-path';
 import scaffoldCucumber from '../../../src/testing/cucumber';
 
 suite('cucumber scaffolder', () => {
+  let sandbox;
   const projectRoot = any.string();
 
-  test('that cucmber is scaffolded', async () => {
+  setup(() => {
+    sandbox = sinon.createSandbox();
+
+    sandbox.stub(fs, 'copyFile');
+    sandbox.stub(templatePath, 'default');
+  });
+
+  teardown(() => sandbox.restore());
+
+  test('that cucumber is scaffolded', async () => {
+    const pathToTemplate = any.string();
+    fs.copyFile.resolves();
+    templatePath.default.withArgs('cucumber.txt').returns(pathToTemplate);
+
     assert.deepEqual(
       await scaffoldCucumber({projectRoot}),
       {
         devDependencies: ['cucumber', 'chai'],
-        scripts: {'test:integration': 'DEBUG=any cucumber-js test/integration --require-module @babel/register --format-options \'{"snippetInterface": "async-await"}\''}   // eslint-disable-line max-len
+        scripts: {
+          'test:integration': 'run-s \'test:integration:base -- --profile noWip\'',
+          'test:integration:base': 'DEBUG=any cucumber-js test/integration --profile base',
+          'test:integration:debug': 'DEBUG=test run-s test:integration',
+          'test:integration:wip': 'run-s \'test:integration:base -- --profile wip\''
+        }
       }
     );
+    assert.calledWith(fs.copyFile, pathToTemplate, `${projectRoot}/cucumber.js`);
   });
 });
