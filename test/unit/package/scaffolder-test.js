@@ -73,6 +73,6 @@ suite('package scaffolder', () => {
     );
 
     assert.calledWith(fs.writeFile, `${projectRoot}/package.json`, JSON.stringify(packageDetails));
-    assert.calledWith(dependencyInstaller.default, {projectType, contributors});
+    assert.calledWith(dependencyInstaller.default, {contributors});
   });
 });

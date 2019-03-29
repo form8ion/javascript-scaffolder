@@ -19,6 +19,7 @@ import * as badgeDetailsBuilder from '../../src/badges';
 import * as vcsIgnoresBuilder from '../../src/vcs-ignore';
 import * as commitConvention from '../../src/commit-convention/scaffolder';
 import * as packageScaffolder from '../../src/package/scaffolder';
+import * as packageTypeScaffolder from '../../src/project-type/package';
 import {scaffold} from '../../src/scaffolder';
 import {questionNames} from '../../src/prompts/question-names';
 
@@ -55,6 +56,7 @@ suite('javascript project scaffolder', () => {
   const configs = {babelPreset, ...any.simpleObject()};
   const versionCategory = any.word();
   const testingResults = any.simpleObject();
+  const packageTypeResults = any.simpleObject();
   const lintingResults = any.simpleObject();
   const ciServiceResults = any.simpleObject();
   const commitConventionResults = any.simpleObject();
@@ -121,12 +123,14 @@ suite('javascript project scaffolder', () => {
     sandbox.stub(vcsIgnoresBuilder, 'default');
     sandbox.stub(commitConvention, 'default');
     sandbox.stub(packageScaffolder, 'default');
+    sandbox.stub(packageTypeScaffolder, 'default');
 
     fs.writeFile.resolves();
     fs.copyFile.resolves();
     packageScaffolder.default
       .withArgs(packageScaffoldingInputs)
       .resolves({...any.simpleObject(), name: packageName, homepage});
+    packageTypeScaffolder.default.withArgs({projectRoot}).resolves(packageTypeResults);
     prompts.prompt.withArgs(overrides, ciServices, hosts, visibility, vcsDetails).resolves(commonPromptAnswers);
     ci.default
       .withArgs(
@@ -208,13 +212,12 @@ suite('javascript project scaffolder', () => {
       });
 
       suite('package', () => {
-        test('that the package gets bundled with rollup', async () => {
+        test('that the package gets additional details scaffolded', async () => {
           const packageProjectType = 'Package';
           prompts.prompt
             .withArgs(overrides, ciServices, hosts, visibility, vcsDetails)
             .resolves({...commonPromptAnswers, [questionNames.PROJECT_TYPE]: packageProjectType});
           packageScaffolder.default
-            .withArgs({...packageScaffoldingInputs, projectType: packageProjectType})
             .resolves(any.simpleObject());
           ci.default
             .withArgs(
@@ -234,9 +237,12 @@ suite('javascript project scaffolder', () => {
           await scaffold(options);
 
           assert.calledWith(
-            fs.copyFile,
-            path.resolve(__dirname, '../../', 'templates', 'rollup.config.js'),
-            `${projectRoot}/rollup.config.js`
+            packageScaffolder.default,
+            {
+              ...packageScaffoldingInputs,
+              projectType: packageProjectType,
+              contributors: [...contributors, packageTypeResults]
+            }
           );
         });
       });

@@ -402,34 +402,6 @@ suite('package details builder', () => {
 
         assert.equal(packageDetails.scripts.test, 'npm-run-all --print-label --parallel lint:* --parallel test:*');
       });
-
-      suite('clean', () => {
-        test('that no clean script is defined if the package-type is not `Package`', () => {
-          const packageDetails = buildPackageDetails({
-            tests: {},
-            vcs: {},
-            author: {},
-            projectType: any.word(),
-            configs: {},
-            contributors: []
-          });
-
-          assert.isUndefined(packageDetails.scripts.clean);
-        });
-
-        test('that the clean script removes the `lib/` directory if the package-type is `Package`', () => {
-          const packageDetails = buildPackageDetails({
-            tests: {},
-            vcs: {},
-            author: {},
-            projectType: 'Package',
-            configs: {},
-            contributors: []
-          });
-
-          assert.equal(packageDetails.scripts.clean, 'rimraf lib/');
-        });
-      });
     });
 
     suite('build', () => {
@@ -447,23 +419,6 @@ suite('package details builder', () => {
           assert.isUndefined(packageDetails.scripts.build);
           assert.isUndefined(packageDetails.scripts['build:js']);
           assert.isUndefined(packageDetails.scripts.watch);
-        });
-      });
-
-      suite('package', () => {
-        test('that the rollup build is scripted', () => {
-          const packageDetails = buildPackageDetails({
-            tests: {},
-            vcs: {},
-            author: {},
-            projectType: 'Package',
-            configs: {},
-            contributors: []
-          });
-
-          assert.equal(packageDetails.scripts.build, 'run-s clean build:*');
-          assert.equal(packageDetails.scripts['build:js'], 'rollup -c');
-          assert.equal(packageDetails.scripts.watch, 'run-s \'build:js -- --watch\'');
         });
       });
     });
@@ -486,19 +441,6 @@ suite('package details builder', () => {
       });
 
       suite('package', () => {
-        test('that the build is executed before publishing', () => {
-          const packageDetails = buildPackageDetails({
-            tests: {},
-            vcs: {},
-            author: {},
-            projectType: 'Package',
-            configs: {},
-            contributors: []
-          });
-
-          assert.equal(packageDetails.scripts.prepack, 'run-s build');
-        });
-
         test('that the package is marked as side-effects free', () => {
           const packageDetails = buildPackageDetails({
             tests: {},

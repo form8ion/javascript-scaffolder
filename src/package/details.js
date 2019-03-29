@@ -1,20 +1,9 @@
-function definePackageBuildScripts() {
-  return {
-    clean: 'rimraf lib/',
-    build: 'run-s clean build:*',
-    'build:js': 'rollup -c',
-    watch: 'run-s \'build:js -- --watch\'',
-    prepack: 'run-s build'
-  };
-}
-
 function defineScripts(packageType, configs, ci, tests, contributors) {
   return {
     test: `npm-run-all --print-label --parallel lint:*${(tests.unit || tests.integration) ? ' --parallel test:*' : ''}`,
     ...contributors.map(contributor => contributor.scripts).reduce((acc, scripts) => ({...acc, ...scripts}), {}),
 
-    ...('Application' === packageType) && {start: './lib/index.js'},
-    ...('Package' === packageType) && definePackageBuildScripts()
+    ...('Application' === packageType) && {start: './lib/index.js'}
   };
 }
 

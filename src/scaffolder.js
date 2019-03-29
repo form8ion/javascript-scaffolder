@@ -1,5 +1,4 @@
-import {resolve} from 'path';
-import {copyFile, writeFile} from 'mz/fs';
+import {writeFile} from 'mz/fs';
 import chalk from 'chalk';
 import {questionNames as commonQuestionNames} from '@travi/language-scaffolder-prompts';
 import {validate} from './options-validator';
@@ -17,6 +16,7 @@ import {questionNames} from './prompts/question-names';
 import buildBadgesDetails from './badges';
 import buildVcsIgnoreLists from './vcs-ignore';
 import scaffoldPackage from './package';
+import scaffoldPackageType from './project-type/package';
 
 export async function scaffold(options) {
   console.error(chalk.blue('Initializing JavaScript project'));     // eslint-disable-line no-console
@@ -59,18 +59,12 @@ export async function scaffold(options) {
     scaffoldLinting(({configs, projectRoot, tests, vcs, transpileLint})),
     scaffoldCi(ciServices, ci, {projectRoot, vcs, visibility, packageType: projectType, nodeVersion, tests}),
     scaffoldBabel({preset: configs.babelPreset, projectRoot, transpileLint}),
-    scaffoldCommitConvention({projectRoot, configs})
+    scaffoldCommitConvention({projectRoot, configs}),
+    ...'Package' === projectType ? [scaffoldPackageType(({projectRoot}))] : []
   ]);
   const [host, testing, linting, ciService] = contributors;
 
-  await Promise.all([
-    writeFile(`${projectRoot}/.nvmrc`, nodeVersion),
-    scaffoldNpmConfig({projectType, projectRoot}),
-    ('Package' === projectType) && copyFile(
-      resolve(__dirname, '..', 'templates', 'rollup.config.js'),
-      `${projectRoot}/rollup.config.js`
-    )
-  ]);
+  await Promise.all([writeFile(`${projectRoot}/.nvmrc`, nodeVersion), scaffoldNpmConfig({projectType, projectRoot})]);
 
   await installNodeVersion(nodeVersionCategory);
 

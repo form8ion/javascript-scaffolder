@@ -30,13 +30,4 @@ suite('dependencies', () => {
 
     assert.calledWith(dependencyInstaller.default, defaultDevDependencies);
   });
-
-  test('that additional devDependencies get installed for package type projects', async () => {
-    await installDependencies({projectType: 'Package', contributors});
-
-    assert.calledWith(
-      dependencyInstaller.default,
-      [...defaultDevDependencies, 'rimraf', 'rollup', 'rollup-plugin-auto-external']
-    );
-  });
 });
