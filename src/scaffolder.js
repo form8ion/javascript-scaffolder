@@ -31,7 +31,8 @@ export async function scaffold(options) {
     configs,
     overrides,
     ciServices,
-    hosts
+    hosts,
+    applicationTypes
   } = validate(options);
 
   const {
@@ -64,7 +65,7 @@ export async function scaffold(options) {
     scaffoldBabel({preset: configs.babelPreset, projectRoot, transpileLint}),
     scaffoldCommitConvention({projectRoot, configs}),
     ...'Package' === projectType ? [scaffoldPackageType(({projectRoot}))] : [],
-    ...'Application' === projectType ? [scaffoldApplicationType(({projectRoot}))] : []
+    ...'Application' === projectType ? [scaffoldApplicationType(({projectRoot, applicationTypes}))] : []
   ]);
   const [host, testing, linting, ciService] = contributors;
 

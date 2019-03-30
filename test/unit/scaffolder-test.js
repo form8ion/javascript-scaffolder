@@ -61,6 +61,7 @@ suite('javascript project scaffolder', () => {
   const lintingResults = any.simpleObject();
   const ciServiceResults = any.simpleObject();
   const commitConventionResults = any.simpleObject();
+  const applicationTypes = any.simpleObject();
   const transpileLint = any.boolean();
   const contributors = [
     hostResults,
@@ -163,7 +164,8 @@ suite('javascript project scaffolder', () => {
         projectName,
         license,
         vcs: vcsDetails,
-        description
+        description,
+        applicationTypes
       });
   });
 
@@ -220,7 +222,7 @@ suite('javascript project scaffolder', () => {
           prompts.prompt
             .withArgs(overrides, ciServices, hosts, visibility, vcsDetails)
             .resolves({...commonPromptAnswers, [questionNames.PROJECT_TYPE]: applicationProjectType});
-          applicationTypeScaffolder.default.withArgs({projectRoot}).resolves(applicationTypeResults);
+          applicationTypeScaffolder.default.withArgs({projectRoot, applicationTypes}).resolves(applicationTypeResults);
           packageScaffolder.default.resolves(any.simpleObject());
           ci.default
             .withArgs(
