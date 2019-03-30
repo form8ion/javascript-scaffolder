@@ -13,7 +13,7 @@ import * as babel from '../../src/config/babel';
 import * as linting from '../../src/linting/scaffolder';
 import * as npmConfig from '../../src/config/npm';
 import * as documentation from '../../src/documentation';
-import * as nodeVersionHandler from '../../src/node-version';
+import * as nodeVersionScaffolder from '../../src/node-version/scaffolder';
 import * as badgeDetailsBuilder from '../../src/badges';
 import * as vcsIgnoresBuilder from '../../src/vcs-ignore';
 import * as commitConvention from '../../src/commit-convention/scaffolder';
@@ -116,8 +116,7 @@ suite('javascript project scaffolder', () => {
     sandbox.stub(linting, 'default');
     sandbox.stub(npmConfig, 'default');
     sandbox.stub(documentation, 'default');
-    sandbox.stub(nodeVersionHandler, 'determineLatestVersionOf');
-    sandbox.stub(nodeVersionHandler, 'install');
+    sandbox.stub(nodeVersionScaffolder, 'default');
     sandbox.stub(badgeDetailsBuilder, 'default');
     sandbox.stub(vcsIgnoresBuilder, 'default');
     sandbox.stub(commitConvention, 'default');
@@ -151,7 +150,7 @@ suite('javascript project scaffolder', () => {
     babel.default.withArgs({projectRoot, preset: babelPreset, transpileLint}).resolves(babelResults);
     npmConfig.default.resolves();
     commitConvention.default.withArgs({projectRoot, configs}).resolves(commitConventionResults);
-    nodeVersionHandler.determineLatestVersionOf.withArgs(versionCategory).returns(version);
+    nodeVersionScaffolder.default.withArgs({projectRoot, nodeVersionCategory: versionCategory}).resolves(version);
     optionsValidator.validate
       .withArgs(options)
       .returns({
@@ -176,7 +175,6 @@ suite('javascript project scaffolder', () => {
 
       assert.calledWith(babel.default, {preset: babelPreset, projectRoot, transpileLint});
       assert.calledWith(npmConfig.default, {projectRoot, projectType});
-      assert.calledWith(nodeVersionHandler.install, versionCategory);
     });
 
     suite('build', () => {

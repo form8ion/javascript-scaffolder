@@ -1,10 +1,10 @@
 import sinon from 'sinon';
 import any from '@travi/any';
 import {assert} from 'chai';
-import * as exec from '../../third-party-wrappers/exec-as-promised';
-import {determineLatestVersionOf, install} from '../../src/node-version';
+import * as exec from '../../../third-party-wrappers/exec-as-promised';
+import {determineLatestVersionOf, install} from '../../../src/node-version/tasks';
 
-suite('node version', () => {
+suite('node-version tasks', () => {
   let sandbox;
   const version = `v${any.integer()}.${any.integer()}.${any.integer()}`;
 
@@ -33,7 +33,7 @@ suite('node version', () => {
   });
 
   test('that the node version gets installed', async () => {
-    await install(any.word());
+    await install();
 
     assert.calledWith(exec.default, '. ~/.nvm/nvm.sh && nvm install', {silent: false});
   });

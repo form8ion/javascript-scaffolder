@@ -1,4 +1,3 @@
-import {writeFile} from 'mz/fs';
 import chalk from 'chalk';
 import {questionNames as commonQuestionNames} from '@travi/language-scaffolder-prompts';
 import {validate} from './options-validator';
@@ -11,7 +10,7 @@ import scaffoldLinting from './linting';
 import scaffoldNpmConfig from './config/npm';
 import scaffoldCommitConvention from './commit-convention';
 import scaffoldDocumentation from './documentation';
-import {determineLatestVersionOf, install as installNodeVersion} from './node-version';
+import scaffoldeNodeVersion from './node-version';
 import {questionNames} from './prompts/question-names';
 import buildBadgesDetails from './badges';
 import buildVcsIgnoreLists from './vcs-ignore';
@@ -49,7 +48,10 @@ export async function scaffold(options) {
     [questionNames.TRANSPILE_LINT]: transpileLint
   } = await prompt(overrides, ciServices, hosts, visibility, vcs);
 
-  const nodeVersion = await determineLatestVersionOf(nodeVersionCategory);
+  const [nodeVersion] = await Promise.all([
+    scaffoldeNodeVersion({projectRoot, nodeVersionCategory}),
+    scaffoldNpmConfig({projectType, projectRoot})
+  ]);
 
   console.error(chalk.grey('Writing project files'));      // eslint-disable-line no-console
 
@@ -65,10 +67,6 @@ export async function scaffold(options) {
     ...'Application' === projectType ? [scaffoldApplicationType(({projectRoot}))] : []
   ]);
   const [host, testing, linting, ciService] = contributors;
-
-  await Promise.all([writeFile(`${projectRoot}/.nvmrc`, nodeVersion), scaffoldNpmConfig({projectType, projectRoot})]);
-
-  await installNodeVersion(nodeVersionCategory);
 
   const {name: packageName, homepage: projectHomepage} = await scaffoldPackage({
     projectRoot,

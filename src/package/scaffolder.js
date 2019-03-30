@@ -1,4 +1,5 @@
 import {writeFile} from 'mz/fs';
+import chalk from 'chalk';
 import buildPackageDetails from './details';
 import installDependencies from './dependencies';
 
@@ -15,6 +16,8 @@ export default async function ({
   author,
   description
 }) {
+  console.log(chalk.blue('Configuring package.json'));    // eslint-disable-line no-console
+
   const packageData = await buildPackageDetails({
     projectName,
     visibility,
