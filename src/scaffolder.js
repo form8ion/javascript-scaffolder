@@ -17,6 +17,7 @@ import buildBadgesDetails from './badges';
 import buildVcsIgnoreLists from './vcs-ignore';
 import scaffoldPackage from './package';
 import scaffoldPackageType from './project-type/package';
+import scaffoldApplicationType from './project-type/application';
 
 export async function scaffold(options) {
   console.error(chalk.blue('Initializing JavaScript project'));     // eslint-disable-line no-console
@@ -60,7 +61,8 @@ export async function scaffold(options) {
     scaffoldCi(ciServices, ci, {projectRoot, vcs, visibility, packageType: projectType, nodeVersion, tests}),
     scaffoldBabel({preset: configs.babelPreset, projectRoot, transpileLint}),
     scaffoldCommitConvention({projectRoot, configs}),
-    ...'Package' === projectType ? [scaffoldPackageType(({projectRoot}))] : []
+    ...'Package' === projectType ? [scaffoldPackageType(({projectRoot}))] : [],
+    ...'Application' === projectType ? [scaffoldApplicationType(({projectRoot}))] : []
   ]);
   const [host, testing, linting, ciService] = contributors;
 
@@ -79,9 +81,7 @@ export async function scaffold(options) {
     vcs,
     tests,
     author: {name: authorName, email: authorEmail, url: authorUrl},
-    ci,
-    description,
-    configs
+    description
   });
 
   return {

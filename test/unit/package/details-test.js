@@ -344,34 +344,6 @@ suite('package details builder', () => {
       );
     });
 
-    suite('start', () => {
-      test('that the `start` script is not defined for a package', () => {
-        const packageDetails = buildPackageDetails({
-          projectType: 'Package',
-          tests: {},
-          vcs: {},
-          author: {},
-          configs: {},
-          contributors: []
-        });
-
-        assert.isUndefined(packageDetails.scripts.start);
-      });
-
-      test('that the `start` script runs the built version of the app with the `node` executable', () => {
-        const packageDetails = buildPackageDetails({
-          projectType: 'Application',
-          tests: {},
-          vcs: {},
-          author: {},
-          configs: {},
-          contributors: []
-        });
-
-        assert.equal(packageDetails.scripts.start, './lib/index.js');
-      });
-    });
-
     suite('verification', () => {
       test('that the `test` script is defined', () => {
         const packageDetails = buildPackageDetails({tests: {}, vcs: {}, author: {}, configs: {}, contributors: []});

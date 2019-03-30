@@ -32,9 +32,7 @@ suite('package scaffolder', () => {
     const tests = any.simpleObject();
     const vcs = any.simpleObject();
     const author = any.simpleObject();
-    const ci = any.word();
     const description = any.sentence();
-    const configs = any.simpleObject();
     const contributors = any.simpleObject();
     buildPackageDetails.default
       .withArgs({
@@ -46,9 +44,7 @@ suite('package scaffolder', () => {
         tests,
         vcs,
         author,
-        ci,
         description,
-        configs,
         contributors
       })
       .resolves(packageDetails);
@@ -65,9 +61,7 @@ suite('package scaffolder', () => {
         tests,
         vcs,
         author,
-        ci,
-        description,
-        configs
+        description
       }),
       {name, homepage}
     );

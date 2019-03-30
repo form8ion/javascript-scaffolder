@@ -1,9 +1,7 @@
-function defineScripts(packageType, configs, ci, tests, contributors) {
+function defineScripts(tests, contributors) {
   return {
     test: `npm-run-all --print-label --parallel lint:*${(tests.unit || tests.integration) ? ' --parallel test:*' : ''}`,
-    ...contributors.map(contributor => contributor.scripts).reduce((acc, scripts) => ({...acc, ...scripts}), {}),
-
-    ...('Application' === packageType) && {start: './lib/index.js'}
+    ...contributors.map(contributor => contributor.scripts).reduce((acc, scripts) => ({...acc, ...scripts}), {})
   };
 }
 
@@ -37,9 +35,7 @@ export default function ({
   tests,
   vcs,
   author,
-  ci,
   description,
-  configs,
   contributors
 }) {
   const packageName = `${scope ? `@${scope}/` : ''}${projectName}`;
@@ -52,6 +48,6 @@ export default function ({
     ...('Application' === projectType) && {private: true},
     ...defineVcsHostDetails(vcs, projectType, packageName),
     author: `${author.name}${author.email ? ` <${author.email}>` : ''}${author.url ? ` (${author.url})` : ''}`,
-    scripts: defineScripts(projectType, configs, ci, tests, contributors)
+    scripts: defineScripts(tests, contributors)
   };
 }

@@ -13,9 +13,7 @@ export default async function ({
   tests,
   vcs,
   author,
-  ci,
-  description,
-  configs
+  description
 }) {
   const packageData = await buildPackageDetails({
     projectName,
@@ -26,9 +24,7 @@ export default async function ({
     tests,
     vcs,
     author,
-    ci,
     description,
-    configs,
     contributors
   });
 

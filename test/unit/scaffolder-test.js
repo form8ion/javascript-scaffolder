@@ -1,4 +1,3 @@
-import path from 'path';
 import fs from 'mz/fs';
 import {questionNames as commonQuestionNames} from '@travi/language-scaffolder-prompts';
 import {assert} from 'chai';
@@ -20,6 +19,7 @@ import * as vcsIgnoresBuilder from '../../src/vcs-ignore';
 import * as commitConvention from '../../src/commit-convention/scaffolder';
 import * as packageScaffolder from '../../src/package/scaffolder';
 import * as packageTypeScaffolder from '../../src/project-type/package';
+import * as applicationTypeScaffolder from '../../src/project-type/application';
 import {scaffold} from '../../src/scaffolder';
 import {questionNames} from '../../src/prompts/question-names';
 
@@ -57,6 +57,7 @@ suite('javascript project scaffolder', () => {
   const versionCategory = any.word();
   const testingResults = any.simpleObject();
   const packageTypeResults = any.simpleObject();
+  const applicationTypeResults = any.simpleObject();
   const lintingResults = any.simpleObject();
   const ciServiceResults = any.simpleObject();
   const commitConventionResults = any.simpleObject();
@@ -80,9 +81,7 @@ suite('javascript project scaffolder', () => {
     tests,
     vcs: vcsDetails,
     author: {name: authorName, email: authorEmail, url: authorUrl},
-    ci: chosenCiService,
-    description,
-    configs
+    description
   };
   const commonPromptAnswers = {
     [questionNames.NODE_VERSION_CATEGORY]: any.word(),
@@ -124,13 +123,13 @@ suite('javascript project scaffolder', () => {
     sandbox.stub(commitConvention, 'default');
     sandbox.stub(packageScaffolder, 'default');
     sandbox.stub(packageTypeScaffolder, 'default');
+    sandbox.stub(applicationTypeScaffolder, 'default');
 
     fs.writeFile.resolves();
     fs.copyFile.resolves();
     packageScaffolder.default
       .withArgs(packageScaffoldingInputs)
       .resolves({...any.simpleObject(), name: packageName, homepage});
-    packageTypeScaffolder.default.withArgs({projectRoot}).resolves(packageTypeResults);
     prompts.prompt.withArgs(overrides, ciServices, hosts, visibility, vcsDetails).resolves(commonPromptAnswers);
     ci.default
       .withArgs(
@@ -181,44 +180,14 @@ suite('javascript project scaffolder', () => {
     });
 
     suite('build', () => {
-      suite('application', () => {
-        test('that rollup is not configured', async () => {
-          const applicationProjectType = 'Application';
-          prompts.prompt
-            .withArgs(overrides, ciServices, hosts, visibility, vcsDetails)
-            .resolves({...commonPromptAnswers, [questionNames.PROJECT_TYPE]: applicationProjectType});
-          packageScaffolder.default
-            .withArgs({...packageScaffoldingInputs, projectType: applicationProjectType})
-            .resolves(any.simpleObject());
-          ci.default
-            .withArgs(
-              ciServices,
-              chosenCiService,
-              {
-                projectRoot,
-                vcs: vcsDetails,
-                visibility,
-                packageType: applicationProjectType,
-                nodeVersion: version,
-                tests
-              }
-            )
-            .resolves(ciServiceResults);
-
-          await scaffold(options);
-
-          assert.neverCalledWith(fs.copyFile, path.resolve(__dirname, '../../', 'templates', 'rollup.config.js'));
-        });
-      });
-
       suite('package', () => {
-        test('that the package gets additional details scaffolded', async () => {
+        test('that a package type project gets additional details scaffolded', async () => {
           const packageProjectType = 'Package';
           prompts.prompt
             .withArgs(overrides, ciServices, hosts, visibility, vcsDetails)
             .resolves({...commonPromptAnswers, [questionNames.PROJECT_TYPE]: packageProjectType});
-          packageScaffolder.default
-            .resolves(any.simpleObject());
+          packageTypeScaffolder.default.withArgs({projectRoot}).resolves(packageTypeResults);
+          packageScaffolder.default.resolves(any.simpleObject());
           ci.default
             .withArgs(
               ciServices,
@@ -242,6 +211,42 @@ suite('javascript project scaffolder', () => {
               ...packageScaffoldingInputs,
               projectType: packageProjectType,
               contributors: [...contributors, packageTypeResults]
+            }
+          );
+        });
+      });
+
+      suite('application', () => {
+        test('that an application type project gets additional details scaffolded', async () => {
+          const applicationProjectType = 'Application';
+          prompts.prompt
+            .withArgs(overrides, ciServices, hosts, visibility, vcsDetails)
+            .resolves({...commonPromptAnswers, [questionNames.PROJECT_TYPE]: applicationProjectType});
+          applicationTypeScaffolder.default.withArgs({projectRoot}).resolves(applicationTypeResults);
+          packageScaffolder.default.resolves(any.simpleObject());
+          ci.default
+            .withArgs(
+              ciServices,
+              chosenCiService,
+              {
+                projectRoot,
+                vcs: vcsDetails,
+                visibility,
+                packageType: applicationProjectType,
+                nodeVersion: version,
+                tests
+              }
+            )
+            .resolves(ciServiceResults);
+
+          await scaffold(options);
+
+          assert.calledWith(
+            packageScaffolder.default,
+            {
+              ...packageScaffoldingInputs,
+              projectType: applicationProjectType,
+              contributors: [...contributors, applicationTypeResults]
             }
           );
         });
