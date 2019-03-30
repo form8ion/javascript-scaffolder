@@ -443,7 +443,41 @@ suite('options validator', () => {
     });
   });
 
-  test('that `configs`, `overrides`, `hosts`, and `ciServices` default to empty objects', () => {
+  suite('application types', () => {
+    const key = any.word();
+
+    test('that a provided application-type must provide a scaffold function', () => assert.throws(
+      () => validate({
+        projectRoot: any.string(),
+        projectName: any.string(),
+        visibility: any.fromList(['Public', 'Private']),
+        license: any.string(),
+        applicationTypes: {[key]: any.word()}
+      }),
+      `child "applicationTypes" fails because [child "${key}" fails because ["${key}" must be a Function]]`
+    ));
+
+    test('that a provided application-type scaffolder must accept a single argument', () => assert.throws(
+      () => validate({
+        projectRoot: any.string(),
+        projectName: any.string(),
+        visibility: any.fromList(['Public', 'Private']),
+        license: any.string(),
+        applicationTypes: {[key]: () => undefined}
+      }),
+      `child "applicationTypes" fails because [child "${key}" fails because ["${key}" must have an arity of 1]]`
+    ));
+
+    test('that a provided application-type scaffolder is valid if an options object is provided', () => validate({
+      projectRoot: any.string(),
+      projectName: any.string(),
+      visibility: any.fromList(['Public', 'Private']),
+      license: any.string(),
+      applicationTypes: {[key]: options => options}
+    }));
+  });
+
+  test('that `configs`, `overrides`, `hosts`, `ciServices`, and `applicationTypes` default to empty objects', () => {
     const options = {
       projectRoot: any.string(),
       projectName: any.string(),
@@ -455,6 +489,9 @@ suite('options validator', () => {
 
     const validated = validate(options);
 
-    assert.deepEqual(validated, {...options, configs: {}, overrides: {}, ciServices: {}, hosts: {}});
+    assert.deepEqual(
+      validated,
+      {...options, configs: {}, overrides: {}, ciServices: {}, hosts: {}, applicationTypes: {}}
+    );
   });
 });

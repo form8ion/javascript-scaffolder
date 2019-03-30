@@ -44,7 +44,8 @@ export function validate(options) {
     hosts: joi.object().pattern(/^/, joi.object({
       scaffolder: joi.func().arity(1).required(),
       projectTypes: joi.array().items(joi.string().only(['static', 'node'])).default([])
-    })).default({})
+    })).default({}),
+    applicationTypes: joi.object().pattern(/^/, joi.func().arity(1)).default({})
   }).required());
 
   hoek.assert(!validated.error, validated.error);
