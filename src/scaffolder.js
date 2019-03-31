@@ -58,7 +58,6 @@ export async function scaffold(options) {
 
   const tests = {unit: unitTested, integration: integrationTested};
   const contributors = await Promise.all([
-    scaffoldHost(hosts, chosenHost),
     scaffoldTesting({projectRoot, tests, visibility}),
     scaffoldLinting(({configs, projectRoot, tests, vcs, transpileLint})),
     scaffoldCi(ciServices, ci, {projectRoot, vcs, visibility, packageType: projectType, nodeVersion, tests}),
@@ -67,7 +66,13 @@ export async function scaffold(options) {
     ...'Package' === projectType ? [scaffoldPackageType(({projectRoot}))] : [],
     ...'Application' === projectType ? [scaffoldApplicationType(({projectRoot, applicationTypes}))] : []
   ]);
-  const [host, testing, linting, ciService] = contributors;
+  const [testing, linting, ciService, , , applicationOrPackage] = contributors;
+  const host = await scaffoldHost(
+    hosts,
+    chosenHost,
+    {...applicationOrPackage && {buildDirectory: applicationOrPackage.buildDirectory}}
+  );
+  contributors.push(host);
 
   const {name: packageName, homepage: projectHomepage} = await scaffoldPackage({
     projectRoot,

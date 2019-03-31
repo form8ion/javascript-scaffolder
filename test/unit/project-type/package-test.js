@@ -27,13 +27,15 @@ suite('package project-type', () => {
       {
         devDependencies: ['rimraf', 'rollup', 'rollup-plugin-auto-external'],
         scripts: {
-          clean: 'rimraf lib/',
-          build: 'run-s clean build:*',
-          'build:js': 'rollup -c',
+          clean: 'rimraf ./lib',
+          prebuild: 'run-s clean',
+          build: 'npm-run-all --print-label --parallel build:*',
+          'build:js': 'rollup --config',
           watch: 'run-s \'build:js -- --watch\'',
           prepack: 'run-s build'
         },
-        vcsIgnore: {files: [], directories: []}
+        vcsIgnore: {files: [], directories: []},
+        buildDirectory: './lib'
       }
     );
     assert.calledWith(fs.copyFile, pathToTemplate, `${projectRoot}/rollup.config.js`);

@@ -2,6 +2,8 @@ import {copyFile} from 'mz/fs';
 import chalk from 'chalk';
 import determinePathToTemplateFile from '../template-path';
 
+const defaultBuildDirectory = './lib';
+
 export default async function ({projectRoot}) {
   console.log(chalk.blue('Scaffolding Package Details'));    // eslint-disable-line no-console
 
@@ -10,12 +12,14 @@ export default async function ({projectRoot}) {
   return {
     devDependencies: ['rimraf', 'rollup', 'rollup-plugin-auto-external'],
     scripts: {
-      clean: 'rimraf lib/',
-      build: 'run-s clean build:*',
-      'build:js': 'rollup -c',
+      clean: `rimraf ${defaultBuildDirectory}`,
+      prebuild: 'run-s clean',
+      build: 'npm-run-all --print-label --parallel build:*',
+      'build:js': 'rollup --config',
       watch: 'run-s \'build:js -- --watch\'',
       prepack: 'run-s build'
     },
-    vcsIgnore: {files: [], directories: []}
+    vcsIgnore: {files: [], directories: []},
+    buildDirectory: defaultBuildDirectory
   };
 }

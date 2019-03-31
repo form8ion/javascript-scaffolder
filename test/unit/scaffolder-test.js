@@ -56,21 +56,22 @@ suite('javascript project scaffolder', () => {
   const configs = {babelPreset, ...any.simpleObject()};
   const versionCategory = any.word();
   const testingResults = any.simpleObject();
-  const packageTypeResults = any.simpleObject();
-  const applicationTypeResults = any.simpleObject();
+  const buildDirectory = any.string();
+  const packageTypeResults = {...any.simpleObject(), buildDirectory};
+  const applicationTypeResults = {...any.simpleObject(), buildDirectory};
   const lintingResults = any.simpleObject();
   const ciServiceResults = any.simpleObject();
   const commitConventionResults = any.simpleObject();
   const applicationTypes = any.simpleObject();
   const transpileLint = any.boolean();
-  const contributors = [
-    hostResults,
+  const contributorsWithoutHost = [
     testingResults,
     lintingResults,
     ciServiceResults,
     babelResults,
     commitConventionResults
   ];
+  const contributors = [...contributorsWithoutHost, hostResults];
   const packageScaffoldingInputs = {
     projectRoot,
     projectType,
@@ -145,7 +146,6 @@ suite('javascript project scaffolder', () => {
         }
       )
       .resolves(ciServiceResults);
-    host.default.withArgs(hosts, chosenHost).resolves(hostResults);
     testing.default.withArgs({projectRoot, tests, visibility}).resolves(testingResults);
     linting.default.withArgs({configs, projectRoot, tests, vcs: vcsDetails, transpileLint}).resolves(lintingResults);
     babel.default.withArgs({projectRoot, preset: babelPreset, transpileLint}).resolves(babelResults);
@@ -173,6 +173,8 @@ suite('javascript project scaffolder', () => {
 
   suite('config files', () => {
     test('that config files are created', async () => {
+      host.default.withArgs(hosts, chosenHost, {}).resolves(hostResults);
+
       await scaffold(options);
 
       assert.calledWith(babel.default, {preset: babelPreset, projectRoot, transpileLint});
@@ -188,6 +190,7 @@ suite('javascript project scaffolder', () => {
             .resolves({...commonPromptAnswers, [questionNames.PROJECT_TYPE]: packageProjectType});
           packageTypeScaffolder.default.withArgs({projectRoot}).resolves(packageTypeResults);
           packageScaffolder.default.resolves(any.simpleObject());
+          host.default.withArgs(hosts, chosenHost, {buildDirectory}).resolves(hostResults);
           ci.default
             .withArgs(
               ciServices,
@@ -210,7 +213,7 @@ suite('javascript project scaffolder', () => {
             {
               ...packageScaffoldingInputs,
               projectType: packageProjectType,
-              contributors: [...contributors, packageTypeResults]
+              contributors: [...contributorsWithoutHost, packageTypeResults, hostResults]
             }
           );
         });
@@ -224,6 +227,7 @@ suite('javascript project scaffolder', () => {
             .resolves({...commonPromptAnswers, [questionNames.PROJECT_TYPE]: applicationProjectType});
           applicationTypeScaffolder.default.withArgs({projectRoot, applicationTypes}).resolves(applicationTypeResults);
           packageScaffolder.default.resolves(any.simpleObject());
+          host.default.withArgs(hosts, chosenHost, {buildDirectory}).resolves(hostResults);
           ci.default
             .withArgs(
               ciServices,
@@ -246,7 +250,7 @@ suite('javascript project scaffolder', () => {
             {
               ...packageScaffoldingInputs,
               projectType: applicationProjectType,
-              contributors: [...contributors, applicationTypeResults]
+              contributors: [...contributorsWithoutHost, applicationTypeResults, hostResults]
             }
           );
         });
@@ -255,6 +259,10 @@ suite('javascript project scaffolder', () => {
   });
 
   suite('data passed downstream', () => {
+    setup(() => {
+      host.default.withArgs(hosts, chosenHost, {}).resolves(hostResults);
+    });
+
     suite('badges', () => {
       test('that badges are provided', async () => {
         const builtBadges = any.simpleObject();

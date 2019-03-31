@@ -2,6 +2,8 @@ import chalk from 'chalk';
 import chooseApplicationType from './prompt';
 import scaffoldChosenApplicationType from './choice-scaffolder';
 
+const defaultBuildDirectory = './lib';
+
 export default async function ({applicationTypes, projectRoot}) {
   console.log(chalk.blue('Scaffolding Application Details'));    // eslint-disable-line no-console
 
@@ -9,9 +11,15 @@ export default async function ({applicationTypes, projectRoot}) {
   const results = await scaffoldChosenApplicationType(applicationTypes, chosenType, {projectRoot});
 
   return {
-    scripts: {clean: 'rimraf lib/', start: './lib/index.js', prebuild: 'run-s clean', ...results.scripts},
+    scripts: {
+      clean: `rimraf ${defaultBuildDirectory}`,
+      start: `${defaultBuildDirectory}/index.js`,
+      prebuild: 'run-s clean',
+      ...results.scripts
+    },
     dependencies: results.dependencies,
     devDependencies: ['rimraf', ...results.devDependencies],
-    vcsIgnore: {files: results.vcsIgnore.files, directories: results.vcsIgnore.directories}
+    vcsIgnore: {files: results.vcsIgnore.files, directories: results.vcsIgnore.directories},
+    buildDirectory: defaultBuildDirectory
   };
 }

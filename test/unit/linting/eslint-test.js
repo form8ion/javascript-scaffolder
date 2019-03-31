@@ -57,8 +57,7 @@ suite('eslint config scaffolder', () => {
       'that the test config is added if the config prefix is provided and the project will be unit tested',
       async () => {
         const pathToCreatedDirectory = any.string();
-        mkdir.default.withArgs(`${projectRoot}/test/unit`)
-          .resolves(pathToCreatedDirectory);
+        mkdir.default.withArgs(`${projectRoot}/test/unit`).resolves(pathToCreatedDirectory);
 
         await scaffoldEsLint({
           projectRoot,
