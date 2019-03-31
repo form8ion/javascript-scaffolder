@@ -9,9 +9,9 @@ export default async function ({applicationTypes, projectRoot}) {
   const results = await scaffoldChosenApplicationType(applicationTypes, chosenType, {projectRoot});
 
   return {
-    scripts: {start: './lib/index.js', ...results.scripts},
+    scripts: {clean: 'rimraf lib/', start: './lib/index.js', prebuild: 'run-s clean', ...results.scripts},
     dependencies: results.dependencies,
-    devDependencies: results.devDependencies,
+    devDependencies: ['rimraf', ...results.devDependencies],
     vcsIgnore: {files: results.vcsIgnore.files, directories: results.vcsIgnore.directories}
   };
 }

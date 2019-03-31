@@ -41,9 +41,9 @@ suite('application project-type', () => {
     assert.deepEqual(
       await scaffoldApplication({projectRoot, applicationTypes}),
       {
-        scripts: {start: './lib/index.js', ...scaffoldedTypeScripts},
+        scripts: {clean: 'rimraf lib/', start: './lib/index.js', prebuild: 'run-s clean', ...scaffoldedTypeScripts},
         dependencies: scaffoldedTypeDependencies,
-        devDependencies: scaffoldedTypeDevDependencies,
+        devDependencies: ['rimraf', ...scaffoldedTypeDevDependencies],
         vcsIgnore: {files: scaffoldedFilesToIgnore, directories: scaffoldedDirectoriesToIgnore}
       }
     );
