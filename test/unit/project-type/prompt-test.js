@@ -16,17 +16,18 @@ suite('project-type prompts', () => {
   teardown(() => sandbox.restore());
 
   test('that the choice of application-type is presented', async () => {
-    const answers = any.simpleObject();
+    const chosenType = any.word();
+    const answers = {...any.simpleObject(), type: chosenType};
     const types = any.simpleObject();
     inquirer.prompt
       .withArgs([{
-        name: 'types',
+        name: 'type',
         type: 'list',
         message: 'What type of application is this?',
         choices: [...Object.keys(types), new inquirer.Separator(), 'Other']
       }])
       .resolves(answers);
 
-    assert.equal(await prompt({types}), answers);
+    assert.equal(await prompt({types}), chosenType);
   });
 });

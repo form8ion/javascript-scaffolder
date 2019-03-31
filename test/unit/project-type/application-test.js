@@ -2,6 +2,7 @@ import {assert} from 'chai';
 import any from '@travi/any';
 import sinon from 'sinon';
 import * as applicationChooser from '../../../src/project-type/prompt';
+import * as choiceScaffolder from '../../../src/project-type/choice-scaffolder';
 import scaffoldApplication from '../../../src/project-type/application';
 
 suite('application project-type', () => {
@@ -12,22 +13,39 @@ suite('application project-type', () => {
     sandbox = sinon.createSandbox();
 
     sandbox.stub(applicationChooser, 'default');
+    sandbox.stub(choiceScaffolder, 'default');
   });
 
   teardown(() => sandbox.restore());
 
   test('that details specific to an application project-type are scaffolded', async () => {
     const applicationTypes = any.simpleObject();
+    const chosenApplicationType = any.word();
+    const scaffoldedTypeDependencies = any.listOf(any.string);
+    const scaffoldedTypeDevDependencies = any.listOf(any.string);
+    const scaffoldedTypeScripts = any.simpleObject();
+    const scaffoldedFilesToIgnore = any.listOf(any.string);
+    const scaffoldedDirectoriesToIgnore = any.listOf(any.string);
+    const typeScaffoldingResults = {
+      ...any.simpleObject(),
+      dependencies: scaffoldedTypeDependencies,
+      devDependencies: scaffoldedTypeDevDependencies,
+      scripts: scaffoldedTypeScripts,
+      vcsIgnore: {files: scaffoldedFilesToIgnore, directories: scaffoldedDirectoriesToIgnore}
+    };
+    applicationChooser.default.withArgs({types: applicationTypes}).resolves(chosenApplicationType);
+    choiceScaffolder.default
+      .withArgs(applicationTypes, chosenApplicationType, {projectRoot})
+      .resolves(typeScaffoldingResults);
 
     assert.deepEqual(
       await scaffoldApplication({projectRoot, applicationTypes}),
       {
-        scripts: {start: './lib/index.js'},
-        dependencies: [],
-        devDependencies: [],
-        vcsIgnore: {files: [], directories: []}
+        scripts: {start: './lib/index.js', ...scaffoldedTypeScripts},
+        dependencies: scaffoldedTypeDependencies,
+        devDependencies: scaffoldedTypeDevDependencies,
+        vcsIgnore: {files: scaffoldedFilesToIgnore, directories: scaffoldedDirectoriesToIgnore}
       }
     );
-    assert.calledWith(applicationChooser.default, {types: applicationTypes});
   });
 });
