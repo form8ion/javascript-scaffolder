@@ -49,30 +49,33 @@ export async function scaffold(options) {
     [questionNames.TRANSPILE_LINT]: transpileLint
   } = await prompt(overrides, ciServices, hosts, visibility, vcs);
 
+  console.error(chalk.grey('Writing project files'));      // eslint-disable-line no-console
+
+  const [applicationOrPackage] = await Promise.all([
+    ...'Package' === projectType ? [scaffoldPackageType(({projectRoot}))] : [],
+    ...'Application' === projectType ? [scaffoldApplicationType(({projectRoot, applicationTypes}))] : []
+  ]);
   const [nodeVersion] = await Promise.all([
     scaffoldeNodeVersion({projectRoot, nodeVersionCategory}),
     scaffoldNpmConfig({projectType, projectRoot})
   ]);
-
-  console.error(chalk.grey('Writing project files'));      // eslint-disable-line no-console
-
   const tests = {unit: unitTested, integration: integrationTested};
-  const contributors = await Promise.all([
-    scaffoldTesting({projectRoot, tests, visibility}),
-    scaffoldLinting(({configs, projectRoot, tests, vcs, transpileLint})),
-    scaffoldCi(ciServices, ci, {projectRoot, vcs, visibility, packageType: projectType, nodeVersion, tests}),
-    scaffoldBabel({preset: configs.babelPreset, projectRoot, transpileLint}),
-    scaffoldCommitConvention({projectRoot, configs}),
-    ...'Package' === projectType ? [scaffoldPackageType(({projectRoot}))] : [],
-    ...'Application' === projectType ? [scaffoldApplicationType(({projectRoot, applicationTypes}))] : []
-  ]);
-  const [testing, linting, ciService, , , applicationOrPackage] = contributors;
-  const host = await scaffoldHost(
-    hosts,
-    chosenHost,
-    {...applicationOrPackage && {buildDirectory: applicationOrPackage.buildDirectory}}
-  );
-  contributors.push(host);
+  const contributors = [
+    ...(await Promise.all([
+      scaffoldHost(
+        hosts,
+        chosenHost,
+        {...applicationOrPackage && {buildDirectory: applicationOrPackage.buildDirectory}}
+      ),
+      scaffoldTesting({projectRoot, tests, visibility}),
+      scaffoldLinting(({configs, projectRoot, tests, vcs, transpileLint})),
+      scaffoldCi(ciServices, ci, {projectRoot, vcs, visibility, packageType: projectType, nodeVersion, tests}),
+      scaffoldBabel({preset: configs.babelPreset, projectRoot, transpileLint}),
+      scaffoldCommitConvention({projectRoot, configs})
+    ])),
+    ...applicationOrPackage ? [applicationOrPackage] : []
+  ];
+  const [host, testing, linting, ciService] = contributors;
 
   const {name: packageName, homepage: projectHomepage} = await scaffoldPackage({
     projectRoot,

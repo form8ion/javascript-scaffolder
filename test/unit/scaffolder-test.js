@@ -64,14 +64,14 @@ suite('javascript project scaffolder', () => {
   const commitConventionResults = any.simpleObject();
   const applicationTypes = any.simpleObject();
   const transpileLint = any.boolean();
-  const contributorsWithoutHost = [
+  const contributors = [
+    hostResults,
     testingResults,
     lintingResults,
     ciServiceResults,
     babelResults,
     commitConventionResults
   ];
-  const contributors = [...contributorsWithoutHost, hostResults];
   const packageScaffoldingInputs = {
     projectRoot,
     projectType,
@@ -213,7 +213,7 @@ suite('javascript project scaffolder', () => {
             {
               ...packageScaffoldingInputs,
               projectType: packageProjectType,
-              contributors: [...contributorsWithoutHost, packageTypeResults, hostResults]
+              contributors: [...contributors, packageTypeResults]
             }
           );
         });
@@ -250,7 +250,7 @@ suite('javascript project scaffolder', () => {
             {
               ...packageScaffoldingInputs,
               projectType: applicationProjectType,
-              contributors: [...contributorsWithoutHost, applicationTypeResults, hostResults]
+              contributors: [...contributors, applicationTypeResults]
             }
           );
         });
@@ -259,9 +259,7 @@ suite('javascript project scaffolder', () => {
   });
 
   suite('data passed downstream', () => {
-    setup(() => {
-      host.default.withArgs(hosts, chosenHost, {}).resolves(hostResults);
-    });
+    setup(() => host.default.withArgs(hosts, chosenHost, {}).resolves(hostResults));
 
     suite('badges', () => {
       test('that badges are provided', async () => {
