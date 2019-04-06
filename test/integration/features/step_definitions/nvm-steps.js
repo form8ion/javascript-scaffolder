@@ -1,6 +1,10 @@
-import {Given} from 'cucumber';
+import {Before, Given} from 'cucumber';
 import any from '@travi/any';
 import * as exec from '../../../../third-party-wrappers/exec-as-promised';
+
+Before(function () {
+  this.sinonSandbox.stub(exec, 'default');
+});
 
 function versionSegment() {
   return any.integer({max: 20});

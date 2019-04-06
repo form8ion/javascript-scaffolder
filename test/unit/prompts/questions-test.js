@@ -3,7 +3,7 @@ import * as commonPrompts from '@travi/language-scaffolder-prompts';
 import sinon from 'sinon';
 import {assert} from 'chai';
 import any from '@travi/any';
-import * as exec from '../../../third-party-wrappers/exec-as-promised';
+import * as execa from '../../../third-party-wrappers/execa';
 import * as npmConf from '../../../third-party-wrappers/npm-conf';
 import * as validators from '../../../src/prompts/validators';
 import * as conditionals from '../../../src/prompts/conditionals';
@@ -23,7 +23,7 @@ suite('prompts', () => {
 
     sandbox.stub(inquirer, 'prompt');
     sandbox.stub(npmConf, 'default');
-    sandbox.stub(exec, 'default');
+    sandbox.stub(execa, 'default');
     sandbox.stub(validators, 'scope');
     sandbox.stub(conditionals, 'scopePromptShouldBePresentedFactory');
     sandbox.stub(visibilityFilterForChoices, 'default');
@@ -48,7 +48,7 @@ suite('prompts', () => {
     const scopePromptShouldBePresented = () => undefined;
     const answers = any.simpleObject();
     npmConf.default.returns({get});
-    exec.default.withArgs('npm whoami').resolves(`${npmUser}\n`);
+    execa.default.withArgs('npm whoami').resolves(npmUser);
     get.withArgs('init.author.name').returns(authorName);
     get.withArgs('init.author.email').returns(authorEmail);
     get.withArgs('init.author.url').returns(authorUrl);
@@ -155,7 +155,7 @@ suite('prompts', () => {
   });
 
   test('that private packages are not asked about whether they should be scoped', async () => {
-    exec.default.withArgs('npm whoami').resolves(any.word());
+    execa.default.withArgs('npm whoami').resolves(any.word());
     npmConf.default.returns({get: () => undefined});
     commonPrompts.questions.withArgs({vcs, ciServices, visibility: 'Private'}).returns(commonQuestions);
 

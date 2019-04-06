@@ -1,6 +1,6 @@
 import {prompt as promptWithInquirer, Separator} from 'inquirer';
 import {questions as commonQuestions} from '@travi/language-scaffolder-prompts';
-import exec from '../../third-party-wrappers/exec-as-promised';
+import execa from '../../third-party-wrappers/execa';
 import {
   packageTypeIsApplication,
   scopePromptShouldBePresentedFactory,
@@ -61,7 +61,7 @@ export async function prompt({npmAccount, author}, ciServices, hosts, visibility
       message: 'What is the scope?',
       when: scopePromptShouldBePresentedFactory(visibility),
       validate: validateScope(visibility),
-      default: npmAccount || (await exec('npm whoami')).trim()
+      default: npmAccount || await execa('npm whoami')
     },
     ...authorQuestions(author || {
       name: npmConf.get('init.author.name'),

@@ -1,11 +1,11 @@
 import {Before, Given} from 'cucumber';
 import any from '@travi/any';
-import * as exec from '../../../../third-party-wrappers/exec-as-promised';
+import * as execa from '../../../../third-party-wrappers/execa';
 
 Before(function () {
-  this.sinonSandbox.stub(exec, 'default');
+  this.sinonSandbox.stub(execa, 'default');
 });
 
 Given(/^the npm cli is logged in$/, function () {
-  exec.default.withArgs('npm whoami').resolves(`${any.word()}\n`);
+  execa.default.withArgs('npm whoami').resolves(any.word());
 });
