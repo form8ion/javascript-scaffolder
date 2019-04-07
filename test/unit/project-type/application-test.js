@@ -20,6 +20,7 @@ suite('application project-type', () => {
 
   test('that details specific to an application project-type are scaffolded', async () => {
     const applicationTypes = any.simpleObject();
+    const configs = any.simpleObject();
     const chosenApplicationType = any.word();
     const scaffoldedTypeDependencies = any.listOf(any.string);
     const scaffoldedTypeDevDependencies = any.listOf(any.string);
@@ -35,11 +36,11 @@ suite('application project-type', () => {
     };
     applicationChooser.default.withArgs({types: applicationTypes}).resolves(chosenApplicationType);
     choiceScaffolder.default
-      .withArgs(applicationTypes, chosenApplicationType, {projectRoot})
+      .withArgs(applicationTypes, chosenApplicationType, {projectRoot, configs})
       .resolves(typeScaffoldingResults);
 
     assert.deepEqual(
-      await scaffoldApplication({projectRoot, applicationTypes}),
+      await scaffoldApplication({projectRoot, applicationTypes, configs}),
       {
         scripts: {clean: 'rimraf ./lib', start: './lib/index.js', prebuild: 'run-s clean', ...scaffoldedTypeScripts},
         dependencies: scaffoldedTypeDependencies,

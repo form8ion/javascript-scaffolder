@@ -225,7 +225,9 @@ suite('javascript project scaffolder', () => {
           prompts.prompt
             .withArgs(overrides, ciServices, hosts, visibility, vcsDetails)
             .resolves({...commonPromptAnswers, [questionNames.PROJECT_TYPE]: applicationProjectType});
-          applicationTypeScaffolder.default.withArgs({projectRoot, applicationTypes}).resolves(applicationTypeResults);
+          applicationTypeScaffolder.default
+            .withArgs({projectRoot, applicationTypes, configs})
+            .resolves(applicationTypeResults);
           packageScaffolder.default.resolves(any.simpleObject());
           host.default.withArgs(hosts, chosenHost, {buildDirectory}).resolves(hostResults);
           ci.default

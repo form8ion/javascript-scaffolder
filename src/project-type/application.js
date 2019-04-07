@@ -4,11 +4,11 @@ import scaffoldChosenApplicationType from './choice-scaffolder';
 
 const defaultBuildDirectory = './lib';
 
-export default async function ({applicationTypes, projectRoot}) {
+export default async function ({applicationTypes, projectRoot, configs}) {
   console.log(chalk.blue('Scaffolding Application Details'));    // eslint-disable-line no-console
 
   const chosenType = await chooseApplicationType({types: applicationTypes});
-  const results = await scaffoldChosenApplicationType(applicationTypes, chosenType, {projectRoot});
+  const results = await scaffoldChosenApplicationType(applicationTypes, chosenType, {projectRoot, configs});
 
   return {
     scripts: {
