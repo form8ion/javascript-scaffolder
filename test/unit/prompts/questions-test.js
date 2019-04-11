@@ -48,7 +48,7 @@ suite('prompts', () => {
     const scopePromptShouldBePresented = () => undefined;
     const answers = any.simpleObject();
     npmConf.default.returns({get});
-    execa.default.withArgs('npm whoami').resolves(npmUser);
+    execa.default.withArgs('npm', ['whoami']).resolves(npmUser);
     get.withArgs('init.author.name').returns(authorName);
     get.withArgs('init.author.email').returns(authorEmail);
     get.withArgs('init.author.url').returns(authorUrl);

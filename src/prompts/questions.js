@@ -61,7 +61,7 @@ export async function prompt({npmAccount, author}, ciServices, hosts, visibility
       message: 'What is the scope?',
       when: scopePromptShouldBePresentedFactory(visibility),
       validate: validateScope(visibility),
-      default: npmAccount || await execa('npm whoami')
+      default: npmAccount || await execa('npm', ['whoami'])
     },
     ...authorQuestions(author || {
       name: npmConf.get('init.author.name'),
