@@ -1,4 +1,4 @@
-import {copyFile} from 'mz/fs';
+import {copyFile, writeFile} from 'mz/fs';
 import mkdir from '../../third-party-wrappers/make-dir';
 import determinePathToTemplateFile from '../template-path';
 
@@ -7,7 +7,10 @@ export default async function ({projectRoot}) {
 
   await Promise.all([
     copyFile(determinePathToTemplateFile('canary-test.txt'), `${createdUnitTestDirectory}/canary-test.js`),
-    copyFile(determinePathToTemplateFile('mocha.opts'), `${createdUnitTestDirectory}/../mocha.opts`),
+    writeFile(
+      `${projectRoot}/.mocharc.json`,
+      JSON.stringify({ui: 'tdd', require: ['@babel/register', './test/mocha-setup.js'], recursive: true})
+    ),
     copyFile(determinePathToTemplateFile('mocha-setup.txt'), `${createdUnitTestDirectory}/../mocha-setup.js`)
   ]);
 

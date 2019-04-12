@@ -15,6 +15,7 @@ suite('mocha scaffolder', () => {
 
     sandbox.stub(mkdir, 'default');
     sandbox.stub(fs, 'copyFile');
+    sandbox.stub(fs, 'writeFile');
   });
 
   teardown(() => sandbox.restore());
@@ -36,9 +37,9 @@ suite('mocha scaffolder', () => {
       `${pathToCreatedDirectory}/canary-test.js`
     );
     assert.calledWith(
-      fs.copyFile,
-      path.resolve(__dirname, '../../../', 'templates', 'mocha.opts'),
-      `${pathToCreatedDirectory}/../mocha.opts`
+      fs.writeFile,
+      `${projectRoot}/.mocharc.json`,
+      JSON.stringify({ui: 'tdd', require: ['@babel/register', './test/mocha-setup.js'], recursive: true})
     );
     assert.calledWith(
       fs.copyFile,

@@ -21,7 +21,6 @@ Before(async function () {
     templates: {
       'rollup.config.js': await readFile(resolve(__dirname, '../../../../', 'templates/rollup.config.js')),
       'canary-test.txt': await readFile(resolve(__dirname, '../../../../', 'templates/canary-test.txt')),
-      'mocha.opts': await readFile(resolve(__dirname, '../../../../', 'templates/mocha.opts')),
       'mocha-setup.txt': await readFile(resolve(__dirname, '../../../../', 'templates/mocha-setup.txt')),
       'cucumber.txt': await readFile(resolve(__dirname, '../../../../', 'templates/cucumber.txt'))
     }
