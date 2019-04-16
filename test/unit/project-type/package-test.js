@@ -34,7 +34,7 @@ suite('package project-type', () => {
           watch: 'run-s \'build:js -- --watch\'',
           prepack: 'run-s build'
         },
-        vcsIgnore: {files: [], directories: []},
+        vcsIgnore: {files: [], directories: ['/lib/']},
         buildDirectory: './lib'
       }
     );

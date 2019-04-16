@@ -2,7 +2,7 @@ import * as joi from 'joi';
 import hoek from 'hoek';
 
 export function validate(options) {
-  const validated = joi.validate(options, joi.object({
+  const {error, value} = joi.validate(options, joi.object({
     projectRoot: joi.string().required(),
     projectName: joi.string().regex(/^@\w*\//, {invert: true}).required(),
     visibility: joi.string().valid(['Public', 'Private']).required(),
@@ -48,7 +48,7 @@ export function validate(options) {
     applicationTypes: joi.object().pattern(/^/, joi.func().arity(1)).default({})
   }).required());
 
-  hoek.assert(!validated.error, validated.error);
+  hoek.assert(!error, error);
 
-  return validated.value;
+  return value;
 }

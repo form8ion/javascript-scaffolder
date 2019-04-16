@@ -17,7 +17,6 @@ suite('vcs-ignore lists builder', () => {
         files: [...lintingFiles],
         directories: [
           '/node_modules/',
-          '/lib/',
           ...testingDirectories,
           ...hostDirectories
         ]
