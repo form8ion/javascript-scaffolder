@@ -40,4 +40,20 @@ suite('package project-type', () => {
     );
     assert.calledWith(fs.copyFile, pathToTemplate, `${projectRoot}/rollup.config.js`);
   });
+
+  test('that build details are not included when the project will not be transpiled', async () => {
+    const projectRoot = any.string();
+    const pathToTemplate = any.string();
+    templatePath.default.withArgs('rollup.config.js').returns(pathToTemplate);
+
+    assert.deepEqual(
+      await scaffoldPackage({projectRoot, transpileLint: false}),
+      {
+        devDependencies: [],
+        scripts: {},
+        vcsIgnore: {files: [], directories: []}
+      }
+    );
+    assert.neverCalledWith(fs.copyFile, pathToTemplate, `${projectRoot}/rollup.config.js`);
+  });
 });

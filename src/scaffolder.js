@@ -52,7 +52,7 @@ export async function scaffold(options) {
   console.error(chalk.grey('Writing project files'));      // eslint-disable-line no-console
 
   const [applicationOrPackage] = await Promise.all([
-    ...'Package' === projectType ? [scaffoldPackageType(({projectRoot}))] : [],
+    ...'Package' === projectType ? [scaffoldPackageType(({projectRoot, transpileLint}))] : [],
     ...'Application' === projectType ? [scaffoldApplicationType(({projectRoot, applicationTypes, configs}))] : []
   ]);
   const [nodeVersion] = await Promise.all([
