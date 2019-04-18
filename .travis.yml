@@ -1,12 +1,7 @@
+dist: xenial
 language: node_js
 notifications:
   email: false
-addons:
-  apt:
-    sources:
-      - ubuntu-toolchain-r-test
-    packages:
-    - libstdc++-4.9-dev
 branches:
   except:
   - "/^v\\d+\\.\\d+\\.\\d+$/"
