@@ -1,11 +1,11 @@
-import chalk from 'chalk';
+import {info} from '@travi/cli-messages';
 import chooseApplicationType from './prompt';
 import scaffoldChosenApplicationType from './choice-scaffolder';
 
 const defaultBuildDirectory = './lib';
 
 export default async function ({applicationTypes, projectRoot, configs}) {
-  console.log(chalk.blue('Scaffolding Application Details'));    // eslint-disable-line no-console
+  info('Scaffolding Application Details');
 
   const chosenType = await chooseApplicationType({types: applicationTypes});
   const results = await scaffoldChosenApplicationType(applicationTypes, chosenType, {projectRoot, configs});

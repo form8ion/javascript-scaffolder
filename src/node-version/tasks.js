@@ -1,8 +1,8 @@
-import chalk from 'chalk';
+import {info} from '@travi/cli-messages';
 import exec from '../../third-party-wrappers/exec-as-promised';
 
 export async function determineLatestVersionOf(nodeVersionCategory) {
-  console.log(chalk.grey('Determining version of node'));    // eslint-disable-line no-console
+  info('Determining version of node', {level: 'secondary'});
 
   const nvmLsOutput = await exec(`. ~/.nvm/nvm.sh && nvm ls-remote${('LTS' === nodeVersionCategory) ? ' --lts' : ''}`);
 
@@ -13,7 +13,7 @@ export async function determineLatestVersionOf(nodeVersionCategory) {
 }
 
 export function install() {
-  console.log(chalk.grey('Installing version of node using nvm'));  // eslint-disable-line no-console
+  info('Installing version of node using nvm', {level: 'secondary'});
 
   return exec('. ~/.nvm/nvm.sh && nvm install', {silent: false});
 }

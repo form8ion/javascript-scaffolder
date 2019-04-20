@@ -1,4 +1,4 @@
-import chalk from 'chalk';
+import {info} from '@travi/cli-messages';
 import {questionNames as commonQuestionNames} from '@travi/language-scaffolder-prompts';
 import {validate} from './options-validator';
 import {prompt} from './prompts/questions';
@@ -19,7 +19,7 @@ import scaffoldPackageType from './project-type/package';
 import scaffoldApplicationType from './project-type/application';
 
 export async function scaffold(options) {
-  console.error(chalk.blue('Initializing JavaScript project'));     // eslint-disable-line no-console
+  info('Initializing JavaScript project');
 
   const {
     projectRoot,
@@ -49,7 +49,7 @@ export async function scaffold(options) {
     [questionNames.TRANSPILE_LINT]: transpileLint
   } = await prompt(overrides, ciServices, hosts, visibility, vcs);
 
-  console.error(chalk.grey('Writing project files'));      // eslint-disable-line no-console
+  info('Writing project files', {level: 'secondary'});
 
   const [applicationOrPackage] = await Promise.all([
     ...'Package' === projectType ? [scaffoldPackageType(({projectRoot, transpileLint}))] : [],

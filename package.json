@@ -74,8 +74,8 @@
     "travis-lint": "^1.0.0"
   },
   "dependencies": {
+    "@travi/cli-messages": "1.0.0",
     "@travi/language-scaffolder-prompts": "1.1.0",
-    "chalk": "^2.4.1",
     "execa": "^1.0.0",
     "hoek": "^6.1.2",
     "inquirer": "6.3.1",

@@ -1,11 +1,11 @@
 import {copyFile} from 'mz/fs';
-import chalk from 'chalk';
+import {info} from '@travi/cli-messages';
 import determinePathToTemplateFile from '../template-path';
 
 const defaultBuildDirectory = './lib';
 
 export default async function ({projectRoot, transpileLint}) {
-  console.log(chalk.blue('Scaffolding Package Details'));    // eslint-disable-line no-console
+  info('Scaffolding Package Details');
 
   if (false !== transpileLint) {
     await copyFile(determinePathToTemplateFile('rollup.config.js'), `${projectRoot}/rollup.config.js`);
