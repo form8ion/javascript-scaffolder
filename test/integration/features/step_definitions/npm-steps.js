@@ -7,5 +7,5 @@ Before(function () {
 });
 
 Given(/^the npm cli is logged in$/, function () {
-  execa.default.withArgs('npm', ['whoami']).resolves(any.word());
+  execa.default.withArgs('npm', ['whoami']).resolves({stdout: any.word()});
 });

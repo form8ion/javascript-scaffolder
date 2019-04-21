@@ -48,7 +48,7 @@ suite('prompts', () => {
     const scopePromptShouldBePresented = () => undefined;
     const answers = any.simpleObject();
     npmConf.default.returns({get});
-    execa.default.withArgs('npm', ['whoami']).resolves(npmUser);
+    execa.default.withArgs('npm', ['whoami']).resolves({stdout: npmUser});
     get.withArgs('init.author.name').returns(authorName);
     get.withArgs('init.author.email').returns(authorEmail);
     get.withArgs('init.author.url').returns(authorUrl);
@@ -155,7 +155,7 @@ suite('prompts', () => {
   });
 
   test('that private packages are not asked about whether they should be scoped', async () => {
-    execa.default.withArgs('npm whoami').resolves(any.word());
+    execa.default.withArgs('npm', ['whoami']).resolves({stdout: any.word()});
     npmConf.default.returns({get: () => undefined});
     commonPrompts.questions.withArgs({vcs, ciServices, visibility: 'Private'}).returns(commonQuestions);
 
