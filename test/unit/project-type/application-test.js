@@ -8,6 +8,8 @@ import scaffoldApplication from '../../../src/project-type/application';
 suite('application project-type', () => {
   let sandbox;
   const projectRoot = any.string();
+  const applicationTypes = any.simpleObject();
+  const configs = any.simpleObject();
 
   setup(() => {
     sandbox = sinon.createSandbox();
@@ -19,8 +21,6 @@ suite('application project-type', () => {
   teardown(() => sandbox.restore());
 
   test('that details specific to an application project-type are scaffolded', async () => {
-    const applicationTypes = any.simpleObject();
-    const configs = any.simpleObject();
     const chosenApplicationType = any.word();
     const scaffoldedTypeDependencies = any.listOf(any.string);
     const scaffoldedTypeDevDependencies = any.listOf(any.string);
@@ -48,6 +48,13 @@ suite('application project-type', () => {
         vcsIgnore: {files: scaffoldedFilesToIgnore, directories: [...scaffoldedDirectoriesToIgnore, '/lib/']},
         buildDirectory: './lib'
       }
+    );
+  });
+
+  test('that build details are not included when the project will not be transpiled', async () => {
+    assert.deepEqual(
+      await scaffoldApplication({projectRoot, applicationTypes, configs, transpileLint: false}),
+      {scripts: {}, dependencies: [], devDependencies: [], vcsIgnore: {files: [], directories: []}}
     );
   });
 });
