@@ -53,7 +53,9 @@ export async function scaffold(options) {
 
   const [applicationOrPackage] = await Promise.all([
     ...'Package' === projectType ? [scaffoldPackageType(({projectRoot, transpileLint}))] : [],
-    ...'Application' === projectType ? [scaffoldApplicationType(({projectRoot, applicationTypes, configs}))] : []
+    ...'Application' === projectType
+      ? [scaffoldApplicationType(({projectRoot, applicationTypes, configs, transpileLint}))]
+      : []
   ]);
   const [nodeVersion] = await Promise.all([
     scaffoldeNodeVersion({projectRoot, nodeVersionCategory}),
