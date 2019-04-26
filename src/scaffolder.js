@@ -17,6 +17,7 @@ import buildVcsIgnoreLists from './vcs-ignore';
 import scaffoldPackage from './package';
 import scaffoldPackageType from './project-type/package';
 import scaffoldApplicationType from './project-type/application';
+import buildPackageName from './package-name';
 
 export async function scaffold(options) {
   info('Initializing JavaScript project');
@@ -51,6 +52,7 @@ export async function scaffold(options) {
 
   info('Writing project files', {level: 'secondary'});
 
+  const packageName = buildPackageName(projectName, scope);
   const [applicationOrPackage] = await Promise.all([
     ...'Package' === projectType ? [scaffoldPackageType(({projectRoot, transpileLint}))] : [],
     ...'Application' === projectType
@@ -79,13 +81,12 @@ export async function scaffold(options) {
   ];
   const [host, testing, linting, ciService] = contributors;
 
-  const {name: packageName, homepage: projectHomepage} = await scaffoldPackage({
+  const {homepage: projectHomepage} = await scaffoldPackage({
     projectRoot,
     projectType,
     contributors,
-    projectName,
+    packageName,
     visibility,
-    scope,
     license,
     vcs,
     tests,

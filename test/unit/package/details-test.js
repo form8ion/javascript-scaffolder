@@ -3,40 +3,21 @@ import {assert} from 'chai';
 import buildPackageDetails from '../../../src/package/details';
 
 suite('package details builder', () => {
-  const projectName = any.string();
+  const packageName = any.string();
   const visibility = any.fromList(['Private', 'Public']);
 
-  suite('name', () => {
-    test('that the package name is defined', () => {
-      const packageDetails = buildPackageDetails({
-        projectName,
-        visibility,
-        tests: {},
-        vcs: undefined,
-        author: {},
-        configs: {},
-        contributors: []
-      });
-
-      assert.equal(packageDetails.name, projectName);
+  test('that the package name is defined', () => {
+    const packageDetails = buildPackageDetails({
+      packageName,
+      visibility,
+      tests: {},
+      vcs: undefined,
+      author: {},
+      configs: {},
+      contributors: []
     });
 
-    test('that the scope is included in the project name when provided', () => {
-      const scope = any.word();
-
-      const packageDetails = buildPackageDetails({
-        projectName,
-        visibility,
-        scope,
-        tests: {},
-        vcs: undefined,
-        author: {},
-        configs: {},
-        contributors: []
-      });
-
-      assert.equal(packageDetails.name, `@${scope}/${projectName}`);
-    });
+    assert.equal(packageDetails.name, packageName);
   });
 
   suite('description', () => {
@@ -201,7 +182,7 @@ suite('package details builder', () => {
     test('that the homepage is set to npm for packages', () => {
       const packageDetails = buildPackageDetails({
         projectType: 'Package',
-        projectName,
+        packageName,
         tests: {},
         vcs: {host: 'GitHub', name: repoName, owner},
         author: {},
@@ -209,31 +190,14 @@ suite('package details builder', () => {
         contributors: []
       });
 
-      assert.equal(packageDetails.homepage, `https://npm.im/${projectName}`);
-    });
-
-    test('that the npm homepage includes the scope for scoped packages', () => {
-      const scope = any.word();
-
-      const packageDetails = buildPackageDetails({
-        projectType: 'Package',
-        projectName,
-        scope,
-        tests: {},
-        vcs: {host: 'GitHub', name: repoName, owner},
-        author: {},
-        configs: {},
-        contributors: []
-      });
-
-      assert.equal(packageDetails.homepage, `https://npm.im/@${scope}/${projectName}`);
+      assert.equal(packageDetails.homepage, `https://npm.im/${packageName}`);
     });
   });
 
   suite('other vcs', () => {
     test('that project information is not included', () => {
       const packageDetails = buildPackageDetails({
-        projectName,
+        projectName: packageName,
         visibility,
         tests: {},
         vcs: {host: any.word()},

@@ -27,9 +27,8 @@ function definePackagingDetails(visibility) {
 }
 
 export default function ({
-  projectName,
+  packageName,
   visibility,
-  scope,
   projectType,
   license,
   tests,
@@ -38,8 +37,6 @@ export default function ({
   description,
   contributors
 }) {
-  const packageName = `${scope ? `@${scope}/` : ''}${projectName}`;
-
   return {
     name: packageName,
     description,

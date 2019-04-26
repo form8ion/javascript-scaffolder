@@ -7,9 +7,8 @@ export default async function ({
   projectRoot,
   projectType,
   contributors,
-  projectName,
+  packageName,
   visibility,
-  scope,
   license,
   tests,
   vcs,
@@ -19,9 +18,8 @@ export default async function ({
   info('Configuring package.json');
 
   const packageData = await buildPackageDetails({
-    projectName,
+    packageName,
     visibility,
-    scope,
     projectType,
     license,
     tests,
@@ -35,5 +33,5 @@ export default async function ({
 
   await installDependencies({contributors});
 
-  return {name: packageData.name, homepage: packageData.homepage};
+  return {homepage: packageData.homepage};
 }

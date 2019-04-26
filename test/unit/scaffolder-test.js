@@ -20,6 +20,7 @@ import * as commitConvention from '../../src/commit-convention/scaffolder';
 import * as packageScaffolder from '../../src/package/scaffolder';
 import * as packageTypeScaffolder from '../../src/project-type/package';
 import * as applicationTypeScaffolder from '../../src/project-type/application';
+import * as packageNameBuilder from '../../src/package-name';
 import {scaffold} from '../../src/scaffolder';
 import {questionNames} from '../../src/prompts/question-names';
 
@@ -76,9 +77,8 @@ suite('javascript project scaffolder', () => {
     projectRoot,
     projectType,
     contributors,
-    projectName,
+    packageName,
     visibility,
-    scope,
     license,
     tests,
     vcs: vcsDetails,
@@ -125,12 +125,14 @@ suite('javascript project scaffolder', () => {
     sandbox.stub(packageScaffolder, 'default');
     sandbox.stub(packageTypeScaffolder, 'default');
     sandbox.stub(applicationTypeScaffolder, 'default');
+    sandbox.stub(packageNameBuilder, 'default');
 
     fs.writeFile.resolves();
     fs.copyFile.resolves();
+    packageNameBuilder.default.withArgs(projectName, scope).returns(packageName);
     packageScaffolder.default
       .withArgs(packageScaffoldingInputs)
-      .resolves({...any.simpleObject(), name: packageName, homepage});
+      .resolves({...any.simpleObject(), homepage});
     prompts.prompt.withArgs(overrides, ciServices, hosts, visibility, vcsDetails).resolves(commonPromptAnswers);
     ci.default
       .withArgs(

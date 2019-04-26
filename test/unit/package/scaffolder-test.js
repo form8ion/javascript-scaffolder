@@ -20,13 +20,11 @@ suite('package scaffolder', () => {
   teardown(() => sandbox.restore());
 
   test('that the package file is created and dependencies are installed', async () => {
-    const name = any.string();
+    const packageName = any.string();
     const homepage = any.url();
-    const packageDetails = {...any.simpleObject(), name, homepage};
+    const packageDetails = {...any.simpleObject(), homepage};
     const projectRoot = any.string();
-    const projectName = any.string();
     const visibility = any.word();
-    const scope = any.word();
     const projectType = any.word();
     const license = any.string();
     const tests = any.simpleObject();
@@ -36,9 +34,8 @@ suite('package scaffolder', () => {
     const contributors = any.simpleObject();
     buildPackageDetails.default
       .withArgs({
-        projectName,
+        packageName,
         visibility,
-        scope,
         projectType,
         license,
         tests,
@@ -54,16 +51,15 @@ suite('package scaffolder', () => {
         projectRoot,
         projectType,
         contributors,
-        projectName,
+        packageName,
         visibility,
-        scope,
         license,
         tests,
         vcs,
         author,
         description
       }),
-      {name, homepage}
+      {homepage}
     );
 
     assert.calledWith(fs.writeFile, `${projectRoot}/package.json`, JSON.stringify(packageDetails));
