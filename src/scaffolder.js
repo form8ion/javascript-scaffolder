@@ -15,7 +15,7 @@ import {questionNames} from './prompts/question-names';
 import buildBadgesDetails from './badges';
 import buildVcsIgnoreLists from './vcs-ignore';
 import scaffoldPackage from './package';
-import scaffoldPackageType from './project-type/package';
+import scaffoldPackageType from './project-type/package/scaffolder';
 import scaffoldApplicationType from './project-type/application';
 import buildPackageName from './package-name';
 
@@ -54,7 +54,7 @@ export async function scaffold(options) {
 
   const packageName = buildPackageName(projectName, scope);
   const [applicationOrPackage] = await Promise.all([
-    ...'Package' === projectType ? [scaffoldPackageType(({projectRoot, transpileLint}))] : [],
+    ...'Package' === projectType ? [scaffoldPackageType(({projectRoot, transpileLint, packageName, visibility}))] : [],
     ...'Application' === projectType
       ? [scaffoldApplicationType(({projectRoot, applicationTypes, configs, transpileLint}))]
       : []

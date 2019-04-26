@@ -18,7 +18,7 @@ import * as badgeDetailsBuilder from '../../src/badges';
 import * as vcsIgnoresBuilder from '../../src/vcs-ignore';
 import * as commitConvention from '../../src/commit-convention/scaffolder';
 import * as packageScaffolder from '../../src/package/scaffolder';
-import * as packageTypeScaffolder from '../../src/project-type/package';
+import * as packageTypeScaffolder from '../../src/project-type/package/scaffolder';
 import * as applicationTypeScaffolder from '../../src/project-type/application';
 import * as packageNameBuilder from '../../src/package-name';
 import {scaffold} from '../../src/scaffolder';
@@ -190,7 +190,9 @@ suite('javascript project scaffolder', () => {
           prompts.prompt
             .withArgs(overrides, ciServices, hosts, visibility, vcsDetails)
             .resolves({...commonPromptAnswers, [questionNames.PROJECT_TYPE]: packageProjectType});
-          packageTypeScaffolder.default.withArgs({projectRoot, transpileLint}).resolves(packageTypeResults);
+          packageTypeScaffolder.default
+            .withArgs({projectRoot, transpileLint, packageName, visibility})
+            .resolves(packageTypeResults);
           packageScaffolder.default.resolves(any.simpleObject());
           host.default.withArgs(hosts, chosenHost, {buildDirectory}).resolves(hostResults);
           ci.default

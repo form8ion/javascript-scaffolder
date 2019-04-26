@@ -2,17 +2,24 @@ import fs from 'mz/fs';
 import sinon from 'sinon';
 import {assert} from 'chai';
 import any from '@travi/any';
-import * as templatePath from '../../../src/template-path';
-import scaffoldPackage from '../../../src/project-type/package';
+import * as templatePath from '../../../../src/template-path';
+import * as defineBadges from '../../../../src/project-type/package/badges';
+import scaffoldPackage from '../../../../src/project-type/package/scaffolder';
 
 suite('package project-type', () => {
   let sandbox;
+  const packageName = any.word();
+  const badges = any.simpleObject();
+  const visibility = any.word();
 
   setup(() => {
     sandbox = sinon.createSandbox();
 
     sandbox.stub(fs, 'copyFile');
     sandbox.stub(templatePath, 'default');
+    sandbox.stub(defineBadges, 'default');
+
+    defineBadges.default.withArgs(packageName, visibility).returns(badges);
   });
 
   teardown(() => sandbox.restore());
@@ -23,7 +30,7 @@ suite('package project-type', () => {
     templatePath.default.withArgs('rollup.config.js').returns(pathToTemplate);
 
     assert.deepEqual(
-      await scaffoldPackage({projectRoot}),
+      await scaffoldPackage({projectRoot, packageName, visibility}),
       {
         devDependencies: ['rimraf', 'rollup', 'rollup-plugin-auto-external'],
         scripts: {
@@ -35,7 +42,8 @@ suite('package project-type', () => {
           prepack: 'run-s build'
         },
         vcsIgnore: {files: [], directories: ['/lib/']},
-        buildDirectory: './lib'
+        buildDirectory: './lib',
+        badges
       }
     );
     assert.calledWith(fs.copyFile, pathToTemplate, `${projectRoot}/rollup.config.js`);
@@ -47,11 +55,12 @@ suite('package project-type', () => {
     templatePath.default.withArgs('rollup.config.js').returns(pathToTemplate);
 
     assert.deepEqual(
-      await scaffoldPackage({projectRoot, transpileLint: false}),
+      await scaffoldPackage({projectRoot, transpileLint: false, packageName, visibility}),
       {
         devDependencies: [],
         scripts: {},
-        vcsIgnore: {files: [], directories: []}
+        vcsIgnore: {files: [], directories: []},
+        badges
       }
     );
     assert.neverCalledWith(fs.copyFile, pathToTemplate, `${projectRoot}/rollup.config.js`);

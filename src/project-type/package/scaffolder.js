@@ -1,10 +1,11 @@
 import {copyFile} from 'mz/fs';
 import {info} from '@travi/cli-messages';
-import determinePathToTemplateFile from '../template-path';
+import determinePathToTemplateFile from '../../template-path';
+import defineBadges from './badges';
 
 const defaultBuildDirectory = './lib';
 
-export default async function ({projectRoot, transpileLint}) {
+export default async function ({projectRoot, transpileLint, packageName, visibility}) {
   info('Scaffolding Package Details');
 
   if (false !== transpileLint) {
@@ -24,13 +25,15 @@ export default async function ({projectRoot, transpileLint}) {
         files: [],
         directories: ['/lib/']
       },
-      buildDirectory: defaultBuildDirectory
+      buildDirectory: defaultBuildDirectory,
+      badges: defineBadges(packageName, visibility)
     };
   }
 
   return {
     devDependencies: [],
     scripts: {},
-    vcsIgnore: {files: [], directories: []}
+    vcsIgnore: {files: [], directories: []},
+    badges: defineBadges(packageName, visibility)
   };
 }
