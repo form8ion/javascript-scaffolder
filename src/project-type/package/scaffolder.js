@@ -9,6 +9,8 @@ export default async function ({projectRoot, transpileLint, packageName, visibil
   info('Scaffolding Package Details');
 
   if (false !== transpileLint) {
+    const coreBadges = defineBadges(packageName, visibility);
+
     await copyFile(determinePathToTemplateFile('rollup.config.js'), `${projectRoot}/rollup.config.js`);
 
     return {
@@ -26,7 +28,20 @@ export default async function ({projectRoot, transpileLint, packageName, visibil
         directories: ['/lib/']
       },
       buildDirectory: defaultBuildDirectory,
-      badges: defineBadges(packageName, visibility)
+      badges: {
+        consumer: {
+          ...coreBadges.consumer,
+          ...'Public' === visibility && {
+            runkit: {
+              img: `https://badge.runkitcdn.com/${packageName}.svg`,
+              text: `Try ${packageName} on RunKit`,
+              link: `https://npm.runkit.com/${packageName}`
+            }
+          }
+        },
+        contribution: coreBadges.contribution,
+        status: coreBadges.status
+      }
     };
   }
 

@@ -1,6 +1,8 @@
+import defineBadges from './package/badges';
+
 const defaultBuildDirectory = './bin';
 
-export default function () {
+export default function ({packageName, visibility}) {
   return {
     scripts: {
       clean: `rimraf ${defaultBuildDirectory}`,
@@ -19,6 +21,7 @@ export default function () {
       'rollup-plugin-json'
     ],
     vcsIgnore: {files: [], directories: ['/bin/']},
-    buildDirectory: defaultBuildDirectory
+    buildDirectory: defaultBuildDirectory,
+    badges: defineBadges(packageName, visibility)
   };
 }

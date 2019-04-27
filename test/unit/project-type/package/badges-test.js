@@ -23,6 +23,6 @@ suite('badges for package project-type', () => {
   });
 
   test('that the npm badge is returned for public projects', () => {
-    assert.deepEqual(defineBadges(packageName, 'Public').consumer.npm, npmBadgeDetails);
+    assert.deepEqual(defineBadges(packageName, 'Public').consumer, {npm: npmBadgeDetails});
   });
 });

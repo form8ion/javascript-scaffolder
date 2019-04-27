@@ -9,7 +9,7 @@ import scaffoldPackage from '../../../../src/project-type/package/scaffolder';
 suite('package project-type', () => {
   let sandbox;
   const packageName = any.word();
-  const badges = any.simpleObject();
+  const badges = {consumer: any.simpleObject(), contribution: any.simpleObject(), status: any.simpleObject()};
   const visibility = any.word();
 
   setup(() => {
@@ -44,6 +44,23 @@ suite('package project-type', () => {
         vcsIgnore: {files: [], directories: ['/lib/']},
         buildDirectory: './lib',
         badges
+      }
+    );
+    assert.calledWith(fs.copyFile, pathToTemplate, `${projectRoot}/rollup.config.js`);
+  });
+
+  test('that the runkit badge is included for public projects', async () => {
+    const projectRoot = any.string();
+    const pathToTemplate = any.string();
+    templatePath.default.withArgs('rollup.config.js').returns(pathToTemplate);
+    defineBadges.default.withArgs(packageName, 'Public').returns(badges);
+
+    assert.deepEqual(
+      (await scaffoldPackage({projectRoot, packageName, visibility: 'Public'})).badges.consumer.runkit,
+      {
+        img: `https://badge.runkitcdn.com/${packageName}.svg`,
+        text: `Try ${packageName} on RunKit`,
+        link: `https://npm.runkit.com/${packageName}`
       }
     );
     assert.calledWith(fs.copyFile, pathToTemplate, `${projectRoot}/rollup.config.js`);
