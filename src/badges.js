@@ -1,14 +1,6 @@
-export default function (visibility, packageType, packageName, ciService, unitTested, vcs) {
+export default function (visibility, packageType, packageName, ciService, unitTested, vcs, contributors) {
   return {
-    consumer: {
-      ...('Public' === visibility && 'Package' === packageType) && {
-        npm: {
-          img: `https://img.shields.io/npm/v/${packageName}.svg`,
-          text: 'npm',
-          link: `https://www.npmjs.com/package/${packageName}`
-        }
-      }
-    },
+    consumer: contributors.map(contributor => contributor.consumer).reduce((acc, badges) => ({...acc, ...badges}), {}),
     contribution: {
       'commit-convention': {
         img: 'https://img.shields.io/badge/Conventional%20Commits-1.0.0-yellow.svg',
@@ -20,13 +12,7 @@ export default function (visibility, packageType, packageName, ciService, unitTe
         text: 'Commitizen friendly',
         link: 'http://commitizen.github.io/cz-cli/'
       },
-      ...'Package' === packageType && {
-        'semantic-release': {
-          img: 'https://img.shields.io/badge/%20%20%F0%9F%93%A6%F0%9F%9A%80-semantic--release-e10079.svg',
-          text: 'semantic-release',
-          link: 'https://github.com/semantic-release/semantic-release'
-        }
-      }
+      ...contributors.map(contributor => contributor.contribution).reduce((acc, badges) => ({...acc, ...badges}), {})
     },
     status: {
       ...ciService.badge && {ci: ciService.badge},
@@ -36,7 +22,8 @@ export default function (visibility, packageType, packageName, ciService, unitTe
           link: `https://codecov.io/github/${vcs.owner}/${vcs.name}`,
           text: 'Codecov'
         }
-      }
+      },
+      ...contributors.map(contributor => contributor.status).reduce((acc, badges) => ({...acc, ...badges}), {})
     }
   };
 }
