@@ -7,6 +7,7 @@ Feature: Simplest Use
     And nvm is properly configured
     When the project is scaffolded
     Then the expected files are generated
+    And the expected results are returned to the project scaffolder
 
   Scenario: Minimal Options w/ Versioning
     Given the project will be versioned

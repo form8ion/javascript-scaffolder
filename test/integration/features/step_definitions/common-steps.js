@@ -12,6 +12,8 @@ import {scaffold} from '../../../../src';
 
 setWorldConstructor(World);
 
+let scaffoldResult;
+
 Before(async function () {
   // work around for overly aggressive mock-fs, see:
   // https://github.com/tschaub/mock-fs/issues/213#issuecomment-347002795
@@ -57,7 +59,7 @@ When(/^the project is scaffolded$/, async function () {
     ...this.transpilationLintAnswer ? this.transpilationLintAnswer : []
   ]);
 
-  await scaffold({
+  scaffoldResult = await scaffold({
     projectRoot: process.cwd(),
     projectName: any.string(),
     visibility,
@@ -76,4 +78,8 @@ Then(/^the expected files are generated$/, async function () {
   assert.equal(nvmRc.toString(), this.latestLtsVersion);
   assert.isTrue(existsSync(`${process.cwd()}/.eslintrc.yml`));
   assert.isTrue(existsSync(`${process.cwd()}/.babelrc`));
+});
+
+Then('the expected results are returned to the project scaffolder', async function () {
+  assert.containsAllKeys(scaffoldResult.badges.contribution, ['commit-convention', 'commitizen']);
 });

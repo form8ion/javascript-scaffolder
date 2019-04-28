@@ -1,8 +1,10 @@
 export default function (visibility, packageType, packageName, ciService, unitTested, vcs, contributors) {
   return {
-    consumer: contributors.map(contributor => contributor.consumer).reduce((acc, badges) => ({...acc, ...badges}), {}),
+    consumer: contributors
+      .map(contributor => contributor.badges && contributor.badges.consumer)
+      .reduce((acc, badges) => ({...acc, ...badges}), {}),
     contribution: contributors
-      .map(contributor => contributor.contribution)
+      .map(contributor => contributor.badges && contributor.badges.contribution)
       .reduce((acc, badges) => ({...acc, ...badges}), {}),
     status: {
       ...ciService.badge && {ci: ciService.badge},
@@ -13,7 +15,9 @@ export default function (visibility, packageType, packageName, ciService, unitTe
           text: 'Codecov'
         }
       },
-      ...contributors.map(contributor => contributor.status).reduce((acc, badges) => ({...acc, ...badges}), {})
+      ...contributors
+        .map(contributor => contributor.badges && contributor.badges.status)
+        .reduce((acc, badges) => ({...acc, ...badges}), {})
     }
   };
 }
