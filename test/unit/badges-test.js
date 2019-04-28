@@ -23,19 +23,7 @@ suite('badges', () => {
       badgeDetailsBuilder(null, null, null, {}, null, null, contributors),
       {
         consumer: contributedConsumerBadges,
-        contribution: {
-          'commit-convention': {
-            img: 'https://img.shields.io/badge/Conventional%20Commits-1.0.0-yellow.svg',
-            text: 'Conventional Commits',
-            link: 'https://conventionalcommits.org'
-          },
-          commitizen: {
-            img: 'https://img.shields.io/badge/commitizen-friendly-brightgreen.svg',
-            text: 'Commitizen friendly',
-            link: 'http://commitizen.github.io/cz-cli/'
-          },
-          ...contributedContributionBadges
-        },
+        contribution: contributedContributionBadges,
         status: contributedStatusBadges
       }
     );

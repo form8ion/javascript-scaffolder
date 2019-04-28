@@ -1,19 +1,9 @@
 export default function (visibility, packageType, packageName, ciService, unitTested, vcs, contributors) {
   return {
     consumer: contributors.map(contributor => contributor.consumer).reduce((acc, badges) => ({...acc, ...badges}), {}),
-    contribution: {
-      'commit-convention': {
-        img: 'https://img.shields.io/badge/Conventional%20Commits-1.0.0-yellow.svg',
-        text: 'Conventional Commits',
-        link: 'https://conventionalcommits.org'
-      },
-      commitizen: {
-        img: 'https://img.shields.io/badge/commitizen-friendly-brightgreen.svg',
-        text: 'Commitizen friendly',
-        link: 'http://commitizen.github.io/cz-cli/'
-      },
-      ...contributors.map(contributor => contributor.contribution).reduce((acc, badges) => ({...acc, ...badges}), {})
-    },
+    contribution: contributors
+      .map(contributor => contributor.contribution)
+      .reduce((acc, badges) => ({...acc, ...badges}), {}),
     status: {
       ...ciService.badge && {ci: ciService.badge},
       ...unitTested && 'Public' === visibility && vcs && 'GitHub' === vcs.host && {

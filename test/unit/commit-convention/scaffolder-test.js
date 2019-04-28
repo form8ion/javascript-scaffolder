@@ -13,6 +13,18 @@ suite('commit-convention scaffolder', () => {
   const commitizenDevDependencies = any.listOf(any.string);
   const huskyScripts = any.simpleObject();
   const huskyDevDependencies = any.listOf(any.string);
+  const contributionBadges = {
+    'commit-convention': {
+      img: 'https://img.shields.io/badge/Conventional%20Commits-1.0.0-yellow.svg',
+      text: 'Conventional Commits',
+      link: 'https://conventionalcommits.org'
+    },
+    commitizen: {
+      img: 'https://img.shields.io/badge/commitizen-friendly-brightgreen.svg',
+      text: 'Commitizen friendly',
+      link: 'http://commitizen.github.io/cz-cli/'
+    }
+  };
 
   setup(() => {
     sandbox = sinon.createSandbox();
@@ -43,7 +55,8 @@ suite('commit-convention scaffolder', () => {
       {
         devDependencies: [...commitizenDevDependencies, ...huskyDevDependencies, ...commitlintDevDependencies],
         scripts: {...commitizenScripts, ...huskyScripts},
-        vcsIgnore: {files: [], directories: []}
+        vcsIgnore: {files: [], directories: []},
+        badges: {contribution: contributionBadges}
       }
     );
   });
@@ -54,7 +67,8 @@ suite('commit-convention scaffolder', () => {
       {
         devDependencies: [...commitizenDevDependencies, ...huskyDevDependencies],
         scripts: {...commitizenScripts, ...huskyScripts},
-        vcsIgnore: {files: [], directories: []}
+        vcsIgnore: {files: [], directories: []},
+        badges: {contribution: contributionBadges}
       }
     );
     assert.notCalled(commitlintScaffolder.default);
