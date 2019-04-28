@@ -95,7 +95,7 @@ export async function scaffold(options) {
   });
 
   return {
-    badges: buildBadgesDetails(visibility, unitTested, vcs, contributors),
+    badges: buildBadgesDetails(contributors),
     documentation: scaffoldDocumentation({projectType, packageName, visibility, scope}),
     vcsIgnore: buildVcsIgnoreLists({host, linting, testing, projectType}),
     verificationCommand: 'npm test',

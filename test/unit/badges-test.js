@@ -22,7 +22,7 @@ suite('badges', () => {
     .reduce((acc, badges) => ({...acc, ...badges}), {});
 
   test('that badges are collected from contributing results', () => assert.deepEqual(
-    badgeDetailsBuilder(null, null, null, [...contributors, any.simpleObject()]),
+    badgeDetailsBuilder([...contributors, any.simpleObject()]),
     {
       consumer: contributedConsumerBadges,
       contribution: contributedContributionBadges,

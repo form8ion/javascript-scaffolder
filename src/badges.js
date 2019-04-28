@@ -1,4 +1,4 @@
-export default function (visibility, unitTested, vcs, contributors) {
+export default function (contributors) {
   return {
     consumer: contributors
       .map(contributor => contributor.badges && contributor.badges.consumer)

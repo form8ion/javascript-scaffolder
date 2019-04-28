@@ -270,9 +270,7 @@ suite('javascript project scaffolder', () => {
     suite('badges', () => {
       test('that badges are provided', async () => {
         const builtBadges = any.simpleObject();
-        badgeDetailsBuilder.default
-          .withArgs(visibility, unitTested, vcsDetails, contributors)
-          .returns(builtBadges);
+        badgeDetailsBuilder.default.withArgs(contributors).returns(builtBadges);
 
         const {badges} = await scaffold(options);
 
