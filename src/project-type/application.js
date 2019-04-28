@@ -20,7 +20,10 @@ export default async function ({applicationTypes, projectRoot, configs, transpil
       },
       dependencies: results.dependencies,
       devDependencies: ['rimraf', ...results.devDependencies],
-      vcsIgnore: {files: results.vcsIgnore.files, directories: [...results.vcsIgnore.directories, '/lib/']},
+      vcsIgnore: {
+        files: [...results.vcsIgnore.files, '.env'],
+        directories: [...results.vcsIgnore.directories, '/lib/']
+      },
       buildDirectory: defaultBuildDirectory
     };
   }

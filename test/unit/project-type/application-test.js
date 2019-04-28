@@ -45,7 +45,10 @@ suite('application project-type', () => {
         scripts: {clean: 'rimraf ./lib', start: './lib/index.js', prebuild: 'run-s clean', ...scaffoldedTypeScripts},
         dependencies: scaffoldedTypeDependencies,
         devDependencies: ['rimraf', ...scaffoldedTypeDevDependencies],
-        vcsIgnore: {files: scaffoldedFilesToIgnore, directories: [...scaffoldedDirectoriesToIgnore, '/lib/']},
+        vcsIgnore: {
+          files: [...scaffoldedFilesToIgnore, '.env'],
+          directories: [...scaffoldedDirectoriesToIgnore, '/lib/']
+        },
         buildDirectory: './lib'
       }
     );
