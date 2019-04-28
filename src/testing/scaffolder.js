@@ -1,9 +1,9 @@
 import scaffoldUnitTesting from './unit';
 import scaffoldIntegrationTesting from './integration';
 
-export default async function ({projectRoot, visibility, tests: {unit, integration}}) {
+export default async function ({projectRoot, visibility, tests: {unit, integration}, vcs}) {
   const [unitResults, integrationResults] = await Promise.all([
-    unit ? scaffoldUnitTesting({projectRoot, visibility}) : undefined,
+    unit ? scaffoldUnitTesting({projectRoot, visibility, vcs}) : undefined,
     integration ? scaffoldIntegrationTesting({projectRoot}) : undefined
   ]);
 

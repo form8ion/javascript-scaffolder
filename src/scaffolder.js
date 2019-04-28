@@ -71,7 +71,7 @@ export async function scaffold(options) {
         chosenHost,
         {...applicationOrPackage && {buildDirectory: applicationOrPackage.buildDirectory}}
       ),
-      scaffoldTesting({projectRoot, tests, visibility}),
+      scaffoldTesting({projectRoot, tests, visibility, vcs}),
       scaffoldLinting(({configs, projectRoot, tests, vcs, transpileLint})),
       scaffoldCi(ciServices, ci, {projectRoot, vcs, visibility, packageType: projectType, nodeVersion, tests}),
       scaffoldBabel({preset: configs.babelPreset, projectRoot, transpileLint}),

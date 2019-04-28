@@ -13,6 +13,7 @@ suite('unit testing scaffolder', () => {
   const nycDevDependencies = any.listOf(any.string);
   const nycFilesToIgnoreFromVcs = any.listOf(any.string);
   const nycDirectoriesToIgnoreFromVcs = any.listOf(any.string);
+  const vcs = any.simpleObject();
 
   setup(() => {
     sandbox = sinon.createSandbox();
@@ -23,20 +24,22 @@ suite('unit testing scaffolder', () => {
     mocha.default
       .withArgs({projectRoot})
       .resolves({...any.simpleObject(), devDependencies: mochaDevDependencies, scripts: mochaScripts});
-    nyc.default
-      .withArgs({projectRoot})
-      .resolves({
-        ...any.simpleObject(),
-        devDependencies: nycDevDependencies,
-        vcsIgnore: {files: nycFilesToIgnoreFromVcs, directories: nycDirectoriesToIgnoreFromVcs}
-      });
   });
 
   teardown(() => sandbox.restore());
 
   test('that mocha is scaffolded', async () => {
+    const visibility = any.word();
+    nyc.default
+      .withArgs({projectRoot, vcs, visibility})
+      .resolves({
+        ...any.simpleObject(),
+        devDependencies: nycDevDependencies,
+        vcsIgnore: {files: nycFilesToIgnoreFromVcs, directories: nycDirectoriesToIgnoreFromVcs}
+      });
+
     assert.deepEqual(
-      await scaffoldUnitTesting({projectRoot}),
+      await scaffoldUnitTesting({projectRoot, vcs, visibility}),
       {
         devDependencies: [...mochaDevDependencies, ...nycDevDependencies],
         scripts: {
@@ -49,8 +52,17 @@ suite('unit testing scaffolder', () => {
   });
 
   test('that codecov is installed for public projects', async () => {
+    const visibility = 'Public';
+    nyc.default
+      .withArgs({projectRoot, vcs, visibility})
+      .resolves({
+        ...any.simpleObject(),
+        devDependencies: nycDevDependencies,
+        vcsIgnore: {files: nycFilesToIgnoreFromVcs, directories: nycDirectoriesToIgnoreFromVcs}
+      });
+
     assert.deepEqual(
-      await scaffoldUnitTesting({projectRoot, visibility: 'Public'}),
+      await scaffoldUnitTesting({projectRoot, visibility, vcs}),
       {
         devDependencies: [...mochaDevDependencies, ...nycDevDependencies, 'codecov'],
         scripts: {

@@ -1,8 +1,8 @@
 import scaffoldMocha from './mocha';
 import scaffoldNyc from '../config/nyc';
 
-export default async function ({projectRoot, visibility}) {
-  const [mocha, nyc] = await Promise.all([scaffoldMocha({projectRoot}), scaffoldNyc({projectRoot})]);
+export default async function ({projectRoot, visibility, vcs}) {
+  const [mocha, nyc] = await Promise.all([scaffoldMocha({projectRoot}), scaffoldNyc({projectRoot, vcs, visibility})]);
 
   return {
     devDependencies: [

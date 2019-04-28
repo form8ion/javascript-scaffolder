@@ -148,7 +148,7 @@ suite('javascript project scaffolder', () => {
         }
       )
       .resolves(ciServiceResults);
-    testing.default.withArgs({projectRoot, tests, visibility}).resolves(testingResults);
+    testing.default.withArgs({projectRoot, tests, visibility, vcs: vcsDetails}).resolves(testingResults);
     linting.default.withArgs({configs, projectRoot, tests, vcs: vcsDetails, transpileLint}).resolves(lintingResults);
     babel.default.withArgs({projectRoot, preset: babelPreset, transpileLint}).resolves(babelResults);
     npmConfig.default.resolves();
