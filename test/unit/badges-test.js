@@ -21,39 +21,21 @@ suite('badges', () => {
     .map(contributor => contributor.badges.status)
     .reduce((acc, badges) => ({...acc, ...badges}), {});
 
-  test('that badges are collected from contributing results', () => {
-    assert.deepEqual(
-      badgeDetailsBuilder(null, null, null, {}, null, null, [...contributors, any.simpleObject()]),
-      {
-        consumer: contributedConsumerBadges,
-        contribution: contributedContributionBadges,
-        status: contributedStatusBadges
-      }
-    );
-  });
-
-  suite('ci', () => {
-    test('that the ci badge is provided', async () => {
-      const badge = any.simpleObject();
-
-      const badges = badgeDetailsBuilder(null, null, null, {badge}, null, null, contributors);
-
-      assert.equal(badges.status.ci, badge);
-    });
-
-    test('that the ci badge is not provided when not defined', async () => {
-      const badges = badgeDetailsBuilder(null, null, null, {}, null, null, contributors);
-
-      assert.notProperty(badges.status, 'ci');
-    });
-  });
+  test('that badges are collected from contributing results', () => assert.deepEqual(
+    badgeDetailsBuilder(null, null, null, [...contributors, any.simpleObject()]),
+    {
+      consumer: contributedConsumerBadges,
+      contribution: contributedContributionBadges,
+      status: contributedStatusBadges
+    }
+  ));
 
   suite('coverage', () => {
     test('that the coverage badge is provided', async () => {
       const vcs = {host: 'GitHub', owner: any.word(), name: any.word()};
       const unitTested = true;
 
-      const badges = badgeDetailsBuilder('Public', null, null, {}, unitTested, vcs, contributors);
+      const badges = badgeDetailsBuilder('Public', unitTested, vcs, contributors);
 
       assert.deepEqual(badges.status.coverage, {
         img: `https://img.shields.io/codecov/c/github/${vcs.owner}/${vcs.name}.svg`,
@@ -63,7 +45,7 @@ suite('badges', () => {
     });
 
     test('that the coverage badge is not provided for private projects', async () => {
-      const badges = badgeDetailsBuilder('Private', null, null, {}, null, null, contributors);
+      const badges = badgeDetailsBuilder('Private', null, null, contributors);
 
       assert.notProperty(badges.status, 'coverage');
     });
@@ -71,7 +53,7 @@ suite('badges', () => {
     test('that the coverage badge is not provided when a project is not unit tested', async () => {
       const unitTested = false;
 
-      const badges = badgeDetailsBuilder('Public', null, null, {}, unitTested, null, contributors);
+      const badges = badgeDetailsBuilder('Public', unitTested, null, contributors);
 
       assert.notProperty(badges.status, 'coverage');
     });
@@ -80,7 +62,7 @@ suite('badges', () => {
       const vcs = {host: any.word(), owner: any.word(), name: any.word()};
       const unitTested = true;
 
-      const badges = badgeDetailsBuilder('Public', null, null, {}, unitTested, vcs, contributors);
+      const badges = badgeDetailsBuilder('Public', unitTested, vcs, contributors);
 
       assert.notProperty(badges.status, 'coverage');
     });
@@ -89,7 +71,7 @@ suite('badges', () => {
       const vcs = undefined;
       const unitTested = true;
 
-      const badges = badgeDetailsBuilder('Public', null, null, {}, unitTested, vcs, contributors);
+      const badges = badgeDetailsBuilder('Public', unitTested, vcs, contributors);
 
       assert.notProperty(badges.status, 'coverage');
     });

@@ -1,4 +1,4 @@
-export default function (visibility, packageType, packageName, ciService, unitTested, vcs, contributors) {
+export default function (visibility, unitTested, vcs, contributors) {
   return {
     consumer: contributors
       .map(contributor => contributor.badges && contributor.badges.consumer)
@@ -7,7 +7,6 @@ export default function (visibility, packageType, packageName, ciService, unitTe
       .map(contributor => contributor.badges && contributor.badges.contribution)
       .reduce((acc, badges) => ({...acc, ...badges}), {}),
     status: {
-      ...ciService.badge && {ci: ciService.badge},
       ...unitTested && 'Public' === visibility && vcs && 'GitHub' === vcs.host && {
         coverage: {
           img: `https://img.shields.io/codecov/c/github/${vcs.owner}/${vcs.name}.svg`,
