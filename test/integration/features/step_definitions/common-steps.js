@@ -61,7 +61,7 @@ When(/^the project is scaffolded$/, async function () {
 
   scaffoldResult = await scaffold({
     projectRoot: process.cwd(),
-    projectName: any.string(),
+    projectName: any.word(),
     visibility,
     license: any.string(),
     vcs: this.vcs,
