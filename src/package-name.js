@@ -4,9 +4,10 @@ import validatePackageName from '../third-party-wrappers/validate-npm-package-na
 export default function (projectName, scope) {
   const name = `${scope ? `@${scope}/` : ''}${projectName}`;
 
-  const validationResults = validatePackageName(name);
+  const {validForNewPackages, errors} = validatePackageName(name);
 
-  if (validationResults.validForNewPackages) return name;
+  if (validForNewPackages) return name;
+  if (1 === errors.length && errors.includes('name cannot start with a period')) return projectName.slice(1);
 
-  throw new Error(`The package name ${name} is invalid:${EOL}\t* ${validationResults.errors.join(`${EOL}\t* `)}`);
+  throw new Error(`The package name ${name} is invalid:${EOL}\t* ${errors.join(`${EOL}\t* `)}`);
 }

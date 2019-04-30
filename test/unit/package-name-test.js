@@ -40,4 +40,22 @@ suite('package name', () => {
       `The package name ${projectName} is invalid:${EOL}\t* ${errors.join(`${EOL}\t* `)}`
     );
   });
+
+  test('that a leading dot is stripped from the package name', () => {
+    packageNameValidator.default
+      .withArgs(`.${projectName}`)
+      .returns({validForNewPackages: false, errors: ['name cannot start with a period']});
+
+    assert.equal(packageName(`.${projectName}`), projectName);
+  });
+
+  test('that an error is thrown if more validation errors than a leading dot exist', () => {
+    const errors = [...any.listOf(any.sentence), 'name cannot start with a period'];
+    packageNameValidator.default.withArgs(projectName).returns({validForNewPackages: false, errors});
+
+    assert.throws(
+      () => packageName(projectName),
+      `The package name ${projectName} is invalid:${EOL}\t* ${errors.join(`${EOL}\t* `)}`
+    );
+  });
 });
