@@ -9,7 +9,5 @@ export default async function (dependencies, dependenciesType) {
     await execa.shell(
       `. ~/.nvm/nvm.sh && nvm use && npm install ${uniq(dependencies).join(' ')} --save-${dependenciesType}`
     );
-  }
-
-  warn(`No ${dependenciesType} dependencies to install`);
+  } else warn(`No ${dependenciesType} dependencies to install`);
 }
