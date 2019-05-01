@@ -1,7 +1,7 @@
 import {assert} from 'chai';
 import sinon from 'sinon';
 import any from '@travi/any';
-import * as exec from '../../../third-party-wrappers/exec-as-promised';
+import execa from 'execa';
 import npmInstall from '../../../src/package/install';
 
 suite('npm install', () => {
@@ -10,7 +10,7 @@ suite('npm install', () => {
   setup(() => {
     sandbox = sinon.createSandbox();
 
-    sandbox.stub(exec, 'default');
+    sandbox.stub(execa, 'shell');
   });
 
   teardown(() => sandbox.restore());
@@ -18,7 +18,7 @@ suite('npm install', () => {
   test('that `npm install` is not run when no dependencies need to be installed', async () => {
     await npmInstall([]);
 
-    assert.notCalled(exec.default);
+    assert.notCalled(execa.shell);
   });
 
   suite('devDependencies', () => {
@@ -28,9 +28,8 @@ suite('npm install', () => {
       await npmInstall(devDependencies);
 
       assert.calledWith(
-        exec.default,
-        `. ~/.nvm/nvm.sh && nvm use && npm install ${devDependencies.join(' ')} --save-dev`,
-        {silent: false}
+        execa.shell,
+        `. ~/.nvm/nvm.sh && nvm use && npm install ${devDependencies.join(' ')} --save-dev`
       );
     });
   });
