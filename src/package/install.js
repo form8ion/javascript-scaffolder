@@ -5,7 +5,7 @@ export default async function (dependencies) {
   if (dependencies.length) {
     const dependenciesType = 'dev';
 
-    info(`Installing ${dependenciesType} dependencies`);
+    info(`Installing ${dependenciesType} dependencies`, {level: 'secondary'});
 
     await execa.shell(`. ~/.nvm/nvm.sh && nvm use && npm install ${dependencies.join(' ')} --save-${dependenciesType}`);
   }
