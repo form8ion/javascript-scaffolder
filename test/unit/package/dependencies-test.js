@@ -28,6 +28,6 @@ suite('dependencies', () => {
   test('that devDependencies get installed', async () => {
     await installDependencies({contributors});
 
-    assert.calledWith(dependencyInstaller.default, defaultDevDependencies);
+    assert.calledWith(dependencyInstaller.default, defaultDevDependencies, 'dev');
   });
 });
