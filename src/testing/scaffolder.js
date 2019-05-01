@@ -9,7 +9,7 @@ export default async function ({projectRoot, visibility, tests: {unit, integrati
 
   return {
     devDependencies: [
-      '@travi/any',
+      ...(unit || integration) ? ['@travi/any'] : [],
       ...unitResults ? unitResults.devDependencies : [],
       ...integrationResults ? integrationResults.devDependencies : []
     ],
