@@ -23,14 +23,18 @@ suite('npm install', () => {
 
   suite('devDependencies', () => {
     test('that devDependencies are installed', async () => {
-      const dependencies = any.listOf(any.word);
+      const duplicateDependency = any.word();
+      const uniqueDependencies = any.listOf(any.word);
+      const dependencies = [duplicateDependency, ...uniqueDependencies, duplicateDependency];
       const dependenciesType = any.word();
 
       await npmInstall(dependencies, dependenciesType);
 
       assert.calledWith(
         execa.shell,
-        `. ~/.nvm/nvm.sh && nvm use && npm install ${dependencies.join(' ')} --save-${dependenciesType}`
+        `. ~/.nvm/nvm.sh && nvm use && npm install ${
+          [duplicateDependency, ...uniqueDependencies].join(' ')
+        } --save-${dependenciesType}`
       );
     });
   });
