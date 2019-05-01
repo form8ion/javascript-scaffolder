@@ -1,7 +1,12 @@
-import exec from '../../third-party-wrappers/exec-as-promised';
+import {info} from '@travi/cli-messages';
+import execa from 'execa';
 
 export default async function (dependencies) {
   if (dependencies.length) {
-    await exec(`. ~/.nvm/nvm.sh && nvm use && npm install ${dependencies.join(' ')} --save-dev`, {silent: false});
+    const dependenciesType = 'dev';
+
+    info(`Installing ${dependenciesType} dependencies`, {level: 'secondary'});
+
+    await execa.shell(`. ~/.nvm/nvm.sh && nvm use && npm install ${dependencies.join(' ')} --save-${dependenciesType}`);
   }
 }

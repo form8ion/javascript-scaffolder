@@ -3,7 +3,7 @@ import {info} from '@travi/cli-messages';
 import install from './install';
 
 export default async function ({contributors}) {
-  info('Installing devDependencies', {level: 'secondary'});
+  info('Installing dependencies');
 
   await install(uniq([
     'npm-run-all',
