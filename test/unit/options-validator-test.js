@@ -226,7 +226,7 @@ suite('options validator', () => {
   });
 
   suite('overrides', () => {
-    const email = `${any.word()}@${any.word()}.${any.word()}`;
+    const email = any.email();
 
     test('that `npmAccount` can be overridden', () => {
       validate({
