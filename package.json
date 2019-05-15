@@ -29,7 +29,7 @@
     "build:js": "rollup -c",
     "build": "run-s clean build:*",
     "watch": "run-s 'build:js -- --watch'",
-    "prepublishOnly": "run-s build"
+    "prepack": "run-s build"
   },
   "publishConfig": {
     "access": "public"
