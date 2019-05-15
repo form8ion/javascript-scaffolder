@@ -8,7 +8,7 @@ suite('dependencies', () => {
   let sandbox;
   const dependenciesLists = any.listOf(() => any.fromList([any.listOf(any.string), undefined]), {min: 5});
   const dependenciesFromAllContributors = dependenciesLists.reduce((acc, list) => (list ? [...acc, ...list] : acc), []);
-  const devDependenciesLists = any.listOf(() => any.listOf(any.string), {min: 5});
+  const devDependenciesLists = any.listOf(() => any.listOf(any.string), {size: dependenciesLists.length});
   const devDependenciesFromAllContributors = devDependenciesLists.reduce((acc, list) => ([...acc, ...list]), []);
   const contributors = any.listOf(
     index => ({
