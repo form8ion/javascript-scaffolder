@@ -82,4 +82,7 @@ Then(/^the expected files are generated$/, async function () {
 
 Then('the expected results are returned to the project scaffolder', async function () {
   assert.containsAllKeys(scaffoldResult.badges.contribution, ['commit-convention', 'commitizen']);
+
+  assert.include(scaffoldResult.vcsIgnore.directories, '/node_modules/');
+  assert.include(scaffoldResult.vcsIgnore.directories, '/lib/');
 });
