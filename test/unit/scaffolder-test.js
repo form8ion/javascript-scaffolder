@@ -281,9 +281,7 @@ suite('javascript project scaffolder', () => {
     suite('vcs ignore', () => {
       test('that ignores are defined', async () => {
         const ignores = any.simpleObject();
-        vcsIgnoresBuilder.default
-          .withArgs({host: hostResults, linting: lintingResults, testing: testingResults, projectType})
-          .returns(ignores);
+        vcsIgnoresBuilder.default.withArgs(contributors).returns(ignores);
         commitConvention.default.resolves({devDependencies: commitConventionDevDependencies});
 
         const {vcsIgnore} = await scaffold(options);

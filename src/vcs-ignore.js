@@ -1,10 +1,13 @@
-export default function ({linting, host, testing, projectType}) {
+export default function (contributors) {
   return {
-    files: [...linting.vcsIgnore.files, ...'Application' === projectType ? ['.env'] : []],
+    files: contributors
+      .map(contributor => contributor.vcsIgnore.files)
+      .reduce((acc, files) => ([...acc, ...files]), []),
     directories: [
       '/node_modules/',
-      ...testing.vcsIgnore.directories,
-      ...host.vcsIgnore.directories
+      ...contributors
+        .map(contributor => contributor.vcsIgnore.directories)
+        .reduce((acc, directories) => ([...acc, ...directories]), [])
     ]
   };
 }

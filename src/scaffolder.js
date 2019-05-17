@@ -79,7 +79,6 @@ export async function scaffold(options) {
     ])),
     ...applicationOrPackage ? [applicationOrPackage] : []
   ];
-  const [host, testing, linting] = contributors;
 
   const {homepage: projectHomepage} = await scaffoldPackage({
     projectRoot,
@@ -97,7 +96,7 @@ export async function scaffold(options) {
   return {
     badges: buildBadgesDetails(contributors),
     documentation: scaffoldDocumentation({projectType, packageName, visibility, scope}),
-    vcsIgnore: buildVcsIgnoreLists({host, linting, testing, projectType}),
+    vcsIgnore: buildVcsIgnoreLists(contributors),
     verificationCommand: 'npm test',
     projectDetails: {...projectHomepage && {homepage: projectHomepage}}
   };

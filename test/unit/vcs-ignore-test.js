@@ -3,30 +3,23 @@ import any from '@travi/any';
 import buildVcsIgnoreLists from '../../src/vcs-ignore';
 
 suite('vcs-ignore lists builder', () => {
-  const hostDirectories = any.listOf(any.string);
-  const lintingFiles = any.listOf(any.string);
-  const testingDirectories = any.listOf(any.string);
-  const host = {vcsIgnore: {directories: hostDirectories}};
-  const linting = {vcsIgnore: {files: lintingFiles}};
-  const testing = {vcsIgnore: {directories: testingDirectories}};
+  const filesLists = any.listOf(() => any.listOf(any.word));
+  const directoriesLists = any.listOf(() => any.listOf(any.word), {size: filesLists.length});
+  const contributors = any.listOf(index => ({
+    ...any.simpleObject(),
+    vcsIgnore: {files: filesLists[index], directories: directoriesLists[index]}
+  }), {size: filesLists.length});
 
   test('that default lists are defined', () => {
     assert.deepEqual(
-      buildVcsIgnoreLists({host, linting, testing}),
+      buildVcsIgnoreLists(contributors),
       {
-        files: [...lintingFiles],
+        files: filesLists.reduce((acc, files) => ([...acc, ...files]), []),
         directories: [
           '/node_modules/',
-          ...testingDirectories,
-          ...hostDirectories
+          ...directoriesLists.reduce((acc, directories) => ([...acc, ...directories]), [])
         ]
       }
     );
-  });
-
-  test('that application-specific exclusions are defined for application projects', () => {
-    const ignores = buildVcsIgnoreLists({host, linting, testing, projectType: 'Application'});
-
-    assert.include(ignores.files, '.env');
   });
 });
