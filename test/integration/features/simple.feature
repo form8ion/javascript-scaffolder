@@ -7,7 +7,7 @@ Feature: Simplest Use
     And the npm cli is logged in
     And nvm is properly configured
     When the project is scaffolded
-    Then the expected files are generated
+    Then the expected files for a "package" are generated
     And the expected results for a "package" are returned to the project scaffolder
 
   Scenario: Minimal Options w/ Versioning
@@ -17,7 +17,7 @@ Feature: Simplest Use
     And the npm cli is logged in
     And nvm is properly configured
     When the project is scaffolded
-    Then the expected files are generated
+    Then the expected files for a "package" are generated
 
   Scenario: Without testing, transpilation, or linting
     Given the project will be a "package"

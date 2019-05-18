@@ -74,12 +74,17 @@ When(/^the project is scaffolded$/, async function () {
   });
 });
 
-Then(/^the expected files are generated$/, async function () {
+Then('the expected files for a(n) {string} are generated', async function (projectType) {
   const nvmRc = await readFile(`${process.cwd()}/.nvmrc`);
 
   assert.equal(nvmRc.toString(), this.latestLtsVersion);
   assert.isTrue(existsSync(`${process.cwd()}/.eslintrc.yml`));
   assert.isTrue(existsSync(`${process.cwd()}/.babelrc`));
+  assert.isTrue(existsSync(`${process.cwd()}/package.json`));
+
+  if ('cli' === projectType) {
+    assert.equal(require('../../../../package.json').bin, 'foo');
+  }
 });
 
 Then('the expected results for a(n) {string} are returned to the project scaffolder', async function (projectType) {
