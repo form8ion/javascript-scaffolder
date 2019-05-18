@@ -22,4 +22,16 @@ suite('vcs-ignore lists builder', () => {
       }
     );
   });
+
+  test('that contributors without`vcsIgnore` defined do not cause an error', () => {
+    buildVcsIgnoreLists([...contributors, any.simpleObject()]);
+  });
+
+  test('that contributors without`vcsIgnore.files` defined do not cause an error', () => {
+    buildVcsIgnoreLists([...contributors, {...any.simpleObject(), vcsIgnore: {directories: []}}]);
+  });
+
+  test('that contributors without`vcsIgnore.directories` defined do not cause an error', () => {
+    buildVcsIgnoreLists([...contributors, {...any.simpleObject(), vcsIgnore: {files: []}}]);
+  });
 });
