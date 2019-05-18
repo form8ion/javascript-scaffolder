@@ -70,7 +70,7 @@ When(/^the project is scaffolded$/, async function () {
       eslint: {prefix: any.word(), packageName: any.word()},
       babelPreset: {name: any.word(), packageName: any.word()}
     },
-    ciServices: {[any.word()]: {scaffolder: foo => ({foo, devDependencies: []}), public: true}}
+    ciServices: {[any.word()]: {scaffolder: foo => ({foo}), public: true}}
   });
 });
 

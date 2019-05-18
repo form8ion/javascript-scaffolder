@@ -34,4 +34,8 @@ suite('dependencies', () => {
     assert.calledWith(dependencyInstaller.default, dependenciesFromAllContributors, 'prod');
     assert.calledWith(dependencyInstaller.default, defaultDevDependencies, 'dev');
   });
+
+  test('that a contirbutor without `devDependencies` does not throw an error', async () => {
+    await installDependencies({contributors: [...contributors, any.simpleObject()]});
+  });
 });

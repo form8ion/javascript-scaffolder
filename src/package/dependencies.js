@@ -17,6 +17,7 @@ export default async function ({contributors}) {
       'npm-run-all',
       ...contributors
         .map(contributor => contributor.devDependencies)
+        .filter(Boolean)
         .reduce((acc, devDependencies) => ([...acc, ...devDependencies]), [])
     ],
     'dev'
