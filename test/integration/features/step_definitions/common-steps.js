@@ -47,7 +47,7 @@ When(/^the project is scaffolded$/, async function () {
 
   bddStdIn(...[
     '\n',
-    '\n',
+    ...this.projectTypeAnswer,
     ...'Public' === visibility ? ['\n'] : [],
     '\n',
     '\n',
@@ -56,6 +56,7 @@ When(/^the project is scaffolded$/, async function () {
     ...this.unitTestAnswer,
     ...this.integrationTestAnswer,
     ...this.ciAnswer ? this.ciAnswer : [],
+    ...'application' === this.projectType ? ['\n'] : [],
     ...this.transpilationLintAnswer ? this.transpilationLintAnswer : []
   ]);
 
@@ -80,9 +81,11 @@ Then(/^the expected files are generated$/, async function () {
   assert.isTrue(existsSync(`${process.cwd()}/.babelrc`));
 });
 
-Then('the expected results are returned to the project scaffolder', async function () {
+Then('the expected results for a(n) {string} are returned to the project scaffolder', async function (projectType) {
   assert.containsAllKeys(scaffoldResult.badges.contribution, ['commit-convention', 'commitizen']);
 
   assert.include(scaffoldResult.vcsIgnore.directories, '/node_modules/');
   assert.include(scaffoldResult.vcsIgnore.directories, '/lib/');
+  if ('application' === projectType) assert.include(scaffoldResult.vcsIgnore.files, '.env');
+  else assert.notInclude(scaffoldResult.vcsIgnore.files, '.env');
 });

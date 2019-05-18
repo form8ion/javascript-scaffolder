@@ -1,16 +1,18 @@
 Feature: Simplest Use
 
   Scenario: Minimal Options w/o Versioning
-    Given the project will not be versioned
+    Given the project will be a "package"
+    And the project will not be versioned
     And the default answers are chosen
     And the npm cli is logged in
     And nvm is properly configured
     When the project is scaffolded
     Then the expected files are generated
-    And the expected results are returned to the project scaffolder
+    And the expected results for a "package" are returned to the project scaffolder
 
   Scenario: Minimal Options w/ Versioning
-    Given the project will be versioned
+    Given the project will be a "package"
+    And the project will be versioned
     And the default answers are chosen
     And the npm cli is logged in
     And nvm is properly configured
@@ -18,7 +20,8 @@ Feature: Simplest Use
     Then the expected files are generated
 
   Scenario: Without testing, transpilation, or linting
-    Given the project will be versioned
+    Given the project will be a "package"
+    And the project will be versioned
     And the npm cli is logged in
     And nvm is properly configured
     And the project will not be tested
