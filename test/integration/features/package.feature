@@ -27,5 +27,5 @@ Feature: Simplest Use
     And the project will not be tested
     And the project will not be transpiled or linted
     When the project is scaffolded
-#    Then the expected files are generated
+    Then the expected files for a "package" are generated
     And Babel and ESLint are not scaffolded

@@ -66,6 +66,8 @@ Before(async function () {
   });
 
   this.sinonSandbox = sinon.createSandbox();
+
+  this.transpileAndLint = true;
 });
 
 After(function () {
@@ -115,8 +117,8 @@ Then('the expected files for a(n) {string} are generated', async function (proje
   const nvmRc = await readFile(`${process.cwd()}/.nvmrc`);
 
   assert.equal(nvmRc.toString(), this.latestLtsVersion);
-  assert.isTrue(existsSync(`${process.cwd()}/.eslintrc.yml`));
-  assert.isTrue(existsSync(`${process.cwd()}/.babelrc`));
+  assert.equal(existsSync(`${process.cwd()}/.eslintrc.yml`), this.transpileAndLint);
+  assert.equal(existsSync(`${process.cwd()}/.babelrc`), this.transpileAndLint);
 
   await assertThatPackageDetailsAreConfiguredCorrectlyFor(projectType);
   await assertThatNpmConfigDetailsAreConfiguredCorrectlyFor(projectType);
