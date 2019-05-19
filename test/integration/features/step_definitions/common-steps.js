@@ -1,4 +1,3 @@
-import {EOL} from 'os';
 import {readFile} from 'mz/fs';
 import {existsSync} from 'fs';
 import {resolve} from 'path';
@@ -10,46 +9,15 @@ import sinon from 'sinon';
 import {assert} from 'chai';
 import {World} from '../support/world';
 import {scaffold} from '../../../../src';
+import {
+  assertThatNpmConfigDetailsAreConfiguredCorrectlyFor,
+  assertThatPackageDetailsAreConfiguredCorrectlyFor
+} from './npm-steps';
+import * as execa from '../../../../third-party-wrappers/execa';
 
 setWorldConstructor(World);
 
 let scaffoldResult;
-
-async function assertThatPackageDetailsAreConfiguredCorrectlyFor(projectType) {
-  const packageDetails = JSON.parse(await readFile(`${process.cwd()}/package.json`));
-
-  if ('application' === projectType) {
-    assert.isTrue(packageDetails.private);
-    assert.isUndefined(packageDetails.files);
-  } else {
-    assert.isUndefined(packageDetails.private);
-  }
-
-  if ('package' === projectType) {
-    assert.equal(packageDetails.main, 'lib/index.cjs.js');
-    assert.equal(packageDetails.module, 'lib/index.es.js');
-    assert.deepEqual(packageDetails.files, ['lib/']);
-  } else {
-    assert.isUndefined(packageDetails.main);
-    assert.isUndefined(packageDetails.module);
-  }
-
-  if ('cli' === projectType) {
-    assert.deepEqual(packageDetails.bin, {});
-    assert.deepEqual(packageDetails.files, ['bin/']);
-  } else {
-    assert.isUndefined(packageDetails.bin);
-  }
-}
-
-async function assertThatNpmConfigDetailsAreConfiguredCorrectlyFor(projectType) {
-  const npmConfigDetails = (await readFile(`${process.cwd()}/.npmrc`)).toString().split(EOL);
-
-  assert.include(npmConfigDetails, 'update-notifier=false');
-
-  if ('application' === projectType || 'cli' === projectType) assert.include(npmConfigDetails, 'save-exact=true');
-  else assert.notInclude(npmConfigDetails, 'save-exact=true');
-}
 
 Before(async function () {
   // work around for overly aggressive mock-fs, see:
@@ -66,6 +34,7 @@ Before(async function () {
   });
 
   this.sinonSandbox = sinon.createSandbox();
+  this.sinonSandbox.stub(execa, 'default');
 
   this.transpileAndLint = true;
 });
