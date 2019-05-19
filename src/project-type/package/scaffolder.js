@@ -23,10 +23,7 @@ export default async function ({projectRoot, transpileLint, packageName, visibil
         watch: 'run-s \'build:js -- --watch\'',
         prepack: 'run-s build'
       },
-      vcsIgnore: {
-        files: [],
-        directories: ['/lib/']
-      },
+      vcsIgnore: {directories: ['/lib/']},
       buildDirectory: defaultBuildDirectory,
       badges: {
         consumer: {
@@ -46,9 +43,7 @@ export default async function ({projectRoot, transpileLint, packageName, visibil
   }
 
   return {
-    devDependencies: [],
     scripts: {},
-    vcsIgnore: {files: [], directories: []},
     badges: defineBadges(packageName, visibility)
   };
 }

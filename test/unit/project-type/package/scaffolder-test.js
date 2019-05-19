@@ -41,7 +41,7 @@ suite('package project-type', () => {
           watch: 'run-s \'build:js -- --watch\'',
           prepack: 'run-s build'
         },
-        vcsIgnore: {files: [], directories: ['/lib/']},
+        vcsIgnore: {directories: ['/lib/']},
         buildDirectory: './lib',
         badges
       }
@@ -73,12 +73,7 @@ suite('package project-type', () => {
 
     assert.deepEqual(
       await scaffoldPackage({projectRoot, transpileLint: false, packageName, visibility}),
-      {
-        devDependencies: [],
-        scripts: {},
-        vcsIgnore: {files: [], directories: []},
-        badges
-      }
+      {scripts: {}, badges}
     );
     assert.neverCalledWith(fs.copyFile, pathToTemplate, `${projectRoot}/rollup.config.js`);
   });
