@@ -37,6 +37,7 @@ Before(async function () {
   this.sinonSandbox.stub(execa, 'default');
 
   this.transpileAndLint = true;
+  this.visibility = any.fromList(['Public', 'Private']);
 });
 
 After(function () {
@@ -51,12 +52,10 @@ Given(/^the default answers are chosen$/, async function () {
 });
 
 When(/^the project is scaffolded$/, async function () {
-  const visibility = any.fromList(['Public', 'Private']);
-
   bddStdIn(...[
     '\n',
     ...this.projectTypeAnswer,
-    ...'Public' === visibility ? ['\n'] : [],
+    ...'Public' === this.visibility ? ['\n'] : [],
     '\n',
     '\n',
     '\n',
@@ -71,7 +70,7 @@ When(/^the project is scaffolded$/, async function () {
   scaffoldResult = await scaffold({
     projectRoot: process.cwd(),
     projectName: any.word(),
-    visibility,
+    visibility: this.visibility,
     license: any.string(),
     vcs: this.vcs,
     configs: {
@@ -89,7 +88,7 @@ Then('the expected files for a(n) {string} are generated', async function (proje
   assert.equal(existsSync(`${process.cwd()}/.eslintrc.yml`), this.transpileAndLint);
   assert.equal(existsSync(`${process.cwd()}/.babelrc`), this.transpileAndLint);
 
-  await assertThatPackageDetailsAreConfiguredCorrectlyFor(projectType);
+  await assertThatPackageDetailsAreConfiguredCorrectlyFor(projectType, this.visibility);
   await assertThatNpmConfigDetailsAreConfiguredCorrectlyFor(projectType);
 });
 
