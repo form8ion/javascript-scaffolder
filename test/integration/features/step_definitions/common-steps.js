@@ -1,3 +1,4 @@
+import {EOL} from 'os';
 import {readFile} from 'mz/fs';
 import {existsSync} from 'fs';
 import {resolve} from 'path';
@@ -39,6 +40,15 @@ async function assertThatPackageDetailsAreConfiguredCorrectlyFor(projectType) {
   } else {
     assert.isUndefined(packageDetails.bin);
   }
+}
+
+async function assertThatNpmConfigDetailsAreConfiguredCorrectlyFor(projectType) {
+  const npmConfigDetails = (await readFile(`${process.cwd()}/.npmrc`)).toString().split(EOL);
+
+  assert.include(npmConfigDetails, 'update-notifier=false');
+
+  if ('application' === projectType || 'cli' === projectType) assert.include(npmConfigDetails, 'save-exact=true');
+  else assert.notInclude(npmConfigDetails, 'save-exact=true');
 }
 
 Before(async function () {
@@ -107,9 +117,9 @@ Then('the expected files for a(n) {string} are generated', async function (proje
   assert.equal(nvmRc.toString(), this.latestLtsVersion);
   assert.isTrue(existsSync(`${process.cwd()}/.eslintrc.yml`));
   assert.isTrue(existsSync(`${process.cwd()}/.babelrc`));
-  assert.isTrue(existsSync(`${process.cwd()}/package.json`));
 
   await assertThatPackageDetailsAreConfiguredCorrectlyFor(projectType);
+  await assertThatNpmConfigDetailsAreConfiguredCorrectlyFor(projectType);
 });
 
 Then('the expected results for a(n) {string} are returned to the project scaffolder', async function (projectType) {
