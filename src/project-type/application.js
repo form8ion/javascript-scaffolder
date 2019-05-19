@@ -24,7 +24,8 @@ export default async function ({applicationTypes, projectRoot, configs, transpil
         files: [...results.vcsIgnore.files, '.env'],
         directories: [...results.vcsIgnore.directories, '/lib/']
       },
-      buildDirectory: defaultBuildDirectory
+      buildDirectory: defaultBuildDirectory,
+      packageProperties: {private: true}
     };
   }
 

@@ -8,6 +8,15 @@ const defaultBuildDirectory = './lib';
 export default async function ({projectRoot, transpileLint, packageName, visibility}) {
   info('Scaffolding Package Details');
 
+  const commonPackageProperties = {
+    version: '0.0.0-semantically-released',
+    main: 'lib/index.cjs.js',
+    module: 'lib/index.es.js',
+    sideEffects: false,
+    files: ['lib/'],
+    publishConfig: {access: 'Public' === visibility ? 'public' : 'restricted'}
+  };
+
   if (false !== transpileLint) {
     const coreBadges = defineBadges(packageName, visibility);
 
@@ -38,12 +47,14 @@ export default async function ({projectRoot, transpileLint, packageName, visibil
         },
         contribution: coreBadges.contribution,
         status: coreBadges.status
-      }
+      },
+      packageProperties: commonPackageProperties
     };
   }
 
   return {
     scripts: {},
-    badges: defineBadges(packageName, visibility)
+    badges: defineBadges(packageName, visibility),
+    packageProperties: commonPackageProperties
   };
 }

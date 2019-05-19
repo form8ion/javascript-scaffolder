@@ -49,7 +49,8 @@ suite('application project-type', () => {
           files: [...scaffoldedFilesToIgnore, '.env'],
           directories: [...scaffoldedDirectoriesToIgnore, '/lib/']
         },
-        buildDirectory: './lib'
+        buildDirectory: './lib',
+        packageProperties: {private: true}
       }
     );
   });
