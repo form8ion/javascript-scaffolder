@@ -19,6 +19,7 @@ async function assertThatPackageDetailsAreConfiguredCorrectlyFor(projectType) {
 
   if ('application' === projectType) {
     assert.isTrue(packageDetails.private);
+    assert.isUndefined(packageDetails.files);
   } else {
     assert.isUndefined(packageDetails.private);
   }
@@ -26,13 +27,15 @@ async function assertThatPackageDetailsAreConfiguredCorrectlyFor(projectType) {
   if ('package' === projectType) {
     assert.equal(packageDetails.main, 'lib/index.cjs.js');
     assert.equal(packageDetails.module, 'lib/index.es.js');
+    assert.deepEqual(packageDetails.files, ['lib/']);
   } else {
     assert.isUndefined(packageDetails.main);
     assert.isUndefined(packageDetails.module);
   }
 
   if ('cli' === projectType) {
-    assert.equal(packageDetails.bin, 'foo');
+    assert.deepEqual(packageDetails.bin, {});
+    assert.deepEqual(packageDetails.files, ['bin/']);
   } else {
     assert.isUndefined(packageDetails.bin);
   }
