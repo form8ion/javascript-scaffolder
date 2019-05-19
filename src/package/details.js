@@ -15,34 +15,22 @@ function defineVcsHostDetails(vcs, packageType, packageName) {
   };
 }
 
-function definePackagingDetails(visibility) {
-  return {
-    version: '0.0.0-semantically-released',
-    main: 'lib/index.cjs.js',
-    module: 'lib/index.es.js',
-    sideEffects: false,
-    publishConfig: {access: 'Public' === visibility ? 'public' : 'restricted'},
-    files: ['lib/']
-  };
-}
-
 export default function ({
   packageName,
-  visibility,
   projectType,
   license,
   tests,
   vcs,
   author,
   description,
-  contributors
+  contributors,
+  packageProperties
 }) {
   return {
     name: packageName,
     description,
     license,
-    ...('Package' === projectType) && definePackagingDetails(visibility),
-    ...('Application' === projectType) && {private: true},
+    ...packageProperties,
     ...defineVcsHostDetails(vcs, projectType, packageName),
     author: `${author.name}${author.email ? ` <${author.email}>` : ''}${author.url ? ` (${author.url})` : ''}`,
     scripts: defineScripts(tests, contributors)

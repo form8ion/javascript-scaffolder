@@ -24,7 +24,6 @@ suite('package scaffolder', () => {
     const homepage = any.url();
     const packageDetails = {...any.simpleObject(), homepage};
     const projectRoot = any.string();
-    const visibility = any.word();
     const projectType = any.word();
     const license = any.string();
     const tests = any.simpleObject();
@@ -32,17 +31,18 @@ suite('package scaffolder', () => {
     const author = any.simpleObject();
     const description = any.sentence();
     const contributors = any.simpleObject();
+    const packageProperties = any.simpleObject();
     buildPackageDetails.default
       .withArgs({
         packageName,
-        visibility,
         projectType,
         license,
         tests,
         vcs,
         author,
         description,
-        contributors
+        contributors,
+        packageProperties
       })
       .resolves(packageDetails);
 
@@ -52,12 +52,12 @@ suite('package scaffolder', () => {
         projectType,
         contributors,
         packageName,
-        visibility,
         license,
         tests,
         vcs,
         author,
-        description
+        description,
+        packageProperties
       }),
       {homepage}
     );

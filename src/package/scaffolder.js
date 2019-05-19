@@ -8,25 +8,25 @@ export default async function ({
   projectType,
   contributors,
   packageName,
-  visibility,
   license,
   tests,
   vcs,
   author,
-  description
+  description,
+  packageProperties
 }) {
   info('Configuring package.json');
 
   const packageData = await buildPackageDetails({
     packageName,
-    visibility,
     projectType,
     license,
     tests,
     vcs,
     author,
     description,
-    contributors
+    contributors,
+    packageProperties
   });
 
   await writeFile(`${projectRoot}/package.json`, JSON.stringify(packageData));

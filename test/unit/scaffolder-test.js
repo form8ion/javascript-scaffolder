@@ -62,7 +62,8 @@ suite('javascript project scaffolder', () => {
   const applicationTypes = any.simpleObject();
   const transpileLint = any.boolean();
   const projectTypeBuildDirectory = any.string();
-  const projectTypeResults = {...any.simpleObject(), buildDirectory: projectTypeBuildDirectory};
+  const packageProperties = any.simpleObject();
+  const projectTypeResults = {...any.simpleObject(), buildDirectory: projectTypeBuildDirectory, packageProperties};
   const contributors = [
     hostResults,
     testingResults,
@@ -77,12 +78,12 @@ suite('javascript project scaffolder', () => {
     projectType,
     contributors,
     packageName,
-    visibility,
     license,
     tests,
     vcs: vcsDetails,
     author: {name: authorName, email: authorEmail, url: authorUrl},
-    description
+    description,
+    packageProperties
   };
   const commonPromptAnswers = {
     [questionNames.NODE_VERSION_CATEGORY]: any.word(),

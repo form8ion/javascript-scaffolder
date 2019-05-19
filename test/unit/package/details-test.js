@@ -38,40 +38,6 @@ suite('package details builder', () => {
     });
   });
 
-  suite('main/module', () => {
-    suite('application', () => {
-      test('that these properties aer not defined for applications', () => {
-        const packageDetails = buildPackageDetails({
-          tests: {},
-          vcs: {},
-          author: {},
-          projectType: 'Application',
-          configs: {},
-          contributors: []
-        });
-
-        assert.isUndefined(packageDetails.main);
-        assert.isUndefined(packageDetails.module);
-      });
-    });
-
-    suite('package', () => {
-      test('that `main` and `module` are defined for package consumers', () => {
-        const packageDetails = buildPackageDetails({
-          tests: {},
-          vcs: {},
-          author: {},
-          projectType: 'Package',
-          configs: {},
-          contributors: []
-        });
-
-        assert.equal(packageDetails.main, 'lib/index.cjs.js');
-        assert.equal(packageDetails.module, 'lib/index.es.js');
-      });
-    });
-  });
-
   suite('author', () => {
     const name = any.string();
     const email = any.string();
@@ -111,36 +77,6 @@ suite('package details builder', () => {
       });
 
       assert.equal(packageDetails.author, `${name} <${email}>`);
-    });
-  });
-
-  suite('private', () => {
-    test('that the package is marked as private for an application', () => {
-      const packageDetails = buildPackageDetails({
-        visibility,
-        projectType: 'Application',
-        tests: {},
-        vcs: {},
-        author: {},
-        configs: {},
-        contributors: []
-      });
-
-      assert.isTrue(packageDetails.private);
-    });
-
-    test('that the package is not marked as private for a package', () => {
-      const packageDetails = buildPackageDetails({
-        visibility,
-        projectType: 'Package',
-        tests: {},
-        vcs: {},
-        author: {},
-        configs: {},
-        contributors: []
-      });
-
-      assert.isUndefined(packageDetails.private);
     });
   });
 
@@ -212,77 +148,6 @@ suite('package details builder', () => {
     });
   });
 
-  suite('publish config', () => {
-    test('that access is marked as restricted for private projects', () => {
-      const packageDetails = buildPackageDetails({
-        visibility: 'Private',
-        projectType: 'Package',
-        tests: {},
-        vcs: {},
-        author: {},
-        configs: {},
-        contributors: []
-      });
-
-      assert.deepEqual(packageDetails.publishConfig, {access: 'restricted'});
-    });
-
-    test('that access is marked as public for public projects', () => {
-      const packageDetails = buildPackageDetails({
-        visibility: 'Public',
-        projectType: 'Package',
-        tests: {},
-        vcs: {},
-        author: {},
-        configs: {},
-        contributors: []
-      });
-
-      assert.deepEqual(packageDetails.publishConfig, {access: 'public'});
-    });
-
-    test('that access is marked as restricted when visibility is omitted for some reason', () => {
-      const packageDetails = buildPackageDetails({
-        projectType: 'Package',
-        tests: {},
-        vcs: {},
-        author: {},
-        configs: {},
-        contributors: []
-      });
-
-      assert.deepEqual(packageDetails.publishConfig, {access: 'restricted'});
-    });
-  });
-
-  suite('version', () => {
-    test('that `version` is not set for applications', () => {
-      const packageDetails = buildPackageDetails({
-        projectType: 'Application',
-        tests: {},
-        vcs: {},
-        author: {},
-        configs: {},
-        contributors: []
-      });
-
-      assert.isUndefined(packageDetails.version);
-    });
-
-    test('that the `version` makes it clear that versioning is handled by semantic-release', () => {
-      const packageDetails = buildPackageDetails({
-        projectType: 'Package',
-        tests: {},
-        vcs: {},
-        author: {},
-        configs: {},
-        contributors: []
-      });
-
-      assert.equal(packageDetails.version, '0.0.0-semantically-released');
-    });
-  });
-
   suite('scripts', () => {
     test('that scripts from each contributor are included', () => {
       const contributors = any.listOf(() => ({...any.simpleObject(), scripts: any.simpleObject()}));
@@ -339,70 +204,24 @@ suite('package details builder', () => {
         assert.equal(packageDetails.scripts.test, 'npm-run-all --print-label --parallel lint:* --parallel test:*');
       });
     });
+  });
 
-    suite('build', () => {
-      suite('application', () => {
-        test('that rollup is not used', () => {
-          const packageDetails = buildPackageDetails({
-            tests: {},
-            vcs: {},
-            author: {},
-            projectType: 'Application',
-            configs: {},
-            contributors: []
-          });
+  suite('package properties', () => {
+    test('that the provided properties are included in the generated details', () => {
+      const packageProperties = any.simpleObject();
 
-          assert.isUndefined(packageDetails.scripts.build);
-          assert.isUndefined(packageDetails.scripts['build:js']);
-          assert.isUndefined(packageDetails.scripts.watch);
-        });
-      });
-    });
-
-    suite('publish', () => {
-      suite('application', () => {
-        test('that publishing is not configured', () => {
-          const packageDetails = buildPackageDetails({
-            tests: {},
-            vcs: {},
-            author: {},
-            projectType: 'Application',
-            configs: {},
-            contributors: []
-          });
-
-          assert.isUndefined(packageDetails.scripts.prepack);
-          assert.isUndefined(packageDetails.files);
-        });
+      const packageDetails = buildPackageDetails({
+        packageName,
+        visibility,
+        tests: {},
+        vcs: undefined,
+        author: {},
+        configs: {},
+        contributors: [],
+        packageProperties
       });
 
-      suite('package', () => {
-        test('that the package is marked as side-effects free', () => {
-          const packageDetails = buildPackageDetails({
-            tests: {},
-            vcs: {},
-            author: {},
-            projectType: 'Package',
-            configs: {},
-            contributors: []
-          });
-
-          assert.isFalse(packageDetails.sideEffects);
-        });
-
-        test('that the lib/ directory is whitelisted for inclusion in the published package', () => {
-          const packageDetails = buildPackageDetails({
-            tests: {},
-            vcs: {},
-            author: {},
-            projectType: 'Package',
-            configs: {},
-            contributors: []
-          });
-
-          assert.deepEqual(packageDetails.files, ['lib/']);
-        });
-      });
+      assert.include(packageDetails, packageProperties);
     });
   });
 });
