@@ -14,6 +14,30 @@ setWorldConstructor(World);
 
 let scaffoldResult;
 
+async function assertThatPackageDetailsAreConfiguredCorrectlyFor(projectType) {
+  const packageDetails = JSON.parse(await readFile(`${process.cwd()}/package.json`));
+
+  if ('application' === projectType) {
+    assert.isTrue(packageDetails.private);
+  } else {
+    assert.isUndefined(packageDetails.private);
+  }
+
+  if ('package' === projectType) {
+    assert.equal(packageDetails.main, 'lib/index.cjs.js');
+    assert.equal(packageDetails.module, 'lib/index.es.js');
+  } else {
+    assert.isUndefined(packageDetails.main);
+    assert.isUndefined(packageDetails.module);
+  }
+
+  if ('cli' === projectType) {
+    assert.equal(packageDetails.bin, 'foo');
+  } else {
+    assert.isUndefined(packageDetails.bin);
+  }
+}
+
 Before(async function () {
   // work around for overly aggressive mock-fs, see:
   // https://github.com/tschaub/mock-fs/issues/213#issuecomment-347002795
@@ -82,9 +106,7 @@ Then('the expected files for a(n) {string} are generated', async function (proje
   assert.isTrue(existsSync(`${process.cwd()}/.babelrc`));
   assert.isTrue(existsSync(`${process.cwd()}/package.json`));
 
-  if ('cli' === projectType) {
-    assert.equal(require('../../../../package.json').bin, 'foo');
-  }
+  await assertThatPackageDetailsAreConfiguredCorrectlyFor(projectType);
 });
 
 Then('the expected results for a(n) {string} are returned to the project scaffolder', async function (projectType) {
