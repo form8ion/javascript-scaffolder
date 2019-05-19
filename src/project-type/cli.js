@@ -22,6 +22,11 @@ export default function ({packageName, visibility}) {
     ],
     vcsIgnore: {files: [], directories: ['/bin/']},
     buildDirectory: defaultBuildDirectory,
-    badges: defineBadges(packageName, visibility)
+    badges: defineBadges(packageName, visibility),
+    packageProperties: {
+      version: '0.0.0-semantically-released',
+      files: ['bin/'],
+      publishConfig: {access: 'Public' === visibility ? 'public' : 'restricted'}
+    }
   };
 }

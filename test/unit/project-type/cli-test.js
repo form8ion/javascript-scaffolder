@@ -9,20 +9,19 @@ suite('cli project-type', () => {
   const projectRoot = any.string();
   const packageName = any.word();
   const badges = any.simpleObject();
-  const visibility = any.word();
+  const configs = any.simpleObject();
 
   setup(() => {
     sandbox = sinon.createSandbox();
 
     sandbox.stub(defineBadges, 'default');
-
-    defineBadges.default.withArgs(packageName, visibility).returns(badges);
   });
 
   teardown(() => sandbox.restore());
 
   test('that details specific to a cli project-type are scaffolded', async () => {
-    const configs = any.simpleObject();
+    const visibility = 'Private';
+    defineBadges.default.withArgs(packageName, visibility).returns(badges);
 
     assert.deepEqual(
       await scaffoldCli({projectRoot, configs, packageName, visibility}),
@@ -45,8 +44,19 @@ suite('cli project-type', () => {
         ],
         vcsIgnore: {files: [], directories: ['/bin/']},
         buildDirectory: './bin',
-        badges
+        badges,
+        packageProperties: {
+          version: '0.0.0-semantically-released',
+          files: ['bin/'],
+          publishConfig: {access: 'restricted'}
+        }
       }
     );
+  });
+
+  test('that the package is published publically when the visibility is `Public`', async () => {
+    const results = await scaffoldCli({projectRoot, configs, packageName, visibility: 'Public'});
+
+    assert.equal(results.packageProperties.publishConfig.access, 'public');
   });
 });
