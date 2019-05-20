@@ -18,8 +18,7 @@ import * as badgeDetailsBuilder from '../../src/badges';
 import * as vcsIgnoresBuilder from '../../src/vcs-ignore';
 import * as commitConvention from '../../src/commit-convention/scaffolder';
 import * as packageScaffolder from '../../src/package/scaffolder';
-import * as packageTypeScaffolder from '../../src/project-type/package/scaffolder';
-import * as applicationTypeScaffolder from '../../src/project-type/application';
+import * as projectTypeScaffolder from '../../src/project-type/scaffolder';
 import * as packageNameBuilder from '../../src/package-name';
 import {scaffold} from '../../src/scaffolder';
 import {questionNames} from '../../src/prompts/question-names';
@@ -57,21 +56,21 @@ suite('javascript project scaffolder', () => {
   const configs = {babelPreset, ...any.simpleObject()};
   const versionCategory = any.word();
   const testingResults = any.simpleObject();
-  const buildDirectory = any.string();
-  const packageTypeResults = {...any.simpleObject(), buildDirectory};
-  const applicationTypeResults = {...any.simpleObject(), buildDirectory};
   const lintingResults = any.simpleObject();
   const ciServiceResults = any.simpleObject();
   const commitConventionResults = any.simpleObject();
   const applicationTypes = any.simpleObject();
   const transpileLint = any.boolean();
+  const projectTypeBuildDirectory = any.string();
+  const projectTypeResults = {...any.simpleObject(), buildDirectory: projectTypeBuildDirectory};
   const contributors = [
     hostResults,
     testingResults,
     lintingResults,
     ciServiceResults,
     babelResults,
-    commitConventionResults
+    commitConventionResults,
+    projectTypeResults
   ];
   const packageScaffoldingInputs = {
     projectRoot,
@@ -123,16 +122,14 @@ suite('javascript project scaffolder', () => {
     sandbox.stub(vcsIgnoresBuilder, 'default');
     sandbox.stub(commitConvention, 'default');
     sandbox.stub(packageScaffolder, 'default');
-    sandbox.stub(packageTypeScaffolder, 'default');
-    sandbox.stub(applicationTypeScaffolder, 'default');
     sandbox.stub(packageNameBuilder, 'default');
+    sandbox.stub(projectTypeScaffolder, 'default');
 
     fs.writeFile.resolves();
     fs.copyFile.resolves();
     packageNameBuilder.default.withArgs(projectName, scope).returns(packageName);
-    packageScaffolder.default
-      .withArgs(packageScaffoldingInputs)
-      .resolves({...any.simpleObject(), homepage});
+    projectTypeScaffolder.default.resolves(projectTypeResults);
+    packageScaffolder.default.withArgs(packageScaffoldingInputs).resolves({...any.simpleObject(), homepage});
     prompts.prompt.withArgs(overrides, ciServices, hosts, visibility, vcsDetails).resolves(commonPromptAnswers);
     ci.default
       .withArgs(
@@ -175,97 +172,21 @@ suite('javascript project scaffolder', () => {
 
   suite('config files', () => {
     test('that config files are created', async () => {
-      host.default.withArgs(hosts, chosenHost, {}).resolves(hostResults);
+      host.default.withArgs(hosts, chosenHost, {buildDirectory: projectTypeBuildDirectory}).resolves(hostResults);
 
       await scaffold(options);
 
       assert.calledWith(babel.default, {preset: babelPreset, projectRoot, transpileLint});
       assert.calledWith(npmConfig.default, {projectRoot, projectType});
     });
-
-    suite('build', () => {
-      suite('package', () => {
-        test('that a package type project gets additional details scaffolded', async () => {
-          const packageProjectType = 'Package';
-          prompts.prompt
-            .withArgs(overrides, ciServices, hosts, visibility, vcsDetails)
-            .resolves({...commonPromptAnswers, [questionNames.PROJECT_TYPE]: packageProjectType});
-          packageTypeScaffolder.default
-            .withArgs({projectRoot, transpileLint, packageName, visibility})
-            .resolves(packageTypeResults);
-          packageScaffolder.default.resolves(any.simpleObject());
-          host.default.withArgs(hosts, chosenHost, {buildDirectory}).resolves(hostResults);
-          ci.default
-            .withArgs(
-              ciServices,
-              chosenCiService,
-              {
-                projectRoot,
-                vcs: vcsDetails,
-                visibility,
-                packageType: packageProjectType,
-                nodeVersion: version,
-                tests
-              }
-            )
-            .resolves(ciServiceResults);
-
-          await scaffold(options);
-
-          assert.calledWith(
-            packageScaffolder.default,
-            {
-              ...packageScaffoldingInputs,
-              projectType: packageProjectType,
-              contributors: [...contributors, packageTypeResults]
-            }
-          );
-        });
-      });
-
-      suite('application', () => {
-        test('that an application type project gets additional details scaffolded', async () => {
-          const applicationProjectType = 'Application';
-          prompts.prompt
-            .withArgs(overrides, ciServices, hosts, visibility, vcsDetails)
-            .resolves({...commonPromptAnswers, [questionNames.PROJECT_TYPE]: applicationProjectType});
-          applicationTypeScaffolder.default
-            .withArgs({projectRoot, applicationTypes, configs, transpileLint})
-            .resolves(applicationTypeResults);
-          packageScaffolder.default.resolves(any.simpleObject());
-          host.default.withArgs(hosts, chosenHost, {buildDirectory}).resolves(hostResults);
-          ci.default
-            .withArgs(
-              ciServices,
-              chosenCiService,
-              {
-                projectRoot,
-                vcs: vcsDetails,
-                visibility,
-                packageType: applicationProjectType,
-                nodeVersion: version,
-                tests
-              }
-            )
-            .resolves(ciServiceResults);
-
-          await scaffold(options);
-
-          assert.calledWith(
-            packageScaffolder.default,
-            {
-              ...packageScaffoldingInputs,
-              projectType: applicationProjectType,
-              contributors: [...contributors, applicationTypeResults]
-            }
-          );
-        });
-      });
-    });
   });
 
   suite('data passed downstream', () => {
-    setup(() => host.default.withArgs(hosts, chosenHost, {}).resolves(hostResults));
+    setup(
+      () => host.default
+        .withArgs(hosts, chosenHost, {buildDirectory: projectTypeBuildDirectory})
+        .resolves(hostResults)
+    );
 
     suite('badges', () => {
       test('that badges are provided', async () => {

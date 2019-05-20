@@ -15,9 +15,8 @@ import {questionNames} from './prompts/question-names';
 import buildBadgesDetails from './badges';
 import buildVcsIgnoreLists from './vcs-ignore';
 import scaffoldPackage from './package';
-import scaffoldPackageType from './project-type/package/scaffolder';
-import scaffoldApplicationType from './project-type/application';
 import buildPackageName from './package-name';
+import scaffoldProjectType from './project-type';
 
 export async function scaffold(options) {
   info('Initializing JavaScript project');
@@ -53,12 +52,15 @@ export async function scaffold(options) {
   info('Writing project files', {level: 'secondary'});
 
   const packageName = buildPackageName(projectName, scope);
-  const [applicationOrPackage] = await Promise.all([
-    ...'Package' === projectType ? [scaffoldPackageType(({projectRoot, transpileLint, packageName, visibility}))] : [],
-    ...'Application' === projectType
-      ? [scaffoldApplicationType(({projectRoot, applicationTypes, configs, transpileLint}))]
-      : []
-  ]);
+  const projectTypeResults = await scaffoldProjectType({
+    projectType,
+    projectRoot,
+    transpileLint,
+    packageName,
+    visibility,
+    applicationTypes,
+    configs
+  });
   const [nodeVersion] = await Promise.all([
     scaffoldeNodeVersion({projectRoot, nodeVersionCategory}),
     scaffoldNpmConfig({projectType, projectRoot})
@@ -66,18 +68,14 @@ export async function scaffold(options) {
   const tests = {unit: unitTested, integration: integrationTested};
   const contributors = [
     ...(await Promise.all([
-      scaffoldHost(
-        hosts,
-        chosenHost,
-        {...applicationOrPackage && {buildDirectory: applicationOrPackage.buildDirectory}}
-      ),
+      scaffoldHost(hosts, chosenHost, {buildDirectory: projectTypeResults.buildDirectory}),
       scaffoldTesting({projectRoot, tests, visibility, vcs}),
       scaffoldLinting(({configs, projectRoot, tests, vcs, transpileLint})),
       scaffoldCi(ciServices, ci, {projectRoot, vcs, visibility, packageType: projectType, nodeVersion, tests}),
       scaffoldBabel({preset: configs.babelPreset, projectRoot, transpileLint}),
       scaffoldCommitConvention({projectRoot, configs})
     ])),
-    ...applicationOrPackage ? [applicationOrPackage] : []
+    projectTypeResults
   ];
 
   const {homepage: projectHomepage} = await scaffoldPackage({
