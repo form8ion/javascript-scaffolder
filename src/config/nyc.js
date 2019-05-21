@@ -1,7 +1,13 @@
 import {writeFile} from 'mz/fs';
 
 export default async function ({projectRoot, vcs, visibility}) {
-  await writeFile(`${projectRoot}/.nycrc`, JSON.stringify({reporter: ['lcov', 'text-summary'], exclude: ['test/']}));
+  await writeFile(
+    `${projectRoot}/.nycrc`,
+    JSON.stringify({
+      reporter: ['lcov', 'text-summary', 'html'],
+      exclude: ['test/', 'thirdparty-wrappers/', 'vendor/']
+    })
+  );
 
   return {
     devDependencies: ['nyc'],

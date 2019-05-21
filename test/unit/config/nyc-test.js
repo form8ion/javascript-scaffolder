@@ -38,7 +38,10 @@ suite('nyc scaffolder', () => {
     assert.calledWith(
       fs.writeFile,
       `${projectRoot}/.nycrc`,
-      JSON.stringify({reporter: ['lcov', 'text-summary'], exclude: ['test/']})
+      JSON.stringify({
+        reporter: ['lcov', 'text-summary', 'html'],
+        exclude: ['test/', 'thirdparty-wrappers/', 'vendor/']
+      })
     );
   });
 
