@@ -22,6 +22,12 @@ suite('npm config scaffolder', () => {
     assert.calledWith(fs.writeFile, `${projectRoot}/.npmrc`, 'update-notifier=false\nsave-exact=true\n');
   });
 
+  test('that cli-applications save exact versions of dependencies', async () => {
+    await scaffoldNpmConfig({projectRoot, projectType: 'CLI'});
+
+    assert.calledWith(fs.writeFile, `${projectRoot}/.npmrc`, 'update-notifier=false\nsave-exact=true\n');
+  });
+
   test('that packages are allowed to use semver ranges', async () => {
     await scaffoldNpmConfig({projectRoot, projectType: 'Package'});
 

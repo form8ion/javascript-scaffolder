@@ -4,6 +4,8 @@ import bddStdIn from 'bdd-stdin';
 Given('the project will be a(n) {string}', async function (projectType) {
   this.projectType = projectType;
 
-  if ('application' === projectType) this.projectTypeAnswer = [bddStdIn.keys.down, '\n'];
-  else this.projectTypeAnswer = ['\n'];
+  if ('application' === projectType) this.projectTypeAnswer = [bddStdIn.keys.up, '\n'];
+  else if ('cli' === projectType) this.projectTypeAnswer = [bddStdIn.keys.down, '\n'];
+  else if ('package' === projectType) this.projectTypeAnswer = ['\n'];
+  else throw new Error('invalid project type');
 });

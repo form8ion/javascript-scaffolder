@@ -12,6 +12,7 @@ export async function assertThatPackageDetailsAreConfiguredCorrectlyFor(projectT
     assert.isTrue(packageDetails.private);
     assert.isUndefined(packageDetails.files);
     assert.isUndefined(packageDetails.version);
+    assert.isUndefined(packageDetails.publishConfig);
   } else {
     assert.isUndefined(packageDetails.private);
   }
@@ -30,13 +31,16 @@ export async function assertThatPackageDetailsAreConfiguredCorrectlyFor(projectT
     assert.isUndefined(packageDetails.main);
     assert.isUndefined(packageDetails.module);
     assert.isUndefined(packageDetails.sideEffects);
-    assert.isUndefined(packageDetails.publishConfig);
   }
 
   if ('cli' === projectType) {
     assert.equal(packageDetails.version, '0.0.0-semantically-released');
     assert.deepEqual(packageDetails.bin, {});
     assert.deepEqual(packageDetails.files, ['bin/']);
+    assert.deepEqual(
+      packageDetails.publishConfig,
+      {access: 'Private' === visibility ? 'restricted' : 'public'}
+    );
   } else {
     assert.isUndefined(packageDetails.bin);
   }

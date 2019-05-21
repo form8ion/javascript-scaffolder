@@ -25,6 +25,7 @@ export default function ({packageName, visibility}) {
     badges: defineBadges(packageName, visibility),
     packageProperties: {
       version: '0.0.0-semantically-released',
+      bin: {},
       files: ['bin/'],
       publishConfig: {access: 'Public' === visibility ? 'public' : 'restricted'}
     }

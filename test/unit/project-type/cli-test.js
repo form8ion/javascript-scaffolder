@@ -47,6 +47,7 @@ suite('cli project-type', () => {
         badges,
         packageProperties: {
           version: '0.0.0-semantically-released',
+          bin: {},
           files: ['bin/'],
           publishConfig: {access: 'restricted'}
         }

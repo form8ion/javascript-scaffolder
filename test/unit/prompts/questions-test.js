@@ -68,7 +68,7 @@ suite('prompts', () => {
           name: questionNames.PROJECT_TYPE,
           message: 'What type of JavaScript project is this?',
           type: 'list',
-          choices: ['Application', 'Package'],
+          choices: ['Application', 'Package', 'CLI'],
           default: 'Package'
         },
         {

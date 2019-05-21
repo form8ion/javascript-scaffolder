@@ -96,7 +96,13 @@ Then('the expected results for a(n) {string} are returned to the project scaffol
   assert.containsAllKeys(scaffoldResult.badges.contribution, ['commit-convention', 'commitizen']);
 
   assert.include(scaffoldResult.vcsIgnore.directories, '/node_modules/');
-  assert.include(scaffoldResult.vcsIgnore.directories, '/lib/');
+  if ('cli' === projectType) {
+    assert.include(scaffoldResult.vcsIgnore.directories, '/bin/');
+    assert.notInclude(scaffoldResult.vcsIgnore.directories, '/lib/');
+  } else {
+    assert.include(scaffoldResult.vcsIgnore.directories, '/lib/');
+    assert.notInclude(scaffoldResult.vcsIgnore.directories, '/bin/');
+  }
   if ('application' === projectType) assert.include(scaffoldResult.vcsIgnore.files, '.env');
   else assert.notInclude(scaffoldResult.vcsIgnore.files, '.env');
 });
