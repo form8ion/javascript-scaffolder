@@ -1,3 +1,4 @@
+import {EOL} from 'os';
 import {readFile} from 'mz/fs';
 import {existsSync} from 'fs';
 import {resolve} from 'path';
@@ -18,6 +19,39 @@ import * as execa from '../../../../third-party-wrappers/execa';
 setWorldConstructor(World);
 
 let scaffoldResult;
+
+async function assertThatProperDirectoriesAreIgnoredFromEslint(projectType, transpileAndLint) {
+  if (transpileAndLint) {
+    const eslintIgnoreDetails = (await readFile(`${process.cwd()}/.eslintignore`)).toString().split(EOL);
+
+    if ('cli' === projectType) {
+      assert.include(eslintIgnoreDetails, '/bin/');
+      assert.notInclude(eslintIgnoreDetails, '/lib/');
+    } else {
+      assert.include(eslintIgnoreDetails, '/lib/');
+      assert.notInclude(eslintIgnoreDetails, '/bin/');
+    }
+  } else assert.isFalse(existsSync(`${process.cwd()}/.eslintrc.yml`));
+}
+
+function assertThatProperDirectoriesAreIgnoredFromVersionControl(projectType) {
+  assert.include(scaffoldResult.vcsIgnore.directories, '/node_modules/');
+  if ('cli' === projectType) {
+    assert.include(scaffoldResult.vcsIgnore.directories, '/bin/');
+    assert.notInclude(scaffoldResult.vcsIgnore.directories, '/lib/');
+  } else {
+    assert.include(scaffoldResult.vcsIgnore.directories, '/lib/');
+    assert.notInclude(scaffoldResult.vcsIgnore.directories, '/bin/');
+  }
+}
+
+function assertThatProperFilesAreIgnoredFromVersionControl(projectType) {
+  if ('application' === projectType) {
+    assert.include(scaffoldResult.vcsIgnore.files, '.env');
+  } else {
+    assert.notInclude(scaffoldResult.vcsIgnore.files, '.env');
+  }
+}
 
 Before(async function () {
   // work around for overly aggressive mock-fs, see:
@@ -85,9 +119,9 @@ Then('the expected files for a(n) {string} are generated', async function (proje
   const nvmRc = await readFile(`${process.cwd()}/.nvmrc`);
 
   assert.equal(nvmRc.toString(), this.latestLtsVersion);
-  assert.equal(existsSync(`${process.cwd()}/.eslintrc.yml`), this.transpileAndLint);
   assert.equal(existsSync(`${process.cwd()}/.babelrc`), this.transpileAndLint);
 
+  await assertThatProperDirectoriesAreIgnoredFromEslint(projectType, this.transpileAndLint);
   await assertThatPackageDetailsAreConfiguredCorrectlyFor(projectType, this.visibility);
   await assertThatNpmConfigDetailsAreConfiguredCorrectlyFor(projectType);
 });
@@ -95,14 +129,6 @@ Then('the expected files for a(n) {string} are generated', async function (proje
 Then('the expected results for a(n) {string} are returned to the project scaffolder', async function (projectType) {
   assert.containsAllKeys(scaffoldResult.badges.contribution, ['commit-convention', 'commitizen']);
 
-  assert.include(scaffoldResult.vcsIgnore.directories, '/node_modules/');
-  if ('cli' === projectType) {
-    assert.include(scaffoldResult.vcsIgnore.directories, '/bin/');
-    assert.notInclude(scaffoldResult.vcsIgnore.directories, '/lib/');
-  } else {
-    assert.include(scaffoldResult.vcsIgnore.directories, '/lib/');
-    assert.notInclude(scaffoldResult.vcsIgnore.directories, '/bin/');
-  }
-  if ('application' === projectType) assert.include(scaffoldResult.vcsIgnore.files, '.env');
-  else assert.notInclude(scaffoldResult.vcsIgnore.files, '.env');
+  assertThatProperDirectoriesAreIgnoredFromVersionControl(projectType);
+  assertThatProperFilesAreIgnoredFromVersionControl(projectType);
 });

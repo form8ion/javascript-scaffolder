@@ -147,7 +147,16 @@ suite('javascript project scaffolder', () => {
       )
       .resolves(ciServiceResults);
     testing.default.withArgs({projectRoot, tests, visibility, vcs: vcsDetails}).resolves(testingResults);
-    linting.default.withArgs({configs, projectRoot, tests, vcs: vcsDetails, transpileLint}).resolves(lintingResults);
+    linting.default
+      .withArgs({
+        configs,
+        projectRoot,
+        tests,
+        vcs: vcsDetails,
+        transpileLint,
+        buildDirectory: projectTypeBuildDirectory
+      })
+      .resolves(lintingResults);
     babel.default.withArgs({projectRoot, preset: babelPreset, transpileLint}).resolves(babelResults);
     npmConfig.default.resolves();
     commitConvention.default.withArgs({projectRoot, configs}).resolves(commitConventionResults);
@@ -173,7 +182,9 @@ suite('javascript project scaffolder', () => {
 
   suite('config files', () => {
     test('that config files are created', async () => {
-      host.default.withArgs(hosts, chosenHost, {buildDirectory: projectTypeBuildDirectory}).resolves(hostResults);
+      host.default
+        .withArgs(hosts, chosenHost, {buildDirectory: `./${projectTypeBuildDirectory}`})
+        .resolves(hostResults);
 
       await scaffold(options);
 
@@ -185,7 +196,7 @@ suite('javascript project scaffolder', () => {
   suite('data passed downstream', () => {
     setup(
       () => host.default
-        .withArgs(hosts, chosenHost, {buildDirectory: projectTypeBuildDirectory})
+        .withArgs(hosts, chosenHost, {buildDirectory: `./${projectTypeBuildDirectory}`})
         .resolves(hostResults)
     );
 

@@ -3,7 +3,7 @@ import {info} from '@travi/cli-messages';
 import determinePathToTemplateFile from '../../template-path';
 import defineBadges from './badges';
 
-const defaultBuildDirectory = './lib';
+const defaultBuildDirectory = 'lib';
 
 export default async function ({projectRoot, transpileLint, packageName, visibility}) {
   info('Scaffolding Package Details');
@@ -25,14 +25,14 @@ export default async function ({projectRoot, transpileLint, packageName, visibil
     return {
       devDependencies: ['rimraf', 'rollup', 'rollup-plugin-auto-external'],
       scripts: {
-        clean: `rimraf ${defaultBuildDirectory}`,
+        clean: `rimraf ./${defaultBuildDirectory}`,
         prebuild: 'run-s clean',
         build: 'npm-run-all --print-label --parallel build:*',
         'build:js': 'rollup --config',
         watch: 'run-s \'build:js -- --watch\'',
         prepack: 'run-s build'
       },
-      vcsIgnore: {directories: ['/lib/']},
+      vcsIgnore: {directories: [`/${defaultBuildDirectory}/`]},
       buildDirectory: defaultBuildDirectory,
       badges: {
         consumer: {

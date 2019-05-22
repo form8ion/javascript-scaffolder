@@ -48,7 +48,7 @@ suite('package project-type', () => {
           prepack: 'run-s build'
         },
         vcsIgnore: {directories: ['/lib/']},
-        buildDirectory: './lib',
+        buildDirectory: 'lib',
         badges,
         packageProperties: {...commonPackageProperties, publishConfig: {access: 'restricted'}}
       }

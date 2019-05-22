@@ -20,6 +20,7 @@ suite('linting scaffolder', () => {
   const remarkDevDependencies = any.listOf(any.string);
   const remarkScripts = any.simpleObject();
   const configForRemark = any.simpleObject();
+  const buildDirectory = any.string();
 
   setup(() => {
     sandbox = sinon.createSandbox();
@@ -32,7 +33,7 @@ suite('linting scaffolder', () => {
       .withArgs({projectRoot, config: configForRemark})
       .resolves({devDependencies: remarkDevDependencies, scripts: remarkScripts});
     scaffoldEslint.default
-      .withArgs({projectRoot, unitTested, config: configForEslint})
+      .withArgs({projectRoot, unitTested, config: configForEslint, buildDirectory})
       .resolves({
         devDependencies: eslintDevDependencies,
         vcsIgnore: {files: eslintFilesIgnoredFromVcs},
@@ -49,7 +50,8 @@ suite('linting scaffolder', () => {
       projectRoot,
       tests: {unit: unitTested},
       configs: {eslint: configForEslint, remark: configForRemark},
-      vcs
+      vcs,
+      buildDirectory
     });
 
     assert.deepEqual(
@@ -97,7 +99,13 @@ suite('linting scaffolder', () => {
   });
 
   test('that remark is not scaffolded when a config is not defined', async () => {
-    const result = await scaffold({projectRoot, tests: {unit: unitTested}, configs: {eslint: configForEslint}, vcs});
+    const result = await scaffold({
+      projectRoot,
+      tests: {unit: unitTested},
+      configs: {eslint: configForEslint},
+      vcs,
+      buildDirectory
+    });
 
     assert.notCalled(scaffoldRemark.default);
     assert.deepEqual(result.devDependencies, [...eslintDevDependencies, ...banSensitiveFilesDevDependencies]);
@@ -111,7 +119,8 @@ suite('linting scaffolder', () => {
       projectRoot,
       tests: {unit: unitTested},
       configs: {eslint: configForEslint, remark: configForRemark},
-      vcs: undefined
+      vcs: undefined,
+      buildDirectory
     });
 
     assert.deepEqual(result.devDependencies, [...eslintDevDependencies, ...remarkDevDependencies]);

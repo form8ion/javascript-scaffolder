@@ -2,7 +2,7 @@ import {info} from '@travi/cli-messages';
 import chooseApplicationType from './prompt';
 import scaffoldChosenApplicationType from './choice-scaffolder';
 
-const defaultBuildDirectory = './lib';
+const defaultBuildDirectory = 'lib';
 
 export default async function ({applicationTypes, projectRoot, configs, transpileLint}) {
   info('Scaffolding Application Details');
@@ -13,8 +13,8 @@ export default async function ({applicationTypes, projectRoot, configs, transpil
 
     return {
       scripts: {
-        clean: `rimraf ${defaultBuildDirectory}`,
-        start: `${defaultBuildDirectory}/index.js`,
+        clean: `rimraf ./${defaultBuildDirectory}`,
+        start: `./${defaultBuildDirectory}/index.js`,
         prebuild: 'run-s clean',
         ...results.scripts
       },
@@ -22,7 +22,7 @@ export default async function ({applicationTypes, projectRoot, configs, transpil
       devDependencies: ['rimraf', ...results.devDependencies],
       vcsIgnore: {
         files: [...results.vcsIgnore.files, '.env'],
-        directories: [...results.vcsIgnore.directories, '/lib/']
+        directories: [...results.vcsIgnore.directories, `/${defaultBuildDirectory}/`]
       },
       buildDirectory: defaultBuildDirectory,
       packageProperties: {private: true}

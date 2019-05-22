@@ -83,15 +83,11 @@ suite('eslint config scaffolder', () => {
 
     suite('eslint-ignore', () => {
       test('that non-source files are excluded from linting', async () => {
-        await scaffoldEsLint({
-          projectRoot,
-          config: {
-            packageName,
-            prefix
-          }
-        });
+        const buildDirectory = any.string();
 
-        assert.calledWith(fs.writeFile, `${projectRoot}/.eslintignore`, sinon.match('/lib/'));
+        await scaffoldEsLint({projectRoot, config: {packageName, prefix}, buildDirectory});
+
+        assert.calledWith(fs.writeFile, `${projectRoot}/.eslintignore`, sinon.match(`/${buildDirectory}/`));
         assert.neverCalledWith(fs.writeFile, `${projectRoot}/.eslintignore`, sinon.match('/coverage/'));
       });
 

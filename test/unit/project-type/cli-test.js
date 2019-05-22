@@ -43,7 +43,7 @@ suite('cli project-type', () => {
           'rollup-plugin-json'
         ],
         vcsIgnore: {files: [], directories: ['/bin/']},
-        buildDirectory: './bin',
+        buildDirectory: 'bin',
         badges,
         packageProperties: {
           version: '0.0.0-semantically-released',

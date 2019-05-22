@@ -68,9 +68,16 @@ export async function scaffold(options) {
   const tests = {unit: unitTested, integration: integrationTested};
   const contributors = [
     ...(await Promise.all([
-      scaffoldHost(hosts, chosenHost, {buildDirectory: projectTypeResults.buildDirectory}),
+      scaffoldHost(hosts, chosenHost, {buildDirectory: `./${projectTypeResults.buildDirectory}`}),
       scaffoldTesting({projectRoot, tests, visibility, vcs}),
-      scaffoldLinting(({configs, projectRoot, tests, vcs, transpileLint})),
+      scaffoldLinting({
+        configs,
+        projectRoot,
+        tests,
+        vcs,
+        transpileLint,
+        buildDirectory: projectTypeResults.buildDirectory
+      }),
       scaffoldCi(ciServices, ci, {projectRoot, vcs, visibility, packageType: projectType, nodeVersion, tests}),
       scaffoldBabel({preset: configs.babelPreset, projectRoot, transpileLint}),
       scaffoldCommitConvention({projectRoot, configs})

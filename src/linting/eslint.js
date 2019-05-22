@@ -1,8 +1,8 @@
 import {writeFile} from 'mz/fs';
 import mkdir from '../../third-party-wrappers/make-dir';
 
-export default async function ({config, projectRoot, unitTested}) {
-  const eslintIgnoreDirectories = ['/lib/', ...unitTested ? ['/coverage/'] : []];
+export default async function ({config, projectRoot, unitTested, buildDirectory}) {
+  const eslintIgnoreDirectories = [`/${buildDirectory}/`, ...unitTested ? ['/coverage/'] : []];
 
   await Promise.all([
     writeFile(`${projectRoot}/.eslintrc.yml`, `extends: '${config.prefix}/rules/es6'`),
