@@ -5,7 +5,7 @@ import any from '@travi/any';
 import {assert} from 'chai';
 import * as execa from '../../../../third-party-wrappers/execa';
 
-export async function assertThatPackageDetailsAreConfiguredCorrectlyFor(projectType, visibility) {
+export async function assertThatPackageDetailsAreConfiguredCorrectlyFor(projectType, visibility, transpileAndLint) {
   const packageDetails = JSON.parse(await readFile(`${process.cwd()}/package.json`));
 
   if ('application' === projectType) {
@@ -19,10 +19,17 @@ export async function assertThatPackageDetailsAreConfiguredCorrectlyFor(projectT
 
   if ('package' === projectType) {
     assert.equal(packageDetails.version, '0.0.0-semantically-released');
-    assert.equal(packageDetails.main, 'lib/index.cjs.js');
-    assert.equal(packageDetails.module, 'lib/index.es.js');
-    assert.deepEqual(packageDetails.files, ['lib/']);
-    assert.isFalse(packageDetails.sideEffects);
+    if (transpileAndLint) {
+      assert.equal(packageDetails.main, 'lib/index.cjs.js');
+      assert.equal(packageDetails.module, 'lib/index.es.js');
+      assert.deepEqual(packageDetails.files, ['lib/']);
+      assert.isFalse(packageDetails.sideEffects);
+    } else {
+      assert.deepEqual(packageDetails.files, ['index.js']);
+      assert.isUndefined(packageDetails.main);
+      assert.isUndefined(packageDetails.module);
+      assert.isUndefined(packageDetails.sideEffects);
+    }
     assert.deepEqual(
       packageDetails.publishConfig,
       {access: 'Private' === visibility ? 'restricted' : 'public'}

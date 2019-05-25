@@ -10,13 +10,7 @@ suite('package project-type', () => {
   let sandbox;
   const packageName = any.word();
   const badges = {consumer: any.simpleObject(), contribution: any.simpleObject(), status: any.simpleObject()};
-  const commonPackageProperties = {
-    version: '0.0.0-semantically-released',
-    main: 'lib/index.cjs.js',
-    module: 'lib/index.es.js',
-    sideEffects: false,
-    files: ['lib/']
-  };
+  const commonPackageProperties = {version: '0.0.0-semantically-released'};
 
   setup(() => {
     sandbox = sinon.createSandbox();
@@ -50,7 +44,14 @@ suite('package project-type', () => {
         vcsIgnore: {directories: ['/lib/']},
         buildDirectory: 'lib',
         badges,
-        packageProperties: {...commonPackageProperties, publishConfig: {access: 'restricted'}}
+        packageProperties: {
+          ...commonPackageProperties,
+          sideEffects: false,
+          main: 'lib/index.cjs.js',
+          module: 'lib/index.es.js',
+          files: ['lib/'],
+          publishConfig: {access: 'restricted'}
+        }
       }
     );
     assert.calledWith(fs.copyFile, pathToTemplate, `${projectRoot}/rollup.config.js`);
@@ -73,7 +74,17 @@ suite('package project-type', () => {
         link: `https://npm.runkit.com/${packageName}`
       }
     );
-    assert.deepEqual(results.packageProperties, {...commonPackageProperties, publishConfig: {access: 'public'}});
+    assert.deepEqual(
+      results.packageProperties,
+      {
+        ...commonPackageProperties,
+        sideEffects: false,
+        main: 'lib/index.cjs.js',
+        module: 'lib/index.es.js',
+        files: ['lib/'],
+        publishConfig: {access: 'public'}
+      }
+    );
     assert.calledWith(fs.copyFile, pathToTemplate, `${projectRoot}/rollup.config.js`);
   });
 
@@ -86,7 +97,11 @@ suite('package project-type', () => {
 
     assert.deepEqual(
       await scaffoldPackage({projectRoot, transpileLint: false, packageName, visibility}),
-      {scripts: {}, badges, packageProperties: {...commonPackageProperties, publishConfig: {access: 'restricted'}}}
+      {
+        scripts: {},
+        badges,
+        packageProperties: {...commonPackageProperties, files: ['index.js'], publishConfig: {access: 'restricted'}}
+      }
     );
     assert.neverCalledWith(fs.copyFile, pathToTemplate, `${projectRoot}/rollup.config.js`);
   });

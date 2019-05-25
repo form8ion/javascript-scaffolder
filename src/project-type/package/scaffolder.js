@@ -10,10 +10,13 @@ export default async function ({projectRoot, transpileLint, packageName, visibil
 
   const commonPackageProperties = {
     version: '0.0.0-semantically-released',
-    main: 'lib/index.cjs.js',
-    module: 'lib/index.es.js',
-    sideEffects: false,
-    files: ['lib/'],
+    ...false !== transpileLint && {
+      main: 'lib/index.cjs.js',
+      module: 'lib/index.es.js',
+      sideEffects: false,
+      files: ['lib/']
+    },
+    ...false === transpileLint && {files: ['index.js']},
     publishConfig: {access: 'Public' === visibility ? 'public' : 'restricted'}
   };
 
