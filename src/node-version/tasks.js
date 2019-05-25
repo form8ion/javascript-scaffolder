@@ -12,8 +12,8 @@ export async function determineLatestVersionOf(nodeVersionCategory) {
   return lsLine.match(/(v[0-9]+\.[0-9]+\.[0-9]+)/)[1];
 }
 
-export function install() {
-  info('Installing version of node using nvm', {level: 'secondary'});
+export function install(nodeVersionCategory) {
+  info(`Installing ${nodeVersionCategory} version of node using nvm`, {level: 'secondary'});
 
   return exec('. ~/.nvm/nvm.sh && nvm install', {silent: false});
 }
