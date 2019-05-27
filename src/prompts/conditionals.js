@@ -5,12 +5,16 @@ function projectIsPackage(answers) {
   return 'Package' === answers[questionNames.PROJECT_TYPE];
 }
 
+function projectIsCLI(answers) {
+  return 'CLI' === answers[questionNames.PROJECT_TYPE];
+}
+
 function packageShouldBeScoped(visibility, answers) {
   return 'Private' === visibility || answers[questionNames.SHOULD_BE_SCOPED];
 }
 
 export function shouldBeScopedPromptShouldBePresented(answers) {
-  return projectIsPackage(answers);
+  return projectIsPackage(answers) || projectIsCLI(answers);
 }
 
 export function scopePromptShouldBePresentedFactory(visibility) {

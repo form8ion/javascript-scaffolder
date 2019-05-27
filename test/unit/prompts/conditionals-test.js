@@ -14,6 +14,9 @@ suite('javascript prompt conditionals', () => {
     test('that whether the package should be scoped is presented for packages', () => {
       assert.isTrue(shouldBeScopedPromptShouldBePresented({[questionNames.PROJECT_TYPE]: 'Package'}));
     });
+    test('that whether the package should be scoped is presented for CLI projects', () => {
+      assert.isTrue(shouldBeScopedPromptShouldBePresented({[questionNames.PROJECT_TYPE]: 'CLI'}));
+    });
 
     test('that whether the package should be scoped is not presented for non-packages', () => {
       assert.isFalse(shouldBeScopedPromptShouldBePresented({[questionNames.PROJECT_TYPE]: any.string()}));
