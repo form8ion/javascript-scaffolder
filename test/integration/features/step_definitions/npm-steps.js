@@ -49,7 +49,7 @@ export async function assertThatPackageDetailsAreConfiguredCorrectlyFor({
   }
 
   if ('cli' === projectType) {
-    assert.equal(packageDetails.name, 'Private' === visibility ? `@${npmAccount}/${projectName}` : projectName);
+    assert.equal(packageDetails.name, `@${npmAccount}/${projectName}`);
     assert.equal(packageDetails.version, '0.0.0-semantically-released');
     assert.deepEqual(packageDetails.bin, {});
     assert.deepEqual(packageDetails.files, ['bin/']);
