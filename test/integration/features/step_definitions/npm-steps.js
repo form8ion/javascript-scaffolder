@@ -5,10 +5,17 @@ import any from '@travi/any';
 import {assert} from 'chai';
 import * as execa from '../../../../third-party-wrappers/execa';
 
-export async function assertThatPackageDetailsAreConfiguredCorrectlyFor(projectType, visibility, transpileAndLint) {
+export async function assertThatPackageDetailsAreConfiguredCorrectlyFor({
+  projectType,
+  visibility,
+  transpileAndLint,
+  projectName,
+  npmAccount
+}) {
   const packageDetails = JSON.parse(await readFile(`${process.cwd()}/package.json`));
 
   if ('application' === projectType) {
+    assert.equal(packageDetails.name, projectName);
     assert.isTrue(packageDetails.private);
     assert.isUndefined(packageDetails.files);
     assert.isUndefined(packageDetails.version);
@@ -18,6 +25,7 @@ export async function assertThatPackageDetailsAreConfiguredCorrectlyFor(projectT
   }
 
   if ('package' === projectType) {
+    assert.equal(packageDetails.name, `@${npmAccount}/${projectName}`);
     assert.equal(packageDetails.version, '0.0.0-semantically-released');
     if (transpileAndLint) {
       assert.equal(packageDetails.main, 'lib/index.cjs.js');
@@ -41,6 +49,7 @@ export async function assertThatPackageDetailsAreConfiguredCorrectlyFor(projectT
   }
 
   if ('cli' === projectType) {
+    assert.equal(packageDetails.name, 'Private' === visibility ? `@${npmAccount}/${projectName}` : projectName);
     assert.equal(packageDetails.version, '0.0.0-semantically-released');
     assert.deepEqual(packageDetails.bin, {});
     assert.deepEqual(packageDetails.files, ['bin/']);
@@ -66,5 +75,7 @@ export async function assertThatNpmConfigDetailsAreConfiguredCorrectlyFor(projec
 }
 
 Given(/^the npm cli is logged in$/, function () {
-  execa.default.withArgs('npm', ['whoami']).resolves({stdout: any.word()});
+  this.npmAccount = any.word();
+
+  execa.default.withArgs('npm', ['whoami']).resolves({stdout: this.npmAccount});
 });

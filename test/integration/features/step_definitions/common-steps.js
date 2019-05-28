@@ -86,10 +86,13 @@ Given(/^the default answers are chosen$/, async function () {
 });
 
 When(/^the project is scaffolded$/, async function () {
+  const shouldBeScopedAnswer = 'Public' === this.visibility ? ['\n'] : [];
+  this.projectName = any.word();
+
   bddStdIn(...[
     '\n',
     ...this.projectTypeAnswer,
-    ...'Public' === this.visibility ? ['\n'] : [],
+    ...shouldBeScopedAnswer,
     '\n',
     '\n',
     '\n',
@@ -103,7 +106,7 @@ When(/^the project is scaffolded$/, async function () {
 
   scaffoldResult = await scaffold({
     projectRoot: process.cwd(),
-    projectName: any.word(),
+    projectName: this.projectName,
     visibility: this.visibility,
     license: any.string(),
     vcs: this.vcs,
@@ -122,7 +125,13 @@ Then('the expected files for a(n) {string} are generated', async function (proje
   assert.equal(existsSync(`${process.cwd()}/.babelrc`), this.transpileAndLint);
 
   await assertThatProperDirectoriesAreIgnoredFromEslint(projectType, this.transpileAndLint);
-  await assertThatPackageDetailsAreConfiguredCorrectlyFor(projectType, this.visibility, this.transpileAndLint);
+  await assertThatPackageDetailsAreConfiguredCorrectlyFor({
+    projectType,
+    visibility: this.visibility,
+    transpileAndLint: this.transpileAndLint,
+    projectName: this.projectName,
+    npmAccount: this.npmAccount
+  });
   await assertThatNpmConfigDetailsAreConfiguredCorrectlyFor(projectType);
 });
 

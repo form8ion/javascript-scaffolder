@@ -36,6 +36,20 @@ suite('javascript prompt conditionals', () => {
       }));
     });
 
+    test('that a scope is presented when a CLI project should be scoped', () => {
+      assert.isTrue(scopePromptShouldBePresentedFactory()({
+        [questionNames.SHOULD_BE_SCOPED]: true,
+        [questionNames.PROJECT_TYPE]: 'CLI'
+      }));
+    });
+
+    test('that a scope is presented when a CLI project is private, because they must be scoped', () => {
+      assert.isTrue(scopePromptShouldBePresentedFactory('Private')({
+        [questionNames.SHOULD_BE_SCOPED]: false,
+        [questionNames.PROJECT_TYPE]: 'CLI'
+      }));
+    });
+
     test('that a scope is not presented when an app is private', () => {
       assert.isFalse(scopePromptShouldBePresentedFactory('Private')({
         [questionNames.SHOULD_BE_SCOPED]: false,

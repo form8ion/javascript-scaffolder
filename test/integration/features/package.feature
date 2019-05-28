@@ -29,3 +29,5 @@ Feature: Simplest Use
     When the project is scaffolded
     Then the expected files for a "package" are generated
     And Babel and ESLint are not scaffolded
+
+  Scenario:

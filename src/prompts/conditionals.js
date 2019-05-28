@@ -13,12 +13,16 @@ function packageShouldBeScoped(visibility, answers) {
   return 'Private' === visibility || answers[questionNames.SHOULD_BE_SCOPED];
 }
 
-export function shouldBeScopedPromptShouldBePresented(answers) {
+function willBePublishedToNpm(answers) {
   return projectIsPackage(answers) || projectIsCLI(answers);
 }
 
+export function shouldBeScopedPromptShouldBePresented(answers) {
+  return willBePublishedToNpm(answers);
+}
+
 export function scopePromptShouldBePresentedFactory(visibility) {
-  return answers => projectIsPackage(answers) && packageShouldBeScoped(visibility, answers);
+  return answers => willBePublishedToNpm(answers) && packageShouldBeScoped(visibility, answers);
 }
 
 export function packageTypeIsApplication(answers) {
