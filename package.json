@@ -73,11 +73,11 @@
     "travis-lint": "^1.0.0"
   },
   "dependencies": {
+    "@hapi/hoek": "^6.2.4",
     "@hapi/joi": "^15.0.1",
     "@travi/cli-messages": "1.0.1",
     "@travi/language-scaffolder-prompts": "1.1.0",
     "execa": "^1.0.0",
-    "hoek": "^6.1.2",
     "inquirer": "6.3.1",
     "lodash.uniq": "4.5.0",
     "make-dir": "3.0.0",
