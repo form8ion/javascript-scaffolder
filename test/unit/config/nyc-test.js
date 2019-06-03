@@ -40,7 +40,7 @@ suite('nyc scaffolder', () => {
       `${projectRoot}/.nycrc`,
       JSON.stringify({
         reporter: ['lcov', 'text-summary', 'html'],
-        exclude: ['test/', 'thirdparty-wrappers/', 'vendor/']
+        exclude: ['src/**/*-test.js', 'test/', 'thirdparty-wrappers/', 'vendor/']
       })
     );
   });

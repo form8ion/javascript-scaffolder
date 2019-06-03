@@ -5,7 +5,7 @@ export default async function ({projectRoot, vcs, visibility}) {
     `${projectRoot}/.nycrc`,
     JSON.stringify({
       reporter: ['lcov', 'text-summary', 'html'],
-      exclude: ['test/', 'thirdparty-wrappers/', 'vendor/']
+      exclude: ['src/**/*-test.js', 'test/', 'thirdparty-wrappers/', 'vendor/']
     })
   );
 
