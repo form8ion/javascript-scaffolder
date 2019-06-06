@@ -1,6 +1,5 @@
 import {EOL} from 'os';
-import {readFile} from 'mz/fs';
-import {existsSync} from 'fs';
+import {existsSync, promises} from 'fs';
 import {resolve} from 'path';
 import {After, Before, Given, setWorldConstructor, Then, When} from 'cucumber';
 import stubbedFs from 'mock-fs';
@@ -22,7 +21,7 @@ let scaffoldResult;
 
 async function assertThatProperDirectoriesAreIgnoredFromEslint(projectType, transpileAndLint) {
   if (transpileAndLint) {
-    const eslintIgnoreDetails = (await readFile(`${process.cwd()}/.eslintignore`)).toString().split(EOL);
+    const eslintIgnoreDetails = (await promises.readFile(`${process.cwd()}/.eslintignore`)).toString().split(EOL);
 
     if ('cli' === projectType) {
       assert.include(eslintIgnoreDetails, '/bin/');
@@ -60,10 +59,10 @@ Before(async function () {
 
   stubbedFs({
     templates: {
-      'rollup.config.js': await readFile(resolve(__dirname, '../../../../', 'templates/rollup.config.js')),
-      'canary-test.txt': await readFile(resolve(__dirname, '../../../../', 'templates/canary-test.txt')),
-      'mocha-setup.txt': await readFile(resolve(__dirname, '../../../../', 'templates/mocha-setup.txt')),
-      'cucumber.txt': await readFile(resolve(__dirname, '../../../../', 'templates/cucumber.txt'))
+      'rollup.config.js': await promises.readFile(resolve(__dirname, '../../../../', 'templates/rollup.config.js')),
+      'canary-test.txt': await promises.readFile(resolve(__dirname, '../../../../', 'templates/canary-test.txt')),
+      'mocha-setup.txt': await promises.readFile(resolve(__dirname, '../../../../', 'templates/mocha-setup.txt')),
+      'cucumber.txt': await promises.readFile(resolve(__dirname, '../../../../', 'templates/cucumber.txt'))
     }
   });
 
@@ -119,7 +118,7 @@ When(/^the project is scaffolded$/, async function () {
 });
 
 Then('the expected files for a(n) {string} are generated', async function (projectType) {
-  const nvmRc = await readFile(`${process.cwd()}/.nvmrc`);
+  const nvmRc = await promises.readFile(`${process.cwd()}/.nvmrc`);
 
   assert.equal(nvmRc.toString(), this.latestLtsVersion);
   assert.equal(existsSync(`${process.cwd()}/.babelrc`), this.transpileAndLint);
