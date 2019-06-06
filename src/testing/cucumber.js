@@ -11,6 +11,7 @@ export default async function ({projectRoot}) {
       'test:integration:base': 'DEBUG=any cucumber-js test/integration --profile base',
       'test:integration:debug': 'DEBUG=test run-s test:integration',
       'test:integration:wip': 'run-s \'test:integration:base -- --profile wip\''
-    }
+    },
+    eslintConfigs: ['cucumber']
   };
 }

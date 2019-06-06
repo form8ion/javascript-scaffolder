@@ -11,6 +11,7 @@ suite('testing scaffolder', () => {
   const visibility = any.word();
   const unitTestingDevDependencies = any.listOf(any.string);
   const unitTestingEslintConfigs = any.listOf(any.string);
+  const integrationTestingEslintConfigs = any.listOf(any.string);
   const integrationTestingDevDependencies = any.listOf(any.string);
   const unitTestScripts = any.simpleObject();
   const unitTestFilesToIgnoreFromVcs = any.listOf(any.string);
@@ -38,7 +39,8 @@ suite('testing scaffolder', () => {
       .resolves({
         ...any.simpleObject(),
         devDependencies: integrationTestingDevDependencies,
-        scripts: integrationTestScripts
+        scripts: integrationTestScripts,
+        eslintConfigs: integrationTestingEslintConfigs
       });
   });
 
@@ -51,7 +53,7 @@ suite('testing scaffolder', () => {
         devDependencies: ['@travi/any', ...unitTestingDevDependencies, ...integrationTestingDevDependencies],
         scripts: {...unitTestScripts, ...integrationTestScripts},
         vcsIgnore: {files: unitTestFilesToIgnoreFromVcs, directories: unitTestDirectoriesToIgnoreFromVcs},
-        eslintConfigs: unitTestingEslintConfigs
+        eslintConfigs: [...unitTestingEslintConfigs, ...integrationTestingEslintConfigs]
       }
     );
   });
@@ -75,7 +77,7 @@ suite('testing scaffolder', () => {
         devDependencies: ['@travi/any', ...integrationTestingDevDependencies],
         scripts: integrationTestScripts,
         vcsIgnore: {files: [], directories: []},
-        eslintConfigs: []
+        eslintConfigs: [...integrationTestingEslintConfigs]
       }
     );
   });

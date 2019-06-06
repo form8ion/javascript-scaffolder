@@ -21,6 +21,9 @@ export default async function ({projectRoot, visibility, tests: {unit, integrati
       files: [...unitResults ? unitResults.vcsIgnore.files : []],
       directories: [...unitResults ? unitResults.vcsIgnore.directories : []]
     },
-    eslintConfigs: [...unitResults ? unitResults.eslintConfigs : []]
+    eslintConfigs: [
+      ...unitResults ? unitResults.eslintConfigs : [],
+      ...integrationResults ? integrationResults.eslintConfigs : []
+    ]
   };
 }
