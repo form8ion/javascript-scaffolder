@@ -10,6 +10,7 @@ suite('testing scaffolder', () => {
   const projectRoot = any.string();
   const visibility = any.word();
   const unitTestingDevDependencies = any.listOf(any.string);
+  const unitTestingEslintConfigs = any.listOf(any.string);
   const integrationTestingDevDependencies = any.listOf(any.string);
   const unitTestScripts = any.simpleObject();
   const unitTestFilesToIgnoreFromVcs = any.listOf(any.string);
@@ -29,7 +30,8 @@ suite('testing scaffolder', () => {
         ...any.simpleObject(),
         devDependencies: unitTestingDevDependencies,
         scripts: unitTestScripts,
-        vcsIgnore: {files: unitTestFilesToIgnoreFromVcs, directories: unitTestDirectoriesToIgnoreFromVcs}
+        vcsIgnore: {files: unitTestFilesToIgnoreFromVcs, directories: unitTestDirectoriesToIgnoreFromVcs},
+        eslintConfigs: unitTestingEslintConfigs
       });
     integrationTestingScaffolder.default
       .withArgs({projectRoot})
@@ -48,7 +50,8 @@ suite('testing scaffolder', () => {
       {
         devDependencies: ['@travi/any', ...unitTestingDevDependencies, ...integrationTestingDevDependencies],
         scripts: {...unitTestScripts, ...integrationTestScripts},
-        vcsIgnore: {files: unitTestFilesToIgnoreFromVcs, directories: unitTestDirectoriesToIgnoreFromVcs}
+        vcsIgnore: {files: unitTestFilesToIgnoreFromVcs, directories: unitTestDirectoriesToIgnoreFromVcs},
+        eslintConfigs: unitTestingEslintConfigs
       }
     );
   });
@@ -59,7 +62,8 @@ suite('testing scaffolder', () => {
       {
         devDependencies: ['@travi/any', ...unitTestingDevDependencies],
         scripts: unitTestScripts,
-        vcsIgnore: {files: unitTestFilesToIgnoreFromVcs, directories: unitTestDirectoriesToIgnoreFromVcs}
+        vcsIgnore: {files: unitTestFilesToIgnoreFromVcs, directories: unitTestDirectoriesToIgnoreFromVcs},
+        eslintConfigs: unitTestingEslintConfigs
       }
     );
   });
@@ -70,7 +74,8 @@ suite('testing scaffolder', () => {
       {
         devDependencies: ['@travi/any', ...integrationTestingDevDependencies],
         scripts: integrationTestScripts,
-        vcsIgnore: {files: [], directories: []}
+        vcsIgnore: {files: [], directories: []},
+        eslintConfigs: []
       }
     );
   });
@@ -81,7 +86,8 @@ suite('testing scaffolder', () => {
       {
         devDependencies: [],
         scripts: {},
-        vcsIgnore: {files: [], directories: []}
+        vcsIgnore: {files: [], directories: []},
+        eslintConfigs: []
       }
     );
   });

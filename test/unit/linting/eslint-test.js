@@ -54,14 +54,15 @@ suite('eslint config scaffolder', () => {
       'that the test config is added if the config prefix is provided and the project will be unit tested',
       async () => {
         const pathToCreatedDirectory = any.string();
+        const additionalConfigs = any.listOf(any.word);
         mkdir.default.withArgs(`${projectRoot}/test/unit`).resolves(pathToCreatedDirectory);
 
-        await scaffoldEsLint({projectRoot, config: {packageName, prefix}, unitTested: true});
+        await scaffoldEsLint({projectRoot, config: {packageName, prefix}, unitTested: true, additionalConfigs});
 
         assert.calledWith(
           fs.writeFile,
           `${projectRoot}/.eslintrc.yml`,
-          `extends:\n  - '${prefix}'\n  - '${prefix}/mocha'`
+          `extends:\n  - '${prefix}'\n  - '${prefix}/${additionalConfigs.join(`'\n  - '${prefix}/`)}'`
         );
       }
     );

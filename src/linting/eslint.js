@@ -1,9 +1,8 @@
 import {writeFile} from 'mz/fs';
 
-export default async function ({config, projectRoot, unitTested, buildDirectory}) {
+export default async function ({config, projectRoot, unitTested, buildDirectory, additionalConfigs}) {
   const {packageName, prefix} = config;
   const eslintIgnoreDirectories = [`/${buildDirectory}/`, ...unitTested ? ['/coverage/'] : []];
-  const additionalConfigs = unitTested && ['mocha'];
 
   await Promise.all([
     writeFile(

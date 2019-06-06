@@ -61,28 +61,30 @@ export async function scaffold(options) {
     applicationTypes,
     configs
   });
-  const [nodeVersion] = await Promise.all([
+  const tests = {unit: unitTested, integration: integrationTested};
+  const [testingResults, nodeVersion] = await Promise.all([
+    scaffoldTesting({projectRoot, tests, visibility, vcs}),
     scaffoldeNodeVersion({projectRoot, nodeVersionCategory}),
     scaffoldNpmConfig({projectType, projectRoot})
   ]);
-  const tests = {unit: unitTested, integration: integrationTested};
   const contributors = [
     ...(await Promise.all([
       scaffoldHost(hosts, chosenHost, {buildDirectory: `./${projectTypeResults.buildDirectory}`}),
-      scaffoldTesting({projectRoot, tests, visibility, vcs}),
       scaffoldLinting({
         configs,
         projectRoot,
         tests,
         vcs,
         transpileLint,
-        buildDirectory: projectTypeResults.buildDirectory
+        buildDirectory: projectTypeResults.buildDirectory,
+        eslintConfigs: testingResults.eslintConfigs
       }),
       scaffoldCi(ciServices, ci, {projectRoot, vcs, visibility, packageType: projectType, nodeVersion, tests}),
       scaffoldBabel({preset: configs.babelPreset, projectRoot, transpileLint}),
       scaffoldCommitConvention({projectRoot, configs})
     ])),
-    projectTypeResults
+    projectTypeResults,
+    testingResults
   ];
 
   const {homepage: projectHomepage} = await scaffoldPackage({

@@ -15,6 +15,7 @@ export default async function ({projectRoot, visibility, vcs}) {
       ...mocha.scripts,
       ...'Public' === visibility && {'coverage:report': 'nyc report --reporter=text-lcov > coverage.lcov && codecov'}
     },
-    vcsIgnore: nyc.vcsIgnore
+    vcsIgnore: nyc.vcsIgnore,
+    eslintConfigs: mocha.eslintConfigs
   };
 }

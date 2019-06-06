@@ -10,6 +10,7 @@ suite('unit testing scaffolder', () => {
   const projectRoot = any.string();
   const mochaDevDependencies = any.listOf(any.string);
   const mochaScripts = any.simpleObject();
+  const mochaEslintConfigs = any.listOf(any.string);
   const nycDevDependencies = any.listOf(any.string);
   const nycFilesToIgnoreFromVcs = any.listOf(any.string);
   const nycDirectoriesToIgnoreFromVcs = any.listOf(any.string);
@@ -23,7 +24,12 @@ suite('unit testing scaffolder', () => {
 
     mocha.default
       .withArgs({projectRoot})
-      .resolves({...any.simpleObject(), devDependencies: mochaDevDependencies, scripts: mochaScripts});
+      .resolves({
+        ...any.simpleObject(),
+        devDependencies: mochaDevDependencies,
+        scripts: mochaScripts,
+        eslintConfigs: mochaEslintConfigs
+      });
   });
 
   teardown(() => sandbox.restore());
@@ -46,7 +52,8 @@ suite('unit testing scaffolder', () => {
           'test:unit': 'nyc run-s test:unit:base',
           ...mochaScripts
         },
-        vcsIgnore: {files: nycFilesToIgnoreFromVcs, directories: nycDirectoriesToIgnoreFromVcs}
+        vcsIgnore: {files: nycFilesToIgnoreFromVcs, directories: nycDirectoriesToIgnoreFromVcs},
+        eslintConfigs: mochaEslintConfigs
       }
     );
   });
@@ -70,7 +77,8 @@ suite('unit testing scaffolder', () => {
           ...mochaScripts,
           'coverage:report': 'nyc report --reporter=text-lcov > coverage.lcov && codecov'
         },
-        vcsIgnore: {files: nycFilesToIgnoreFromVcs, directories: nycDirectoriesToIgnoreFromVcs}
+        vcsIgnore: {files: nycFilesToIgnoreFromVcs, directories: nycDirectoriesToIgnoreFromVcs},
+        eslintConfigs: mochaEslintConfigs
       }
     );
   });

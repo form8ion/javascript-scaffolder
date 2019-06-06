@@ -16,6 +16,7 @@ export default async function ({projectRoot}) {
 
   return {
     devDependencies: ['mocha', 'chai', 'sinon'],
-    scripts: {'test:unit:base': 'DEBUG=any mocha --recursive test/unit'}
+    scripts: {'test:unit:base': 'DEBUG=any mocha --recursive test/unit'},
+    eslintConfigs: ['mocha']
   };
 }

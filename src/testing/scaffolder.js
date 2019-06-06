@@ -20,6 +20,7 @@ export default async function ({projectRoot, visibility, tests: {unit, integrati
     vcsIgnore: {
       files: [...unitResults ? unitResults.vcsIgnore.files : []],
       directories: [...unitResults ? unitResults.vcsIgnore.directories : []]
-    }
+    },
+    eslintConfigs: [...unitResults ? unitResults.eslintConfigs : []]
   };
 }

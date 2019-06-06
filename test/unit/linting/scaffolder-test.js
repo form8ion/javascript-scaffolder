@@ -21,6 +21,7 @@ suite('linting scaffolder', () => {
   const remarkScripts = any.simpleObject();
   const configForRemark = any.simpleObject();
   const buildDirectory = any.string();
+  const eslintConfigs = any.listOf(any.word);
 
   setup(() => {
     sandbox = sinon.createSandbox();
@@ -33,7 +34,7 @@ suite('linting scaffolder', () => {
       .withArgs({projectRoot, config: configForRemark})
       .resolves({devDependencies: remarkDevDependencies, scripts: remarkScripts});
     scaffoldEslint.default
-      .withArgs({projectRoot, unitTested, config: configForEslint, buildDirectory})
+      .withArgs({projectRoot, unitTested, config: configForEslint, buildDirectory, additionalConfigs: eslintConfigs})
       .resolves({
         devDependencies: eslintDevDependencies,
         vcsIgnore: {files: eslintFilesIgnoredFromVcs},
@@ -51,7 +52,8 @@ suite('linting scaffolder', () => {
       tests: {unit: unitTested},
       configs: {eslint: configForEslint, remark: configForRemark},
       vcs,
-      buildDirectory
+      buildDirectory,
+      eslintConfigs
     });
 
     assert.deepEqual(
@@ -104,7 +106,8 @@ suite('linting scaffolder', () => {
       tests: {unit: unitTested},
       configs: {eslint: configForEslint},
       vcs,
-      buildDirectory
+      buildDirectory,
+      eslintConfigs
     });
 
     assert.notCalled(scaffoldRemark.default);
@@ -120,7 +123,8 @@ suite('linting scaffolder', () => {
       tests: {unit: unitTested},
       configs: {eslint: configForEslint, remark: configForRemark},
       vcs: undefined,
-      buildDirectory
+      buildDirectory,
+      eslintConfigs
     });
 
     assert.deepEqual(result.devDependencies, [...eslintDevDependencies, ...remarkDevDependencies]);

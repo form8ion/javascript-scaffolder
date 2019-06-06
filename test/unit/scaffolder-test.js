@@ -35,6 +35,7 @@ suite('javascript project scaffolder', () => {
   const visibility = any.fromList(['Private', 'Public']);
   const version = any.string();
   const commitConventionDevDependencies = any.listOf(any.string);
+  const testingEslintConfigs = any.listOf(any.string);
   const hostResults = any.simpleObject();
   const babelResults = any.simpleObject();
   const chosenHost = any.word();
@@ -55,7 +56,7 @@ suite('javascript project scaffolder', () => {
   const babelPreset = {name: babelPresetName};
   const configs = {babelPreset, ...any.simpleObject()};
   const versionCategory = any.word();
-  const testingResults = any.simpleObject();
+  const testingResults = {...any.simpleObject(), eslintConfigs: testingEslintConfigs};
   const lintingResults = any.simpleObject();
   const ciServiceResults = any.simpleObject();
   const commitConventionResults = any.simpleObject();
@@ -66,12 +67,12 @@ suite('javascript project scaffolder', () => {
   const projectTypeResults = {...any.simpleObject(), buildDirectory: projectTypeBuildDirectory, packageProperties};
   const contributors = [
     hostResults,
-    testingResults,
     lintingResults,
     ciServiceResults,
     babelResults,
     commitConventionResults,
-    projectTypeResults
+    projectTypeResults,
+    testingResults
   ];
   const packageScaffoldingInputs = {
     projectRoot,
@@ -154,7 +155,8 @@ suite('javascript project scaffolder', () => {
         tests,
         vcs: vcsDetails,
         transpileLint,
-        buildDirectory: projectTypeBuildDirectory
+        buildDirectory: projectTypeBuildDirectory,
+        eslintConfigs: testingEslintConfigs
       })
       .resolves(lintingResults);
     babel.default.withArgs({projectRoot, preset: babelPreset, transpileLint}).resolves(babelResults);
