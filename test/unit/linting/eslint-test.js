@@ -8,6 +8,7 @@ import scaffoldEsLint from '../../../src/linting/eslint';
 suite('eslint config scaffolder', () => {
   let sandbox;
   const packageName = any.word();
+  const prefix = any.string();
 
   setup(() => {
     sandbox = sinon.createSandbox();
@@ -24,6 +25,12 @@ suite('eslint config scaffolder', () => {
     assert.deepEqual(result.devDependencies, [packageName]);
   });
 
+  test('that the mocha dependency is installed if the project will be unit tested', async () => {
+    const result = await scaffoldEsLint({config: {packageName, prefix}, unitTested: true});
+
+    assert.deepEqual(result.devDependencies, [packageName, `${prefix}/mocha`]);
+  });
+
   test('that the script is defined', async () => {
     assert.deepEqual((await scaffoldEsLint({config: {packageName}})).scripts, {'lint:js': 'eslint . --cache'});
   });
@@ -36,21 +43,11 @@ suite('eslint config scaffolder', () => {
 
   suite('config', () => {
     const projectRoot = any.string();
-    const prefix = any.string();
 
     test('that the base config is added to the root of the project if the config prefix is provided', async () => {
-      await scaffoldEsLint({
-        projectRoot,
-        config: {
-          packageName,
-          prefix
-        }
-      });
+      await scaffoldEsLint({projectRoot, config: {packageName, prefix}});
 
-      assert.calledWith(fs.writeFile, `${projectRoot}/.eslintrc.yml`, `extends: '${prefix}/rules/es6'`);
-      assert.neverCalledWith(fs.writeFile, `${projectRoot}/test/.eslintrc.yml`);
-      assert.neverCalledWith(fs.writeFile, `${projectRoot}/test/unit/.eslintrc.yml`);
-      assert.neverCalledWith(mkdir.default, `${projectRoot}/test/unit`);
+      assert.calledWith(fs.writeFile, `${projectRoot}/.eslintrc.yml`, `extends: '${prefix}'`);
     });
 
     test(
@@ -59,24 +56,12 @@ suite('eslint config scaffolder', () => {
         const pathToCreatedDirectory = any.string();
         mkdir.default.withArgs(`${projectRoot}/test/unit`).resolves(pathToCreatedDirectory);
 
-        await scaffoldEsLint({
-          projectRoot,
-          config: {
-            packageName,
-            prefix
-          },
-          unitTested: true
-        });
+        await scaffoldEsLint({projectRoot, config: {packageName, prefix}, unitTested: true});
 
         assert.calledWith(
           fs.writeFile,
-          `${pathToCreatedDirectory}/../.eslintrc.yml`,
-          `extends: '${prefix}/rules/tests/base'`
-        );
-        assert.calledWith(
-          fs.writeFile,
-          `${pathToCreatedDirectory}/.eslintrc.yml`,
-          `extends: '${prefix}/rules/tests/mocha'`
+          `${projectRoot}/.eslintrc.yml`,
+          `extends:\n  - '${prefix}'\n  - '${prefix}/mocha'`
         );
       }
     );
@@ -92,14 +77,7 @@ suite('eslint config scaffolder', () => {
       });
 
       test('that the coverage folder is excluded from linting when the project is unit tested', async () => {
-        await scaffoldEsLint({
-          projectRoot,
-          config: {
-            packageName,
-            prefix
-          },
-          unitTested: true
-        });
+        await scaffoldEsLint({projectRoot, config: {packageName, prefix}, unitTested: true});
 
         assert.calledWith(
           fs.writeFile,
