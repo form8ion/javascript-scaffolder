@@ -1,5 +1,5 @@
 import {EOL} from 'os';
-import {readFile} from 'mz/fs';
+import {promises} from 'fs';
 import {Given} from 'cucumber';
 import any from '@travi/any';
 import {assert} from 'chai';
@@ -12,7 +12,7 @@ export async function assertThatPackageDetailsAreConfiguredCorrectlyFor({
   projectName,
   npmAccount
 }) {
-  const packageDetails = JSON.parse(await readFile(`${process.cwd()}/package.json`));
+  const packageDetails = JSON.parse(await promises.readFile(`${process.cwd()}/package.json`));
 
   if ('application' === projectType) {
     assert.equal(packageDetails.name, projectName);
@@ -63,7 +63,7 @@ export async function assertThatPackageDetailsAreConfiguredCorrectlyFor({
 }
 
 export async function assertThatNpmConfigDetailsAreConfiguredCorrectlyFor(projectType) {
-  const npmConfigDetails = (await readFile(`${process.cwd()}/.npmrc`)).toString().split(EOL);
+  const npmConfigDetails = (await promises.readFile(`${process.cwd()}/.npmrc`)).toString().split(EOL);
 
   assert.include(npmConfigDetails, 'update-notifier=false');
 
