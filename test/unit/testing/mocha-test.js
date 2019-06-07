@@ -21,21 +21,23 @@ suite('mocha scaffolder', () => {
   teardown(() => sandbox.restore());
 
   test('that mocha is scaffolded', async () => {
-    const pathToCreatedDirectory = any.string();
-    mkdir.default.withArgs(`${projectRoot}/test/unit`).resolves(pathToCreatedDirectory);
+    const pathToCreatedTestDirectory = any.string();
+    const pathToCreatedSrcDirectory = any.string();
+    mkdir.default.withArgs(`${projectRoot}/src`).resolves(pathToCreatedSrcDirectory);
+    mkdir.default.withArgs(`${projectRoot}/test`).resolves(pathToCreatedTestDirectory);
 
     assert.deepEqual(
       await scaffoldMocha({projectRoot}),
       {
         devDependencies: ['mocha', 'chai', 'sinon'],
-        scripts: {'test:unit:base': 'DEBUG=any mocha --recursive test/unit'},
+        scripts: {'test:unit:base': 'DEBUG=any mocha src/**/*-test.js'},
         eslintConfigs: ['mocha']
       }
     );
     assert.calledWith(
       fs.copyFile,
       path.resolve(__dirname, '../../../', 'templates', 'canary-test.txt'),
-      `${pathToCreatedDirectory}/canary-test.js`
+      `${pathToCreatedSrcDirectory}/canary-test.js`
     );
     assert.calledWith(
       fs.writeFile,
@@ -45,7 +47,7 @@ suite('mocha scaffolder', () => {
     assert.calledWith(
       fs.copyFile,
       path.resolve(__dirname, '../../../', 'templates', 'mocha-setup.txt'),
-      `${pathToCreatedDirectory}/../mocha-setup.js`
+      `${pathToCreatedTestDirectory}/mocha-setup.js`
     );
   });
 });
