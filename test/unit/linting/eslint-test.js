@@ -8,7 +8,7 @@ import scaffoldEsLint from '../../../src/linting/eslint';
 suite('eslint config scaffolder', () => {
   let sandbox;
   const packageName = any.word();
-  const prefix = any.string();
+  const scope = any.string();
 
   setup(() => {
     sandbox = sinon.createSandbox();
@@ -20,9 +20,9 @@ suite('eslint config scaffolder', () => {
   teardown(() => sandbox.restore());
 
   test('that the dependency is installed if the config is defined', async () => {
-    const result = await scaffoldEsLint({config: {packageName}});
+    const result = await scaffoldEsLint({config: {scope}});
 
-    assert.deepEqual(result.devDependencies, [packageName]);
+    assert.deepEqual(result.devDependencies, [`${scope}/eslint-config`]);
   });
 
   test('that the script is defined', async () => {
@@ -38,14 +38,14 @@ suite('eslint config scaffolder', () => {
   suite('config', () => {
     const projectRoot = any.string();
 
-    test('that the base config is added to the root of the project if the config prefix is provided', async () => {
-      await scaffoldEsLint({projectRoot, config: {packageName, prefix}});
+    test('that the base config is added to the root of the project if the config scope is provided', async () => {
+      await scaffoldEsLint({projectRoot, config: {packageName, scope}});
 
-      assert.calledWith(fs.writeFile, `${projectRoot}/.eslintrc.yml`, `extends: '${prefix}'`);
+      assert.calledWith(fs.writeFile, `${projectRoot}/.eslintrc.yml`, `extends: '${scope}'`);
     });
 
     test(
-      'that the additional configs are added if the config prefix is provided',
+      'that the additional configs are added if the config scope is provided',
       async () => {
         const pathToCreatedDirectory = any.string();
         const additionalConfigs = any.listOf(any.word);
@@ -53,7 +53,7 @@ suite('eslint config scaffolder', () => {
 
         const result = await scaffoldEsLint({
           projectRoot,
-          config: {packageName, prefix},
+          config: {packageName, scope},
           unitTested: true,
           additionalConfigs
         });
@@ -61,11 +61,11 @@ suite('eslint config scaffolder', () => {
         assert.calledWith(
           fs.writeFile,
           `${projectRoot}/.eslintrc.yml`,
-          `extends:\n  - '${prefix}'\n  - '${prefix}/${additionalConfigs.join(`'\n  - '${prefix}/`)}'`
+          `extends:\n  - '${scope}'\n  - '${scope}/${additionalConfigs.join(`'\n  - '${scope}/`)}'`
         );
         assert.deepEqual(
           result.devDependencies,
-          [packageName, ...additionalConfigs.map(config => `${prefix}/${config}`)]
+          [`${scope}/eslint-config`, ...additionalConfigs.map(config => `${scope}/${config}`)]
         );
       }
     );
@@ -74,14 +74,14 @@ suite('eslint config scaffolder', () => {
       test('that non-source files are excluded from linting', async () => {
         const buildDirectory = any.string();
 
-        await scaffoldEsLint({projectRoot, config: {packageName, prefix}, buildDirectory});
+        await scaffoldEsLint({projectRoot, config: {packageName, scope}, buildDirectory});
 
         assert.calledWith(fs.writeFile, `${projectRoot}/.eslintignore`, sinon.match(`/${buildDirectory}/`));
         assert.neverCalledWith(fs.writeFile, `${projectRoot}/.eslintignore`, sinon.match('/coverage/'));
       });
 
       test('that the coverage folder is excluded from linting when the project is unit tested', async () => {
-        await scaffoldEsLint({projectRoot, config: {packageName, prefix}, unitTested: true});
+        await scaffoldEsLint({projectRoot, config: {packageName, scope}, unitTested: true});
 
         assert.calledWith(
           fs.writeFile,

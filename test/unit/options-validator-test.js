@@ -100,7 +100,7 @@ suite('options validator', () => {
 
   suite('configs', () => {
     suite('eslint', () => {
-      test('that `packageName` is required', () => assert.throws(
+      test('that `scope` is required', () => assert.throws(
         () => validate({
           projectRoot: any.string(),
           projectName: any.string(),
@@ -111,10 +111,10 @@ suite('options validator', () => {
           description: any.string(),
           configs: {eslint: {}}
         }),
-        'child "packageName" fails because ["packageName" is required]'
+        'child "scope" fails because ["scope" is required]'
       ));
 
-      test('that `prefix` is required', () => assert.throws(
+      test('that `scope` must be a string', () => assert.throws(
         () => validate({
           projectRoot: any.string(),
           projectName: any.string(),
@@ -123,10 +123,46 @@ suite('options validator', () => {
           vcs: {host: any.word(), owner: any.word(), name: any.word()},
           ci: any.string(),
           description: any.string(),
-          configs: {eslint: {packageName: any.string()}}
+          configs: {eslint: {scope: any.simpleObject()}}
         }),
-        'child "prefix" fails because ["prefix" is required]'
+        'child "scope" fails because ["scope" must be a string]'
       ));
+
+      test('that `scope` starts with `@`', () => {
+        const scope = any.word();
+
+        assert.throws(
+          () => validate({
+            projectRoot: any.string(),
+            projectName: any.string(),
+            visibility: any.fromList(['Public', 'Private']),
+            license: any.string(),
+            vcs: {host: any.word(), owner: any.word(), name: any.word()},
+            ci: any.string(),
+            description: any.string(),
+            configs: {eslint: {scope}}
+          }),
+          `child "scope" fails because ["scope" with value "${scope}" fails to match the scope pattern]`
+        );
+      });
+
+      test('that `scope` does not contain a `/`', () => {
+        const scope = `@${any.word()}/${any.word()}`;
+
+        assert.throws(
+          () => validate({
+            projectRoot: any.string(),
+            projectName: any.string(),
+            visibility: any.fromList(['Public', 'Private']),
+            license: any.string(),
+            vcs: {host: any.word(), owner: any.word(), name: any.word()},
+            ci: any.string(),
+            description: any.string(),
+            configs: {eslint: {scope}}
+          }),
+          `child "scope" fails because ["scope" with value "${scope}" fails to match the scope pattern]`
+        );
+      });
     });
 
     suite('commitlint', () => {

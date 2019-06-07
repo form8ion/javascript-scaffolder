@@ -110,7 +110,7 @@ When(/^the project is scaffolded$/, async function () {
     license: any.string(),
     vcs: this.vcs,
     configs: {
-      eslint: {prefix: any.word(), packageName: any.word()},
+      eslint: {scope: `@${any.word()}`},
       babelPreset: {name: any.word(), packageName: any.word()}
     },
     ciServices: {[any.word()]: {scaffolder: foo => ({foo}), public: true}}

@@ -14,10 +14,7 @@ export function validate(options) {
     }),
     description: joi.string(),
     configs: joi.object({
-      eslint: joi.object({
-        packageName: joi.string().required(),
-        prefix: joi.string().required()
-      }),
+      eslint: joi.object({scope: joi.string().regex(/^@[a-z0-9]+$/i, 'scope').required()}),
       commitlint: joi.object({
         packageName: joi.string().required(),
         name: joi.string().required()
