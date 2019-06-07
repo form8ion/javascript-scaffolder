@@ -493,6 +493,18 @@ suite('options validator', () => {
       `child "applicationTypes" fails because [child "${key}" fails because ["${key}" must be an object]]`
     ));
 
+    test('that a provided application-type must provide a scaffolded', () => assert.throws(
+      () => validate({
+        projectRoot: any.string(),
+        projectName: any.string(),
+        visibility: any.fromList(['Public', 'Private']),
+        license: any.string(),
+        applicationTypes: {[key]: {}}
+      }),
+      // eslint-disable-next-line max-len
+      `child "applicationTypes" fails because [child "${key}" fails because [child "scaffolder" fails because ["scaffolder" is required]]]`
+    ));
+
     test('that a provided application-type must provide a scaffold function', () => assert.throws(
       () => validate({
         projectRoot: any.string(),
