@@ -482,7 +482,7 @@ suite('options validator', () => {
   suite('application types', () => {
     const key = any.word();
 
-    test('that a provided application-type must provide a scaffold function', () => assert.throws(
+    test('that a provided application-type must define config', () => assert.throws(
       () => validate({
         projectRoot: any.string(),
         projectName: any.string(),
@@ -490,7 +490,19 @@ suite('options validator', () => {
         license: any.string(),
         applicationTypes: {[key]: any.word()}
       }),
-      `child "applicationTypes" fails because [child "${key}" fails because ["${key}" must be a Function]]`
+      `child "applicationTypes" fails because [child "${key}" fails because ["${key}" must be an object]]`
+    ));
+
+    test('that a provided application-type must provide a scaffold function', () => assert.throws(
+      () => validate({
+        projectRoot: any.string(),
+        projectName: any.string(),
+        visibility: any.fromList(['Public', 'Private']),
+        license: any.string(),
+        applicationTypes: {[key]: {scaffolder: any.word()}}
+      }),
+      // eslint-disable-next-line max-len
+      `child "applicationTypes" fails because [child "${key}" fails because [child "scaffolder" fails because ["scaffolder" must be a Function]]]`
     ));
 
     test('that a provided application-type scaffolder must accept a single argument', () => assert.throws(
@@ -499,9 +511,10 @@ suite('options validator', () => {
         projectName: any.string(),
         visibility: any.fromList(['Public', 'Private']),
         license: any.string(),
-        applicationTypes: {[key]: () => undefined}
+        applicationTypes: {[key]: {scaffolder: () => undefined}}
       }),
-      `child "applicationTypes" fails because [child "${key}" fails because ["${key}" must have an arity of 1]]`
+      // eslint-disable-next-line max-len
+      `child "applicationTypes" fails because [child "${key}" fails because [child "scaffolder" fails because ["scaffolder" must have an arity of 1]]]`
     ));
 
     test('that a provided application-type scaffolder is valid if an options object is provided', () => validate({
@@ -509,7 +522,7 @@ suite('options validator', () => {
       projectName: any.string(),
       visibility: any.fromList(['Public', 'Private']),
       license: any.string(),
-      applicationTypes: {[key]: options => options}
+      applicationTypes: {[key]: {scaffolder: options => options}}
     }));
   });
 

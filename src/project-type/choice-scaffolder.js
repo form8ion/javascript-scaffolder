@@ -1,7 +1,7 @@
 export default function (typeScaffolders, chosenType, options) {
-  const typeScaffolder = typeScaffolders[chosenType];
+  const type = typeScaffolders[chosenType];
 
-  if (typeScaffolder) return typeScaffolder(options);
+  if (type) return type.scaffolder(options);
 
   return {scripts: {}, dependencies: [], devDependencies: [], vcsIgnore: {files: [], directories: []}};
 }

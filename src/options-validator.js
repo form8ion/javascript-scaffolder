@@ -42,7 +42,7 @@ export function validate(options) {
       scaffolder: joi.func().arity(1).required(),
       projectTypes: joi.array().items(joi.string().only(['static', 'node'])).default([])
     })).default({}),
-    applicationTypes: joi.object().pattern(/^/, joi.func().arity(1)).default({})
+    applicationTypes: joi.object().pattern(/^/, joi.object({scaffolder: joi.func().arity(1)})).default({})
   }).required());
 
   hoek.assert(!error, error);

@@ -9,7 +9,7 @@ suite('type choice scaffolder', () => {
     const options = any.simpleObject();
     const results = any.simpleObject();
     const chosenTypeScaffolder = sinon.stub();
-    const typeScaffolders = {...any.simpleObject(), [chosenType]: chosenTypeScaffolder};
+    const typeScaffolders = {...any.simpleObject(), [chosenType]: {scaffolder: chosenTypeScaffolder}};
     chosenTypeScaffolder.withArgs(options).resolves(results);
 
     assert.equal(await scaffoldTypeChoice(typeScaffolders, chosenType, options), results);
