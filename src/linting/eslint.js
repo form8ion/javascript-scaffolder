@@ -15,7 +15,10 @@ export default async function ({config, projectRoot, unitTested, buildDirectory,
   ]);
 
   return {
-    devDependencies: [packageName, ...unitTested ? [`${prefix}/mocha`] : []],
+    devDependencies: [
+      packageName,
+      ...additionalConfigs ? additionalConfigs.map(supportingConfig => `${prefix}/${supportingConfig}`) : []
+    ],
     scripts: {'lint:js': 'eslint . --cache'},
     vcsIgnore: {files: ['.eslintcache']}
   };

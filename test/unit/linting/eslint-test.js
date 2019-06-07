@@ -25,12 +25,6 @@ suite('eslint config scaffolder', () => {
     assert.deepEqual(result.devDependencies, [packageName]);
   });
 
-  test('that the mocha dependency is installed if the project will be unit tested', async () => {
-    const result = await scaffoldEsLint({config: {packageName, prefix}, unitTested: true});
-
-    assert.deepEqual(result.devDependencies, [packageName, `${prefix}/mocha`]);
-  });
-
   test('that the script is defined', async () => {
     assert.deepEqual((await scaffoldEsLint({config: {packageName}})).scripts, {'lint:js': 'eslint . --cache'});
   });
@@ -51,18 +45,27 @@ suite('eslint config scaffolder', () => {
     });
 
     test(
-      'that the test config is added if the config prefix is provided and the project will be unit tested',
+      'that the additional configs are added if the config prefix is provided',
       async () => {
         const pathToCreatedDirectory = any.string();
         const additionalConfigs = any.listOf(any.word);
         mkdir.default.withArgs(`${projectRoot}/test/unit`).resolves(pathToCreatedDirectory);
 
-        await scaffoldEsLint({projectRoot, config: {packageName, prefix}, unitTested: true, additionalConfigs});
+        const result = await scaffoldEsLint({
+          projectRoot,
+          config: {packageName, prefix},
+          unitTested: true,
+          additionalConfigs
+        });
 
         assert.calledWith(
           fs.writeFile,
           `${projectRoot}/.eslintrc.yml`,
           `extends:\n  - '${prefix}'\n  - '${prefix}/${additionalConfigs.join(`'\n  - '${prefix}/`)}'`
+        );
+        assert.deepEqual(
+          result.devDependencies,
+          [packageName, ...additionalConfigs.map(config => `${prefix}/${config}`)]
         );
       }
     );
