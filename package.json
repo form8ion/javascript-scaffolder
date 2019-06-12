@@ -45,7 +45,7 @@
   "devDependencies": {
     "@travi/any": "2.0.0",
     "@travi/eslint-config-travi": "1.8.0",
-    "@travi/project-scaffolder": "^6.4.4",
+    "@travi/project-scaffolder": "^7.0.0",
     "babel-plugin-transform-object-rest-spread": "6.26.0",
     "babel-preset-env": "^1.7.0",
     "babel-register": "6.26.0",
