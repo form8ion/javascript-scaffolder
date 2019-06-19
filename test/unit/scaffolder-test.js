@@ -130,7 +130,9 @@ suite('javascript project scaffolder', () => {
     fs.writeFile.resolves();
     fs.copyFile.resolves();
     packageNameBuilder.default.withArgs(projectName, scope).returns(packageName);
-    projectTypeScaffolder.default.resolves(projectTypeResults);
+    projectTypeScaffolder.default
+      .withArgs({projectType, projectRoot, transpileLint, packageName, visibility, applicationTypes})
+      .resolves(projectTypeResults);
     packageScaffolder.default.withArgs(packageScaffoldingInputs).resolves({...any.simpleObject(), homepage});
     prompts.prompt.withArgs(overrides, ciServices, hosts, visibility, vcsDetails).resolves(commonPromptAnswers);
     ci.default

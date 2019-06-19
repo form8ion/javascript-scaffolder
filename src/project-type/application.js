@@ -4,12 +4,12 @@ import scaffoldChosenApplicationType from './choice-scaffolder';
 
 const defaultBuildDirectory = 'lib';
 
-export default async function ({applicationTypes, projectRoot, configs, transpileLint}) {
+export default async function ({applicationTypes, projectRoot, transpileLint}) {
   info('Scaffolding Application Details');
 
   if (false !== transpileLint) {
     const chosenType = await chooseApplicationType({types: applicationTypes});
-    const results = await scaffoldChosenApplicationType(applicationTypes, chosenType, {projectRoot, configs});
+    const results = await scaffoldChosenApplicationType(applicationTypes, chosenType, {projectRoot});
 
     return {
       scripts: {

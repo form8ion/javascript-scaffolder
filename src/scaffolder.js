@@ -58,8 +58,7 @@ export async function scaffold(options) {
     transpileLint,
     packageName,
     visibility,
-    applicationTypes,
-    configs
+    applicationTypes
   });
   const tests = {unit: unitTested, integration: integrationTested};
   const [testingResults, nodeVersion] = await Promise.all([

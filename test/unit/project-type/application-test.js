@@ -9,7 +9,6 @@ suite('application project-type', () => {
   let sandbox;
   const projectRoot = any.string();
   const applicationTypes = any.simpleObject();
-  const configs = any.simpleObject();
 
   setup(() => {
     sandbox = sinon.createSandbox();
@@ -36,11 +35,11 @@ suite('application project-type', () => {
     };
     applicationChooser.default.withArgs({types: applicationTypes}).resolves(chosenApplicationType);
     choiceScaffolder.default
-      .withArgs(applicationTypes, chosenApplicationType, {projectRoot, configs})
+      .withArgs(applicationTypes, chosenApplicationType, {projectRoot})
       .resolves(typeScaffoldingResults);
 
     assert.deepEqual(
-      await scaffoldApplication({projectRoot, applicationTypes, configs}),
+      await scaffoldApplication({projectRoot, applicationTypes}),
       {
         scripts: {clean: 'rimraf ./lib', start: './lib/index.js', prebuild: 'run-s clean', ...scaffoldedTypeScripts},
         dependencies: scaffoldedTypeDependencies,
@@ -57,7 +56,7 @@ suite('application project-type', () => {
 
   test('that build details are not included when the project will not be transpiled', async () => {
     assert.deepEqual(
-      await scaffoldApplication({projectRoot, applicationTypes, configs, transpileLint: false}),
+      await scaffoldApplication({projectRoot, applicationTypes, transpileLint: false}),
       {scripts: {}, dependencies: [], devDependencies: [], vcsIgnore: {files: [], directories: []}}
     );
   });
