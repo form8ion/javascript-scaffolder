@@ -17,7 +17,9 @@ export default async function ({config, projectRoot, unitTested, buildDirectory,
   return {
     devDependencies: [
       `${scope}/eslint-config`,
-      ...additionalConfigs ? additionalConfigs.map(supportingConfig => `${scope}/${supportingConfig}`) : []
+      ...additionalConfigs
+        ? additionalConfigs.map(supportingConfig => `${scope}/eslint-config-${supportingConfig}`)
+        : []
     ],
     scripts: {'lint:js': 'eslint . --cache'},
     vcsIgnore: {files: ['.eslintcache']}

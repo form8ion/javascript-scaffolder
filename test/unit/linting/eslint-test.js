@@ -65,7 +65,7 @@ suite('eslint config scaffolder', () => {
         );
         assert.deepEqual(
           result.devDependencies,
-          [`${scope}/eslint-config`, ...additionalConfigs.map(config => `${scope}/${config}`)]
+          [`${scope}/eslint-config`, ...additionalConfigs.map(config => `${scope}/eslint-config-${config}`)]
         );
       }
     );
