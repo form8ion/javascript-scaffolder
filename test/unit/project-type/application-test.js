@@ -54,6 +54,22 @@ suite('application project-type', () => {
     );
   });
 
+  test('that missing details do not result in errors', async () => {
+    choiceScaffolder.default.resolves({});
+
+    assert.deepEqual(
+      await scaffoldApplication({projectRoot, applicationTypes}),
+      {
+        buildDirectory: 'lib',
+        scripts: {clean: 'rimraf ./lib', start: './lib/index.js', prebuild: 'run-s clean'},
+        packageProperties: {private: true},
+        dependencies: [],
+        devDependencies: ['rimraf'],
+        vcsIgnore: {files: ['.env'], directories: ['/lib/']}
+      }
+    );
+  });
+
   test('that build details are not included when the project will not be transpiled', async () => {
     assert.deepEqual(
       await scaffoldApplication({projectRoot, applicationTypes, transpileLint: false}),

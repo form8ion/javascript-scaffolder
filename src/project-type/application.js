@@ -18,11 +18,11 @@ export default async function ({applicationTypes, projectRoot, transpileLint}) {
         prebuild: 'run-s clean',
         ...results.scripts
       },
-      dependencies: results.dependencies,
-      devDependencies: ['rimraf', ...results.devDependencies],
+      dependencies: [...results.dependencies ? results.dependencies : []],
+      devDependencies: ['rimraf', ...results.devDependencies ? results.devDependencies : []],
       vcsIgnore: {
-        files: [...results.vcsIgnore.files, '.env'],
-        directories: [...results.vcsIgnore.directories, `/${defaultBuildDirectory}/`]
+        files: [...results.vcsIgnore ? results.vcsIgnore.files : [], '.env'],
+        directories: [...results.vcsIgnore ? results.vcsIgnore.directories : [], `/${defaultBuildDirectory}/`]
       },
       buildDirectory: defaultBuildDirectory,
       packageProperties: {private: true}
