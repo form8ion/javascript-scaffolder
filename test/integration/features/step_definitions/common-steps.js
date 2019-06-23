@@ -99,7 +99,7 @@ When(/^the project is scaffolded$/, async function () {
     ...this.unitTestAnswer,
     ...this.integrationTestAnswer,
     ...this.ciAnswer ? this.ciAnswer : [],
-    ...'application' === this.projectType ? ['\n'] : [],
+    ...'application' === this.projectType ? this.applicationTypeAnswer : [],
     ...this.transpilationLintAnswer ? this.transpilationLintAnswer : []
   ]);
 
@@ -113,7 +113,8 @@ When(/^the project is scaffolded$/, async function () {
       eslint: {scope: `@${any.word()}`},
       babelPreset: {name: any.word(), packageName: any.word()}
     },
-    ciServices: {[any.word()]: {scaffolder: foo => ({foo}), public: true}}
+    ciServices: {[any.word()]: {scaffolder: foo => ({foo}), public: true}},
+    applicationTypes: {[any.word()]: {scaffolder: foo => ({foo})}}
   });
 });
 
