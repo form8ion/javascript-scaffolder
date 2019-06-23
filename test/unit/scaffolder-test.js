@@ -228,11 +228,14 @@ suite('javascript project scaffolder', () => {
     });
 
     suite('verification', () => {
-      test('that `npm test` is defined as the verification command', async () => {
-        const {verificationCommand} = await scaffold(options);
+      test(
+        'that `npm test` is defined as the verification command & peer-dependencies are also checked for compatibility',
+        async () => {
+          const {verificationCommand} = await scaffold(options);
 
-        assert.equal(verificationCommand, 'npm test');
-      });
+          assert.equal(verificationCommand, 'npm test && npm ls');
+        }
+      );
     });
 
     suite('project details', () => {
