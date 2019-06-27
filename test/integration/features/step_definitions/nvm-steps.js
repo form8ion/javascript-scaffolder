@@ -1,4 +1,3 @@
-import execa from 'execa';
 import {Before, Given} from 'cucumber';
 import any from '@travi/any';
 import * as exec from '../../../../third-party-wrappers/exec-as-promised';
@@ -12,7 +11,6 @@ function semverStringFactory() {
 }
 
 Before(function () {
-  this.sinonSandbox.stub(execa, 'shell');
   this.sinonSandbox.stub(exec, 'default');
 });
 
