@@ -14,7 +14,7 @@ export default async function ({applicationTypes, projectRoot, transpileLint}) {
     return {
       scripts: {
         clean: `rimraf ./${defaultBuildDirectory}`,
-        start: `./${defaultBuildDirectory}/index.js`,
+        start: `node ./${defaultBuildDirectory}/index.js`,
         prebuild: 'run-s clean',
         ...results.scripts
       },
