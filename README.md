@@ -11,25 +11,23 @@ opinionated scaffolder for JavaScript projects
 
 * [Features](#features)
 * [Usage](#usage)
-
   * [Installation](#installation)
   * [As one of the languages for scaffolding a project](#as-one-of-the-languages-for-scaffolding-a-project)
-
     * [Example](#example)
+      * [Dependencies:](#dependencies)
+      * [Register with commander](#register-with-commander)
     * [Options](#options)
-
-      * [projectRoot string (required)](#projectroot-string-required)
-      * [projectName string (required)](#projectname-string-required)
-      * [visibility string (required)](#visibility-string-required)
-      * [license string (required)](#license-string-required)
-      * [vcs object (required)](#vcs-object-required)
-      * [description string (optional)](#description-string-optional)
-      * [configs object (optional)](#configs-object-optional)
-      * [overrides object (optional)](#overrides-object-optional)
-      * [ciServices object (optional)](#ciservices-object-optional)
+      * [`projectRoot` __string__ (_required_)](#projectroot-string-required)
+      * [`projectName` __string__ (_required_)](#projectname-string-required)
+      * [`visibility` __string__ (_required_)](#visibility-string-required)
+      * [`license` __string__ (_required_)](#license-string-required)
+      * [`vcs` __object__ (_required_)](#vcs-object-required)
+      * [`description` __string__ (_optional_)](#description-string-optional)
+      * [`configs` __object__ (_optional_)](#configs-object-optional)
+      * [`overrides` __object__ (_optional_)](#overrides-object-optional)
+      * [`ciServices` __object__ (_optional_)](#ciservices-object-optional)
 * [Contributing](#contributing)
-
-  * [Dependencies](#dependencies)
+  * [Dependencies](#dependencies-1)
   * [Verification](#verification)
 * [Related Projects](#related-projects)
 
@@ -59,7 +57,7 @@ opinionated scaffolder for JavaScript projects
 ### Installation
 
 ```sh
-$ npm install @travi/javascript-scaffolder -S
+$ npm install @travi/javascript-scaffolder -save
 ```
 
 ### As one of the languages for scaffolding a project
@@ -73,9 +71,9 @@ within the [project-scaffolder](https://github.com/travi/project-scaffolder).
 ##### Dependencies:
 
 ```javascript
-const program = require('commander');
-const {scaffold} = require('@travi/project-scaffolder');
-const {scaffold: scaffoldJavaScript} = require('@travi/javascript-scaffolder');
+import program from 'commander';
+import {scaffold} from '@travi/project-scaffolder';
+import {scaffold as scaffoldJavaScript} from '@travi/javascript-scaffolder';
 ```
 
 ##### Register with commander

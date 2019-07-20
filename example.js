@@ -1,7 +1,7 @@
 // ##### Dependencies:
-const program = require('commander');
-const {scaffold} = require('@travi/project-scaffolder');
-const {scaffold: scaffoldJavaScript} = require('./lib/index.cjs');
+import program from 'commander';
+import {scaffold} from '@travi/project-scaffolder';
+import {scaffold as scaffoldJavaScript} from './lib/index.cjs';
 
 // ##### Register with commander
 program
