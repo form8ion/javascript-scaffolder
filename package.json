@@ -43,12 +43,11 @@
     }
   },
   "devDependencies": {
+    "@babel/register": "^7.5.5",
     "@travi/any": "2.0.3",
+    "@travi/babel-preset": "^3.0.0",
     "@travi/eslint-config-travi": "1.8.3",
     "@travi/project-scaffolder": "^7.0.0",
-    "babel-plugin-transform-object-rest-spread": "6.26.0",
-    "babel-preset-env": "^1.7.0",
-    "babel-register": "6.26.0",
     "ban-sensitive-files": "^1.9.2",
     "bdd-stdin": "^0.2.0",
     "chai": "4.1.2",
