@@ -48,6 +48,7 @@
     "@travi/babel-preset": "^3.0.0",
     "@travi/eslint-config-travi": "1.8.3",
     "@travi/project-scaffolder": "^7.0.1",
+    "@travi/travis-scaffolder-javascript": "^1.12.0",
     "ban-sensitive-files": "^1.9.2",
     "bdd-stdin": "^0.2.0",
     "chai": "^4.2.0",
