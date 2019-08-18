@@ -13,6 +13,7 @@ suite('cucumber scaffolder', () => {
     sandbox = sinon.createSandbox();
 
     sandbox.stub(fs, 'copyFile');
+    sandbox.stub(fs, 'writeFile');
     sandbox.stub(templatePath, 'default');
   });
 
@@ -21,13 +22,15 @@ suite('cucumber scaffolder', () => {
   test('that cucumber is scaffolded', async () => {
     const pathToTemplate = any.string();
     fs.copyFile.resolves();
+    fs.writeFile.resolves();
     templatePath.default.withArgs('cucumber.txt').returns(pathToTemplate);
 
     assert.deepEqual(
       await scaffoldCucumber({projectRoot}),
       {
-        devDependencies: ['cucumber', 'chai'],
+        devDependencies: ['cucumber', 'chai', 'gherkin-lint'],
         scripts: {
+          'lint:gherkin': 'gherkin-lint',
           'test:integration': 'run-s \'test:integration:base -- --profile noWip\'',
           'test:integration:base': 'DEBUG=any cucumber-js test/integration --profile base',
           'test:integration:debug': 'DEBUG=test run-s test:integration',
@@ -37,5 +40,15 @@ suite('cucumber scaffolder', () => {
       }
     );
     assert.calledWith(fs.copyFile, pathToTemplate, `${projectRoot}/cucumber.js`);
+    assert.calledWith(
+      fs.writeFile,
+      `${projectRoot}/.gherkin-lintrc`,
+      JSON.stringify({
+        'no-restricted-tags': ['on', {tags: ['@focus']}],
+        'use-and': 'on',
+        'no-multiple-empty-lines': 'on',
+        'no-dupe-feature-names': 'on'
+      })
+    );
   });
 });
