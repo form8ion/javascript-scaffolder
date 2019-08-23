@@ -76,7 +76,7 @@
     "@hapi/hoek": "^8.2.1",
     "@hapi/joi": "^15.1.1",
     "@travi/cli-messages": "1.0.1",
-    "@travi/language-scaffolder-prompts": "1.1.0",
+    "@travi/language-scaffolder-prompts": "1.1.1",
     "execa": "^2.0.4",
     "inquirer": "^6.5.1",
     "lodash.uniq": "4.5.0",
