@@ -78,7 +78,7 @@
     "@travi/cli-messages": "1.0.1",
     "@travi/language-scaffolder-prompts": "1.1.1",
     "execa": "^2.0.4",
-    "inquirer": "^6.5.1",
+    "inquirer": "^7.0.0",
     "lodash.uniq": "4.5.0",
     "make-dir": "3.0.0",
     "mz": "2.7.0",
