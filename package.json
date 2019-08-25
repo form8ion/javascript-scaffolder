@@ -46,7 +46,7 @@
     "@babel/register": "^7.5.5",
     "@travi/any": "2.0.3",
     "@travi/babel-preset": "^3.0.0",
-    "@travi/eslint-config-travi": "1.8.3",
+    "@travi/eslint-config-travi": "1.8.4",
     "@travi/project-scaffolder": "^7.0.4",
     "@travi/travis-scaffolder-javascript": "^1.12.0",
     "ban-sensitive-files": "^1.9.2",
