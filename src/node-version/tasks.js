@@ -9,7 +9,7 @@ export async function determineLatestVersionOf(nodeVersionCategory) {
   const lsLines = nvmLsOutput.split('\n');
   const lsLine = lsLines[lsLines.length - 2];
 
-  return lsLine.match(/(v[0-9]+\.[0-9]+\.[0-9]+)/)[1];
+  return lsLine.match(/(v[0-9]+)\.[0-9]+\.[0-9]+/)[1];
 }
 
 export function install(nodeVersionCategory) {

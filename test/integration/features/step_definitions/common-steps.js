@@ -123,7 +123,7 @@ When(/^the project is scaffolded$/, async function () {
 Then('the expected files for a(n) {string} are generated', async function (projectType) {
   const nvmRc = await readFile(`${process.cwd()}/.nvmrc`);
 
-  assert.equal(nvmRc.toString(), this.latestLtsVersion);
+  assert.equal(nvmRc.toString(), `v${this.latestLtsMajorVersion}`);
   assert.equal(existsSync(`${process.cwd()}/.babelrc`), this.transpileAndLint);
 
   await assertThatProperDirectoriesAreIgnoredFromEslint(projectType, this.transpileAndLint);

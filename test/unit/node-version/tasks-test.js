@@ -6,7 +6,8 @@ import {determineLatestVersionOf, install} from '../../../src/node-version/tasks
 
 suite('node-version tasks', () => {
   let sandbox;
-  const version = `v${any.integer()}.${any.integer()}.${any.integer()}`;
+  const majorVersion = any.integer();
+  const version = `v${majorVersion}.${any.integer()}.${any.integer()}`;
 
   setup(() => {
     sandbox = sinon.createSandbox();
@@ -21,7 +22,7 @@ suite('node-version tasks', () => {
       .withArgs('. ~/.nvm/nvm.sh && nvm ls-remote')
       .resolves([...any.listOf(any.word), version, ''].join('\n'));
 
-    assert.equal(await determineLatestVersionOf(any.word()), version);
+    assert.equal(await determineLatestVersionOf(any.word()), `v${majorVersion}`);
   });
 
   test('that the latest lts node version is returned when LTS is requested', async () => {
@@ -29,7 +30,7 @@ suite('node-version tasks', () => {
       .withArgs('. ~/.nvm/nvm.sh && nvm ls-remote --lts')
       .resolves([...any.listOf(any.word), version, ''].join('\n'));
 
-    assert.equal(await determineLatestVersionOf('LTS'), version);
+    assert.equal(await determineLatestVersionOf('LTS'), `v${majorVersion}`);
   });
 
   test('that the node version gets installed', async () => {

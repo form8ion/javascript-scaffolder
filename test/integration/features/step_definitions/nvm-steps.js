@@ -6,8 +6,10 @@ function versionSegment() {
   return any.integer({max: 20});
 }
 
+const majorVersion = versionSegment();
+
 function semverStringFactory() {
-  return `v${versionSegment()}.${versionSegment()}.${versionSegment()}`;
+  return `v${majorVersion}.${versionSegment()}.${versionSegment()}`;
 }
 
 Before(function () {
@@ -15,6 +17,7 @@ Before(function () {
 });
 
 Given(/^nvm is properly configured$/, function () {
+  this.latestLtsMajorVersion = majorVersion;
   this.latestLtsVersion = semverStringFactory();
 
   exec.default
