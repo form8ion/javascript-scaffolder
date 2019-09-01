@@ -1,8 +1,6 @@
-import scaffoldPackageDocumentation from './project-type/package/documentation';
-
-export default function ({projectType, packageName, visibility, scope}) {
+export default function ({projectTypeResults}) {
   return {
-    ...'Package' === projectType && scaffoldPackageDocumentation({packageName, visibility, scope}),
+    ...projectTypeResults.documentation,
     contributing: `### Dependencies
 
 \`\`\`sh

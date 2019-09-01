@@ -3,58 +3,7 @@ import any from '@travi/any';
 import scaffoldDocumentation from '../../src/documentation';
 
 suite('documentation', () => {
-  suite('usage', () => {
-    suite('apps', () => {
-      test('that usage document is not provided (yet) for apps', () => {
-        const documentation = scaffoldDocumentation({projectType: any.string()});
-
-        assert.notProperty(documentation, 'usage');
-      });
-    });
-
-    suite('packages', () => {
-      test('that npm install instructions are provided for packages', () => {
-        const packageName = any.string();
-
-        const documentation = scaffoldDocumentation({projectType: 'Package', packageName});
-
-        assert.equal(documentation.usage, `### Installation
-
-\`\`\`sh
-$ npm install ${packageName}
-\`\`\``);
-      });
-
-      test('that an access note is provided for private packages', () => {
-        const packageName = any.string();
-        const scope = any.word();
-
-        const documentation = scaffoldDocumentation({
-          projectType: 'Package',
-          packageName,
-          visibility: 'Private',
-          scope
-        });
-
-        assert.equal(documentation.usage, `### Installation
-
-:warning: this is a private package, so you will need to use an npm token with
-access to private packages under \`@${scope}\`
-
-\`\`\`sh
-$ npm install ${packageName}
-\`\`\``);
-      });
-    });
-  });
-
-  suite('contribution', () => {
-    test('that contribution details are provided', () => {
-      const documentation = scaffoldDocumentation({});
-
-      assert.equal(
-        documentation.contributing,
-        `### Dependencies
+  const contributionDocumentation = `### Dependencies
 
 \`\`\`sh
 $ nvm install
@@ -65,8 +14,26 @@ $ npm install
 
 \`\`\`sh
 $ npm test
-\`\`\``
-      );
-    });
+\`\`\``;
+
+  test('that project-type documentation and contribution details are provided', () => {
+    const projectTypeResults = {documentation: any.simpleObject()};
+
+    assert.deepEqual(
+      scaffoldDocumentation({projectTypeResults}),
+      {
+        ...projectTypeResults.documentation,
+        contributing: contributionDocumentation
+      }
+    );
+  });
+
+  test('that project-type documentation is not included when not provided', () => {
+    const projectTypeResults = {documentation: undefined};
+
+    assert.deepEqual(
+      scaffoldDocumentation({projectTypeResults}),
+      {contributing: contributionDocumentation}
+    );
   });
 });

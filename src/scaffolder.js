@@ -102,7 +102,7 @@ export async function scaffold(options) {
 
   return {
     badges: buildBadgesDetails(contributors),
-    documentation: scaffoldDocumentation({projectType, packageName, visibility, scope}),
+    documentation: scaffoldDocumentation({projectTypeResults}),
     vcsIgnore: buildVcsIgnoreLists(contributors),
     verificationCommand: 'npm test && npm ls',
     projectDetails: {...projectHomepage && {homepage: projectHomepage}}
