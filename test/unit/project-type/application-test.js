@@ -26,12 +26,14 @@ suite('application project-type', () => {
     const scaffoldedTypeScripts = any.simpleObject();
     const scaffoldedFilesToIgnore = any.listOf(any.string);
     const scaffoldedDirectoriesToIgnore = any.listOf(any.string);
+    const documentation = any.simpleObject();
     const typeScaffoldingResults = {
       ...any.simpleObject(),
       dependencies: scaffoldedTypeDependencies,
       devDependencies: scaffoldedTypeDevDependencies,
       scripts: scaffoldedTypeScripts,
-      vcsIgnore: {files: scaffoldedFilesToIgnore, directories: scaffoldedDirectoriesToIgnore}
+      vcsIgnore: {files: scaffoldedFilesToIgnore, directories: scaffoldedDirectoriesToIgnore},
+      documentation
     };
     applicationChooser.default.withArgs({types: applicationTypes}).resolves(chosenApplicationType);
     choiceScaffolder.default
@@ -54,7 +56,8 @@ suite('application project-type', () => {
           directories: [...scaffoldedDirectoriesToIgnore, '/lib/']
         },
         buildDirectory: 'lib',
-        packageProperties: {private: true}
+        packageProperties: {private: true},
+        documentation
       }
     );
   });

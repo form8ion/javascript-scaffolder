@@ -25,7 +25,8 @@ export default async function ({applicationTypes, projectRoot, transpileLint}) {
         directories: [...results.vcsIgnore ? results.vcsIgnore.directories : [], `/${defaultBuildDirectory}/`]
       },
       buildDirectory: defaultBuildDirectory,
-      packageProperties: {private: true}
+      packageProperties: {private: true},
+      ...results.documentation && {documentation: results.documentation}
     };
   }
 
