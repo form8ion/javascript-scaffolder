@@ -2,10 +2,11 @@ import {copyFile} from 'mz/fs';
 import {info} from '@travi/cli-messages';
 import determinePathToTemplateFile from '../../template-path';
 import defineBadges from './badges';
+import scaffoldPackageDocumentation from './documentation';
 
 const defaultBuildDirectory = 'lib';
 
-export default async function ({projectRoot, transpileLint, packageName, visibility}) {
+export default async function ({projectRoot, transpileLint, packageName, visibility, scope}) {
   info('Scaffolding Package Details');
 
   const commonPackageProperties = {
@@ -51,7 +52,8 @@ export default async function ({projectRoot, transpileLint, packageName, visibil
         contribution: coreBadges.contribution,
         status: coreBadges.status
       },
-      packageProperties: commonPackageProperties
+      packageProperties: commonPackageProperties,
+      documentation: scaffoldPackageDocumentation({packageName, visibility, scope})
     };
   }
 

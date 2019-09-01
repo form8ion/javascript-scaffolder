@@ -4,6 +4,7 @@ import {assert} from 'chai';
 import any from '@travi/any';
 import * as templatePath from '../../../../src/template-path';
 import * as defineBadges from '../../../../src/project-type/package/badges';
+import * as documentationScaffolder from '../../../../src/project-type/package/documentation';
 import scaffoldPackage from '../../../../src/project-type/package/scaffolder';
 
 suite('package project-type', () => {
@@ -18,6 +19,7 @@ suite('package project-type', () => {
     sandbox.stub(fs, 'copyFile');
     sandbox.stub(templatePath, 'default');
     sandbox.stub(defineBadges, 'default');
+    sandbox.stub(documentationScaffolder, 'default');
   });
 
   teardown(() => sandbox.restore());
@@ -26,11 +28,14 @@ suite('package project-type', () => {
     const projectRoot = any.string();
     const pathToTemplate = any.string();
     const visibility = 'Private';
+    const documentation = any.simpleObject();
+    const scope = any.word();
     templatePath.default.withArgs('rollup.config.js').returns(pathToTemplate);
     defineBadges.default.withArgs(packageName, visibility).returns(badges);
+    documentationScaffolder.default.withArgs({scope, packageName, visibility}).returns(documentation);
 
     assert.deepEqual(
-      await scaffoldPackage({projectRoot, packageName, visibility}),
+      await scaffoldPackage({projectRoot, packageName, visibility, scope}),
       {
         devDependencies: ['rimraf', 'rollup', 'rollup-plugin-auto-external'],
         scripts: {
@@ -51,7 +56,8 @@ suite('package project-type', () => {
           module: 'lib/index.es.js',
           files: ['lib/'],
           publishConfig: {access: 'restricted'}
-        }
+        },
+        documentation
       }
     );
     assert.calledWith(fs.copyFile, pathToTemplate, `${projectRoot}/rollup.config.js`);

@@ -10,7 +10,7 @@ import scaffoldLinting from './linting';
 import scaffoldNpmConfig from './config/npm';
 import scaffoldCommitConvention from './commit-convention';
 import scaffoldDocumentation from './documentation';
-import scaffoldeNodeVersion from './node-version';
+import scaffoldNodeVersion from './node-version';
 import {questionNames} from './prompts/question-names';
 import buildBadgesDetails from './badges';
 import buildVcsIgnoreLists from './vcs-ignore';
@@ -58,12 +58,13 @@ export async function scaffold(options) {
     transpileLint,
     packageName,
     visibility,
-    applicationTypes
+    applicationTypes,
+    scope
   });
   const tests = {unit: unitTested, integration: integrationTested};
   const [testingResults, nodeVersion] = await Promise.all([
     scaffoldTesting({projectRoot, tests, visibility, vcs}),
-    scaffoldeNodeVersion({projectRoot, nodeVersionCategory}),
+    scaffoldNodeVersion({projectRoot, nodeVersionCategory}),
     scaffoldNpmConfig({projectType, projectRoot})
   ]);
   const contributors = [

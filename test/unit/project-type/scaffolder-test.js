@@ -25,10 +25,14 @@ suite('project-type scaffolder', () => {
   teardown(() => sandbox.restore());
 
   test('that the package-type scaffolder is applied when the project-type is `Package`', async () => {
-    packageTypeScaffolder.default.withArgs({projectRoot, transpileLint, packageName, visibility}).resolves(results);
+    const scope = any.word();
+
+    packageTypeScaffolder.default
+      .withArgs({projectRoot, transpileLint, packageName, visibility, scope})
+      .resolves(results);
 
     assert.equal(
-      await projectTypeScaffolder({projectType: 'Package', projectRoot, transpileLint, packageName, visibility}),
+      await projectTypeScaffolder({projectType: 'Package', projectRoot, transpileLint, packageName, visibility, scope}),
       results
     );
   });
