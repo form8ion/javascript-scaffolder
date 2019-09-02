@@ -55,8 +55,9 @@ export async function scaffold(options) {
   const projectTypeResults = await scaffoldProjectType({
     projectType,
     projectRoot,
-    transpileLint,
+    projectName,
     packageName,
+    transpileLint,
     visibility,
     applicationTypes,
     scope

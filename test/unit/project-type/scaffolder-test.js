@@ -39,12 +39,19 @@ suite('project-type scaffolder', () => {
 
   test('that the application-type scaffolder is applied when the project-type is `Application`', async () => {
     const applicationTypes = any.simpleObject();
+    const projectName = any.word();
     applicationTypeScaffolder.default
-      .withArgs({projectRoot, transpileLint, applicationTypes})
+      .withArgs({projectRoot, projectName, transpileLint, applicationTypes})
       .resolves(results);
 
     assert.equal(
-      await projectTypeScaffolder({projectType: 'Application', projectRoot, transpileLint, applicationTypes}),
+      await projectTypeScaffolder({
+        projectType: 'Application',
+        projectRoot,
+        projectName,
+        transpileLint,
+        applicationTypes
+      }),
       results
     );
   });
