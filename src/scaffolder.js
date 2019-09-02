@@ -52,6 +52,7 @@ export async function scaffold(options) {
   info('Writing project files', {level: 'secondary'});
 
   const packageName = buildPackageName(projectName, scope);
+  const tests = {unit: unitTested, integration: integrationTested};
   const projectTypeResults = await scaffoldProjectType({
     projectType,
     projectRoot,
@@ -60,9 +61,9 @@ export async function scaffold(options) {
     transpileLint,
     visibility,
     applicationTypes,
-    scope
+    scope,
+    tests
   });
-  const tests = {unit: unitTested, integration: integrationTested};
   const [testingResults, nodeVersion] = await Promise.all([
     scaffoldTesting({projectRoot, tests, visibility, vcs}),
     scaffoldNodeVersion({projectRoot, nodeVersionCategory}),

@@ -28,6 +28,7 @@ suite('application project-type', () => {
     const scaffoldedDirectoriesToIgnore = any.listOf(any.string);
     const documentation = any.simpleObject();
     const projectName = any.word();
+    const tests = any.simpleObject();
     const typeScaffoldingResults = {
       ...any.simpleObject(),
       dependencies: scaffoldedTypeDependencies,
@@ -38,11 +39,11 @@ suite('application project-type', () => {
     };
     applicationChooser.default.withArgs({types: applicationTypes}).resolves(chosenApplicationType);
     choiceScaffolder.default
-      .withArgs(applicationTypes, chosenApplicationType, {projectRoot, projectName})
+      .withArgs(applicationTypes, chosenApplicationType, {projectRoot, projectName, tests})
       .resolves(typeScaffoldingResults);
 
     assert.deepEqual(
-      await scaffoldApplication({projectRoot, projectName, applicationTypes}),
+      await scaffoldApplication({projectRoot, projectName, applicationTypes, tests}),
       {
         scripts: {
           clean: 'rimraf ./lib',

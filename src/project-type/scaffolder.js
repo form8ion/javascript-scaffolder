@@ -10,13 +10,14 @@ export default function ({
   transpileLint,
   visibility,
   applicationTypes,
-  scope
+  scope,
+  tests
 }) {
   switch (projectType) {
     case 'Package':
       return scaffoldPackageType({projectRoot, transpileLint, packageName, visibility, scope});
     case 'Application':
-      return scaffoldApplicationType({projectRoot, projectName, applicationTypes, transpileLint});
+      return scaffoldApplicationType({projectRoot, projectName, applicationTypes, transpileLint, tests});
     case 'CLI':
       return scaffoldCliType({packageName, visibility});
     default:
