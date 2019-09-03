@@ -30,7 +30,11 @@ suite('babel config', () => {
       }
     );
 
-    assert.calledWith(fs.writeFile, `${projectRoot}/.babelrc`, JSON.stringify({presets: [babelPresetName]}));
+    assert.calledWith(
+      fs.writeFile,
+      `${projectRoot}/.babelrc`,
+      JSON.stringify({presets: [babelPresetName], ignore: ['./lib/']})
+    );
   });
 
   test('that the babelrc is not written if a preset is not defined', async () => {
