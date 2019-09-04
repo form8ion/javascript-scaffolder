@@ -20,9 +20,30 @@ suite('remark config scaffolder', () => {
     const projectRoot = any.string();
 
     assert.deepEqual(
-      await scaffoldRemark({config, projectRoot}),
+      await scaffoldRemark({config, projectRoot, vcs: any.simpleObject()}),
       {devDependencies: [config, 'remark-cli'], scripts: {'lint:md': 'remark . --frail'}}
     );
-    assert.calledWith(fs.writeFile, `${projectRoot}/.remarkrc.js`, `exports.plugins = ['${config}'];`);
+    assert.calledWith(
+      fs.writeFile,
+      `${projectRoot}/.remarkrc.js`,
+      `exports.plugins = [
+  '${config}'
+];`
+    );
+  });
+
+  test('that the config configures validate-links when the project will not be versioned', async () => {
+    const config = any.string();
+    const projectRoot = any.string();
+
+    await scaffoldRemark({config, projectRoot, vcs: undefined});
+    assert.calledWith(
+      fs.writeFile,
+      `${projectRoot}/.remarkrc.js`,
+      `exports.plugins = [
+  '${config}',
+  ['validate-links', {repository: false}]
+];`
+    );
   });
 });

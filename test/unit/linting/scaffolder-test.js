@@ -31,7 +31,7 @@ suite('linting scaffolder', () => {
     sandbox.stub(scaffoldBanSensitiveFiles, 'default');
 
     scaffoldRemark.default
-      .withArgs({projectRoot, config: configForRemark})
+      .withArgs({projectRoot, config: configForRemark, vcs})
       .resolves({devDependencies: remarkDevDependencies, scripts: remarkScripts});
     scaffoldEslint.default
       .withArgs({projectRoot, unitTested, config: configForEslint, buildDirectory, additionalConfigs: eslintConfigs})
@@ -117,7 +117,11 @@ suite('linting scaffolder', () => {
     assert.deepEqual(result.scripts, {...eslintScripts, ...banSensitiveFilesScripts});
   });
 
-  test('that ban-sensitive-files is not scaffolded when a config is not defined', async () => {
+  test('that ban-sensitive-files is not scaffolded when the project will not be versioned', async () => {
+    scaffoldRemark.default
+      .withArgs({projectRoot, config: configForRemark, vcs: undefined})
+      .resolves({devDependencies: remarkDevDependencies, scripts: remarkScripts});
+
     const result = await scaffold({
       projectRoot,
       tests: {unit: unitTested},

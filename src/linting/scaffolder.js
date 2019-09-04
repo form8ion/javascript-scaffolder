@@ -13,7 +13,7 @@ export default async function ({projectRoot, tests, configs, vcs, transpileLint,
         additionalConfigs: eslintConfigs
       })
       : null,
-    configs.remark ? scaffoldRemark({projectRoot, config: configs.remark}) : null,
+    configs.remark ? scaffoldRemark({projectRoot, config: configs.remark, vcs}) : null,
     vcs ? scaffoldBanSensitiveFiles() : null
   ]);
 
