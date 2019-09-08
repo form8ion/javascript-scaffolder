@@ -22,7 +22,8 @@ export default async function ({projectRoot}) {
       'test:integration': 'run-s \'test:integration:base -- --profile noWip\'',
       'test:integration:base': 'DEBUG=any cucumber-js test/integration --profile base',
       'test:integration:debug': 'DEBUG=test run-s test:integration',
-      'test:integration:wip': 'run-s \'test:integration:base -- --profile wip\''
+      'test:integration:wip': 'run-s \'test:integration:base -- --profile wip\'',
+      'test:integration:focus': 'run-s \'test:integration:base -- --profile focus\''
     },
     eslintConfigs: ['cucumber']
   };
