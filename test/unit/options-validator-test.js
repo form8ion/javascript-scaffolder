@@ -19,8 +19,8 @@ suite('options validator', () => {
 
     assert.throws(
       () => validate({projectRoot: any.string(), projectName}),
-      'child "projectName" fails because ' +
-      `["projectName" with value "${projectName}" matches the inverted pattern: /^@\\w*\\//]`
+      'child "projectName" fails because '
+      + `["projectName" with value "${projectName}" matches the inverted pattern: /^@\\w*\\//]`
     );
   });
 
@@ -313,8 +313,8 @@ suite('options validator', () => {
         description: any.string(),
         overrides: {author: {name: any.string(), email: any.word()}}
       }),
-      'child "overrides" fails because' +
-      ' [child "author" fails because [child "email" fails because ["email" must be a valid email]]]'
+      'child "overrides" fails because'
+      + ' [child "author" fails because [child "email" fails because ["email" must be a valid email]]]'
     ));
 
     test('that `author.url` must be a valid uri when provided', () => assert.throws(
@@ -327,8 +327,8 @@ suite('options validator', () => {
         description: any.string(),
         overrides: {author: {name: any.string(), email, url: any.string()}}
       }),
-      'child "overrides" fails because' +
-      ' [child "author" fails because [child "url" fails because ["url" must be a valid uri]]]'
+      'child "overrides" fails because'
+      + ' [child "author" fails because [child "url" fails because ["url" must be a valid uri]]]'
     ));
   });
 
@@ -345,8 +345,8 @@ suite('options validator', () => {
         description: any.string(),
         ciServices: {[ciServiceName]: {}}
       }),
-      `child "ciServices" fails because [child "${ciServiceName}" fails because ` +
-      '[child "scaffolder" fails because ["scaffolder" is required]]]'
+      `child "ciServices" fails because [child "${ciServiceName}" fails because `
+      + '[child "scaffolder" fails because ["scaffolder" is required]]]'
     ));
 
     test('that a provided ci-service scaffolder must accept a single argument', () => assert.throws(
@@ -359,8 +359,8 @@ suite('options validator', () => {
         description: any.string(),
         ciServices: {[ciServiceName]: {scaffolder: () => undefined}}
       }),
-      `child "ciServices" fails because [child "${ciServiceName}" fails because ` +
-      '[child "scaffolder" fails because ["scaffolder" must have an arity of 1]]]'
+      `child "ciServices" fails because [child "${ciServiceName}" fails because `
+      + '[child "scaffolder" fails because ["scaffolder" must have an arity of 1]]]'
     ));
 
     test('that a provided ci-service scaffolder can be enabled for public projects', () => validate({
@@ -397,8 +397,8 @@ suite('options validator', () => {
         description: any.string(),
         hosts: {[hostName]: {}}
       }),
-      `child "hosts" fails because [child "${hostName}" fails because ` +
-      '[child "scaffolder" fails because ["scaffolder" is required]]]'
+      `child "hosts" fails because [child "${hostName}" fails because `
+      + '[child "scaffolder" fails because ["scaffolder" is required]]]'
     ));
 
     test('that a provided scaffolder must accept a single argument', () => assert.throws(
@@ -411,8 +411,8 @@ suite('options validator', () => {
         description: any.string(),
         hosts: {[hostName]: {scaffolder: () => undefined}}
       }),
-      `child "hosts" fails because [child "${hostName}" fails because ` +
-      '[child "scaffolder" fails because ["scaffolder" must have an arity of 1]]]'
+      `child "hosts" fails because [child "${hostName}" fails because `
+      + '[child "scaffolder" fails because ["scaffolder" must have an arity of 1]]]'
     ));
 
     test('that provided `projectTypes` must be strings', () => assert.throws(
@@ -425,8 +425,8 @@ suite('options validator', () => {
         description: any.string(),
         hosts: {[hostName]: {scaffolder: options => options, projectTypes: [any.integer()]}}
       }),
-      `child "hosts" fails because [child "${hostName}" fails because ` +
-      '[child "projectTypes" fails because ["projectTypes" at position 0 fails because ["0" must be a string]]]'
+      `child "hosts" fails because [child "${hostName}" fails because `
+      + '[child "projectTypes" fails because ["projectTypes" at position 0 fails because ["0" must be a string]]]'
     ));
 
     test('that `projectTypes` must be valid types', () => assert.throws(
@@ -439,9 +439,9 @@ suite('options validator', () => {
         description: any.string(),
         hosts: {[hostName]: {scaffolder: options => options, projectTypes: [any.word()]}}
       }),
-      `child "hosts" fails because [child "${hostName}" fails because ` +
-      '[child "projectTypes" fails because ["projectTypes" at position 0 fails because ' +
-      '["0" must be one of [static, node]]]]'
+      `child "hosts" fails because [child "${hostName}" fails because `
+      + '[child "projectTypes" fails because ["projectTypes" at position 0 fails because '
+      + '["0" must be one of [static, node]]]]'
     ));
 
     test('that `static` is a valid option for `projectTypes`', () => validate({

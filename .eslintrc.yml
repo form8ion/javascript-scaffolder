@@ -1,7 +1,10 @@
-extends: '@travi/travi/rules/es6'
+extends:
+  - '@travi'
+  - '@travi/mocha'
+  - '@travi/cucumber'
 
 overrides:
-  files: example.js
-  rules:
-    import/no-extraneous-dependencies: off
-    no-unused-expressions: off
+  - files: example.js
+    rules:
+      import/no-extraneous-dependencies: off
+      no-unused-expressions: off
