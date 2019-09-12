@@ -4,7 +4,7 @@ import {scaffold} from '@travi/project-scaffolder';
 import {scaffold as scaffoldTravisForJavaScript} from '@travi/travis-scaffolder-javascript';
 import {scaffold as scaffoldJavaScript} from './lib/index.cjs';
 
-// ##### Register with commander
+// ##### Register with yargs
 yargs
   .scriptName('form8ion-utils')
   .usage('Usage: $0 <cmd> [args]')
