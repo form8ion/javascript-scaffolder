@@ -71,7 +71,11 @@ export async function scaffold(options) {
   ]);
   const contributors = [
     ...(await Promise.all([
-      scaffoldHost(hosts, chosenHost, {buildDirectory: `./${projectTypeResults.buildDirectory}`, projectRoot}),
+      scaffoldHost(
+        hosts,
+        chosenHost,
+        {buildDirectory: `./${projectTypeResults.buildDirectory}`, projectRoot, projectName}
+      ),
       scaffoldLinting({
         configs,
         projectRoot,
