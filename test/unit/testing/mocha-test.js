@@ -30,7 +30,7 @@ suite('mocha scaffolder', () => {
       await scaffoldMocha({projectRoot}),
       {
         devDependencies: ['mocha', 'chai', 'sinon'],
-        scripts: {'test:unit:base': 'DEBUG=any mocha src/**/*-test.js'},
+        scripts: {'test:unit:base': "DEBUG=any mocha 'src/**/*-test.js'"},
         eslintConfigs: ['mocha']
       }
     );
