@@ -74,7 +74,7 @@ export async function scaffold(options) {
       scaffoldHost(
         hosts,
         chosenHost,
-        {buildDirectory: `./${projectTypeResults.buildDirectory}`, projectRoot, projectName}
+        {buildDirectory: `./${projectTypeResults.buildDirectory}`, projectRoot, projectName, nodeVersion}
       ),
       scaffoldLinting({
         configs,

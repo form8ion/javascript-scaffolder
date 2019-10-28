@@ -197,7 +197,11 @@ suite('javascript project scaffolder', () => {
   suite('config files', () => {
     test('that config files are created', async () => {
       host.default
-        .withArgs(hosts, chosenHost, {buildDirectory: `./${projectTypeBuildDirectory}`, projectRoot, projectName})
+        .withArgs(
+          hosts,
+          chosenHost,
+          {buildDirectory: `./${projectTypeBuildDirectory}`, projectRoot, projectName, nodeVersion: version}
+        )
         .resolves(hostResults);
 
       await scaffold(options);
@@ -210,7 +214,11 @@ suite('javascript project scaffolder', () => {
   suite('data passed downstream', () => {
     setup(
       () => host.default
-        .withArgs(hosts, chosenHost, {buildDirectory: `./${projectTypeBuildDirectory}`, projectRoot, projectName})
+        .withArgs(
+          hosts,
+          chosenHost,
+          {buildDirectory: `./${projectTypeBuildDirectory}`, projectRoot, projectName, nodeVersion: version}
+        )
         .resolves(hostResults)
     );
 
