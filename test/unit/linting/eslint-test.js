@@ -44,31 +44,34 @@ suite('eslint config scaffolder', () => {
       assert.calledWith(fs.writeFile, `${projectRoot}/.eslintrc.yml`, `extends: '${scope}'`);
     });
 
-    test(
-      'that the additional configs are added if the config scope is provided',
-      async () => {
-        const pathToCreatedDirectory = any.string();
-        const additionalConfigs = any.listOf(any.word);
-        mkdir.default.withArgs(`${projectRoot}/test/unit`).resolves(pathToCreatedDirectory);
+    test('that the additional configs are added if the config scope is provided', async () => {
+      const pathToCreatedDirectory = any.string();
+      const additionalConfigs = any.listOf(any.word);
+      mkdir.default.withArgs(`${projectRoot}/test/unit`).resolves(pathToCreatedDirectory);
 
-        const result = await scaffoldEsLint({
-          projectRoot,
-          config: {packageName, scope},
-          unitTested: true,
-          additionalConfigs
-        });
+      const result = await scaffoldEsLint({
+        projectRoot,
+        config: {packageName, scope},
+        unitTested: true,
+        additionalConfigs
+      });
 
-        assert.calledWith(
-          fs.writeFile,
-          `${projectRoot}/.eslintrc.yml`,
-          `extends:\n  - '${scope}'\n  - '${scope}/${additionalConfigs.join(`'\n  - '${scope}/`)}'`
-        );
-        assert.deepEqual(
-          result.devDependencies,
-          [`${scope}/eslint-config`, ...additionalConfigs.map(config => `${scope}/eslint-config-${config}`)]
-        );
-      }
-    );
+      assert.calledWith(
+        fs.writeFile,
+        `${projectRoot}/.eslintrc.yml`,
+        `extends:\n  - '${scope}'\n  - '${scope}/${additionalConfigs.join(`'\n  - '${scope}/`)}'`
+      );
+      assert.deepEqual(
+        result.devDependencies,
+        [`${scope}/eslint-config`, ...additionalConfigs.map(config => `${scope}/eslint-config-${config}`)]
+      );
+    });
+
+    test('that no additional configs are added if the additional list is empty', async () => {
+      await scaffoldEsLint({projectRoot, config: {packageName, scope}, additionalConfigs: []});
+
+      assert.calledWith(fs.writeFile, `${projectRoot}/.eslintrc.yml`, `extends: '${scope}'`);
+    });
 
     suite('eslint-ignore', () => {
       test('that non-source files are excluded from linting', async () => {

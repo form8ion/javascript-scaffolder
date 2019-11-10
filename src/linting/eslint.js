@@ -7,7 +7,7 @@ export default async function ({config, projectRoot, unitTested, buildDirectory,
   await Promise.all([
     writeFile(
       `${projectRoot}/.eslintrc.yml`,
-      additionalConfigs
+      additionalConfigs && additionalConfigs.length
         ? `extends:\n  - '${scope}'\n  - '${scope}/${additionalConfigs.join(`'\n  - '${scope}/`)}'`
         : `extends: '${scope}'`
     ),
