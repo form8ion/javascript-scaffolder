@@ -83,7 +83,7 @@ export async function scaffold(options) {
         vcs,
         transpileLint,
         buildDirectory: projectTypeResults.buildDirectory,
-        eslintConfigs: testingResults.eslintConfigs
+        eslintConfigs: [...testingResults.eslintConfigs, ...projectTypeResults.eslintConfigs]
       }),
       scaffoldCi(ciServices, ci, {projectRoot, vcs, visibility, packageType: projectType, nodeVersion, tests}),
       scaffoldBabel({preset: configs.babelPreset, projectRoot, transpileLint}),

@@ -57,7 +57,8 @@ suite('package project-type', () => {
           files: ['lib/'],
           publishConfig: {access: 'restricted'}
         },
-        documentation
+        documentation,
+        eslintConfigs: []
       }
     );
     assert.calledWith(fs.copyFile, pathToTemplate, `${projectRoot}/rollup.config.js`);
@@ -106,7 +107,8 @@ suite('package project-type', () => {
       {
         scripts: {},
         badges,
-        packageProperties: {...commonPackageProperties, files: ['index.js'], publishConfig: {access: 'restricted'}}
+        packageProperties: {...commonPackageProperties, files: ['index.js'], publishConfig: {access: 'restricted'}},
+        eslintConfigs: []
       }
     );
     assert.neverCalledWith(fs.copyFile, pathToTemplate, `${projectRoot}/rollup.config.js`);

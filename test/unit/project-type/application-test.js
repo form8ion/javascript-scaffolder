@@ -29,13 +29,15 @@ suite('application project-type', () => {
     const documentation = any.simpleObject();
     const projectName = any.word();
     const tests = any.simpleObject();
+    const eslintConfigs = any.listOf(any.string);
     const typeScaffoldingResults = {
       ...any.simpleObject(),
       dependencies: scaffoldedTypeDependencies,
       devDependencies: scaffoldedTypeDevDependencies,
       scripts: scaffoldedTypeScripts,
       vcsIgnore: {files: scaffoldedFilesToIgnore, directories: scaffoldedDirectoriesToIgnore},
-      documentation
+      documentation,
+      eslintConfigs
     };
     applicationChooser.default.withArgs({types: applicationTypes}).resolves(chosenApplicationType);
     choiceScaffolder.default
@@ -59,7 +61,8 @@ suite('application project-type', () => {
         },
         buildDirectory: 'lib',
         packageProperties: {private: true},
-        documentation
+        documentation,
+        eslintConfigs
       }
     );
   });
@@ -75,7 +78,8 @@ suite('application project-type', () => {
         packageProperties: {private: true},
         dependencies: [],
         devDependencies: ['rimraf'],
-        vcsIgnore: {files: ['.env'], directories: ['/lib/']}
+        vcsIgnore: {files: ['.env'], directories: ['/lib/']},
+        eslintConfigs: []
       }
     );
   });
@@ -83,7 +87,7 @@ suite('application project-type', () => {
   test('that build details are not included when the project will not be transpiled', async () => {
     assert.deepEqual(
       await scaffoldApplication({projectRoot, applicationTypes, transpileLint: false}),
-      {scripts: {}, dependencies: [], devDependencies: [], vcsIgnore: {files: [], directories: []}}
+      {scripts: {}, dependencies: [], devDependencies: [], vcsIgnore: {files: [], directories: []}, eslintConfigs: []}
     );
   });
 });

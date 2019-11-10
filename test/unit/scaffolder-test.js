@@ -36,6 +36,7 @@ suite('javascript project scaffolder', () => {
   const version = any.string();
   const commitConventionDevDependencies = any.listOf(any.string);
   const testingEslintConfigs = any.listOf(any.string);
+  const projectTypeEslintConfigs = any.listOf(any.string);
   const hostResults = any.simpleObject();
   const babelResults = any.simpleObject();
   const chosenHost = any.word();
@@ -64,7 +65,12 @@ suite('javascript project scaffolder', () => {
   const transpileLint = any.boolean();
   const projectTypeBuildDirectory = any.string();
   const packageProperties = any.simpleObject();
-  const projectTypeResults = {...any.simpleObject(), buildDirectory: projectTypeBuildDirectory, packageProperties};
+  const projectTypeResults = {
+    ...any.simpleObject(),
+    buildDirectory: projectTypeBuildDirectory,
+    packageProperties,
+    eslintConfigs: projectTypeEslintConfigs
+  };
   const contributors = [
     hostResults,
     lintingResults,
@@ -168,7 +174,7 @@ suite('javascript project scaffolder', () => {
         vcs: vcsDetails,
         transpileLint,
         buildDirectory: projectTypeBuildDirectory,
-        eslintConfigs: testingEslintConfigs
+        eslintConfigs: [...testingEslintConfigs, ...projectTypeEslintConfigs]
       })
       .resolves(lintingResults);
     babel.default.withArgs({projectRoot, preset: babelPreset, transpileLint}).resolves(babelResults);

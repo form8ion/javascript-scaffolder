@@ -53,13 +53,15 @@ export default async function ({projectRoot, transpileLint, packageName, visibil
         status: coreBadges.status
       },
       packageProperties: commonPackageProperties,
-      documentation: scaffoldPackageDocumentation({packageName, visibility, scope})
+      documentation: scaffoldPackageDocumentation({packageName, visibility, scope}),
+      eslintConfigs: []
     };
   }
 
   return {
     scripts: {},
     badges: defineBadges(packageName, visibility),
-    packageProperties: commonPackageProperties
+    packageProperties: commonPackageProperties,
+    eslintConfigs: []
   };
 }

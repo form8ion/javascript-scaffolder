@@ -28,6 +28,7 @@ export default function ({packageName, visibility}) {
       bin: {},
       files: ['bin/'],
       publishConfig: {access: 'Public' === visibility ? 'public' : 'restricted'}
-    }
+    },
+    eslintConfigs: []
   };
 }
