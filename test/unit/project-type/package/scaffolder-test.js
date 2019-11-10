@@ -10,8 +10,11 @@ import scaffoldPackage from '../../../../src/project-type/package/scaffolder';
 suite('package project-type', () => {
   let sandbox;
   const packageName = any.word();
+  const visibility = 'Private';
+  const scope = any.word();
   const badges = {consumer: any.simpleObject(), contribution: any.simpleObject(), status: any.simpleObject()};
   const commonPackageProperties = {version: '0.0.0-semantically-released'};
+  const documentation = any.simpleObject();
 
   setup(() => {
     sandbox = sinon.createSandbox();
@@ -20,6 +23,8 @@ suite('package project-type', () => {
     sandbox.stub(templatePath, 'default');
     sandbox.stub(defineBadges, 'default');
     sandbox.stub(documentationScaffolder, 'default');
+
+    documentationScaffolder.default.withArgs({scope, packageName, visibility}).returns(documentation);
   });
 
   teardown(() => sandbox.restore());
@@ -27,9 +32,6 @@ suite('package project-type', () => {
   test('that details specific to a package project-type are scaffolded', async () => {
     const projectRoot = any.string();
     const pathToTemplate = any.string();
-    const visibility = 'Private';
-    const documentation = any.simpleObject();
-    const scope = any.word();
     templatePath.default.withArgs('rollup.config.js').returns(pathToTemplate);
     defineBadges.default.withArgs(packageName, visibility).returns(badges);
     documentationScaffolder.default.withArgs({scope, packageName, visibility}).returns(documentation);
@@ -67,11 +69,10 @@ suite('package project-type', () => {
   test('that the runkit badge is included for public projects', async () => {
     const projectRoot = any.string();
     const pathToTemplate = any.string();
-    const visibility = 'Public';
     templatePath.default.withArgs('rollup.config.js').returns(pathToTemplate);
-    defineBadges.default.withArgs(packageName, visibility).returns(badges);
+    defineBadges.default.withArgs(packageName, 'Public').returns(badges);
 
-    const results = await scaffoldPackage({projectRoot, packageName, visibility});
+    const results = await scaffoldPackage({projectRoot, packageName, visibility: 'Public'});
 
     assert.deepEqual(
       results.badges.consumer.runkit,
@@ -98,16 +99,16 @@ suite('package project-type', () => {
   test('that build details are not included when the project will not be transpiled', async () => {
     const projectRoot = any.string();
     const pathToTemplate = any.string();
-    const visibility = 'Private';
     templatePath.default.withArgs('rollup.config.js').returns(pathToTemplate);
     defineBadges.default.withArgs(packageName, visibility).returns(badges);
 
     assert.deepEqual(
-      await scaffoldPackage({projectRoot, transpileLint: false, packageName, visibility}),
+      await scaffoldPackage({projectRoot, transpileLint: false, packageName, visibility, scope}),
       {
         scripts: {},
         badges,
         packageProperties: {...commonPackageProperties, files: ['index.js'], publishConfig: {access: 'restricted'}},
+        documentation,
         eslintConfigs: []
       }
     );

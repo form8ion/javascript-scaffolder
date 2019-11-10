@@ -21,12 +21,19 @@ export default async function ({projectRoot, transpileLint, packageName, visibil
     publishConfig: {access: 'Public' === visibility ? 'public' : 'restricted'}
   };
 
+  const commonResults = {
+    packageProperties: commonPackageProperties,
+    documentation: scaffoldPackageDocumentation({packageName, visibility, scope}),
+    eslintConfigs: []
+  };
+
   if (false !== transpileLint) {
     const coreBadges = defineBadges(packageName, visibility);
 
     await copyFile(determinePathToTemplateFile('rollup.config.js'), `${projectRoot}/rollup.config.js`);
 
     return {
+      ...commonResults,
       devDependencies: ['rimraf', 'rollup', 'rollup-plugin-auto-external'],
       scripts: {
         clean: `rimraf ./${defaultBuildDirectory}`,
@@ -51,17 +58,13 @@ export default async function ({projectRoot, transpileLint, packageName, visibil
         },
         contribution: coreBadges.contribution,
         status: coreBadges.status
-      },
-      packageProperties: commonPackageProperties,
-      documentation: scaffoldPackageDocumentation({packageName, visibility, scope}),
-      eslintConfigs: []
+      }
     };
   }
 
   return {
+    ...commonResults,
     scripts: {},
-    badges: defineBadges(packageName, visibility),
-    packageProperties: commonPackageProperties,
-    eslintConfigs: []
+    badges: defineBadges(packageName, visibility)
   };
 }
