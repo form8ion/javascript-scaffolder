@@ -18,7 +18,7 @@
     "lint:lockfile": "lockfile-lint --path package-lock.json --type npm --validate-https --allowed-hosts npm",
     "test": "npm-run-all --print-label build --parallel lint:* --parallel test:*",
     "test:unit": "nyc run-s test:unit:base",
-    "test:unit:base": "mocha --recursive test/unit",
+    "test:unit:base": "mocha 'src/**/*-test.js'",
     "test:integration": "run-s 'test:integration:base -- --profile noWip'",
     "test:integration:base": "cucumber-js test/integration --profile base",
     "test:integration:debug": "DEBUG=test run-s test:integration",
