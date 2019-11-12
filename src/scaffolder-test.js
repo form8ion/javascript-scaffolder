@@ -159,7 +159,7 @@ suite('javascript project scaffolder', () => {
           projectRoot,
           vcs: vcsDetails,
           visibility,
-          packageType: projectType,
+          projectType,
           nodeVersion: version,
           tests
         }
