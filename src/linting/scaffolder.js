@@ -19,11 +19,13 @@ export default async function ({projectRoot, tests, configs, vcs, transpileLint,
 
   return {
     devDependencies: [
+      'lockfile-lint',
       ...eslintResult ? eslintResult.devDependencies : [],
       ...remarkResult ? remarkResult.devDependencies : [],
       ...banSensitiveFilesResult ? banSensitiveFilesResult.devDependencies : []
     ],
     scripts: {
+      'lint:lockfile': 'lockfile-lint --path package-lock.json --type npm --validate-https --allowed-hosts npm',
       ...eslintResult && eslintResult.scripts,
       ...remarkResult && remarkResult.scripts,
       ...banSensitiveFilesResult && banSensitiveFilesResult.scripts

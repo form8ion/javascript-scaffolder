@@ -58,11 +58,19 @@ suite('linting scaffolder', () => {
 
     assert.deepEqual(
       result.devDependencies,
-      [...eslintDevDependencies, ...remarkDevDependencies, ...banSensitiveFilesDevDependencies]
+      ['lockfile-lint', ...eslintDevDependencies, ...remarkDevDependencies, ...banSensitiveFilesDevDependencies]
     );
     assert.deepEqual(result.vcsIgnore.files, eslintFilesIgnoredFromVcs);
     assert.deepEqual(result.vcsIgnore.directories, []);
-    assert.deepEqual(result.scripts, {...eslintScripts, ...remarkScripts, ...banSensitiveFilesScripts});
+    assert.deepEqual(
+      result.scripts,
+      {
+        'lint:lockfile': 'lockfile-lint --path package-lock.json --type npm --validate-https --allowed-hosts npm',
+        ...eslintScripts,
+        ...remarkScripts,
+        ...banSensitiveFilesScripts
+      }
+    );
   });
 
   test('that eslint is not scaffolded when a config is not defined', async () => {
@@ -75,11 +83,18 @@ suite('linting scaffolder', () => {
 
     assert.deepEqual(
       result.devDependencies,
-      [...remarkDevDependencies, ...banSensitiveFilesDevDependencies]
+      ['lockfile-lint', ...remarkDevDependencies, ...banSensitiveFilesDevDependencies]
     );
     assert.deepEqual(result.vcsIgnore.files, []);
     assert.deepEqual(result.vcsIgnore.directories, []);
-    assert.deepEqual(result.scripts, {...remarkScripts, ...banSensitiveFilesScripts});
+    assert.deepEqual(
+      result.scripts,
+      {
+        'lint:lockfile': 'lockfile-lint --path package-lock.json --type npm --validate-https --allowed-hosts npm',
+        ...remarkScripts,
+        ...banSensitiveFilesScripts
+      }
+    );
   });
 
   test('that eslint is not scaffolded when `transpileLint` is false', async () => {
@@ -93,11 +108,18 @@ suite('linting scaffolder', () => {
 
     assert.deepEqual(
       result.devDependencies,
-      [...remarkDevDependencies, ...banSensitiveFilesDevDependencies]
+      ['lockfile-lint', ...remarkDevDependencies, ...banSensitiveFilesDevDependencies]
     );
     assert.deepEqual(result.vcsIgnore.files, []);
     assert.deepEqual(result.vcsIgnore.directories, []);
-    assert.deepEqual(result.scripts, {...remarkScripts, ...banSensitiveFilesScripts});
+    assert.deepEqual(
+      result.scripts,
+      {
+        'lint:lockfile': 'lockfile-lint --path package-lock.json --type npm --validate-https --allowed-hosts npm',
+        ...remarkScripts,
+        ...banSensitiveFilesScripts
+      }
+    );
   });
 
   test('that remark is not scaffolded when a config is not defined', async () => {
@@ -111,10 +133,20 @@ suite('linting scaffolder', () => {
     });
 
     assert.notCalled(scaffoldRemark.default);
-    assert.deepEqual(result.devDependencies, [...eslintDevDependencies, ...banSensitiveFilesDevDependencies]);
+    assert.deepEqual(
+      result.devDependencies,
+      ['lockfile-lint', ...eslintDevDependencies, ...banSensitiveFilesDevDependencies]
+    );
     assert.deepEqual(result.vcsIgnore.files, eslintFilesIgnoredFromVcs);
     assert.deepEqual(result.vcsIgnore.directories, []);
-    assert.deepEqual(result.scripts, {...eslintScripts, ...banSensitiveFilesScripts});
+    assert.deepEqual(
+      result.scripts,
+      {
+        'lint:lockfile': 'lockfile-lint --path package-lock.json --type npm --validate-https --allowed-hosts npm',
+        ...eslintScripts,
+        ...banSensitiveFilesScripts
+      }
+    );
   });
 
   test('that ban-sensitive-files is not scaffolded when the project will not be versioned', async () => {
@@ -131,9 +163,16 @@ suite('linting scaffolder', () => {
       eslintConfigs
     });
 
-    assert.deepEqual(result.devDependencies, [...eslintDevDependencies, ...remarkDevDependencies]);
+    assert.deepEqual(result.devDependencies, ['lockfile-lint', ...eslintDevDependencies, ...remarkDevDependencies]);
     assert.deepEqual(result.vcsIgnore.files, eslintFilesIgnoredFromVcs);
     assert.deepEqual(result.vcsIgnore.directories, []);
-    assert.deepEqual(result.scripts, {...eslintScripts, ...remarkScripts});
+    assert.deepEqual(
+      result.scripts,
+      {
+        'lint:lockfile': 'lockfile-lint --path package-lock.json --type npm --validate-https --allowed-hosts npm',
+        ...eslintScripts,
+        ...remarkScripts
+      }
+    );
   });
 });
