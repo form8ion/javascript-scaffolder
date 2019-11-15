@@ -542,4 +542,16 @@ suite('options validator', () => {
       {...options, configs: {}, overrides: {}, ciServices: {}, hosts: {}, applicationTypes: {}}
     );
   });
+
+  test('that `answers` is allowed', () => {
+    const options = {
+      projectRoot: any.string(),
+      projectName: any.string(),
+      visibility: any.fromList(['Public', 'Private']),
+      license: any.string(),
+      answers: any.simpleObject()
+    };
+
+    validate(options);
+  });
 });

@@ -58,6 +58,9 @@ export function validate(options) {
       applicationTypes: joi.object().pattern(/^/, joi.object({
         scaffolder: joi.func().arity(1).required()
       })).default({})
+    })
+    .keys({
+      answers: joi.object()
     });
   const {error, value} = schema.validate(options);
 
