@@ -73,6 +73,43 @@ suite('eslint config scaffolder', () => {
       assert.calledWith(fs.writeFile, `${projectRoot}/.eslintrc.yml`, `extends: '${scope}'`);
     });
 
+    test('that a file pattern can be specified for a config', async () => {
+      const pathToCreatedDirectory = any.string();
+      const filePattern = any.string();
+      const configName = any.word();
+      const stringConfigs = any.listOf(any.word);
+      const additionalConfigs = [...stringConfigs, {name: configName, files: filePattern}];
+      mkdir.default.withArgs(`${projectRoot}/test/unit`).resolves(pathToCreatedDirectory);
+
+      const result = await scaffoldEsLint({
+        projectRoot,
+        config: {packageName, scope},
+        unitTested: true,
+        additionalConfigs
+      });
+
+      assert.calledWith(
+        fs.writeFile,
+        `${projectRoot}/.eslintrc.yml`,
+        `extends:
+  - '${scope}'
+  - '${scope}/${stringConfigs.join(`'\n  - '${scope}/`)}'
+
+overrides:
+  - files: ${filePattern}
+    extends: '${scope}/${configName}'
+`
+      );
+      assert.deepEqual(
+        result.devDependencies,
+        [
+          `${scope}/eslint-config`,
+          ...stringConfigs.map(config => `${scope}/eslint-config-${config}`),
+          `${scope}/eslint-config-${configName}`
+        ]
+      );
+    });
+
     suite('eslint-ignore', () => {
       test('that non-source files are excluded from linting', async () => {
         const buildDirectory = any.string();
