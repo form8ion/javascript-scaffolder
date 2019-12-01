@@ -15,7 +15,7 @@ opinionated scaffolder for JavaScript projects
   * [As one of the languages for scaffolding a project](#as-one-of-the-languages-for-scaffolding-a-project)
     * [Example](#example)
       * [Dependencies:](#dependencies)
-      * [Register with commander](#register-with-commander)
+      * [Register with yargs](#register-with-yargs)
     * [Options](#options)
       * [`projectRoot` __string__ (_required_)](#projectroot-string-required)
       * [`projectName` __string__ (_required_)](#projectname-string-required)
@@ -26,6 +26,7 @@ opinionated scaffolder for JavaScript projects
       * [`configs` __object__ (_optional_)](#configs-object-optional)
       * [`overrides` __object__ (_optional_)](#overrides-object-optional)
       * [`ciServices` __object__ (_optional_)](#ciservices-object-optional)
+      * [`applicationTypes` __object__ (_optional_)](#applicationtypes-object-optional)
 * [Contributing](#contributing)
   * [Dependencies](#dependencies-1)
   * [Verification](#verification)
@@ -77,7 +78,7 @@ import {scaffold as scaffoldTravisForJavaScript} from '@travi/travis-scaffolder-
 import {scaffold as scaffoldJavaScript} from '@travi/javascript-scaffolder';
 ```
 
-##### Register with commander
+##### Register with yargs
 
 ```javascript
 yargs
@@ -191,6 +192,12 @@ short summary of the project
     as a public option
   * `private`: __boolean__ (_optional_) whether this service should be presented
     as a private option
+
+##### `applicationTypes` __object__ (_optional_)
+
+* keys: __string__ Name of the type of application
+* values: __object__
+  * `scaffolder` __function__ (_required_) scaffolds the application
 
 ## Contributing
 
