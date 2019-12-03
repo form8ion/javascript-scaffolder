@@ -100,7 +100,6 @@ export async function scaffold(options) {
     packageName,
     license,
     vcs,
-    tests,
     author: {name: authorName, email: authorEmail, url: authorUrl},
     description,
     packageProperties: projectTypeResults.packageProperties

@@ -1,7 +1,15 @@
-function defineScripts(tests, contributors) {
+function projectWillBeTested(contributors) {
+  return contributors
+    .reduce((acc, contributor) => ([...acc, ...Object.keys(contributor)]), [])
+    .find(scriptName => scriptName.startsWith('test:'));
+}
+
+function defineScripts(contributors) {
+  const contributorScripts = contributors.map(contributor => contributor.scripts);
+
   return {
-    test: `npm-run-all --print-label --parallel lint:*${(tests.unit || tests.integration) ? ' --parallel test:*' : ''}`,
-    ...contributors.map(contributor => contributor.scripts).reduce((acc, scripts) => ({...acc, ...scripts}), {})
+    test: `npm-run-all --print-label --parallel lint:*${projectWillBeTested(contributors) ? ' --parallel test:*' : ''}`,
+    ...contributorScripts.reduce((acc, scripts) => ({...acc, ...scripts}), {})
   };
 }
 
@@ -19,7 +27,6 @@ export default function ({
   packageName,
   projectType,
   license,
-  tests,
   vcs,
   author,
   description,
@@ -33,6 +40,6 @@ export default function ({
     ...packageProperties,
     ...defineVcsHostDetails(vcs, projectType, packageName),
     author: `${author.name}${author.email ? ` <${author.email}>` : ''}${author.url ? ` (${author.url})` : ''}`,
-    scripts: defineScripts(tests, contributors)
+    scripts: defineScripts(contributors)
   };
 }

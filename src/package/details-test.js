@@ -175,30 +175,31 @@ suite('package details builder', () => {
 
     suite('verification', () => {
       test('that the `test` script is defined', () => {
-        const packageDetails = buildPackageDetails({tests: {}, vcs: {}, author: {}, configs: {}, contributors: []});
+        const packageDetails = buildPackageDetails({
+          vcs: {},
+          author: {},
+          configs: {},
+          contributors: any.listOf(any.simpleObject)
+        });
 
         assert.equal(packageDetails.scripts.test, 'npm-run-all --print-label --parallel lint:*');
       });
 
-      test('that the `test` script includes running tests when the project will be unit tested', () => {
+      test('that the `test` script includes running tests when the project will be tested', () => {
         const packageDetails = buildPackageDetails({
-          tests: {unit: true},
           vcs: {},
           author: {},
           configs: {},
-          contributors: []
-        });
-
-        assert.equal(packageDetails.scripts.test, 'npm-run-all --print-label --parallel lint:* --parallel test:*');
-      });
-
-      test('that the `test` script includes running tests when the project will be integration tested', () => {
-        const packageDetails = buildPackageDetails({
-          tests: {integration: true},
-          vcs: {},
-          author: {},
-          configs: {},
-          contributors: []
+          contributors: any.listOf(
+            index => (
+              index % 2
+                ? any.simpleObject()
+                : any.objectWithKeys([
+                  ...any.listOf(() => any.fromList([any.string(), `test:${any.word}`])),
+                  `test:${any.word}`
+                ])
+            )
+          )
         });
 
         assert.equal(packageDetails.scripts.test, 'npm-run-all --print-label --parallel lint:* --parallel test:*');

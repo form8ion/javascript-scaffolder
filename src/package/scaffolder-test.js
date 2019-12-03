@@ -26,7 +26,6 @@ suite('package scaffolder', () => {
     const projectRoot = any.string();
     const projectType = any.word();
     const license = any.string();
-    const tests = any.simpleObject();
     const vcs = any.simpleObject();
     const author = any.simpleObject();
     const description = any.sentence();
@@ -37,7 +36,6 @@ suite('package scaffolder', () => {
         packageName,
         projectType,
         license,
-        tests,
         vcs,
         author,
         description,
@@ -53,7 +51,6 @@ suite('package scaffolder', () => {
         contributors,
         packageName,
         license,
-        tests,
         vcs,
         author,
         description,

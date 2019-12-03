@@ -86,7 +86,6 @@ suite('javascript project scaffolder', () => {
     contributors,
     packageName,
     license,
-    tests,
     vcs: vcsDetails,
     author: {name: authorName, email: authorEmail, url: authorUrl},
     description,
