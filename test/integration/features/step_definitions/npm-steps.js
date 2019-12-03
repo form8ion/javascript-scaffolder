@@ -8,11 +8,18 @@ import * as execa from '../../../../third-party-wrappers/execa';
 export async function assertThatPackageDetailsAreConfiguredCorrectlyFor({
   projectType,
   visibility,
+  tested,
   transpileAndLint,
   projectName,
   npmAccount
 }) {
   const packageDetails = JSON.parse(await promises.readFile(`${process.cwd()}/package.json`));
+
+  if (tested) {
+    assert.equal(packageDetails.scripts.test, 'npm-run-all --print-label --parallel lint:* --parallel test:*');
+  } else {
+    assert.equal(packageDetails.scripts.test, 'npm-run-all --print-label --parallel lint:*');
+  }
 
   if ('application' === projectType) {
     assert.equal(packageDetails.name, projectName);

@@ -1,6 +1,7 @@
 function projectWillBeTested(contributors) {
   return contributors
-    .reduce((acc, contributor) => ([...acc, ...Object.keys(contributor)]), [])
+    .filter(contributor => contributor.scripts)
+    .reduce((acc, contributor) => ([...acc, ...Object.keys(contributor.scripts)]), [])
     .find(scriptName => scriptName.startsWith('test:'));
 }
 

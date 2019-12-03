@@ -72,6 +72,7 @@ Before(async function () {
   this.sinonSandbox.stub(execa, 'default');
 
   this.transpileAndLint = true;
+  this.tested = true;
   this.visibility = any.fromList(['Public', 'Private']);
 });
 
@@ -130,6 +131,7 @@ Then('the expected files for a(n) {string} are generated', async function (proje
   await assertThatPackageDetailsAreConfiguredCorrectlyFor({
     projectType,
     visibility: this.visibility,
+    tested: this.tested,
     transpileAndLint: this.transpileAndLint,
     projectName: this.projectName,
     npmAccount: this.npmAccount

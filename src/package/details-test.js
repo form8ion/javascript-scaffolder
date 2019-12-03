@@ -179,7 +179,10 @@ suite('package details builder', () => {
           vcs: {},
           author: {},
           configs: {},
-          contributors: any.listOf(any.simpleObject)
+          contributors: [
+            ...any.listOf(() => ({...any.simpleObject(), scripts: any.simpleObject()})),
+            any.simpleObject()
+          ]
         });
 
         assert.equal(packageDetails.scripts.test, 'npm-run-all --print-label --parallel lint:*');
@@ -190,16 +193,20 @@ suite('package details builder', () => {
           vcs: {},
           author: {},
           configs: {},
-          contributors: any.listOf(
-            index => (
-              index % 2
-                ? any.simpleObject()
-                : any.objectWithKeys([
-                  ...any.listOf(() => any.fromList([any.string(), `test:${any.word}`])),
-                  `test:${any.word}`
-                ])
-            )
-          )
+          contributors: [
+            ...any.listOf(
+              index => ({
+                ...any.simpleObject(),
+                scripts: index % 2
+                  ? any.simpleObject()
+                  : any.objectWithKeys([
+                    ...any.listOf(() => any.fromList([any.string(), `test:${any.word}`])),
+                    `test:${any.word}`
+                  ])
+              })
+            ),
+            any.simpleObject()
+          ]
         });
 
         assert.equal(packageDetails.scripts.test, 'npm-run-all --print-label --parallel lint:* --parallel test:*');
