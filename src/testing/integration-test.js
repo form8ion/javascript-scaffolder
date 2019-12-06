@@ -1,7 +1,7 @@
+import * as cucumber from '@form8ion/cucumber-scaffolder';
 import sinon from 'sinon';
 import {assert} from 'chai';
 import any from '@travi/any';
-import * as cucumber from './cucumber';
 import scaffoldIntegrationTesting from './integration';
 
 suite('unit testing scaffolder', () => {
@@ -11,14 +11,14 @@ suite('unit testing scaffolder', () => {
   setup(() => {
     sandbox = sinon.createSandbox();
 
-    sandbox.stub(cucumber, 'default');
+    sandbox.stub(cucumber, 'scaffold');
   });
 
   teardown(() => sandbox.restore());
 
   test('that cucumber is scaffolded', async () => {
     const cucumberResult = any.simpleObject();
-    cucumber.default.withArgs({projectRoot}).resolves(cucumberResult);
+    cucumber.scaffold.withArgs({projectRoot}).resolves(cucumberResult);
 
     assert.deepEqual(await scaffoldIntegrationTesting({projectRoot}), cucumberResult);
   });
