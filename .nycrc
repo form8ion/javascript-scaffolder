@@ -4,6 +4,7 @@
     "text-summary"
   ],
   "exclude": [
+    "src/**/*-test.js",
     "test/",
     "third-party-wrappers/"
   ]
