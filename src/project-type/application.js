@@ -8,7 +8,7 @@ export default async function ({applicationTypes, projectRoot, projectName, tran
   info('Scaffolding Application Details');
 
   if (false !== transpileLint) {
-    const chosenType = await chooseApplicationType({types: applicationTypes});
+    const chosenType = await chooseApplicationType({types: applicationTypes, projectType: 'application'});
     const results = await scaffoldChosenApplicationType(
       applicationTypes,
       chosenType,

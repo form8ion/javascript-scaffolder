@@ -39,7 +39,9 @@ suite('application project-type', () => {
       documentation,
       eslintConfigs
     };
-    applicationChooser.default.withArgs({types: applicationTypes}).resolves(chosenApplicationType);
+    applicationChooser.default
+      .withArgs({types: applicationTypes, projectType: 'application'})
+      .resolves(chosenApplicationType);
     choiceScaffolder.default
       .withArgs(applicationTypes, chosenApplicationType, {projectRoot, projectName, tests})
       .resolves(typeScaffoldingResults);

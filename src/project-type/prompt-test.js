@@ -17,17 +17,18 @@ suite('project-type prompts', () => {
 
   test('that the choice of application-type is presented', async () => {
     const chosenType = any.word();
+    const projectType = any.word();
     const answers = {...any.simpleObject(), type: chosenType};
     const types = any.simpleObject();
     inquirer.prompt
       .withArgs([{
         name: 'type',
         type: 'list',
-        message: 'What type of application is this?',
+        message: `What type of ${projectType} is this?`,
         choices: [...Object.keys(types), new inquirer.Separator(), 'Other']
       }])
       .resolves(answers);
 
-    assert.equal(await prompt({types}), chosenType);
+    assert.equal(await prompt({types, projectType}), chosenType);
   });
 });

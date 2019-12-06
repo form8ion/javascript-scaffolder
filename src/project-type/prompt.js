@@ -1,10 +1,10 @@
 import {prompt, Separator} from 'inquirer';
 
-export default async function ({types}) {
+export default async function ({types, projectType}) {
   const answers = await prompt([{
     name: 'type',
     type: 'list',
-    message: 'What type of application is this?',
+    message: `What type of ${projectType} is this?`,
     choices: [...Object.keys(types), new Separator(), 'Other']
   }]);
 
