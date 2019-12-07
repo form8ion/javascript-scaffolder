@@ -2,7 +2,7 @@ import {assert} from 'chai';
 import any from '@travi/any';
 import sinon from 'sinon';
 import * as applicationChooser from './prompt';
-import * as choiceScaffolder from './choice-scaffolder';
+import * as choiceScaffolder from '../choice-scaffolder';
 import scaffoldApplication from './application';
 
 suite('application project-type', () => {

@@ -3,8 +3,7 @@ import {questionNames as commonQuestionNames} from '@travi/language-scaffolder-p
 import {validate} from './options-validator';
 import {prompt} from './prompts/questions';
 import scaffoldTesting from './testing';
-import scaffoldCi from './ci';
-import scaffoldHost from './host';
+import scaffoldChoice from './choice-scaffolder';
 import scaffoldBabel from './config/babel';
 import scaffoldLinting from './linting';
 import scaffoldNpmConfig from './config/npm';
@@ -73,7 +72,7 @@ export async function scaffold(options) {
   ]);
   const contributors = [
     ...(await Promise.all([
-      scaffoldHost(
+      scaffoldChoice(
         hosts,
         chosenHost,
         {buildDirectory: `./${projectTypeResults.buildDirectory}`, projectRoot, projectName, nodeVersion}
@@ -87,7 +86,7 @@ export async function scaffold(options) {
         buildDirectory: projectTypeResults.buildDirectory,
         eslintConfigs: [...testingResults.eslintConfigs, ...projectTypeResults.eslintConfigs]
       }),
-      scaffoldCi(ciServices, ci, {projectRoot, vcs, visibility, projectType, nodeVersion, tests}),
+      scaffoldChoice(ciServices, ci, {projectRoot, vcs, visibility, projectType, nodeVersion, tests}),
       scaffoldBabel({preset: configs.babelPreset, projectRoot, transpileLint}),
       scaffoldCommitConvention({projectRoot, configs})
     ])),

@@ -5,14 +5,14 @@ import scaffoldTypeChoice from './choice-scaffolder';
 
 suite('type choice scaffolder', () => {
   test('that chosen type is scaffolded', async () => {
-    const chosenType = any.word();
+    const choice = any.word();
     const options = any.simpleObject();
     const results = any.simpleObject();
-    const chosenTypeScaffolder = sinon.stub();
-    const typeScaffolders = {...any.simpleObject(), [chosenType]: {scaffolder: chosenTypeScaffolder}};
-    chosenTypeScaffolder.withArgs(options).resolves(results);
+    const chosenScaffolder = sinon.stub();
+    const choices = {...any.simpleObject(), [choice]: {scaffolder: chosenScaffolder}};
+    chosenScaffolder.withArgs(options).resolves(results);
 
-    assert.equal(await scaffoldTypeChoice(typeScaffolders, chosenType, options), results);
+    assert.equal(await scaffoldTypeChoice(choices, choice, options), results);
   });
 
   test('that that choosing a type without a defined scaffolder does not result in an error', async () => {

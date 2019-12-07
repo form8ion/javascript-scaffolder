@@ -6,7 +6,7 @@ import * as templatePath from '../../template-path';
 import * as defineBadges from './badges';
 import * as documentationScaffolder from './documentation';
 import * as packageChooser from '../prompt';
-import * as choiceScaffolder from '../choice-scaffolder';
+import * as choiceScaffolder from '../../choice-scaffolder';
 import scaffoldPackage from './scaffolder';
 
 suite('package project-type', () => {

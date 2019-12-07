@@ -1,6 +1,6 @@
 import {info} from '@travi/cli-messages';
 import chooseApplicationType from './prompt';
-import scaffoldChosenApplicationType from './choice-scaffolder';
+import scaffoldChosenApplicationType from '../choice-scaffolder';
 
 const defaultBuildDirectory = 'lib';
 

@@ -4,7 +4,7 @@ import determinePathToTemplateFile from '../../template-path';
 import defineBadges from './badges';
 import scaffoldPackageDocumentation from './documentation';
 import choosePackageType from '../prompt';
-import scaffoldChosenPackageType from '../choice-scaffolder';
+import scaffoldChosenPackageType from '../../choice-scaffolder';
 
 const defaultBuildDirectory = 'lib';
 

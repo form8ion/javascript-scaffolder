@@ -1,5 +1,5 @@
-export default function (typeScaffolders, chosenType, options) {
-  const type = typeScaffolders[chosenType];
+export default function (choices, choice, options) {
+  const type = choices[choice];
 
   if (type) return type.scaffolder(options);
 

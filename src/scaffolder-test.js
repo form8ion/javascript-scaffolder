@@ -6,9 +6,8 @@ import sinon from 'sinon';
 import * as prompts from './prompts/questions';
 import * as installer from './package/install';
 import * as optionsValidator from './options-validator';
-import * as ci from './ci';
 import * as testing from './testing/scaffolder';
-import * as host from './host';
+import * as choiceScaffolder from './choice-scaffolder';
 import * as babel from './config/babel';
 import * as linting from './linting/scaffolder';
 import * as npmConfig from './config/npm';
@@ -118,9 +117,8 @@ suite('javascript project scaffolder', () => {
     sandbox.stub(installer, 'default');
     sandbox.stub(prompts, 'prompt');
     sandbox.stub(optionsValidator, 'validate');
-    sandbox.stub(ci, 'default');
     sandbox.stub(testing, 'default');
-    sandbox.stub(host, 'default');
+    sandbox.stub(choiceScaffolder, 'default');
     sandbox.stub(babel, 'default');
     sandbox.stub(linting, 'default');
     sandbox.stub(npmConfig, 'default');
@@ -152,7 +150,7 @@ suite('javascript project scaffolder', () => {
       .resolves(projectTypeResults);
     packageScaffolder.default.withArgs(packageScaffoldingInputs).resolves({...any.simpleObject(), homepage});
     prompts.prompt.withArgs(overrides, ciServices, hosts, visibility, vcsDetails).resolves(commonPromptAnswers);
-    ci.default
+    choiceScaffolder.default
       .withArgs(
         ciServices,
         chosenCiService,
@@ -204,7 +202,7 @@ suite('javascript project scaffolder', () => {
 
   suite('config files', () => {
     test('that config files are created', async () => {
-      host.default
+      choiceScaffolder.default
         .withArgs(
           hosts,
           chosenHost,
@@ -221,7 +219,7 @@ suite('javascript project scaffolder', () => {
 
   suite('data passed downstream', () => {
     setup(
-      () => host.default
+      () => choiceScaffolder.default
         .withArgs(
           hosts,
           chosenHost,
