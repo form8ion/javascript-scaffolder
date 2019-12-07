@@ -62,6 +62,7 @@ suite('javascript project scaffolder', () => {
   const ciServiceResults = any.simpleObject();
   const commitConventionResults = any.simpleObject();
   const applicationTypes = any.simpleObject();
+  const packageTypes = any.simpleObject();
   const transpileLint = any.boolean();
   const projectTypeBuildDirectory = any.string();
   const packageProperties = any.simpleObject();
@@ -144,6 +145,7 @@ suite('javascript project scaffolder', () => {
         packageName,
         visibility,
         applicationTypes,
+        packageTypes,
         scope,
         tests
       })
@@ -193,7 +195,8 @@ suite('javascript project scaffolder', () => {
         license,
         vcs: vcsDetails,
         description,
-        applicationTypes
+        applicationTypes,
+        packageTypes
       });
   });
 

@@ -32,7 +32,8 @@ export async function scaffold(options) {
     overrides,
     ciServices,
     hosts,
-    applicationTypes
+    applicationTypes,
+    packageTypes
   } = validate(options);
 
   const {
@@ -61,6 +62,7 @@ export async function scaffold(options) {
     transpileLint,
     visibility,
     applicationTypes,
+    packageTypes,
     scope,
     tests
   });

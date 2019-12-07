@@ -525,23 +525,83 @@ suite('options validator', () => {
     }));
   });
 
-  test('that `configs`, `overrides`, `hosts`, `ciServices`, and `applicationTypes` default to empty objects', () => {
-    const options = {
+  suite('package types', () => {
+    const key = any.word();
+
+    test('that a provided package-type must define config', () => assert.throws(
+      () => validate({
+        projectRoot: any.string(),
+        projectName: any.string(),
+        visibility: any.fromList(['Public', 'Private']),
+        license: any.string(),
+        packageTypes: {[key]: any.word()}
+      }),
+      `"packageTypes.${key}" must be of type object`
+    ));
+
+    test('that a provided package-type must provide a scaffolded', () => assert.throws(
+      () => validate({
+        projectRoot: any.string(),
+        projectName: any.string(),
+        visibility: any.fromList(['Public', 'Private']),
+        license: any.string(),
+        packageTypes: {[key]: {}}
+      }),
+      `"packageTypes.${key}.scaffolder" is required`
+    ));
+
+    test('that a provided package-type must provide a scaffold function', () => assert.throws(
+      () => validate({
+        projectRoot: any.string(),
+        projectName: any.string(),
+        visibility: any.fromList(['Public', 'Private']),
+        license: any.string(),
+        packageTypes: {[key]: {scaffolder: any.word()}}
+      }),
+      `"packageTypes.${key}.scaffolder" must be of type function`
+    ));
+
+    test('that a provided package-type scaffolder must accept a single argument', () => assert.throws(
+      () => validate({
+        projectRoot: any.string(),
+        projectName: any.string(),
+        visibility: any.fromList(['Public', 'Private']),
+        license: any.string(),
+        packageTypes: {[key]: {scaffolder: () => undefined}}
+      }),
+      `"packageTypes.${key}.scaffolder" must have an arity of 1`
+    ));
+
+    test('that a provided package-type scaffolder is valid if an options object is provided', () => validate({
       projectRoot: any.string(),
       projectName: any.string(),
       visibility: any.fromList(['Public', 'Private']),
       license: any.string(),
-      vcs: {host: any.word(), owner: any.word(), name: any.word()},
-      description: any.string()
-    };
-
-    const validated = validate(options);
-
-    assert.deepEqual(
-      validated,
-      {...options, configs: {}, overrides: {}, ciServices: {}, hosts: {}, applicationTypes: {}}
-    );
+      packageTypes: {[key]: {scaffolder: options => options}}
+    }));
   });
+
+  test(
+    'that `configs`, `overrides`, `hosts`, `ciServices`, `applicationTypes`, and `packageTypes`'
+    + ' default to empty objects',
+    () => {
+      const options = {
+        projectRoot: any.string(),
+        projectName: any.string(),
+        visibility: any.fromList(['Public', 'Private']),
+        license: any.string(),
+        vcs: {host: any.word(), owner: any.word(), name: any.word()},
+        description: any.string()
+      };
+
+      const validated = validate(options);
+
+      assert.deepEqual(
+        validated,
+        {...options, configs: {}, overrides: {}, ciServices: {}, hosts: {}, applicationTypes: {}, packageTypes: {}}
+      );
+    }
+  );
 
   test('that `answers` is allowed', () => {
     const options = {

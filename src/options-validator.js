@@ -57,6 +57,9 @@ export function validate(options) {
     .keys({
       applicationTypes: joi.object().pattern(/^/, joi.object({
         scaffolder: joi.func().arity(1).required()
+      })).default({}),
+      packageTypes: joi.object().pattern(/^/, joi.object({
+        scaffolder: joi.func().arity(1).required()
       })).default({})
     })
     .keys({
