@@ -31,4 +31,8 @@ suite('project-type prompts', () => {
 
     assert.equal(await prompt({types, projectType}), chosenType);
   });
+
+  test('that the prompt is skipped and `Other` is returned when no options ar provided ', async () => {
+    assert.equal(await prompt({types: {}, projectType: any.word()}), 'Other');
+  });
 });
