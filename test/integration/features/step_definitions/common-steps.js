@@ -113,6 +113,7 @@ When(/^the project is scaffolded$/, async function () {
     ...this.integrationTestAnswer,
     ...this.ciAnswer ? this.ciAnswer : [],
     ...'application' === this.projectType ? this.applicationTypeAnswer : [],
+    ...'package' === this.projectType && !this.transpilationLintAnswer ? this.packageTypeAnswer : [],
     ...this.transpilationLintAnswer ? this.transpilationLintAnswer : []
   ]);
 

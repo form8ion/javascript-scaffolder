@@ -26,13 +26,22 @@ suite('project-type scaffolder', () => {
 
   test('that the package-type scaffolder is applied when the project-type is `Package`', async () => {
     const scope = any.word();
+    const packageTypes = any.simpleObject();
 
     packageTypeScaffolder.default
-      .withArgs({projectRoot, transpileLint, packageName, visibility, scope})
+      .withArgs({projectRoot, transpileLint, packageName, visibility, scope, packageTypes})
       .resolves(results);
 
     assert.equal(
-      await projectTypeScaffolder({projectType: 'Package', projectRoot, transpileLint, packageName, visibility, scope}),
+      await projectTypeScaffolder({
+        projectType: 'Package',
+        projectRoot,
+        transpileLint,
+        packageName,
+        visibility,
+        scope,
+        packageTypes
+      }),
       results
     );
   });

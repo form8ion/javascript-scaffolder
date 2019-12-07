@@ -5,16 +5,28 @@ import any from '@travi/any';
 import * as templatePath from '../../template-path';
 import * as defineBadges from './badges';
 import * as documentationScaffolder from './documentation';
+import * as packageChooser from '../prompt';
+import * as choiceScaffolder from '../choice-scaffolder';
 import scaffoldPackage from './scaffolder';
 
 suite('package project-type', () => {
   let sandbox;
+  const projectRoot = any.string();
+  const packageTypes = any.simpleObject();
   const packageName = any.word();
   const visibility = 'Private';
   const scope = any.word();
   const badges = {consumer: any.simpleObject(), contribution: any.simpleObject(), status: any.simpleObject()};
   const commonPackageProperties = {version: '0.0.0-semantically-released'};
   const documentation = any.simpleObject();
+  const scaffoldedTypeDependencies = any.listOf(any.string);
+  const scaffoldedTypeDevDependencies = any.listOf(any.string);
+  const scaffoldedTypeScripts = any.simpleObject();
+  const scaffoldedFilesToIgnore = any.listOf(any.string);
+  const scaffoldedDirectoriesToIgnore = any.listOf(any.string);
+  const scaffoldedDocumentation = any.listOf(any.string);
+  const eslintConfigs = any.listOf(any.string);
+  const chosenType = any.word();
 
   setup(() => {
     sandbox = sinon.createSandbox();
@@ -23,32 +35,46 @@ suite('package project-type', () => {
     sandbox.stub(templatePath, 'default');
     sandbox.stub(defineBadges, 'default');
     sandbox.stub(documentationScaffolder, 'default');
+    sandbox.stub(packageChooser, 'default');
+    sandbox.stub(choiceScaffolder, 'default');
 
     documentationScaffolder.default.withArgs({scope, packageName, visibility}).returns(documentation);
+    packageChooser.default.withArgs({types: packageTypes, projectType: 'package'}).returns(chosenType);
   });
 
   teardown(() => sandbox.restore());
 
   test('that details specific to a package project-type are scaffolded', async () => {
-    const projectRoot = any.string();
     const pathToTemplate = any.string();
+    const typeScaffoldingResults = {
+      ...any.simpleObject(),
+      dependencies: scaffoldedTypeDependencies,
+      devDependencies: scaffoldedTypeDevDependencies,
+      scripts: scaffoldedTypeScripts,
+      vcsIgnore: {files: scaffoldedFilesToIgnore, directories: scaffoldedDirectoriesToIgnore},
+      documentation: scaffoldedDocumentation,
+      eslintConfigs
+    };
     templatePath.default.withArgs('rollup.config.js').returns(pathToTemplate);
     defineBadges.default.withArgs(packageName, visibility).returns(badges);
     documentationScaffolder.default.withArgs({scope, packageName, visibility}).returns(documentation);
+    choiceScaffolder.default.withArgs(packageTypes, chosenType, {projectRoot}).returns(typeScaffoldingResults);
 
     assert.deepEqual(
-      await scaffoldPackage({projectRoot, packageName, visibility, scope}),
+      await scaffoldPackage({projectRoot, packageName, visibility, scope, packageTypes}),
       {
-        devDependencies: ['rimraf', 'rollup', 'rollup-plugin-auto-external'],
+        dependencies: scaffoldedTypeDependencies,
+        devDependencies: ['rimraf', 'rollup', 'rollup-plugin-auto-external', ...scaffoldedTypeDevDependencies],
         scripts: {
           clean: 'rimraf ./lib',
           prebuild: 'run-s clean',
           build: 'npm-run-all --print-label --parallel build:*',
           'build:js': 'rollup --config',
           watch: 'run-s \'build:js -- --watch\'',
-          prepack: 'run-s build'
+          prepack: 'run-s build',
+          ...scaffoldedTypeScripts
         },
-        vcsIgnore: {directories: ['/lib/']},
+        vcsIgnore: {directories: ['/lib/', ...scaffoldedDirectoriesToIgnore], files: scaffoldedFilesToIgnore},
         buildDirectory: 'lib',
         badges,
         packageProperties: {
@@ -67,12 +93,13 @@ suite('package project-type', () => {
   });
 
   test('that the runkit badge is included for public projects', async () => {
-    const projectRoot = any.string();
     const pathToTemplate = any.string();
+    const typeScaffoldingResults = any.simpleObject();
     templatePath.default.withArgs('rollup.config.js').returns(pathToTemplate);
     defineBadges.default.withArgs(packageName, 'Public').returns(badges);
+    choiceScaffolder.default.withArgs(packageTypes, chosenType, {projectRoot}).returns(typeScaffoldingResults);
 
-    const results = await scaffoldPackage({projectRoot, packageName, visibility: 'Public'});
+    const results = await scaffoldPackage({projectRoot, packageName, visibility: 'Public', packageTypes});
 
     assert.deepEqual(
       results.badges.consumer.runkit,
@@ -97,7 +124,6 @@ suite('package project-type', () => {
   });
 
   test('that build details are not included when the project will not be transpiled', async () => {
-    const projectRoot = any.string();
     const pathToTemplate = any.string();
     templatePath.default.withArgs('rollup.config.js').returns(pathToTemplate);
     defineBadges.default.withArgs(packageName, visibility).returns(badges);
