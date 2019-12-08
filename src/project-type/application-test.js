@@ -30,6 +30,7 @@ suite('application project-type', () => {
     const projectName = any.word();
     const tests = any.simpleObject();
     const eslintConfigs = any.listOf(any.string);
+    const buildDirectory = any.string();
     const typeScaffoldingResults = {
       ...any.simpleObject(),
       dependencies: scaffoldedTypeDependencies,
@@ -37,7 +38,8 @@ suite('application project-type', () => {
       scripts: scaffoldedTypeScripts,
       vcsIgnore: {files: scaffoldedFilesToIgnore, directories: scaffoldedDirectoriesToIgnore},
       documentation,
-      eslintConfigs
+      eslintConfigs,
+      buildDirectory
     };
     applicationChooser.default
       .withArgs({types: applicationTypes, projectType: 'application'})
@@ -50,8 +52,8 @@ suite('application project-type', () => {
       await scaffoldApplication({projectRoot, projectName, applicationTypes, tests}),
       {
         scripts: {
-          clean: 'rimraf ./lib',
-          start: 'node ./lib/index.js',
+          clean: `rimraf ./${buildDirectory}`,
+          start: `node ./${buildDirectory}/index.js`,
           prebuild: 'run-s clean',
           ...scaffoldedTypeScripts
         },
@@ -59,9 +61,9 @@ suite('application project-type', () => {
         devDependencies: ['rimraf', ...scaffoldedTypeDevDependencies],
         vcsIgnore: {
           files: [...scaffoldedFilesToIgnore, '.env'],
-          directories: [...scaffoldedDirectoriesToIgnore, '/lib/']
+          directories: [...scaffoldedDirectoriesToIgnore, `/${buildDirectory}/`]
         },
-        buildDirectory: 'lib',
+        buildDirectory,
         packageProperties: {private: true},
         documentation,
         eslintConfigs
