@@ -237,9 +237,9 @@ $ npm test
 
 [license-badge]: https://img.shields.io/github/license/travi/javascript-scaffolder.svg
 
-[ci-link]: https://travis-ci.org/travi/javascript-scaffolder
+[ci-link]: https://travis-ci.com/travi/javascript-scaffolder
 
-[ci-badge]: https://img.shields.io/travis/travi/javascript-scaffolder.svg?branch=master
+[ci-badge]: https://img.shields.io/travis/com/travi/javascript-scaffolder.svg?branch=master
 
 [commit-convention-link]: https://conventionalcommits.org
 
