@@ -257,7 +257,7 @@ suite('javascript project scaffolder', () => {
         async () => {
           const {verificationCommand} = await scaffold(options);
 
-          assert.equal(verificationCommand, 'npm test && npm ls');
+          assert.equal(verificationCommand, 'npm test && npm ls >/dev/null');
         }
       );
     });
