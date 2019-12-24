@@ -1,19 +1,12 @@
-dist: xenial
+version: ~> 1.0
 language: node_js
 notifications:
   email: false
-branches:
-  except:
-  - "/^v\\d+\\.\\d+\\.\\d+$/"
+import:
+  - source: travi/.travis-ci:authenticated-semantic-release.yml
 before_install: curl ifconfig.co
 before_script: npm ls --production >/dev/null
 after_success: npm run coverage:report
-deploy:
-  provider: script
-  edge: true
-  script: npx semantic-release@beta
-  on:
-    all_branches: true
 env:
   global:
   - FORCE_COLOR=1
