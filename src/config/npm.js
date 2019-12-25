@@ -7,4 +7,6 @@ export default function ({projectRoot, projectType}) {
   ];
 
   writeFile(`${projectRoot}/.npmrc`, `${config.join('\n')}\n`);
+
+  return {scripts: {'lint:peer': 'npm ls >/dev/null'}};
 }

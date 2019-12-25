@@ -65,7 +65,7 @@ export async function scaffold(options) {
     scope,
     tests
   });
-  const [testingResults, nodeVersion] = await Promise.all([
+  const [testingResults, nodeVersion, npmResults] = await Promise.all([
     scaffoldTesting({projectRoot, tests, visibility, vcs}),
     scaffoldNodeVersion({projectRoot, nodeVersionCategory}),
     scaffoldNpmConfig({projectType, projectRoot})
@@ -91,7 +91,8 @@ export async function scaffold(options) {
       scaffoldCommitConvention({projectRoot, configs})
     ])),
     projectTypeResults,
-    testingResults
+    testingResults,
+    npmResults
   ];
 
   const {homepage: projectHomepage} = await scaffoldPackage({
@@ -110,7 +111,7 @@ export async function scaffold(options) {
     badges: buildBadgesDetails(contributors),
     documentation: scaffoldDocumentation({projectTypeResults}),
     vcsIgnore: buildVcsIgnoreLists(contributors),
-    verificationCommand: 'npm test && npm ls >/dev/null',
+    verificationCommand: 'npm test',
     projectDetails: {...projectHomepage && {homepage: projectHomepage}}
   };
 }

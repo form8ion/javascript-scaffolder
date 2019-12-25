@@ -33,4 +33,10 @@ suite('npm config scaffolder', () => {
 
     assert.calledWith(fs.writeFile, `${projectRoot}/.npmrc`, 'update-notifier=false\n');
   });
+
+  test('that the script to enforce peer-dependency compatibility is defined', async () => {
+    const results = await scaffoldNpmConfig({projectRoot, projectType: any.word()});
+
+    assert.equal(results.scripts['lint:peer'], 'npm ls >/dev/null');
+  });
 });

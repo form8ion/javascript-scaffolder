@@ -38,6 +38,7 @@ suite('javascript project scaffolder', () => {
   const projectTypeEslintConfigs = any.listOf(any.string);
   const hostResults = any.simpleObject();
   const babelResults = any.simpleObject();
+  const npmResults = any.simpleObject();
   const chosenHost = any.word();
   const projectType = any.word();
   const scope = any.word();
@@ -78,7 +79,8 @@ suite('javascript project scaffolder', () => {
     babelResults,
     commitConventionResults,
     projectTypeResults,
-    testingResults
+    testingResults,
+    npmResults
   ];
   const packageScaffoldingInputs = {
     projectRoot,
@@ -177,7 +179,7 @@ suite('javascript project scaffolder', () => {
       })
       .resolves(lintingResults);
     babel.default.withArgs({projectRoot, preset: babelPreset, transpileLint}).resolves(babelResults);
-    npmConfig.default.resolves();
+    npmConfig.default.resolves(npmResults);
     commitConvention.default.withArgs({projectRoot, configs}).resolves(commitConventionResults);
     nodeVersionScaffolder.default.withArgs({projectRoot, nodeVersionCategory: versionCategory}).resolves(version);
     optionsValidator.validate
@@ -257,7 +259,7 @@ suite('javascript project scaffolder', () => {
         async () => {
           const {verificationCommand} = await scaffold(options);
 
-          assert.equal(verificationCommand, 'npm test && npm ls >/dev/null');
+          assert.equal(verificationCommand, 'npm test');
         }
       );
     });
