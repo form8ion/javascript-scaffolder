@@ -1,13 +1,9 @@
 version: ~> 1.0
-language: node_js
 notifications:
   email: false
 import:
+  - source: form8ion/.travis-ci:node.yml
   - source: travi/.travis-ci:authenticated-semantic-release.yml
 before_install: curl ifconfig.co
 before_script: npm ls --production >/dev/null
 after_success: npm run coverage:report
-env:
-  global:
-  - FORCE_COLOR=1
-  - NPM_CONFIG_COLOR=always
