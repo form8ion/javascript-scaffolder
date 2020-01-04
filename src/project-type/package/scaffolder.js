@@ -54,6 +54,7 @@ export default async function ({projectRoot, transpileLint, packageName, visibil
         prepack: 'run-s build',
         ...results.scripts
       },
+      eslintConfigs: [...results.eslintConfigs ? results.eslintConfigs : []],
       vcsIgnore: {
         files: [...results.vcsIgnore ? results.vcsIgnore.files : []],
         directories: [`/${defaultBuildDirectory}/`, ...results.vcsIgnore ? results.vcsIgnore.directories : []]

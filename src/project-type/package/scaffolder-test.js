@@ -86,7 +86,7 @@ suite('package project-type', () => {
           publishConfig: {access: 'restricted'}
         },
         documentation,
-        eslintConfigs: []
+        eslintConfigs
       }
     );
     assert.calledWith(fs.copyFile, pathToTemplate, `${projectRoot}/rollup.config.js`);
