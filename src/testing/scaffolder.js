@@ -1,29 +1,18 @@
 import scaffoldUnitTesting from './unit';
-import scaffoldIntegrationTesting from './integration';
 
 export default async function ({projectRoot, visibility, tests: {unit, integration}, vcs}) {
-  const [unitResults, integrationResults] = await Promise.all([
-    unit ? scaffoldUnitTesting({projectRoot, visibility, vcs}) : undefined,
-    integration ? scaffoldIntegrationTesting({projectRoot}) : undefined
-  ]);
+  const unitResults = unit ? await scaffoldUnitTesting({projectRoot, visibility, vcs}) : undefined;
 
   return {
     devDependencies: [
       ...(unit || integration) ? ['@travi/any'] : [],
-      ...unitResults ? unitResults.devDependencies : [],
-      ...integrationResults ? integrationResults.devDependencies : []
+      ...unitResults ? unitResults.devDependencies : []
     ],
-    scripts: {
-      ...unitResults && unitResults.scripts,
-      ...integrationResults && integrationResults.scripts
-    },
+    scripts: {...unitResults && unitResults.scripts},
     vcsIgnore: {
       files: [...unitResults ? unitResults.vcsIgnore.files : []],
       directories: [...unitResults ? unitResults.vcsIgnore.directories : []]
     },
-    eslintConfigs: [
-      ...unitResults ? unitResults.eslintConfigs : [],
-      ...integrationResults ? integrationResults.eslintConfigs : []
-    ]
+    eslintConfigs: unitResults ? unitResults.eslintConfigs : []
   };
 }

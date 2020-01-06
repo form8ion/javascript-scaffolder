@@ -64,17 +64,6 @@ Before(async function () {
       'rollup.config.js': await readFile(resolve(__dirname, '../../../../', 'templates/rollup.config.js')),
       'canary-test.txt': await readFile(resolve(__dirname, '../../../../', 'templates/canary-test.txt')),
       'mocha-setup.txt': await readFile(resolve(__dirname, '../../../../', 'templates/mocha-setup.txt'))
-    },
-    node_modules: {
-      '@form8ion': {
-        'cucumber-scaffolder': {
-          templates: {
-            'cucumber.txt': await readFile(
-              resolve(__dirname, '../../../../', 'node_modules/@form8ion/cucumber-scaffolder/templates/cucumber.txt')
-            )
-          }
-        }
-      }
     }
   });
 

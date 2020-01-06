@@ -2,7 +2,6 @@ import sinon from 'sinon';
 import {assert} from 'chai';
 import any from '@travi/any';
 import * as unitTestingScaffolder from './unit';
-import * as integrationTestingScaffolder from './integration';
 import scaffoldTesting from './scaffolder';
 
 suite('testing scaffolder', () => {
@@ -11,19 +10,15 @@ suite('testing scaffolder', () => {
   const visibility = any.word();
   const unitTestingDevDependencies = any.listOf(any.string);
   const unitTestingEslintConfigs = any.listOf(any.string);
-  const integrationTestingEslintConfigs = any.listOf(any.string);
-  const integrationTestingDevDependencies = any.listOf(any.string);
   const unitTestScripts = any.simpleObject();
   const unitTestFilesToIgnoreFromVcs = any.listOf(any.string);
   const unitTestDirectoriesToIgnoreFromVcs = any.listOf(any.string);
-  const integrationTestScripts = any.simpleObject();
   const vcs = any.simpleObject();
 
   setup(() => {
     sandbox = sinon.createSandbox();
 
     sandbox.stub(unitTestingScaffolder, 'default');
-    sandbox.stub(integrationTestingScaffolder, 'default');
 
     unitTestingScaffolder.default
       .withArgs({projectRoot, visibility, vcs})
@@ -34,33 +29,13 @@ suite('testing scaffolder', () => {
         vcsIgnore: {files: unitTestFilesToIgnoreFromVcs, directories: unitTestDirectoriesToIgnoreFromVcs},
         eslintConfigs: unitTestingEslintConfigs
       });
-    integrationTestingScaffolder.default
-      .withArgs({projectRoot})
-      .resolves({
-        ...any.simpleObject(),
-        devDependencies: integrationTestingDevDependencies,
-        scripts: integrationTestScripts,
-        eslintConfigs: integrationTestingEslintConfigs
-      });
   });
 
   teardown(() => sandbox.restore());
 
   test('that unit testing is scaffolded if the project will be unit tested', async () => {
     assert.deepEqual(
-      await scaffoldTesting({projectRoot, visibility, tests: {unit: true, integration: true}, vcs}),
-      {
-        devDependencies: ['@travi/any', ...unitTestingDevDependencies, ...integrationTestingDevDependencies],
-        scripts: {...unitTestScripts, ...integrationTestScripts},
-        vcsIgnore: {files: unitTestFilesToIgnoreFromVcs, directories: unitTestDirectoriesToIgnoreFromVcs},
-        eslintConfigs: [...unitTestingEslintConfigs, ...integrationTestingEslintConfigs]
-      }
-    );
-  });
-
-  test('that integration testing is not scaffolded if the project will not be integration tested', async () => {
-    assert.deepEqual(
-      await scaffoldTesting({projectRoot, visibility, tests: {unit: true, integration: false}, vcs}),
+      await scaffoldTesting({projectRoot, visibility, tests: {unit: true}, vcs}),
       {
         devDependencies: ['@travi/any', ...unitTestingDevDependencies],
         scripts: unitTestScripts,
@@ -74,10 +49,10 @@ suite('testing scaffolder', () => {
     assert.deepEqual(
       await scaffoldTesting({projectRoot, visibility, tests: {unit: false, integration: true}}),
       {
-        devDependencies: ['@travi/any', ...integrationTestingDevDependencies],
-        scripts: integrationTestScripts,
+        devDependencies: ['@travi/any'],
+        scripts: {},
         vcsIgnore: {files: [], directories: []},
-        eslintConfigs: [...integrationTestingEslintConfigs]
+        eslintConfigs: []
       }
     );
   });
