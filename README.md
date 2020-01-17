@@ -53,12 +53,13 @@ opinionated scaffolder for JavaScript projects
 <!-- consumer badges -->
 
 [![npm][npm-badge]][npm-link]
+![node][node-badge]
 [![MIT license][license-badge]][license-link]
 
 ### Installation
 
 ```sh
-$ npm install @travi/javascript-scaffolder -save
+$ npm install @travi/javascript-scaffolder --save-prod
 ```
 
 ### As one of the languages for scaffolding a project
@@ -232,6 +233,8 @@ $ npm test
 [npm-link]: https://www.npmjs.com/package/@travi/javascript-scaffolder
 
 [npm-badge]: https://img.shields.io/npm/v/@travi/javascript-scaffolder.svg
+
+[node-badge]: https://img.shields.io/node/v/@travi/javascript-scaffolder.svg
 
 [license-link]: LICENSE
 
