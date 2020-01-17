@@ -13,6 +13,7 @@ suite('project-type scaffolder', () => {
   const transpileLint = any.boolean();
   const packageName = any.word();
   const visibility = any.word();
+  const tests = any.simpleObject();
 
   setup(() => {
     sandbox = sinon.createSandbox();
@@ -29,7 +30,7 @@ suite('project-type scaffolder', () => {
     const packageTypes = any.simpleObject();
 
     packageTypeScaffolder.default
-      .withArgs({projectRoot, transpileLint, packageName, visibility, scope, packageTypes})
+      .withArgs({projectRoot, transpileLint, packageName, visibility, scope, packageTypes, tests})
       .resolves(results);
 
     assert.equal(
@@ -40,7 +41,8 @@ suite('project-type scaffolder', () => {
         packageName,
         visibility,
         scope,
-        packageTypes
+        packageTypes,
+        tests
       }),
       results
     );
@@ -49,7 +51,6 @@ suite('project-type scaffolder', () => {
   test('that the application-type scaffolder is applied when the project-type is `Application`', async () => {
     const applicationTypes = any.simpleObject();
     const projectName = any.word();
-    const tests = any.simpleObject();
     applicationTypeScaffolder.default
       .withArgs({projectRoot, projectName, transpileLint, applicationTypes, tests})
       .resolves(results);

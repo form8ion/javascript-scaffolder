@@ -27,6 +27,7 @@ suite('package project-type', () => {
   const scaffoldedDocumentation = any.listOf(any.string);
   const eslintConfigs = any.listOf(any.string);
   const chosenType = any.word();
+  const tests = any.simpleObject();
 
   setup(() => {
     sandbox = sinon.createSandbox();
@@ -58,10 +59,10 @@ suite('package project-type', () => {
     templatePath.default.withArgs('rollup.config.js').returns(pathToTemplate);
     defineBadges.default.withArgs(packageName, visibility).returns(badges);
     documentationScaffolder.default.withArgs({scope, packageName, visibility}).returns(documentation);
-    choiceScaffolder.default.withArgs(packageTypes, chosenType, {projectRoot}).returns(typeScaffoldingResults);
+    choiceScaffolder.default.withArgs(packageTypes, chosenType, {projectRoot, tests}).returns(typeScaffoldingResults);
 
     assert.deepEqual(
-      await scaffoldPackage({projectRoot, packageName, visibility, scope, packageTypes}),
+      await scaffoldPackage({projectRoot, packageName, visibility, scope, packageTypes, tests}),
       {
         dependencies: scaffoldedTypeDependencies,
         devDependencies: ['rimraf', 'rollup', 'rollup-plugin-auto-external', ...scaffoldedTypeDevDependencies],
@@ -97,9 +98,9 @@ suite('package project-type', () => {
     const typeScaffoldingResults = any.simpleObject();
     templatePath.default.withArgs('rollup.config.js').returns(pathToTemplate);
     defineBadges.default.withArgs(packageName, 'Public').returns(badges);
-    choiceScaffolder.default.withArgs(packageTypes, chosenType, {projectRoot}).returns(typeScaffoldingResults);
+    choiceScaffolder.default.withArgs(packageTypes, chosenType, {projectRoot, tests}).returns(typeScaffoldingResults);
 
-    const results = await scaffoldPackage({projectRoot, packageName, visibility: 'Public', packageTypes});
+    const results = await scaffoldPackage({projectRoot, packageName, visibility: 'Public', packageTypes, tests});
 
     assert.deepEqual(
       results.badges.consumer.runkit,

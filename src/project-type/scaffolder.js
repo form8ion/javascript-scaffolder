@@ -16,7 +16,7 @@ export default function ({
 }) {
   switch (projectType) {
     case 'Package':
-      return scaffoldPackageType({projectRoot, transpileLint, packageName, visibility, scope, packageTypes});
+      return scaffoldPackageType({projectRoot, transpileLint, packageName, visibility, scope, packageTypes, tests});
     case 'Application':
       return scaffoldApplicationType({projectRoot, projectName, applicationTypes, transpileLint, tests});
     case 'CLI':

@@ -8,7 +8,7 @@ import scaffoldChosenPackageType from '../../choice-scaffolder';
 
 const defaultBuildDirectory = 'lib';
 
-export default async function ({projectRoot, transpileLint, packageName, visibility, scope, packageTypes}) {
+export default async function ({projectRoot, transpileLint, packageName, visibility, scope, packageTypes, tests}) {
   info('Scaffolding Package Details');
 
   const commonPackageProperties = {
@@ -32,7 +32,7 @@ export default async function ({projectRoot, transpileLint, packageName, visibil
   if (false !== transpileLint) {
     const coreBadges = defineBadges(packageName, visibility);
     const chosenType = await choosePackageType({types: packageTypes, projectType: 'package'});
-    const results = await scaffoldChosenPackageType(packageTypes, chosenType, {projectRoot});
+    const results = await scaffoldChosenPackageType(packageTypes, chosenType, {projectRoot, tests});
 
     await copyFile(determinePathToTemplateFile('rollup.config.js'), `${projectRoot}/rollup.config.js`);
 
