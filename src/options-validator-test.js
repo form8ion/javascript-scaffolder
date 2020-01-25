@@ -603,13 +603,13 @@ suite('options validator', () => {
     }
   );
 
-  test('that `answers` is allowed', () => {
+  test('that `decisions` is allowed', () => {
     const options = {
       projectRoot: any.string(),
       projectName: any.string(),
       visibility: any.fromList(['Public', 'Private']),
       license: any.string(),
-      answers: any.simpleObject()
+      decisions: any.simpleObject()
     };
 
     validate(options);

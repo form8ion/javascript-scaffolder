@@ -63,7 +63,7 @@ export function validate(options) {
       })).default({})
     })
     .keys({
-      answers: joi.object()
+      decisions: joi.object()
     });
   const {error, value} = schema.validate(options);
 
