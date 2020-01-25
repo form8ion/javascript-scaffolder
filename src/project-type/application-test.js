@@ -66,7 +66,8 @@ suite('application project-type', () => {
         buildDirectory,
         packageProperties: {private: true},
         documentation,
-        eslintConfigs
+        eslintConfigs,
+        nextSteps: []
       }
     );
   });
@@ -83,7 +84,8 @@ suite('application project-type', () => {
         dependencies: [],
         devDependencies: ['rimraf'],
         vcsIgnore: {files: ['.env'], directories: ['/lib/']},
-        eslintConfigs: []
+        eslintConfigs: [],
+        nextSteps: []
       }
     );
   });
@@ -91,7 +93,14 @@ suite('application project-type', () => {
   test('that build details are not included when the project will not be transpiled', async () => {
     assert.deepEqual(
       await scaffoldApplication({projectRoot, applicationTypes, transpileLint: false}),
-      {scripts: {}, dependencies: [], devDependencies: [], vcsIgnore: {files: [], directories: []}, eslintConfigs: []}
+      {
+        scripts: {},
+        dependencies: [],
+        devDependencies: [],
+        vcsIgnore: {files: [], directories: []},
+        eslintConfigs: [],
+        nextSteps: []
+      }
     );
   });
 });

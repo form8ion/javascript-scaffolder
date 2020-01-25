@@ -18,6 +18,10 @@ suite('package project-type', () => {
   const scope = any.word();
   const badges = {consumer: any.simpleObject(), contribution: any.simpleObject(), status: any.simpleObject()};
   const commonPackageProperties = {version: '0.0.0-semantically-released'};
+  const commonNextSteps = [
+    {summary: 'Add the appropriate `save` flag to the installation instructions in the README'},
+    {summary: 'Publish pre-release versions to npm until package is stable enough to publish v1.0.0'}
+  ];
   const documentation = any.simpleObject();
   const scaffoldedTypeDependencies = any.listOf(any.string);
   const scaffoldedTypeDevDependencies = any.listOf(any.string);
@@ -87,7 +91,8 @@ suite('package project-type', () => {
           publishConfig: {access: 'restricted'}
         },
         documentation,
-        eslintConfigs
+        eslintConfigs,
+        nextSteps: commonNextSteps
       }
     );
     assert.calledWith(fs.copyFile, pathToTemplate, `${projectRoot}/rollup.config.js`);
@@ -124,7 +129,7 @@ suite('package project-type', () => {
     assert.calledWith(fs.copyFile, pathToTemplate, `${projectRoot}/rollup.config.js`);
   });
 
-  test('that the greenkeeper badge is included for public projects when the vcs-host is GitHub', async () => {
+  test('that the greenkeeper details are included for public projects when the vcs-host is GitHub', async () => {
     const vcs = {host: 'GitHub', owner: any.word(), name: any.word()};
     const typeScaffoldingResults = any.simpleObject();
     defineBadges.default.withArgs(packageName, 'Public').returns(badges);
@@ -140,9 +145,17 @@ suite('package project-type', () => {
         link: 'https://greenkeeper.io/'
       }
     );
+    assert.deepEqual(
+      results.nextSteps,
+      [
+        ...commonNextSteps,
+        {summary: 'Register the greenkeeper-keeper webhook'},
+        {summary: 'Add this repository to the Greenkeeper GitHub App list once v1.0.0 has been published'}
+      ]
+    );
   });
 
-  test('that the greenkeeper badge is not included for public projects when the vcs-host is not GitHub', async () => {
+  test('that the greenkeeper details are not included when the vcs-host is not GitHub', async () => {
     const vcs = {host: any.word(), owner: any.word(), name: any.word()};
     const typeScaffoldingResults = any.simpleObject();
     defineBadges.default.withArgs(packageName, 'Public').returns(badges);
@@ -151,6 +164,7 @@ suite('package project-type', () => {
     const results = await scaffoldPackage({projectRoot, packageName, visibility: 'Public', packageTypes, tests, vcs});
 
     assert.isUndefined(results.badges.consumer.greenkeeper);
+    assert.deepEqual(results.nextSteps, commonNextSteps);
   });
 
   test('that build details are not included when the project will not be transpiled', async () => {
@@ -165,7 +179,8 @@ suite('package project-type', () => {
         badges,
         packageProperties: {...commonPackageProperties, files: ['index.js'], publishConfig: {access: 'restricted'}},
         documentation,
-        eslintConfigs: []
+        eslintConfigs: [],
+        nextSteps: commonNextSteps
       }
     );
     assert.neverCalledWith(fs.copyFile, pathToTemplate, `${projectRoot}/rollup.config.js`);

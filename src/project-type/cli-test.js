@@ -51,7 +51,8 @@ suite('cli project-type', () => {
           files: ['bin/'],
           publishConfig: {access: 'restricted'}
         },
-        eslintConfigs: []
+        eslintConfigs: [],
+        nextSteps: []
       }
     );
   });

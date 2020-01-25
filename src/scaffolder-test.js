@@ -36,6 +36,7 @@ suite('javascript project scaffolder', () => {
   const commitConventionDevDependencies = any.listOf(any.string);
   const testingEslintConfigs = any.listOf(any.string);
   const projectTypeEslintConfigs = any.listOf(any.string);
+  const projectTypeNextSteps = any.listOf(any.simpleObject);
   const hostResults = any.simpleObject();
   const babelResults = any.simpleObject();
   const npmResults = any.simpleObject();
@@ -70,7 +71,8 @@ suite('javascript project scaffolder', () => {
     ...any.simpleObject(),
     buildDirectory: projectTypeBuildDirectory,
     packageProperties,
-    eslintConfigs: projectTypeEslintConfigs
+    eslintConfigs: projectTypeEslintConfigs,
+    nextSteps: projectTypeNextSteps
   };
   const contributors = [
     hostResults,
@@ -291,6 +293,14 @@ suite('javascript project scaffolder', () => {
         const {documentation: documentationContent} = await scaffold(options);
 
         assert.equal(documentationContent, docs);
+      });
+    });
+
+    suite('next steps', () => {
+      test('that next steps are included from the project-type scaffolder', async () => {
+        const {nextSteps} = await scaffold(options);
+
+        assert.deepEqual(nextSteps, projectTypeNextSteps);
       });
     });
   });

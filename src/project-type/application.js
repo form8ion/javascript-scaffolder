@@ -33,7 +33,8 @@ export default async function ({applicationTypes, projectRoot, projectName, tran
       buildDirectory,
       packageProperties: {private: true},
       ...results.documentation && {documentation: results.documentation},
-      eslintConfigs: results.eslintConfigs || []
+      eslintConfigs: results.eslintConfigs || [],
+      nextSteps: []
     };
   }
 
@@ -42,6 +43,7 @@ export default async function ({applicationTypes, projectRoot, projectName, tran
     devDependencies: [],
     scripts: {},
     vcsIgnore: {files: [], directories: []},
-    eslintConfigs: []
+    eslintConfigs: [],
+    nextSteps: []
   };
 }

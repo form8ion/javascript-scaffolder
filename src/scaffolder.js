@@ -113,6 +113,7 @@ export async function scaffold(options) {
     documentation: scaffoldDocumentation({projectTypeResults}),
     vcsIgnore: buildVcsIgnoreLists(contributors),
     verificationCommand: 'npm test',
-    projectDetails: {...projectHomepage && {homepage: projectHomepage}}
+    projectDetails: {...projectHomepage && {homepage: projectHomepage}},
+    nextSteps: [...projectTypeResults.nextSteps]
   };
 }
