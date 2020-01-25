@@ -28,9 +28,10 @@ suite('project-type scaffolder', () => {
   test('that the package-type scaffolder is applied when the project-type is `Package`', async () => {
     const scope = any.word();
     const packageTypes = any.simpleObject();
+    const vcs = any.simpleObject();
 
     packageTypeScaffolder.default
-      .withArgs({projectRoot, transpileLint, packageName, visibility, scope, packageTypes, tests})
+      .withArgs({projectRoot, transpileLint, packageName, visibility, scope, packageTypes, tests, vcs})
       .resolves(results);
 
     assert.equal(
@@ -42,7 +43,8 @@ suite('project-type scaffolder', () => {
         visibility,
         scope,
         packageTypes,
-        tests
+        tests,
+        vcs
       }),
       results
     );

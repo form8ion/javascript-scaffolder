@@ -124,6 +124,35 @@ suite('package project-type', () => {
     assert.calledWith(fs.copyFile, pathToTemplate, `${projectRoot}/rollup.config.js`);
   });
 
+  test('that the greenkeeper badge is included for public projects when the vcs-host is GitHub', async () => {
+    const vcs = {host: 'GitHub', owner: any.word(), name: any.word()};
+    const typeScaffoldingResults = any.simpleObject();
+    defineBadges.default.withArgs(packageName, 'Public').returns(badges);
+    choiceScaffolder.default.withArgs(packageTypes, chosenType, {projectRoot, tests}).returns(typeScaffoldingResults);
+
+    const results = await scaffoldPackage({projectRoot, packageName, visibility: 'Public', packageTypes, tests, vcs});
+
+    assert.deepEqual(
+      results.badges.consumer.greenkeeper,
+      {
+        img: `https://badges.greenkeeper.io/${vcs.owner}/${vcs.name}.svg`,
+        text: 'Greenkeeper',
+        link: 'https://greenkeeper.io/'
+      }
+    );
+  });
+
+  test('that the greenkeeper badge is not included for public projects when the vcs-host is not GitHub', async () => {
+    const vcs = {host: any.word(), owner: any.word(), name: any.word()};
+    const typeScaffoldingResults = any.simpleObject();
+    defineBadges.default.withArgs(packageName, 'Public').returns(badges);
+    choiceScaffolder.default.withArgs(packageTypes, chosenType, {projectRoot, tests}).returns(typeScaffoldingResults);
+
+    const results = await scaffoldPackage({projectRoot, packageName, visibility: 'Public', packageTypes, tests, vcs});
+
+    assert.isUndefined(results.badges.consumer.greenkeeper);
+  });
+
   test('that build details are not included when the project will not be transpiled', async () => {
     const pathToTemplate = any.string();
     templatePath.default.withArgs('rollup.config.js').returns(pathToTemplate);

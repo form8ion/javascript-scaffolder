@@ -147,7 +147,8 @@ suite('javascript project scaffolder', () => {
         applicationTypes,
         packageTypes,
         scope,
-        tests
+        tests,
+        vcs: vcsDetails
       })
       .resolves(projectTypeResults);
     packageScaffolder.default.withArgs(packageScaffoldingInputs).resolves({...any.simpleObject(), homepage});

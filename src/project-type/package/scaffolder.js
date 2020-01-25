@@ -8,7 +8,7 @@ import scaffoldChosenPackageType from '../../choice-scaffolder';
 
 const defaultBuildDirectory = 'lib';
 
-export default async function ({projectRoot, transpileLint, packageName, visibility, scope, packageTypes, tests}) {
+export default async function ({projectRoot, transpileLint, packageName, visibility, scope, packageTypes, tests, vcs}) {
   info('Scaffolding Package Details');
 
   const commonPackageProperties = {
@@ -68,6 +68,13 @@ export default async function ({projectRoot, transpileLint, packageName, visibil
               img: `https://badge.runkitcdn.com/${packageName}.svg`,
               text: `Try ${packageName} on RunKit`,
               link: `https://npm.runkit.com/${packageName}`
+            },
+            ...vcs && 'GitHub' === vcs.host && {
+              greenkeeper: {
+                img: `https://badges.greenkeeper.io/${vcs.owner}/${vcs.name}.svg`,
+                text: 'Greenkeeper',
+                link: 'https://greenkeeper.io/'
+              }
             }
           }
         },
