@@ -32,7 +32,7 @@ function authorQuestions({name, email, url}) {
   ];
 }
 
-export async function prompt({npmAccount, author}, ciServices, hosts, visibility, vcs) {
+export async function prompt({npmAccount, author}, ciServices, hosts, visibility, vcs, decisions) {
   const npmConf = npmConfFactory();
 
   return promptWithInquirer([
@@ -83,5 +83,5 @@ export async function prompt({npmAccount, author}, ciServices, hosts, visibility
       when: packageTypeIsApplication,
       choices: [...Object.keys(hosts), new Separator(), 'Other']
     }
-  ]);
+  ], decisions);
 }

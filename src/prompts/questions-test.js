@@ -15,6 +15,7 @@ import {questionNames} from './question-names';
 suite('prompts', () => {
   let sandbox;
   const commonQuestions = any.listOf(any.simpleObject);
+  const decisions = any.simpleObject();
   const vcs = any.simpleObject();
   const ciServices = any.simpleObject();
   const visibility = any.word();
@@ -115,10 +116,10 @@ suite('prompts', () => {
           when: conditionals.packageTypeIsApplication,
           choices: [...Object.keys(hosts), new inquirer.Separator(), 'Other']
         }
-      ])
+      ], decisions)
       .resolves(answers);
 
-    assert.equal(await prompt({}, ciServices, hosts, visibility, vcs), answers);
+    assert.equal(await prompt({}, ciServices, hosts, visibility, vcs, decisions), answers);
   });
 
   test('that defaults are overridden by the provided options', () => {

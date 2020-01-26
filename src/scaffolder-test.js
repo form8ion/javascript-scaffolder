@@ -31,6 +31,7 @@ suite('javascript project scaffolder', () => {
   const projectName = any.string();
   const packageName = any.string();
   const homepage = any.url();
+  const decisions = any.simpleObject();
   const visibility = any.fromList(['Private', 'Public']);
   const version = any.string();
   const commitConventionDevDependencies = any.listOf(any.string);
@@ -154,7 +155,9 @@ suite('javascript project scaffolder', () => {
       })
       .resolves(projectTypeResults);
     packageScaffolder.default.withArgs(packageScaffoldingInputs).resolves({...any.simpleObject(), homepage});
-    prompts.prompt.withArgs(overrides, ciServices, hosts, visibility, vcsDetails).resolves(commonPromptAnswers);
+    prompts.prompt
+      .withArgs(overrides, ciServices, hosts, visibility, vcsDetails, decisions)
+      .resolves(commonPromptAnswers);
     choiceScaffolder.default
       .withArgs(
         ciServices,
@@ -199,7 +202,8 @@ suite('javascript project scaffolder', () => {
         vcs: vcsDetails,
         description,
         applicationTypes,
-        packageTypes
+        packageTypes,
+        decisions
       });
   });
 

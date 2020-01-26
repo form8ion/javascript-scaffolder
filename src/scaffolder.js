@@ -32,7 +32,8 @@ export async function scaffold(options) {
     ciServices,
     hosts,
     applicationTypes,
-    packageTypes
+    packageTypes,
+    decisions
   } = validate(options);
 
   const {
@@ -47,7 +48,7 @@ export async function scaffold(options) {
     [questionNames.AUTHOR_EMAIL]: authorEmail,
     [questionNames.AUTHOR_URL]: authorUrl,
     [questionNames.TRANSPILE_LINT]: transpileLint
-  } = await prompt(overrides, ciServices, hosts, visibility, vcs);
+  } = await prompt(overrides, ciServices, hosts, visibility, vcs, decisions);
 
   info('Writing project files', {level: 'secondary'});
 
