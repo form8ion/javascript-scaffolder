@@ -1,7 +1,7 @@
 Feature: Application Project Type
 
   Scenario: Minimal Options for an Application
-    Given the project will be an "application"
+    Given the project will be an "Application"
     And the project will be versioned
     And the default answers are chosen
     And the npm cli is logged in

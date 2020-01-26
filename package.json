@@ -57,7 +57,6 @@
     "@travi/project-scaffolder": "^8.0.0",
     "@travi/travis-scaffolder-javascript": "^3.0.1",
     "ban-sensitive-files": "^1.9.2",
-    "bdd-stdin": "^0.2.0",
     "chai": "^4.2.0",
     "chai-as-promised": "7.1.1",
     "check-engine": "^1.8.1",
@@ -82,7 +81,7 @@
     "travis-lint": "^1.0.0"
   },
   "dependencies": {
-    "@form8ion/overridable-prompts": "^1.0.0-alpha.1",
+    "@form8ion/overridable-prompts": "^1.0.0-alpha.5",
     "@hapi/hoek": "^8.5.0",
     "@hapi/joi": "^17.0.2",
     "@travi/cli-messages": "1.0.1",

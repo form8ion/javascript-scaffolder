@@ -1,7 +1,7 @@
 Feature: CLI Project Type
 
   Scenario: Minimal Options for a CLI
-    Given the project will be a "cli"
+    Given the project will be a "CLI"
     And the project will be versioned
     And the default answers are chosen
     And the npm cli is logged in

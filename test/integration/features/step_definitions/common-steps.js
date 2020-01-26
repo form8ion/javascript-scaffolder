@@ -1,10 +1,10 @@
 import {EOL} from 'os';
 import {existsSync, promises as fsPromises} from 'fs';
 import {resolve} from 'path';
+import {questionNames as commonQuestionNames} from '@travi/language-scaffolder-prompts';
 import {After, Before, Given, setWorldConstructor, Then, When} from 'cucumber';
 import stubbedFs from 'mock-fs';
 import any from '@travi/any';
-import bddStdIn from 'bdd-stdin';
 import sinon from 'sinon';
 import {assert} from 'chai';
 import {World} from '../support/world';
@@ -13,7 +13,7 @@ import {
   assertThatPackageDetailsAreConfiguredCorrectlyFor
 } from './npm-steps';
 import * as execa from '../../../../third-party-wrappers/execa';
-import {scaffold} from '../../../../src';
+import {scaffold, questionNames} from '../../../../src';
 
 const {readFile} = fsPromises;
 
@@ -55,10 +55,6 @@ function assertThatProperFilesAreIgnoredFromVersionControl(projectType) {
 }
 
 Before(async function () {
-  // work around for overly aggressive mock-fs, see:
-  // https://github.com/tschaub/mock-fs/issues/213#issuecomment-347002795
-  require('mock-stdin'); // eslint-disable-line import/no-extraneous-dependencies
-
   stubbedFs({
     templates: {
       'rollup.config.js': await readFile(resolve(__dirname, '../../../../', 'templates/rollup.config.js')),
@@ -81,30 +77,14 @@ After(function () {
 });
 
 Given(/^the default answers are chosen$/, async function () {
-  this.unitTestAnswer = ['\n'];
-  this.integrationTestAnswer = ['\n'];
+  this.unitTestAnswer = true;
+  this.integrationTestAnswer = true;
   this.transpilationLintAnswer = null;
 });
 
 When(/^the project is scaffolded$/, async function () {
-  const shouldBeScopedAnswer = 'Public' === this.visibility ? ['\n'] : [];
+  const shouldBeScopedAnswer = true;
   this.projectName = any.word();
-
-  bddStdIn(...[
-    '\n',
-    ...this.projectTypeAnswer,
-    ...shouldBeScopedAnswer,
-    '\n',
-    '\n',
-    '\n',
-    '\n',
-    ...this.unitTestAnswer,
-    ...this.integrationTestAnswer,
-    ...this.ciAnswer ? this.ciAnswer : [],
-    ...'application' === this.projectType ? this.applicationTypeAnswer : [],
-    ...'package' === this.projectType && !this.transpilationLintAnswer ? this.packageTypeAnswer : [],
-    ...this.transpilationLintAnswer ? this.transpilationLintAnswer : []
-  ]);
 
   scaffoldResult = await scaffold({
     projectRoot: process.cwd(),
@@ -117,7 +97,23 @@ When(/^the project is scaffolded$/, async function () {
       babelPreset: {name: any.word(), packageName: any.word()}
     },
     ciServices: {[any.word()]: {scaffolder: foo => ({foo}), public: true}},
-    applicationTypes: {[any.word()]: {scaffolder: foo => ({foo})}}
+    applicationTypes: {[any.word()]: {scaffolder: foo => ({foo})}},
+    decisions: {
+      [questionNames.NODE_VERSION_CATEGORY]: 'LTS',
+      [questionNames.PROJECT_TYPE]: this.projectType,
+      [questionNames.AUTHOR_NAME]: any.word(),
+      [questionNames.AUTHOR_EMAIL]: any.email(),
+      [questionNames.AUTHOR_URL]: any.url(),
+      [commonQuestionNames.UNIT_TESTS]: this.unitTestAnswer,
+      [commonQuestionNames.INTEGRATION_TESTS]: this.integrationTestAnswer,
+      [commonQuestionNames.CI_SERVICE]: this.ciAnswer ? this.ciAnswer : 'Other',
+      [questionNames.TRANSPILE_LINT]: this.transpileAndLint,
+      [questionNames.PROJECT_TYPE_CHOICE]: 'Other',
+      ...['Package', 'CLI'].includes(this.projectType) && {
+        [questionNames.SHOULD_BE_SCOPED]: shouldBeScopedAnswer,
+        ...shouldBeScopedAnswer && {[questionNames.SCOPE]: this.npmAccount}
+      }
+    }
   });
 });
 
