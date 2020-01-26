@@ -1,4 +1,5 @@
 import inquirer from 'inquirer';
+import * as prompts from '@form8ion/overridable-prompts';
 import * as commonPrompts from '@travi/language-scaffolder-prompts';
 import sinon from 'sinon';
 import {assert} from 'chai';
@@ -21,7 +22,7 @@ suite('prompts', () => {
   setup(() => {
     sandbox = sinon.createSandbox();
 
-    sandbox.stub(inquirer, 'prompt');
+    sandbox.stub(prompts, 'prompt');
     sandbox.stub(npmConf, 'default');
     sandbox.stub(execa, 'default');
     sandbox.stub(validators, 'scope');
@@ -55,7 +56,7 @@ suite('prompts', () => {
     validators.scope.withArgs(visibility).returns(scopeValidator);
     conditionals.scopePromptShouldBePresentedFactory.withArgs(visibility).returns(scopePromptShouldBePresented);
     visibilityFilterForChoices.default.withArgs(ciServices, visibility).returns(filteredCiServices);
-    inquirer.prompt
+    prompts.prompt
       .withArgs([
         {
           name: questionNames.NODE_VERSION_CATEGORY,
@@ -128,25 +129,25 @@ suite('prompts', () => {
 
     return prompt({npmAccount, author}, ciServices, {}, visibility, vcs).then(() => {
       assert.calledWith(
-        inquirer.prompt,
+        prompts.prompt,
         sinon.match(value => 1 === value.filter((
           question => questionNames.SCOPE === question.name && npmAccount === question.default
         )).length)
       );
       assert.calledWith(
-        inquirer.prompt,
+        prompts.prompt,
         sinon.match(value => 1 === value.filter((
           question => questionNames.AUTHOR_NAME === question.name && author.name === question.default
         )).length)
       );
       assert.calledWith(
-        inquirer.prompt,
+        prompts.prompt,
         sinon.match(value => 1 === value.filter((
           question => questionNames.AUTHOR_EMAIL === question.name && author.email === question.default
         )).length)
       );
       assert.calledWith(
-        inquirer.prompt,
+        prompts.prompt,
         sinon.match(value => 1 === value.filter((
           question => questionNames.AUTHOR_URL === question.name && author.url === question.default
         )).length)
@@ -162,7 +163,7 @@ suite('prompts', () => {
     await prompt({}, ciServices, {}, 'Private', vcs);
 
     assert.neverCalledWith(
-      inquirer.prompt,
+      prompts.prompt,
       sinon.match(value => 1 === value.filter(question => questionNames.SHOULD_BE_SCOPED === question.name).length)
     );
   });

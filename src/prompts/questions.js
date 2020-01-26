@@ -1,4 +1,5 @@
-import {prompt as promptWithInquirer, Separator} from 'inquirer';
+import {Separator} from 'inquirer';
+import {prompt as promptWithInquirer} from '@form8ion/overridable-prompts';
 import {questions as commonQuestions} from '@travi/language-scaffolder-prompts';
 import execa from '../../third-party-wrappers/execa';
 import {
