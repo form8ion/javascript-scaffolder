@@ -135,6 +135,7 @@ suite('package project-type', () => {
       }
     );
     assert.calledWith(fs.copyFile, pathToTemplate, `${projectRoot}/rollup.config.js`);
+    assert.isUndefined(results.badges.contribution.greenkeeper);
   });
 
   test('that the greenkeeper details are included for public projects when the vcs-host is GitHub', async () => {
@@ -154,7 +155,7 @@ suite('package project-type', () => {
     });
 
     assert.deepEqual(
-      results.badges.consumer.greenkeeper,
+      results.badges.contribution.greenkeeper,
       {
         img: `https://badges.greenkeeper.io/${vcs.owner}/${vcs.name}.svg`,
         text: 'Greenkeeper',
@@ -187,7 +188,27 @@ suite('package project-type', () => {
       decisions
     });
 
-    assert.isUndefined(results.badges.consumer.greenkeeper);
+    assert.isUndefined(results.badges.contribution.greenkeeper);
+    assert.deepEqual(results.nextSteps, commonNextSteps);
+  });
+
+  test('that the greenkeeper details are not included when the project is private', async () => {
+    const vcs = {host: 'GitHub', owner: any.word(), name: any.word()};
+    const typeScaffoldingResults = any.simpleObject();
+    defineBadges.default.withArgs(packageName, 'Private').returns(badges);
+    choiceScaffolder.default.withArgs(packageTypes, chosenType, {projectRoot, tests}).returns(typeScaffoldingResults);
+
+    const results = await scaffoldPackage({
+      projectRoot,
+      packageName,
+      visibility: 'Private',
+      packageTypes,
+      tests,
+      vcs,
+      decisions
+    });
+
+    assert.isUndefined(results.badges.contribution.greenkeeper);
     assert.deepEqual(results.nextSteps, commonNextSteps);
   });
 

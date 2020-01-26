@@ -88,17 +88,19 @@ export default async function ({
               img: `https://badge.runkitcdn.com/${packageName}.svg`,
               text: `Try ${packageName} on RunKit`,
               link: `https://npm.runkit.com/${packageName}`
-            },
-            ...vcs && 'GitHub' === vcs.host && {
-              greenkeeper: {
-                img: `https://badges.greenkeeper.io/${vcs.owner}/${vcs.name}.svg`,
-                text: 'Greenkeeper',
-                link: 'https://greenkeeper.io/'
-              }
             }
           }
         },
-        contribution: coreBadges.contribution,
+        contribution: {
+          ...coreBadges.contribution,
+          ...'Public' === visibility && vcs && 'GitHub' === vcs.host && {
+            greenkeeper: {
+              img: `https://badges.greenkeeper.io/${vcs.owner}/${vcs.name}.svg`,
+              text: 'Greenkeeper',
+              link: 'https://greenkeeper.io/'
+            }
+          }
+        },
         status: coreBadges.status
       }
     };
