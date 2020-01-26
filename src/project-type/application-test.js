@@ -31,6 +31,7 @@ suite('application project-type', () => {
     const tests = any.simpleObject();
     const eslintConfigs = any.listOf(any.string);
     const buildDirectory = any.string();
+    const decisions = any.simpleObject();
     const typeScaffoldingResults = {
       ...any.simpleObject(),
       dependencies: scaffoldedTypeDependencies,
@@ -42,14 +43,14 @@ suite('application project-type', () => {
       buildDirectory
     };
     applicationChooser.default
-      .withArgs({types: applicationTypes, projectType: 'application'})
+      .withArgs({types: applicationTypes, projectType: 'application', decisions})
       .resolves(chosenApplicationType);
     choiceScaffolder.default
       .withArgs(applicationTypes, chosenApplicationType, {projectRoot, projectName, tests})
       .resolves(typeScaffoldingResults);
 
     assert.deepEqual(
-      await scaffoldApplication({projectRoot, projectName, applicationTypes, tests}),
+      await scaffoldApplication({projectRoot, projectName, applicationTypes, tests, decisions}),
       {
         scripts: {
           clean: `rimraf ./${buildDirectory}`,

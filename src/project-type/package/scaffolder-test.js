@@ -32,6 +32,7 @@ suite('package project-type', () => {
   const eslintConfigs = any.listOf(any.string);
   const chosenType = any.word();
   const tests = any.simpleObject();
+  const decisions = any.simpleObject();
 
   setup(() => {
     sandbox = sinon.createSandbox();
@@ -44,7 +45,7 @@ suite('package project-type', () => {
     sandbox.stub(choiceScaffolder, 'default');
 
     documentationScaffolder.default.withArgs({scope, packageName, visibility}).returns(documentation);
-    packageChooser.default.withArgs({types: packageTypes, projectType: 'package'}).returns(chosenType);
+    packageChooser.default.withArgs({types: packageTypes, projectType: 'package', decisions}).returns(chosenType);
   });
 
   teardown(() => sandbox.restore());
@@ -66,7 +67,7 @@ suite('package project-type', () => {
     choiceScaffolder.default.withArgs(packageTypes, chosenType, {projectRoot, tests}).returns(typeScaffoldingResults);
 
     assert.deepEqual(
-      await scaffoldPackage({projectRoot, packageName, visibility, scope, packageTypes, tests}),
+      await scaffoldPackage({projectRoot, packageName, visibility, scope, packageTypes, tests, decisions}),
       {
         dependencies: scaffoldedTypeDependencies,
         devDependencies: ['rimraf', 'rollup', 'rollup-plugin-auto-external', ...scaffoldedTypeDevDependencies],
@@ -105,7 +106,14 @@ suite('package project-type', () => {
     defineBadges.default.withArgs(packageName, 'Public').returns(badges);
     choiceScaffolder.default.withArgs(packageTypes, chosenType, {projectRoot, tests}).returns(typeScaffoldingResults);
 
-    const results = await scaffoldPackage({projectRoot, packageName, visibility: 'Public', packageTypes, tests});
+    const results = await scaffoldPackage({
+      projectRoot,
+      packageName,
+      visibility: 'Public',
+      packageTypes,
+      tests,
+      decisions
+    });
 
     assert.deepEqual(
       results.badges.consumer.runkit,
@@ -135,7 +143,15 @@ suite('package project-type', () => {
     defineBadges.default.withArgs(packageName, 'Public').returns(badges);
     choiceScaffolder.default.withArgs(packageTypes, chosenType, {projectRoot, tests}).returns(typeScaffoldingResults);
 
-    const results = await scaffoldPackage({projectRoot, packageName, visibility: 'Public', packageTypes, tests, vcs});
+    const results = await scaffoldPackage({
+      projectRoot,
+      packageName,
+      visibility: 'Public',
+      packageTypes,
+      tests,
+      vcs,
+      decisions
+    });
 
     assert.deepEqual(
       results.badges.consumer.greenkeeper,
@@ -161,7 +177,15 @@ suite('package project-type', () => {
     defineBadges.default.withArgs(packageName, 'Public').returns(badges);
     choiceScaffolder.default.withArgs(packageTypes, chosenType, {projectRoot, tests}).returns(typeScaffoldingResults);
 
-    const results = await scaffoldPackage({projectRoot, packageName, visibility: 'Public', packageTypes, tests, vcs});
+    const results = await scaffoldPackage({
+      projectRoot,
+      packageName,
+      visibility: 'Public',
+      packageTypes,
+      tests,
+      vcs,
+      decisions
+    });
 
     assert.isUndefined(results.badges.consumer.greenkeeper);
     assert.deepEqual(results.nextSteps, commonNextSteps);

@@ -14,6 +14,7 @@ suite('project-type scaffolder', () => {
   const packageName = any.word();
   const visibility = any.word();
   const tests = any.simpleObject();
+  const decisions = any.simpleObject();
 
   setup(() => {
     sandbox = sinon.createSandbox();
@@ -31,7 +32,7 @@ suite('project-type scaffolder', () => {
     const vcs = any.simpleObject();
 
     packageTypeScaffolder.default
-      .withArgs({projectRoot, transpileLint, packageName, visibility, scope, packageTypes, tests, vcs})
+      .withArgs({projectRoot, transpileLint, packageName, visibility, scope, packageTypes, tests, vcs, decisions})
       .resolves(results);
 
     assert.equal(
@@ -44,7 +45,8 @@ suite('project-type scaffolder', () => {
         scope,
         packageTypes,
         tests,
-        vcs
+        vcs,
+        decisions
       }),
       results
     );
@@ -54,7 +56,7 @@ suite('project-type scaffolder', () => {
     const applicationTypes = any.simpleObject();
     const projectName = any.word();
     applicationTypeScaffolder.default
-      .withArgs({projectRoot, projectName, transpileLint, applicationTypes, tests})
+      .withArgs({projectRoot, projectName, transpileLint, applicationTypes, tests, decisions})
       .resolves(results);
 
     assert.equal(
@@ -64,7 +66,8 @@ suite('project-type scaffolder', () => {
         projectName,
         transpileLint,
         applicationTypes,
-        tests
+        tests,
+        decisions
       }),
       results
     );

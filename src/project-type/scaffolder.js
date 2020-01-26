@@ -13,7 +13,8 @@ export default function ({
   packageTypes,
   scope,
   tests,
-  vcs
+  vcs,
+  decisions
 }) {
   switch (projectType) {
     case 'Package':
@@ -25,10 +26,11 @@ export default function ({
         scope,
         packageTypes,
         tests,
-        vcs
+        vcs,
+        decisions
       });
     case 'Application':
-      return scaffoldApplicationType({projectRoot, projectName, applicationTypes, transpileLint, tests});
+      return scaffoldApplicationType({projectRoot, projectName, applicationTypes, transpileLint, tests, decisions});
     case 'CLI':
       return scaffoldCliType({packageName, visibility});
     default:
