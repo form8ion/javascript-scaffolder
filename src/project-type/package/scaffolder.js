@@ -41,10 +41,7 @@ export default async function ({
       {summary: 'Add the appropriate `save` flag to the installation instructions in the README'},
       {summary: 'Publish pre-release versions to npm until package is stable enough to publish v1.0.0'},
       ...('Public' === visibility && vcs && 'GitHub' === vcs.host)
-        ? [
-          {summary: 'Register the greenkeeper-keeper webhook'},
-          {summary: 'Add this repository to the Greenkeeper GitHub App list once v1.0.0 has been published'}
-        ]
+        ? [{summary: 'Add this repository to the Greenkeeper GitHub App list once v1.0.0 has been published'}]
         : []
     ]
   };
@@ -91,16 +88,7 @@ export default async function ({
             }
           }
         },
-        contribution: {
-          ...coreBadges.contribution,
-          ...'Public' === visibility && vcs && 'GitHub' === vcs.host && {
-            greenkeeper: {
-              img: `https://badges.greenkeeper.io/${vcs.owner}/${vcs.name}.svg`,
-              text: 'Greenkeeper',
-              link: 'https://greenkeeper.io/'
-            }
-          }
-        },
+        contribution: coreBadges.contribution,
         status: coreBadges.status
       }
     };

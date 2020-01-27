@@ -82,6 +82,10 @@ Given(/^the default answers are chosen$/, async function () {
   this.transpilationLintAnswer = null;
 });
 
+Given(/^the project will have "([^"]*)" visibility$/, function (visibility) {
+  this.visibility = visibility;
+});
+
 When(/^the project is scaffolded$/, async function () {
   const shouldBeScopedAnswer = true;
   this.projectName = any.word();
@@ -106,7 +110,7 @@ When(/^the project is scaffolded$/, async function () {
       [questionNames.AUTHOR_URL]: any.url(),
       [commonQuestionNames.UNIT_TESTS]: this.unitTestAnswer,
       [commonQuestionNames.INTEGRATION_TESTS]: this.integrationTestAnswer,
-      [commonQuestionNames.CI_SERVICE]: this.ciAnswer ? this.ciAnswer : 'Other',
+      [commonQuestionNames.CI_SERVICE]: this.ciAnswer || 'Other',
       [questionNames.TRANSPILE_LINT]: this.transpileAndLint,
       [questionNames.PROJECT_TYPE_CHOICE]: 'Other',
       ...['Package', 'CLI'].includes(this.projectType) && {
@@ -136,7 +140,15 @@ Then('the expected files for a(n) {string} are generated', async function (proje
 });
 
 Then('the expected results for a(n) {string} are returned to the project scaffolder', async function (projectType) {
-  assert.containsAllKeys(scaffoldResult.badges.contribution, ['commit-convention', 'commitizen']);
+  assert.containsAllKeys(
+    scaffoldResult.badges.contribution,
+    [
+      'commit-convention',
+      'commitizen',
+      ...this.vcs && 'Public' === this.visibility ? ['greenkeeper'] : [],
+      ...['Package', 'CLI'].includes(this.projectType) ? ['semantic-release'] : []
+    ]
+  );
 
   assertThatProperDirectoriesAreIgnoredFromVersionControl(projectType);
   assertThatProperFilesAreIgnoredFromVersionControl(projectType);

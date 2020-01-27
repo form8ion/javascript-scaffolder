@@ -4,6 +4,7 @@ Feature: CLI Project Type
     Given the project will be a "CLI"
     And the project will be versioned
     And the default answers are chosen
+    And the project will have "Public" visibility
     And the npm cli is logged in
     And nvm is properly configured
     When the project is scaffolded

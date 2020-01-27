@@ -7,5 +7,5 @@ Given(/^the project will not be versioned$/, async function () {
 
 Given(/^the project will be versioned$/, async function () {
   this.ciAnswer = ['\n'];
-  this.vcs = {host: any.word(), owner: any.word(), name: any.word()};
+  this.vcs = {host: 'GitHub', owner: any.word(), name: any.word()};
 });

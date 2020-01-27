@@ -1,8 +1,10 @@
+import deepmerge from 'deepmerge';
 import scaffoldPackageType from './package';
 import scaffoldApplicationType from './application';
 import scaffoldCliType from './cli';
+import buildCommonDetails from './common';
 
-export default function ({
+export default async function ({
   projectType,
   projectRoot,
   projectName,
@@ -18,21 +20,30 @@ export default function ({
 }) {
   switch (projectType) {
     case 'Package':
-      return scaffoldPackageType({
-        projectRoot,
-        transpileLint,
-        packageName,
-        visibility,
-        scope,
-        packageTypes,
-        tests,
-        vcs,
-        decisions
-      });
+      return deepmerge(
+        buildCommonDetails(visibility, vcs),
+        await scaffoldPackageType({
+          projectRoot,
+          transpileLint,
+          packageName,
+          visibility,
+          scope,
+          packageTypes,
+          tests,
+          vcs,
+          decisions
+        })
+      );
     case 'Application':
-      return scaffoldApplicationType({projectRoot, projectName, applicationTypes, transpileLint, tests, decisions});
+      return deepmerge(
+        buildCommonDetails(visibility, vcs),
+        await scaffoldApplicationType({projectRoot, projectName, applicationTypes, transpileLint, tests, decisions})
+      );
     case 'CLI':
-      return scaffoldCliType({packageName, visibility});
+      return deepmerge(
+        buildCommonDetails(visibility, vcs),
+        await scaffoldCliType({packageName, visibility})
+      );
     default:
       throw new Error(`The project-type of ${projectType} is invalid`);
   }
