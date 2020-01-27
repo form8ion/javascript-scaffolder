@@ -12,7 +12,7 @@ export default async function ({projectRoot}) {
     copyFile(determinePathToTemplateFile('canary-test.txt'), `${createdSrcDirectory}/canary-test.js`),
     writeFile(
       `${projectRoot}/.mocharc.json`,
-      JSON.stringify({ui: 'tdd', require: ['@babel/register', './test/mocha-setup.js'], recursive: true})
+      JSON.stringify({ui: 'tdd', require: ['@babel/register', './test/mocha-setup.js']})
     ),
     copyFile(determinePathToTemplateFile('mocha-setup.txt'), `${createdTestDirectory}/mocha-setup.js`)
   ]);

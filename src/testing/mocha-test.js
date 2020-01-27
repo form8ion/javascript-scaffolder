@@ -42,7 +42,7 @@ suite('mocha scaffolder', () => {
     assert.calledWith(
       fs.writeFile,
       `${projectRoot}/.mocharc.json`,
-      JSON.stringify({ui: 'tdd', require: ['@babel/register', './test/mocha-setup.js'], recursive: true})
+      JSON.stringify({ui: 'tdd', require: ['@babel/register', './test/mocha-setup.js']})
     );
     assert.calledWith(
       fs.copyFile,
