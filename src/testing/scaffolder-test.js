@@ -10,6 +10,7 @@ suite('testing scaffolder', () => {
   const visibility = any.word();
   const unitTestingDevDependencies = any.listOf(any.string);
   const unitTestingEslintConfigs = any.listOf(any.string);
+  const unitTestNextSteps = any.listOf(any.simpleObject);
   const unitTestScripts = any.simpleObject();
   const unitTestFilesToIgnoreFromVcs = any.listOf(any.string);
   const unitTestDirectoriesToIgnoreFromVcs = any.listOf(any.string);
@@ -27,7 +28,8 @@ suite('testing scaffolder', () => {
         devDependencies: unitTestingDevDependencies,
         scripts: unitTestScripts,
         vcsIgnore: {files: unitTestFilesToIgnoreFromVcs, directories: unitTestDirectoriesToIgnoreFromVcs},
-        eslintConfigs: unitTestingEslintConfigs
+        eslintConfigs: unitTestingEslintConfigs,
+        nextSteps: unitTestNextSteps
       });
   });
 
@@ -40,7 +42,8 @@ suite('testing scaffolder', () => {
         devDependencies: ['@travi/any', ...unitTestingDevDependencies],
         scripts: unitTestScripts,
         vcsIgnore: {files: unitTestFilesToIgnoreFromVcs, directories: unitTestDirectoriesToIgnoreFromVcs},
-        eslintConfigs: unitTestingEslintConfigs
+        eslintConfigs: unitTestingEslintConfigs,
+        nextSteps: unitTestNextSteps
       }
     );
   });
@@ -52,7 +55,8 @@ suite('testing scaffolder', () => {
         devDependencies: ['@travi/any'],
         scripts: {},
         vcsIgnore: {files: [], directories: []},
-        eslintConfigs: []
+        eslintConfigs: [],
+        nextSteps: []
       }
     );
   });
@@ -64,7 +68,8 @@ suite('testing scaffolder', () => {
         devDependencies: [],
         scripts: {},
         vcsIgnore: {files: [], directories: []},
-        eslintConfigs: []
+        eslintConfigs: [],
+        nextSteps: []
       }
     );
   });

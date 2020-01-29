@@ -20,6 +20,7 @@ export default async function ({projectRoot}) {
   return {
     devDependencies: ['mocha', 'chai', 'sinon'],
     scripts: {'test:unit:base': "DEBUG=any mocha 'src/**/*-test.js'"},
-    eslintConfigs: ['mocha']
+    eslintConfigs: ['mocha'],
+    nextSteps: [{summary: 'Remove the canary test for mocha once more valuable tests exist'}]
   };
 }

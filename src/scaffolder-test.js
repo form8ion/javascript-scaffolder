@@ -36,6 +36,7 @@ suite('javascript project scaffolder', () => {
   const version = any.string();
   const commitConventionDevDependencies = any.listOf(any.string);
   const testingEslintConfigs = any.listOf(any.string);
+  const testingNextSteps = any.listOf(any.simpleObject);
   const projectTypeEslintConfigs = any.listOf(any.string);
   const projectTypeNextSteps = any.listOf(any.simpleObject);
   const hostResults = any.simpleObject();
@@ -59,7 +60,7 @@ suite('javascript project scaffolder', () => {
   const babelPreset = {name: babelPresetName};
   const configs = {babelPreset, ...any.simpleObject()};
   const versionCategory = any.word();
-  const testingResults = {...any.simpleObject(), eslintConfigs: testingEslintConfigs};
+  const testingResults = {...any.simpleObject(), eslintConfigs: testingEslintConfigs, nextSteps: testingNextSteps};
   const lintingResults = any.simpleObject();
   const ciServiceResults = any.simpleObject();
   const commitConventionResults = any.simpleObject();
@@ -305,7 +306,7 @@ suite('javascript project scaffolder', () => {
       test('that next steps are included from the project-type scaffolder', async () => {
         const {nextSteps} = await scaffold(options);
 
-        assert.deepEqual(nextSteps, projectTypeNextSteps);
+        assert.deepEqual(nextSteps, [...projectTypeNextSteps, ...testingNextSteps]);
       });
     });
   });
