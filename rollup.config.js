@@ -6,10 +6,7 @@ export default {
   input: 'src/index.js',
   plugins: [
     autoExternal(),
-    nodeResolve({
-      module: true,
-      jsnext: true
-    })
+    nodeResolve({mainFields: ['module']})
   ],
   external: ['mz/fs'],
   output: [
