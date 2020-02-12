@@ -87,10 +87,10 @@ suite('project-type scaffolder', () => {
   });
 
   test('that the application-type scaffolder is applied when the project-type is `CLI`', async () => {
-    cliTypeScaffolder.default.withArgs({packageName, visibility}).resolves(results);
+    cliTypeScaffolder.default.withArgs({packageName, visibility, projectRoot}).resolves(results);
 
     assert.deepEqual(
-      await projectTypeScaffolder({projectType: 'CLI', packageName, visibility, vcs}),
+      await projectTypeScaffolder({projectType: 'CLI', packageName, visibility, vcs, projectRoot}),
       {...commonDetails, ...results}
     );
   });

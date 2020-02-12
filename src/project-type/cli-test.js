@@ -1,6 +1,8 @@
+import fs from 'mz/fs';
 import {assert} from 'chai';
 import any from '@travi/any';
 import sinon from 'sinon';
+import * as templatePath from '../template-path';
 import * as defineBadges from './package/badges';
 import scaffoldCli from './cli';
 
@@ -14,6 +16,8 @@ suite('cli project-type', () => {
   setup(() => {
     sandbox = sinon.createSandbox();
 
+    sandbox.stub(fs, 'copyFile');
+    sandbox.stub(templatePath, 'default');
     sandbox.stub(defineBadges, 'default');
   });
 
@@ -21,6 +25,8 @@ suite('cli project-type', () => {
 
   test('that details specific to a cli project-type are scaffolded', async () => {
     const visibility = 'Private';
+    const pathToTemplate = any.string();
+    templatePath.default.withArgs('rollup.config.js').returns(pathToTemplate);
     defineBadges.default.withArgs(packageName, visibility).returns(badges);
 
     assert.deepEqual(
@@ -55,6 +61,7 @@ suite('cli project-type', () => {
         nextSteps: []
       }
     );
+    assert.calledWith(fs.copyFile, pathToTemplate, `${projectRoot}/rollup.config.js`);
   });
 
   test('that the package is published publically when the visibility is `Public`', async () => {

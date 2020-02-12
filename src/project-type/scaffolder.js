@@ -42,7 +42,7 @@ export default async function ({
     case 'CLI':
       return deepmerge(
         buildCommonDetails(visibility, vcs),
-        await scaffoldCliType({packageName, visibility})
+        await scaffoldCliType({packageName, visibility, projectRoot})
       );
     default:
       throw new Error(`The project-type of ${projectType} is invalid`);

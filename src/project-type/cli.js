@@ -1,8 +1,12 @@
+import {copyFile} from 'mz/fs';
 import defineBadges from './package/badges';
+import determinePathToTemplateFile from '../template-path';
 
 const defaultBuildDirectory = 'bin';
 
-export default function ({packageName, visibility}) {
+export default async function ({packageName, visibility, projectRoot}) {
+  await copyFile(determinePathToTemplateFile('rollup.config.js'), `${projectRoot}/rollup.config.js`);
+
   return {
     scripts: {
       clean: `rimraf ./${defaultBuildDirectory}`,
