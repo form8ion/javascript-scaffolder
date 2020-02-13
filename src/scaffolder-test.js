@@ -37,6 +37,7 @@ suite('javascript project scaffolder', () => {
   const commitConventionDevDependencies = any.listOf(any.string);
   const testingEslintConfigs = any.listOf(any.string);
   const testingNextSteps = any.listOf(any.simpleObject);
+  const ciServiceNextSteps = any.listOf(any.simpleObject);
   const projectTypeEslintConfigs = any.listOf(any.string);
   const projectTypeNextSteps = any.listOf(any.simpleObject);
   const hostResults = any.simpleObject();
@@ -62,7 +63,7 @@ suite('javascript project scaffolder', () => {
   const versionCategory = any.word();
   const testingResults = {...any.simpleObject(), eslintConfigs: testingEslintConfigs, nextSteps: testingNextSteps};
   const lintingResults = any.simpleObject();
-  const ciServiceResults = any.simpleObject();
+  const ciServiceResults = {...any.simpleObject(), nextSteps: ciServiceNextSteps};
   const commitConventionResults = any.simpleObject();
   const applicationTypes = any.simpleObject();
   const packageTypes = any.simpleObject();
@@ -306,7 +307,7 @@ suite('javascript project scaffolder', () => {
       test('that next steps are included from the project-type scaffolder', async () => {
         const {nextSteps} = await scaffold(options);
 
-        assert.deepEqual(nextSteps, [...projectTypeNextSteps, ...testingNextSteps]);
+        assert.deepEqual(nextSteps, [...ciServiceNextSteps, ...projectTypeNextSteps, ...testingNextSteps]);
       });
     });
   });
