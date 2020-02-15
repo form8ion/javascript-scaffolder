@@ -53,6 +53,7 @@ opinionated scaffolder for JavaScript projects
 <!-- consumer badges -->
 
 [![npm][npm-badge]][npm-link]
+[![Snyk Vulnerabilities for npm package][snyk-badge]][snyk-link]
 ![node][node-badge]
 [![MIT license][license-badge]][license-link]
 
@@ -129,7 +130,7 @@ visibility of the project (`Public` or `Private`)
 * `owner` __string__ (_required_)
   account name on the host service for the repository
 * `name` __string__ (_required_)
-  repository name 
+  repository name
 
 ##### `description` __string__ (_optional_)
 
@@ -147,7 +148,7 @@ short summary of the project
     name to be used when referring to the config within the `.eslintrc` files
 
   :warning: while i'm not confident that it is the recommended convention, it
-  is assumed the defined config has a `rules/` directory exposed from the 
+  is assumed the defined config has a `rules/` directory exposed from the
   package with rulesets defined for
 
   * `es6.js`
@@ -255,3 +256,7 @@ $ npm test
 [prs-link]: http://makeapullrequest.com
 
 [prs-badge]: https://img.shields.io/badge/PRs-welcome-brightgreen.svg
+
+[snyk-badge]: https://img.shields.io/snyk/vulnerabilities/npm/@travi/javascript-scaffolder
+
+[snyk-link]: https://snyk.io/test/npm/@travi/javascript-scaffolder
