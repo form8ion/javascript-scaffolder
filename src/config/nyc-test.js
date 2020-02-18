@@ -1,4 +1,4 @@
-import fs from 'mz/fs';
+import {promises as fsPromises} from 'fs';
 import any from '@travi/any';
 import sinon from 'sinon';
 import {assert} from 'chai';
@@ -13,7 +13,7 @@ suite('nyc scaffolder', () => {
   setup(() => {
     sandbox = sinon.createSandbox();
 
-    sandbox.stub(fs, 'writeFile');
+    sandbox.stub(fsPromises, 'writeFile');
   });
 
   teardown(() => sandbox.restore());
@@ -36,7 +36,7 @@ suite('nyc scaffolder', () => {
       }
     );
     assert.calledWith(
-      fs.writeFile,
+      fsPromises.writeFile,
       `${projectRoot}/.nycrc`,
       JSON.stringify({
         reporter: ['lcov', 'text-summary', 'html'],

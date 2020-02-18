@@ -1,4 +1,4 @@
-import fs from 'mz/fs';
+import {promises as fsPromises} from 'fs';
 import {assert} from 'chai';
 import any from '@travi/any';
 import sinon from 'sinon';
@@ -13,7 +13,7 @@ suite('eslint config scaffolder', () => {
   setup(() => {
     sandbox = sinon.createSandbox();
 
-    sandbox.stub(fs, 'writeFile');
+    sandbox.stub(fsPromises, 'writeFile');
     sandbox.stub(mkdir, 'default');
   });
 
@@ -41,7 +41,7 @@ suite('eslint config scaffolder', () => {
     test('that the base config is added to the root of the project if the config scope is provided', async () => {
       await scaffoldEsLint({projectRoot, config: {packageName, scope}});
 
-      assert.calledWith(fs.writeFile, `${projectRoot}/.eslintrc.yml`, `extends: '${scope}'`);
+      assert.calledWith(fsPromises.writeFile, `${projectRoot}/.eslintrc.yml`, `extends: '${scope}'`);
     });
 
     test('that the additional configs are added if the config scope is provided', async () => {
@@ -57,7 +57,7 @@ suite('eslint config scaffolder', () => {
       });
 
       assert.calledWith(
-        fs.writeFile,
+        fsPromises.writeFile,
         `${projectRoot}/.eslintrc.yml`,
         `extends:\n  - '${scope}'\n  - '${scope}/${additionalConfigs.join(`'\n  - '${scope}/`)}'`
       );
@@ -70,7 +70,7 @@ suite('eslint config scaffolder', () => {
     test('that no additional configs are added if the additional list is empty', async () => {
       await scaffoldEsLint({projectRoot, config: {packageName, scope}, additionalConfigs: []});
 
-      assert.calledWith(fs.writeFile, `${projectRoot}/.eslintrc.yml`, `extends: '${scope}'`);
+      assert.calledWith(fsPromises.writeFile, `${projectRoot}/.eslintrc.yml`, `extends: '${scope}'`);
     });
 
     test('that a file pattern can be specified for a config', async () => {
@@ -89,7 +89,7 @@ suite('eslint config scaffolder', () => {
       });
 
       assert.calledWith(
-        fs.writeFile,
+        fsPromises.writeFile,
         `${projectRoot}/.eslintrc.yml`,
         `extends:
   - '${scope}'
@@ -116,15 +116,15 @@ overrides:
 
         await scaffoldEsLint({projectRoot, config: {packageName, scope}, buildDirectory});
 
-        assert.calledWith(fs.writeFile, `${projectRoot}/.eslintignore`, sinon.match(`/${buildDirectory}/`));
-        assert.neverCalledWith(fs.writeFile, `${projectRoot}/.eslintignore`, sinon.match('/coverage/'));
+        assert.calledWith(fsPromises.writeFile, `${projectRoot}/.eslintignore`, sinon.match(`/${buildDirectory}/`));
+        assert.neverCalledWith(fsPromises.writeFile, `${projectRoot}/.eslintignore`, sinon.match('/coverage/'));
       });
 
       test('that the coverage folder is excluded from linting when the project is unit tested', async () => {
         await scaffoldEsLint({projectRoot, config: {packageName, scope}, unitTested: true});
 
         assert.calledWith(
-          fs.writeFile,
+          fsPromises.writeFile,
           `${projectRoot}/.eslintignore`,
           sinon.match(`
 /coverage/`)

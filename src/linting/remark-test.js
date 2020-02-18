@@ -1,4 +1,4 @@
-import fs from 'mz/fs';
+import {promises as fsPromises} from 'fs';
 import {assert} from 'chai';
 import any from '@travi/any';
 import sinon from 'sinon';
@@ -10,7 +10,7 @@ suite('remark config scaffolder', () => {
   setup(() => {
     sandbox = sinon.createSandbox();
 
-    sandbox.stub(fs, 'writeFile');
+    sandbox.stub(fsPromises, 'writeFile');
   });
 
   teardown(() => sandbox.restore());
@@ -24,7 +24,7 @@ suite('remark config scaffolder', () => {
       {devDependencies: [config, 'remark-cli'], scripts: {'lint:md': 'remark . --frail'}}
     );
     assert.calledWith(
-      fs.writeFile,
+      fsPromises.writeFile,
       `${projectRoot}/.remarkrc.js`,
       `exports.plugins = [
   '${config}'
@@ -38,7 +38,7 @@ suite('remark config scaffolder', () => {
 
     await scaffoldRemark({config, projectRoot, vcs: undefined});
     assert.calledWith(
-      fs.writeFile,
+      fsPromises.writeFile,
       `${projectRoot}/.remarkrc.js`,
       `exports.plugins = [
   '${config}',

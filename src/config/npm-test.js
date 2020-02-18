@@ -1,4 +1,4 @@
-import fs from 'mz/fs';
+import {promises as fsPromises} from 'fs';
 import {assert} from 'chai';
 import any from '@travi/any';
 import sinon from 'sinon';
@@ -11,7 +11,7 @@ suite('npm config scaffolder', () => {
   setup(() => {
     sandbox = sinon.createSandbox();
 
-    sandbox.stub(fs, 'writeFile');
+    sandbox.stub(fsPromises, 'writeFile');
   });
 
   teardown(() => sandbox.restore());
@@ -19,19 +19,19 @@ suite('npm config scaffolder', () => {
   test('that applications save exact versions of dependencies', async () => {
     await scaffoldNpmConfig({projectRoot, projectType: 'Application'});
 
-    assert.calledWith(fs.writeFile, `${projectRoot}/.npmrc`, 'update-notifier=false\nsave-exact=true\n');
+    assert.calledWith(fsPromises.writeFile, `${projectRoot}/.npmrc`, 'update-notifier=false\nsave-exact=true\n');
   });
 
   test('that cli-applications save exact versions of dependencies', async () => {
     await scaffoldNpmConfig({projectRoot, projectType: 'CLI'});
 
-    assert.calledWith(fs.writeFile, `${projectRoot}/.npmrc`, 'update-notifier=false\nsave-exact=true\n');
+    assert.calledWith(fsPromises.writeFile, `${projectRoot}/.npmrc`, 'update-notifier=false\nsave-exact=true\n');
   });
 
   test('that packages are allowed to use semver ranges', async () => {
     await scaffoldNpmConfig({projectRoot, projectType: 'Package'});
 
-    assert.calledWith(fs.writeFile, `${projectRoot}/.npmrc`, 'update-notifier=false\n');
+    assert.calledWith(fsPromises.writeFile, `${projectRoot}/.npmrc`, 'update-notifier=false\n');
   });
 
   test('that the script to enforce peer-dependency compatibility is defined', async () => {

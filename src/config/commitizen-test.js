@@ -1,4 +1,4 @@
-import fs from 'mz/fs';
+import {promises as fsPromises} from 'fs';
 import sinon from 'sinon';
 import {assert} from 'chai';
 import any from '@travi/any';
@@ -10,7 +10,7 @@ suite('commitizen', () => {
   setup(() => {
     sandbox = sinon.createSandbox();
 
-    sandbox.stub(fs, 'writeFile');
+    sandbox.stub(fsPromises, 'writeFile');
   });
 
   teardown(() => sandbox.restore());
@@ -21,7 +21,7 @@ suite('commitizen', () => {
     const result = await scaffold({projectRoot});
 
     assert.calledWith(
-      fs.writeFile,
+      fsPromises.writeFile,
       `${projectRoot}/.czrc`,
       JSON.stringify({path: './node_modules/cz-conventional-changelog'})
     );

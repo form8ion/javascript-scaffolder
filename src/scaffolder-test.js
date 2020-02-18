@@ -1,4 +1,3 @@
-import fs from 'mz/fs';
 import {questionNames as commonQuestionNames} from '@travi/language-scaffolder-prompts';
 import {assert} from 'chai';
 import any from '@travi/any';
@@ -119,8 +118,6 @@ suite('javascript project scaffolder', () => {
   setup(() => {
     sandbox = sinon.createSandbox();
 
-    sandbox.stub(fs, 'writeFile');
-    sandbox.stub(fs, 'copyFile');
     sandbox.stub(installer, 'default');
     sandbox.stub(prompts, 'prompt');
     sandbox.stub(optionsValidator, 'validate');
@@ -138,8 +135,6 @@ suite('javascript project scaffolder', () => {
     sandbox.stub(packageNameBuilder, 'default');
     sandbox.stub(projectTypeScaffolder, 'default');
 
-    fs.writeFile.resolves();
-    fs.copyFile.resolves();
     packageNameBuilder.default.withArgs(projectName, scope).returns(packageName);
     projectTypeScaffolder.default
       .withArgs({

@@ -1,7 +1,7 @@
-import {writeFile} from 'mz/fs';
+import {promises as fsPromises} from 'fs';
 
 export default async function ({config, projectRoot, vcs}) {
-  await writeFile(
+  await fsPromises.writeFile(
     `${projectRoot}/.remarkrc.js`,
     `exports.plugins = [
   '${config}'${

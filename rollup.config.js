@@ -8,7 +8,6 @@ export default {
     autoExternal(),
     nodeResolve({mainFields: ['module']})
   ],
-  external: ['mz/fs'],
   output: [
     {file: 'lib/index.cjs.js', format: 'cjs', sourcemap: true},
     {file: 'lib/index.es.js', format: 'es', sourcemap: true}

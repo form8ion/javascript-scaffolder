@@ -1,4 +1,4 @@
-import fs from 'mz/fs';
+import {promises as fsPromises} from 'fs';
 import path from 'path';
 import {assert} from 'chai';
 import any from '@travi/any';
@@ -14,8 +14,8 @@ suite('mocha scaffolder', () => {
     sandbox = sinon.createSandbox();
 
     sandbox.stub(mkdir, 'default');
-    sandbox.stub(fs, 'copyFile');
-    sandbox.stub(fs, 'writeFile');
+    sandbox.stub(fsPromises, 'copyFile');
+    sandbox.stub(fsPromises, 'writeFile');
   });
 
   teardown(() => sandbox.restore());
@@ -36,17 +36,17 @@ suite('mocha scaffolder', () => {
       }
     );
     assert.calledWith(
-      fs.copyFile,
+      fsPromises.copyFile,
       path.resolve(__dirname, '../../', 'templates', 'canary-test.txt'),
       `${pathToCreatedSrcDirectory}/canary-test.js`
     );
     assert.calledWith(
-      fs.writeFile,
+      fsPromises.writeFile,
       `${projectRoot}/.mocharc.json`,
       JSON.stringify({ui: 'tdd', require: ['@babel/register', './test/mocha-setup.js']})
     );
     assert.calledWith(
-      fs.copyFile,
+      fsPromises.copyFile,
       path.resolve(__dirname, '../../', 'templates', 'mocha-setup.txt'),
       `${pathToCreatedTestDirectory}/mocha-setup.js`
     );

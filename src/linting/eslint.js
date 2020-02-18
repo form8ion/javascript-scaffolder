@@ -1,4 +1,4 @@
-import {writeFile} from 'mz/fs';
+import {promises as fsPromises} from 'fs';
 
 function buildConfig(scope, additionalConfigs) {
   const stringConfigs = additionalConfigs && additionalConfigs
@@ -25,8 +25,8 @@ export default async function ({config, projectRoot, unitTested, buildDirectory,
   const eslintIgnoreDirectories = [`/${buildDirectory}/`, ...unitTested ? ['/coverage/'] : []];
 
   await Promise.all([
-    writeFile(`${projectRoot}/.eslintrc.yml`, buildConfig(scope, additionalConfigs)),
-    writeFile(`${projectRoot}/.eslintignore`, eslintIgnoreDirectories.join('\n'))
+    fsPromises.writeFile(`${projectRoot}/.eslintrc.yml`, buildConfig(scope, additionalConfigs)),
+    fsPromises.writeFile(`${projectRoot}/.eslintignore`, eslintIgnoreDirectories.join('\n'))
   ]);
 
   return {

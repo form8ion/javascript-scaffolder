@@ -1,8 +1,9 @@
-import {copyFile, writeFile} from 'mz/fs';
+import {promises as fsPromises} from 'fs';
 import mkdir from '../../third-party-wrappers/make-dir';
 import determinePathToTemplateFile from '../template-path';
 
 export default async function ({projectRoot}) {
+  const {copyFile, writeFile} = fsPromises;
   const [createdTestDirectory, createdSrcDirectory] = await Promise.all([
     mkdir(`${projectRoot}/test`),
     mkdir(`${projectRoot}/src`)

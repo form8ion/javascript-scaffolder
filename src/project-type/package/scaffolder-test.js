@@ -1,4 +1,4 @@
-import fs from 'mz/fs';
+import {promises as fsPromises} from 'fs';
 import sinon from 'sinon';
 import {assert} from 'chai';
 import any from '@travi/any';
@@ -37,7 +37,7 @@ suite('package project-type', () => {
   setup(() => {
     sandbox = sinon.createSandbox();
 
-    sandbox.stub(fs, 'copyFile');
+    sandbox.stub(fsPromises, 'copyFile');
     sandbox.stub(templatePath, 'default');
     sandbox.stub(defineBadges, 'default');
     sandbox.stub(documentationScaffolder, 'default');
@@ -96,7 +96,7 @@ suite('package project-type', () => {
         nextSteps: commonNextSteps
       }
     );
-    assert.calledWith(fs.copyFile, pathToTemplate, `${projectRoot}/rollup.config.js`);
+    assert.calledWith(fsPromises.copyFile, pathToTemplate, `${projectRoot}/rollup.config.js`);
   });
 
   test('that the runkit badge is included for public projects', async () => {
@@ -134,7 +134,7 @@ suite('package project-type', () => {
         publishConfig: {access: 'public'}
       }
     );
-    assert.calledWith(fs.copyFile, pathToTemplate, `${projectRoot}/rollup.config.js`);
+    assert.calledWith(fsPromises.copyFile, pathToTemplate, `${projectRoot}/rollup.config.js`);
   });
 
   test('that build details are not included when the project will not be transpiled', async () => {
@@ -153,6 +153,6 @@ suite('package project-type', () => {
         nextSteps: commonNextSteps
       }
     );
-    assert.neverCalledWith(fs.copyFile, pathToTemplate, `${projectRoot}/rollup.config.js`);
+    assert.neverCalledWith(fsPromises.copyFile, pathToTemplate, `${projectRoot}/rollup.config.js`);
   });
 });

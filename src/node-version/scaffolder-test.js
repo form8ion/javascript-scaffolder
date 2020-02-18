@@ -1,4 +1,4 @@
-import fs from 'mz/fs';
+import {promises as fsPromises} from 'fs';
 import any from '@travi/any';
 import sinon from 'sinon';
 import {assert} from 'chai';
@@ -14,7 +14,7 @@ suite('node-version scaffolder', () => {
 
     sandbox.stub(nodeVersionTasks, 'determineLatestVersionOf');
     sandbox.stub(nodeVersionTasks, 'install');
-    sandbox.stub(fs, 'writeFile');
+    sandbox.stub(fsPromises, 'writeFile');
   });
 
   teardown(() => sandbox.restore());
@@ -26,6 +26,6 @@ suite('node-version scaffolder', () => {
 
     assert.equal(await scaffoldNodeVersion({projectRoot, nodeVersionCategory}), version);
     assert.calledWith(nodeVersionTasks.install, nodeVersionCategory);
-    assert.calledWith(fs.writeFile, `${projectRoot}/.nvmrc`, version);
+    assert.calledWith(fsPromises.writeFile, `${projectRoot}/.nvmrc`, version);
   });
 });

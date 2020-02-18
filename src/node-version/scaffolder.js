@@ -1,4 +1,4 @@
-import {writeFile} from 'mz/fs';
+import {promises as fsPromises} from 'fs';
 import {info} from '@travi/cli-messages';
 import {determineLatestVersionOf, install as installNodeVersion} from './tasks';
 
@@ -8,7 +8,7 @@ export default async function ({projectRoot, nodeVersionCategory}) {
 
   const version = await determineLatestVersionOf(nodeVersionCategory);
 
-  await writeFile(`${projectRoot}/.nvmrc`, version);
+  await fsPromises.writeFile(`${projectRoot}/.nvmrc`, version);
 
   await installNodeVersion(nodeVersionCategory);
 

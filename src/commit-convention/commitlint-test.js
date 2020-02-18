@@ -1,4 +1,4 @@
-import fs from 'mz/fs';
+import {promises as fsPromises} from 'fs';
 import any from '@travi/any';
 import {assert} from 'chai';
 import sinon from 'sinon';
@@ -10,7 +10,7 @@ suite('commitlint scaffolder', () => {
   setup(() => {
     sandbox = sinon.createSandbox();
 
-    sandbox.stub(fs, 'writeFile');
+    sandbox.stub(fsPromises, 'writeFile');
   });
 
   teardown(() => sandbox.restore());
@@ -25,7 +25,7 @@ suite('commitlint scaffolder', () => {
       {devDependencies: [configPackageName]}
     );
     assert.calledWith(
-      fs.writeFile,
+      fsPromises.writeFile,
       `${projectRoot}/.commitlintrc.js`,
       `module.exports = {extends: ['${configName}']};`
     );

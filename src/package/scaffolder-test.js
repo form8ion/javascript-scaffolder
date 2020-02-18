@@ -1,4 +1,4 @@
-import fs from 'mz/fs';
+import {promises as fsPromises} from 'fs';
 import sinon from 'sinon';
 import any from '@travi/any';
 import {assert} from 'chai';
@@ -12,7 +12,7 @@ suite('package scaffolder', () => {
   setup(() => {
     sandbox = sinon.createSandbox();
 
-    sandbox.stub(fs, 'writeFile');
+    sandbox.stub(fsPromises, 'writeFile');
     sandbox.stub(buildPackageDetails, 'default');
     sandbox.stub(dependencyInstaller, 'default');
   });
@@ -59,7 +59,7 @@ suite('package scaffolder', () => {
       {homepage}
     );
 
-    assert.calledWith(fs.writeFile, `${projectRoot}/package.json`, JSON.stringify(packageDetails));
+    assert.calledWith(fsPromises.writeFile, `${projectRoot}/package.json`, JSON.stringify(packageDetails));
     assert.calledWith(dependencyInstaller.default, {contributors});
   });
 });

@@ -1,4 +1,4 @@
-import fs from 'mz/fs';
+import {promises as fsPromises} from 'fs';
 import sinon from 'sinon';
 import {assert} from 'chai';
 import any from '@travi/any';
@@ -11,7 +11,7 @@ suite('babel config', () => {
   setup(() => {
     sandbox = sinon.createSandbox();
 
-    sandbox.stub(fs, 'writeFile');
+    sandbox.stub(fsPromises, 'writeFile');
   });
 
   teardown(() => sandbox.restore());
@@ -31,7 +31,7 @@ suite('babel config', () => {
     );
 
     assert.calledWith(
-      fs.writeFile,
+      fsPromises.writeFile,
       `${projectRoot}/.babelrc`,
       JSON.stringify({presets: [babelPresetName], ignore: ['./lib/']})
     );
@@ -43,7 +43,7 @@ suite('babel config', () => {
       {devDependencies: ['@babel/register'], scripts: {}, vcsIgnore: {files: [], directories: []}}
     );
 
-    assert.notCalled(fs.writeFile);
+    assert.notCalled(fsPromises.writeFile);
   });
 
   test('that scaffolding is skipped if `transpileLint` is false', async () => {
@@ -52,6 +52,6 @@ suite('babel config', () => {
       {devDependencies: [], scripts: {}, vcsIgnore: {files: [], directories: []}}
     );
 
-    assert.notCalled(fs.writeFile);
+    assert.notCalled(fsPromises.writeFile);
   });
 });

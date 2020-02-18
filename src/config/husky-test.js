@@ -1,4 +1,4 @@
-import fs from 'mz/fs';
+import {promises as fsPromises} from 'fs';
 import {assert} from 'chai';
 import sinon from 'sinon';
 import any from '@travi/any';
@@ -11,7 +11,7 @@ suite('husky config', () => {
   setup(() => {
     sandbox = sinon.createSandbox();
 
-    sandbox.stub(fs, 'writeFile');
+    sandbox.stub(fsPromises, 'writeFile');
   });
 
   teardown(() => sandbox.restore());
@@ -23,7 +23,7 @@ suite('husky config', () => {
     );
 
     assert.calledWith(
-      fs.writeFile,
+      fsPromises.writeFile,
       `${projectRoot}/.huskyrc.json`,
       JSON.stringify({hooks: {'pre-commit': 'npm test', 'commit-msg': 'commitlint -e'}})
     );

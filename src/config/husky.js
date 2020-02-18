@@ -1,7 +1,7 @@
-import {writeFile} from 'mz/fs';
+import {promises as fsPromises} from 'fs';
 
 export default async function ({projectRoot}) {
-  await writeFile(
+  await fsPromises.writeFile(
     `${projectRoot}/.huskyrc.json`,
     JSON.stringify({hooks: {'pre-commit': 'npm test', 'commit-msg': 'commitlint -e'}})
   );

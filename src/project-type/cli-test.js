@@ -1,4 +1,4 @@
-import fs from 'mz/fs';
+import {promises as fsPromises} from 'fs';
 import {assert} from 'chai';
 import any from '@travi/any';
 import sinon from 'sinon';
@@ -16,7 +16,7 @@ suite('cli project-type', () => {
   setup(() => {
     sandbox = sinon.createSandbox();
 
-    sandbox.stub(fs, 'copyFile');
+    sandbox.stub(fsPromises, 'copyFile');
     sandbox.stub(templatePath, 'default');
     sandbox.stub(defineBadges, 'default');
   });
@@ -61,7 +61,7 @@ suite('cli project-type', () => {
         nextSteps: []
       }
     );
-    assert.calledWith(fs.copyFile, pathToTemplate, `${projectRoot}/rollup.config.js`);
+    assert.calledWith(fsPromises.copyFile, pathToTemplate, `${projectRoot}/rollup.config.js`);
   });
 
   test('that the package is published publically when the visibility is `Public`', async () => {

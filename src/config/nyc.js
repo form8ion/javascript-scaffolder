@@ -1,7 +1,7 @@
-import {writeFile} from 'mz/fs';
+import {promises} from 'fs';
 
 export default async function ({projectRoot, vcs, visibility}) {
-  await writeFile(
+  await promises.writeFile(
     `${projectRoot}/.nycrc`,
     JSON.stringify({
       reporter: ['lcov', 'text-summary', 'html'],

@@ -1,4 +1,4 @@
-import {writeFile} from 'mz/fs';
+import {promises as fsPromises} from 'fs';
 import {info} from '@travi/cli-messages';
 import buildPackageDetails from './details';
 import installDependencies from './dependencies';
@@ -27,7 +27,7 @@ export default async function ({
     packageProperties
   });
 
-  await writeFile(`${projectRoot}/package.json`, JSON.stringify(packageData));
+  await fsPromises.writeFile(`${projectRoot}/package.json`, JSON.stringify(packageData));
 
   await installDependencies({contributors});
 

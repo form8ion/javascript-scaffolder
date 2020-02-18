@@ -1,4 +1,4 @@
-import {copyFile} from 'mz/fs';
+import {promises as fsPromises} from 'fs';
 import {info} from '@travi/cli-messages';
 import determinePathToTemplateFile from '../../template-path';
 import defineBadges from './badges';
@@ -51,7 +51,7 @@ export default async function ({
     const chosenType = await choosePackageType({types: packageTypes, projectType: 'package', decisions});
     const results = await scaffoldChosenPackageType(packageTypes, chosenType, {projectRoot, tests});
 
-    await copyFile(determinePathToTemplateFile('rollup.config.js'), `${projectRoot}/rollup.config.js`);
+    await fsPromises.copyFile(determinePathToTemplateFile('rollup.config.js'), `${projectRoot}/rollup.config.js`);
 
     return {
       ...commonResults,
