@@ -6,6 +6,7 @@ opinionated scaffolder for JavaScript projects
 
 [![Build Status][ci-badge]][ci-link]
 [![Codecov](https://img.shields.io/codecov/c/github/travi/javascript-scaffolder.svg)](https://codecov.io/github/travi/javascript-scaffolder)
+[![Snyk Vulnerabilities for npm package][snyk-badge]][snyk-link]
 
 ## Table of Contents
 
@@ -53,7 +54,6 @@ opinionated scaffolder for JavaScript projects
 <!-- consumer badges -->
 
 [![npm][npm-badge]][npm-link]
-[![Snyk Vulnerabilities for npm package][snyk-badge]][snyk-link]
 ![node][node-badge]
 [![MIT license][license-badge]][license-link]
 
