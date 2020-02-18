@@ -26,7 +26,6 @@ suite('unit testing scaffolder', () => {
     mocha.default
       .withArgs({projectRoot})
       .resolves({
-        ...any.simpleObject(),
         devDependencies: mochaDevDependencies,
         scripts: mochaScripts,
         eslintConfigs: mochaEslintConfigs,
@@ -41,7 +40,6 @@ suite('unit testing scaffolder', () => {
     nyc.default
       .withArgs({projectRoot, vcs, visibility})
       .resolves({
-        ...any.simpleObject(),
         devDependencies: nycDevDependencies,
         vcsIgnore: {files: nycFilesToIgnoreFromVcs, directories: nycDirectoriesToIgnoreFromVcs}
       });
@@ -63,23 +61,25 @@ suite('unit testing scaffolder', () => {
 
   test('that codecov is installed for public projects', async () => {
     const visibility = 'Public';
+    const nycStatusBadges = any.simpleObject();
     nyc.default
       .withArgs({projectRoot, vcs, visibility})
       .resolves({
-        ...any.simpleObject(),
         devDependencies: nycDevDependencies,
-        vcsIgnore: {files: nycFilesToIgnoreFromVcs, directories: nycDirectoriesToIgnoreFromVcs}
+        vcsIgnore: {files: nycFilesToIgnoreFromVcs, directories: nycDirectoriesToIgnoreFromVcs},
+        badges: {status: nycStatusBadges}
       });
 
     assert.deepEqual(
       await scaffoldUnitTesting({projectRoot, visibility, vcs}),
       {
-        devDependencies: [...mochaDevDependencies, ...nycDevDependencies, 'codecov'],
+        devDependencies: ['codecov', ...mochaDevDependencies, ...nycDevDependencies],
         scripts: {
           'test:unit': 'nyc run-s test:unit:base',
           ...mochaScripts,
           'coverage:report': 'nyc report --reporter=text-lcov > coverage.lcov && codecov'
         },
+        badges: {status: nycStatusBadges},
         vcsIgnore: {files: nycFilesToIgnoreFromVcs, directories: nycDirectoriesToIgnoreFromVcs},
         eslintConfigs: mochaEslintConfigs,
         nextSteps: mochaNextSteps
