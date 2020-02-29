@@ -5,6 +5,55 @@ import any from '@travi/any';
 import {assert} from 'chai';
 import * as execa from '../../../../third-party-wrappers/execa';
 
+function assertThatPackageSpecificDetailsAreDefinedCorrectly(
+  packageDetails,
+  npmAccount,
+  projectName,
+  transpileAndLint,
+  visibility
+) {
+  assert.equal(packageDetails.name, `@${npmAccount}/${projectName}`);
+  assert.equal(packageDetails.version, '0.0.0-semantically-released');
+
+  if (transpileAndLint) {
+    assert.equal(packageDetails.main, 'lib/index.cjs.js');
+    assert.equal(packageDetails.module, 'lib/index.es.js');
+    assert.deepEqual(packageDetails.files, ['lib/']);
+    assert.isFalse(packageDetails.sideEffects);
+  } else {
+    assert.deepEqual(packageDetails.files, ['index.js']);
+
+    assert.isUndefined(packageDetails.main);
+    assert.isUndefined(packageDetails.module);
+    assert.isUndefined(packageDetails.sideEffects);
+  }
+
+  assert.deepEqual(
+    packageDetails.publishConfig,
+    {access: 'Private' === visibility ? 'restricted' : 'public'}
+  );
+}
+
+function assertThatApplicationSpecificDetailsAreDefinedCorrectly(packageDetails, projectName) {
+  assert.equal(packageDetails.name, projectName);
+  assert.isTrue(packageDetails.private);
+
+  assert.isUndefined(packageDetails.files);
+  assert.isUndefined(packageDetails.version);
+  assert.isUndefined(packageDetails.publishConfig);
+}
+
+function assertThatCliSpecificDetailsAreDefinedCorrectly(packageDetails, npmAccount, projectName, visibility) {
+  assert.equal(packageDetails.name, `@${npmAccount}/${projectName}`);
+  assert.equal(packageDetails.version, '0.0.0-semantically-released');
+  assert.deepEqual(packageDetails.bin, {});
+  assert.deepEqual(packageDetails.files, ['bin/']);
+  assert.deepEqual(
+    packageDetails.publishConfig,
+    {access: 'Private' === visibility ? 'restricted' : 'public'}
+  );
+}
+
 export async function assertThatPackageDetailsAreConfiguredCorrectlyFor({
   projectType,
   visibility,
@@ -22,32 +71,18 @@ export async function assertThatPackageDetailsAreConfiguredCorrectlyFor({
   }
 
   if ('application' === projectType) {
-    assert.equal(packageDetails.name, projectName);
-    assert.isTrue(packageDetails.private);
-    assert.isUndefined(packageDetails.files);
-    assert.isUndefined(packageDetails.version);
-    assert.isUndefined(packageDetails.publishConfig);
+    assertThatApplicationSpecificDetailsAreDefinedCorrectly(packageDetails, projectName);
   } else {
     assert.isUndefined(packageDetails.private);
   }
 
   if ('package' === projectType) {
-    assert.equal(packageDetails.name, `@${npmAccount}/${projectName}`);
-    assert.equal(packageDetails.version, '0.0.0-semantically-released');
-    if (transpileAndLint) {
-      assert.equal(packageDetails.main, 'lib/index.cjs.js');
-      assert.equal(packageDetails.module, 'lib/index.es.js');
-      assert.deepEqual(packageDetails.files, ['lib/']);
-      assert.isFalse(packageDetails.sideEffects);
-    } else {
-      assert.deepEqual(packageDetails.files, ['index.js']);
-      assert.isUndefined(packageDetails.main);
-      assert.isUndefined(packageDetails.module);
-      assert.isUndefined(packageDetails.sideEffects);
-    }
-    assert.deepEqual(
-      packageDetails.publishConfig,
-      {access: 'Private' === visibility ? 'restricted' : 'public'}
+    assertThatPackageSpecificDetailsAreDefinedCorrectly(
+      packageDetails,
+      npmAccount,
+      projectName,
+      transpileAndLint,
+      visibility
     );
   } else {
     assert.isUndefined(packageDetails.main);
@@ -56,14 +91,7 @@ export async function assertThatPackageDetailsAreConfiguredCorrectlyFor({
   }
 
   if ('cli' === projectType) {
-    assert.equal(packageDetails.name, `@${npmAccount}/${projectName}`);
-    assert.equal(packageDetails.version, '0.0.0-semantically-released');
-    assert.deepEqual(packageDetails.bin, {});
-    assert.deepEqual(packageDetails.files, ['bin/']);
-    assert.deepEqual(
-      packageDetails.publishConfig,
-      {access: 'Private' === visibility ? 'restricted' : 'public'}
-    );
+    assertThatCliSpecificDetailsAreDefinedCorrectly(packageDetails, npmAccount, projectName, visibility);
   } else {
     assert.isUndefined(packageDetails.bin);
   }

@@ -1,4 +1,4 @@
-Feature: Simplest Use
+Feature: Package Project Type
 
   Scenario: Minimal Options w/o Versioning
     Given the project will be a "Package"
