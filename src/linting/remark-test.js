@@ -21,13 +21,26 @@ suite('remark config scaffolder', () => {
 
     assert.deepEqual(
       await scaffoldRemark({config, projectRoot, vcs: any.simpleObject()}),
-      {devDependencies: [config, 'remark-cli'], scripts: {'lint:md': 'remark . --frail'}}
+      {
+        devDependencies: [config, 'remark-cli', 'remark-toc'],
+        scripts: {'lint:md': 'remark . --frail', 'generate:md': 'remark . --frail --quiet'}
+      }
     );
     assert.calledWith(
       fsPromises.writeFile,
       `${projectRoot}/.remarkrc.js`,
-      `exports.plugins = [
-  '${config}'
+      `// https://github.com/remarkjs/remark/tree/master/packages/remark-stringify#options
+exports.settings = {
+  listItemIndent: 1,
+  emphasis: '_',
+  strong: '_',
+  bullet: '*',
+  incrementListMarker: false
+};
+
+exports.plugins = [
+  '${config}',
+  [require('remark-toc'), {tight: true}]
 ];`
     );
   });
@@ -40,8 +53,18 @@ suite('remark config scaffolder', () => {
     assert.calledWith(
       fsPromises.writeFile,
       `${projectRoot}/.remarkrc.js`,
-      `exports.plugins = [
+      `// https://github.com/remarkjs/remark/tree/master/packages/remark-stringify#options
+exports.settings = {
+  listItemIndent: 1,
+  emphasis: '_',
+  strong: '_',
+  bullet: '*',
+  incrementListMarker: false
+};
+
+exports.plugins = [
   '${config}',
+  [require('remark-toc'), {tight: true}],
   ['validate-links', {repository: false}]
 ];`
     );
