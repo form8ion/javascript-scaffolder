@@ -14,6 +14,7 @@ import {
 } from './npm-steps';
 import * as execa from '../../../../third-party-wrappers/execa';
 import {scaffold, questionNames} from '../../../../src';
+import {assertThatDocumentationIsDefinedAppropriately} from './documentation-steps';
 
 const {readFile} = fsPromises;
 
@@ -128,16 +129,19 @@ Then('the expected files for a(n) {string} are generated', async function (proje
   assert.equal(nvmRc.toString(), `v${this.latestLtsMajorVersion}`);
   assert.equal(existsSync(`${process.cwd()}/.babelrc`), this.transpileAndLint);
 
-  await assertThatProperDirectoriesAreIgnoredFromEslint(projectType, this.transpileAndLint);
-  await assertThatPackageDetailsAreConfiguredCorrectlyFor({
-    projectType,
-    visibility: this.visibility,
-    tested: this.tested,
-    transpileAndLint: this.transpileAndLint,
-    projectName: this.projectName,
-    npmAccount: this.npmAccount
-  });
-  await assertThatNpmConfigDetailsAreConfiguredCorrectlyFor(projectType);
+  await Promise.all([
+    assertThatProperDirectoriesAreIgnoredFromEslint(projectType, this.transpileAndLint),
+    assertThatPackageDetailsAreConfiguredCorrectlyFor({
+      projectType,
+      visibility: this.visibility,
+      tested: this.tested,
+      transpileAndLint: this.transpileAndLint,
+      projectName: this.projectName,
+      npmAccount: this.npmAccount
+    }),
+    assertThatNpmConfigDetailsAreConfiguredCorrectlyFor(projectType),
+    assertThatDocumentationIsDefinedAppropriately(projectType, this.projectName, this.transpileAndLint)
+  ]);
 });
 
 Then('the expected results for a(n) {string} are returned to the project scaffolder', async function (projectType) {
