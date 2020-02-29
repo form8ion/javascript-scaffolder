@@ -12,6 +12,7 @@ suite('project-type scaffolder', () => {
   const results = any.simpleObject();
   const projectRoot = any.string();
   const transpileLint = any.boolean();
+  const projectName = any.word();
   const packageName = any.word();
   const visibility = any.word();
   const tests = any.simpleObject();
@@ -37,7 +38,18 @@ suite('project-type scaffolder', () => {
     const packageTypes = any.simpleObject();
 
     packageTypeScaffolder.default
-      .withArgs({projectRoot, transpileLint, packageName, visibility, scope, packageTypes, tests, vcs, decisions})
+      .withArgs({
+        projectRoot,
+        transpileLint,
+        packageName,
+        projectName,
+        visibility,
+        scope,
+        packageTypes,
+        tests,
+        vcs,
+        decisions
+      })
       .resolves(results);
 
     assert.deepEqual(
@@ -45,6 +57,7 @@ suite('project-type scaffolder', () => {
         projectType: 'Package',
         projectRoot,
         transpileLint,
+        projectName,
         packageName,
         visibility,
         scope,
@@ -62,7 +75,6 @@ suite('project-type scaffolder', () => {
 
   test('that the application-type scaffolder is applied when the project-type is `Application`', async () => {
     const applicationTypes = any.simpleObject();
-    const projectName = any.word();
     applicationTypeScaffolder.default
       .withArgs({projectRoot, projectName, transpileLint, applicationTypes, tests, decisions})
       .resolves(results);

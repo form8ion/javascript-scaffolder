@@ -25,6 +25,7 @@ export default async function ({
         await scaffoldPackageType({
           projectRoot,
           transpileLint,
+          projectName,
           packageName,
           visibility,
           scope,

@@ -1,4 +1,5 @@
 import {promises as fsPromises} from 'fs';
+import mustache from 'mustache';
 import sinon from 'sinon';
 import {assert} from 'chai';
 import any from '@travi/any';
@@ -13,6 +14,7 @@ suite('package project-type', () => {
   let sandbox;
   const projectRoot = any.string();
   const packageTypes = any.simpleObject();
+  const projectName = any.word();
   const packageName = any.word();
   const visibility = 'Private';
   const scope = any.word();
@@ -33,25 +35,36 @@ suite('package project-type', () => {
   const chosenType = any.word();
   const tests = any.simpleObject();
   const decisions = any.simpleObject();
+  const pathToRollupTemplate = any.string();
+  const pathToExampleTemplate = any.string();
+  const exampleTemplateContent = any.string();
+  const exampleContent = any.string();
 
   setup(() => {
     sandbox = sinon.createSandbox();
 
     sandbox.stub(fsPromises, 'copyFile');
+    sandbox.stub(fsPromises, 'readFile');
+    sandbox.stub(fsPromises, 'writeFile');
     sandbox.stub(templatePath, 'default');
     sandbox.stub(defineBadges, 'default');
     sandbox.stub(documentationScaffolder, 'default');
     sandbox.stub(packageChooser, 'default');
     sandbox.stub(choiceScaffolder, 'default');
+    sandbox.stub(mustache, 'render');
 
     documentationScaffolder.default.withArgs({scope, packageName, visibility}).returns(documentation);
     packageChooser.default.withArgs({types: packageTypes, projectType: 'package', decisions}).returns(chosenType);
+
+    templatePath.default.withArgs('rollup.config.js').returns(pathToRollupTemplate);
+    templatePath.default.withArgs('example.mustache').returns(pathToExampleTemplate);
+    fsPromises.readFile.withArgs(pathToExampleTemplate, 'utf8').resolves(exampleTemplateContent);
+    mustache.render.withArgs(exampleTemplateContent, {projectName}).returns(exampleContent);
   });
 
   teardown(() => sandbox.restore());
 
   test('that details specific to a package project-type are scaffolded', async () => {
-    const pathToTemplate = any.string();
     const typeScaffoldingResults = {
       ...any.simpleObject(),
       dependencies: scaffoldedTypeDependencies,
@@ -61,13 +74,13 @@ suite('package project-type', () => {
       documentation: scaffoldedDocumentation,
       eslintConfigs
     };
-    templatePath.default.withArgs('rollup.config.js').returns(pathToTemplate);
+    templatePath.default.withArgs('rollup.config.js').returns(pathToRollupTemplate);
     defineBadges.default.withArgs(packageName, visibility).returns(badges);
     documentationScaffolder.default.withArgs({scope, packageName, visibility}).returns(documentation);
     choiceScaffolder.default.withArgs(packageTypes, chosenType, {projectRoot, tests}).returns(typeScaffoldingResults);
 
     assert.deepEqual(
-      await scaffoldPackage({projectRoot, packageName, visibility, scope, packageTypes, tests, decisions}),
+      await scaffoldPackage({projectRoot, projectName, packageName, visibility, scope, packageTypes, tests, decisions}),
       {
         dependencies: scaffoldedTypeDependencies,
         devDependencies: ['rimraf', 'rollup', 'rollup-plugin-auto-external', ...scaffoldedTypeDevDependencies],
@@ -96,18 +109,18 @@ suite('package project-type', () => {
         nextSteps: commonNextSteps
       }
     );
-    assert.calledWith(fsPromises.copyFile, pathToTemplate, `${projectRoot}/rollup.config.js`);
+    assert.calledWith(fsPromises.copyFile, pathToRollupTemplate, `${projectRoot}/rollup.config.js`);
+    assert.calledWith(fsPromises.writeFile, `${projectRoot}/example.js`, exampleContent);
   });
 
   test('that the runkit badge is included for public projects', async () => {
-    const pathToTemplate = any.string();
     const typeScaffoldingResults = any.simpleObject();
-    templatePath.default.withArgs('rollup.config.js').returns(pathToTemplate);
     defineBadges.default.withArgs(packageName, 'Public').returns(badges);
     choiceScaffolder.default.withArgs(packageTypes, chosenType, {projectRoot, tests}).returns(typeScaffoldingResults);
 
     const results = await scaffoldPackage({
       projectRoot,
+      projectName,
       packageName,
       visibility: 'Public',
       packageTypes,
@@ -134,12 +147,11 @@ suite('package project-type', () => {
         publishConfig: {access: 'public'}
       }
     );
-    assert.calledWith(fsPromises.copyFile, pathToTemplate, `${projectRoot}/rollup.config.js`);
+    assert.calledWith(fsPromises.copyFile, pathToRollupTemplate, `${projectRoot}/rollup.config.js`);
+    assert.calledWith(fsPromises.writeFile, `${projectRoot}/example.js`, exampleContent);
   });
 
   test('that build details are not included when the project will not be transpiled', async () => {
-    const pathToTemplate = any.string();
-    templatePath.default.withArgs('rollup.config.js').returns(pathToTemplate);
     defineBadges.default.withArgs(packageName, visibility).returns(badges);
 
     assert.deepEqual(
@@ -153,6 +165,7 @@ suite('package project-type', () => {
         nextSteps: commonNextSteps
       }
     );
-    assert.neverCalledWith(fsPromises.copyFile, pathToTemplate, `${projectRoot}/rollup.config.js`);
+    assert.neverCalledWith(fsPromises.copyFile, pathToRollupTemplate, `${projectRoot}/rollup.config.js`);
+    assert.neverCalledWith(fsPromises.copyFile, pathToExampleTemplate, `${projectRoot}/example.js`);
   });
 });

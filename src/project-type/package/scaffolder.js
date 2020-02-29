@@ -1,4 +1,5 @@
 import {promises as fsPromises} from 'fs';
+import mustache from 'mustache';
 import {info} from '@travi/cli-messages';
 import determinePathToTemplateFile from '../../template-path';
 import defineBadges from './badges';
@@ -11,6 +12,7 @@ const defaultBuildDirectory = 'lib';
 export default async function ({
   projectRoot,
   transpileLint,
+  projectName,
   packageName,
   visibility,
   scope,
@@ -51,7 +53,16 @@ export default async function ({
     const chosenType = await choosePackageType({types: packageTypes, projectType: 'package', decisions});
     const results = await scaffoldChosenPackageType(packageTypes, chosenType, {projectRoot, tests});
 
-    await fsPromises.copyFile(determinePathToTemplateFile('rollup.config.js'), `${projectRoot}/rollup.config.js`);
+    await Promise.all([
+      fsPromises.copyFile(determinePathToTemplateFile('rollup.config.js'), `${projectRoot}/rollup.config.js`),
+      fsPromises.writeFile(
+        `${projectRoot}/example.js`,
+        mustache.render(
+          await fsPromises.readFile(determinePathToTemplateFile('example.mustache'), 'utf8'),
+          {projectName}
+        )
+      )
+    ]);
 
     return {
       ...commonResults,
