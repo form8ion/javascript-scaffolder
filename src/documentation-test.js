@@ -3,6 +3,7 @@ import any from '@travi/any';
 import scaffoldDocumentation from './documentation';
 
 suite('documentation', () => {
+  const tocMessage = 'Run `npm run generate:md` to generate a table of contents';
   const contributionDocumentation = `### Dependencies
 
 \`\`\`sh
@@ -22,7 +23,7 @@ $ npm test
     assert.deepEqual(
       scaffoldDocumentation({projectTypeResults}),
       {
-        toc: '',
+        toc: tocMessage,
         ...projectTypeResults.documentation,
         contributing: contributionDocumentation
       }
@@ -35,7 +36,7 @@ $ npm test
     assert.deepEqual(
       scaffoldDocumentation({projectTypeResults}),
       {
-        toc: '',
+        toc: tocMessage,
         contributing: contributionDocumentation
       }
     );
