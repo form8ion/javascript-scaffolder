@@ -1,6 +1,6 @@
 import {promises as fsPromises} from 'fs';
 
-export default async function ({config, projectRoot, vcs}) {
+export default async function ({config, projectRoot, projectType, vcs}) {
   await fsPromises.writeFile(
     `${projectRoot}/.remarkrc.js`,
     `// https://github.com/remarkjs/remark/tree/master/packages/remark-stringify#options
@@ -15,6 +15,11 @@ exports.settings = {
 exports.plugins = [
   '${config}',
   [require('remark-toc'), {tight: true}]${
+  'Package' === projectType
+    ? `,
+  ['remark-usage', {heading: 'example', main: './src'}]`
+    : ''
+}${
   !vcs
     ? `,
   ['validate-links', {repository: false}]`

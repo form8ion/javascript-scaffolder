@@ -2,7 +2,16 @@ import scaffoldEslint from './eslint';
 import scaffoldRemark from './remark';
 import scaffoldBanSensitiveFiles from './ban-sensitive-files';
 
-export default async function ({projectRoot, tests, configs, vcs, transpileLint, buildDirectory, eslintConfigs}) {
+export default async function ({
+  projectRoot,
+  projectType,
+  tests,
+  configs,
+  vcs,
+  transpileLint,
+  buildDirectory,
+  eslintConfigs
+}) {
   const [eslintResult, remarkResult, banSensitiveFilesResult] = await Promise.all([
     configs.eslint && false !== transpileLint
       ? scaffoldEslint({
@@ -13,7 +22,7 @@ export default async function ({projectRoot, tests, configs, vcs, transpileLint,
         additionalConfigs: eslintConfigs
       })
       : null,
-    scaffoldRemark({projectRoot, config: configs.remark || '@form8ion/remark-lint-preset', vcs}),
+    scaffoldRemark({projectRoot, projectType, config: configs.remark || '@form8ion/remark-lint-preset', vcs}),
     vcs ? scaffoldBanSensitiveFiles() : null
   ]);
 

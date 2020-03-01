@@ -13,6 +13,7 @@ suite('linting scaffolder', () => {
   const banSensitiveFilesDevDependencies = any.listOf(any.string);
   const banSensitiveFilesScripts = any.simpleObject();
   const projectRoot = any.string();
+  const projectType = any.word();
   const unitTested = any.boolean();
   const configForEslint = any.simpleObject();
   const eslintScripts = any.simpleObject();
@@ -31,7 +32,7 @@ suite('linting scaffolder', () => {
     sandbox.stub(scaffoldBanSensitiveFiles, 'default');
 
     scaffoldRemark.default
-      .withArgs({projectRoot, config: configForRemark, vcs})
+      .withArgs({projectRoot, projectType, config: configForRemark, vcs})
       .resolves({devDependencies: remarkDevDependencies, scripts: remarkScripts});
     scaffoldEslint.default
       .withArgs({projectRoot, unitTested, config: configForEslint, buildDirectory, additionalConfigs: eslintConfigs})
@@ -49,6 +50,7 @@ suite('linting scaffolder', () => {
   test('that linters are configured when config definitions are provided', async () => {
     const result = await scaffold({
       projectRoot,
+      projectType,
       tests: {unit: unitTested},
       configs: {eslint: configForEslint, remark: configForRemark},
       vcs,
@@ -76,6 +78,7 @@ suite('linting scaffolder', () => {
   test('that eslint is not scaffolded when a config is not defined', async () => {
     const result = await scaffold({
       projectRoot,
+      projectType,
       tests: {unit: unitTested},
       configs: {remark: configForRemark},
       vcs
@@ -100,6 +103,7 @@ suite('linting scaffolder', () => {
   test('that eslint is not scaffolded when `transpileLint` is false', async () => {
     const result = await scaffold({
       projectRoot,
+      projectType,
       tests: {unit: unitTested},
       configs: {eslint: configForEslint, remark: configForRemark},
       vcs,
@@ -125,6 +129,7 @@ suite('linting scaffolder', () => {
   test('that remark  defaults to the form8ion config when a config is not defined', async () => {
     const result = await scaffold({
       projectRoot,
+      projectType,
       tests: {unit: unitTested},
       configs: {eslint: configForEslint},
       vcs,
@@ -132,7 +137,7 @@ suite('linting scaffolder', () => {
       eslintConfigs
     });
 
-    assert.calledWith(scaffoldRemark.default, {projectRoot, vcs, config: '@form8ion/remark-lint-preset'});
+    assert.calledWith(scaffoldRemark.default, {projectRoot, projectType, vcs, config: '@form8ion/remark-lint-preset'});
     assert.deepEqual(
       result.devDependencies,
       ['lockfile-lint', ...eslintDevDependencies, ...banSensitiveFilesDevDependencies]
@@ -151,11 +156,12 @@ suite('linting scaffolder', () => {
 
   test('that ban-sensitive-files is not scaffolded when the project will not be versioned', async () => {
     scaffoldRemark.default
-      .withArgs({projectRoot, config: configForRemark, vcs: undefined})
+      .withArgs({projectRoot, projectType, config: configForRemark, vcs: undefined})
       .resolves({devDependencies: remarkDevDependencies, scripts: remarkScripts});
 
     const result = await scaffold({
       projectRoot,
+      projectType,
       tests: {unit: unitTested},
       configs: {eslint: configForEslint, remark: configForRemark},
       vcs: undefined,

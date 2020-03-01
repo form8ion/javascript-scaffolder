@@ -83,6 +83,7 @@ export async function scaffold(options) {
       scaffoldLinting({
         configs,
         projectRoot,
+        projectType,
         tests,
         vcs,
         transpileLint,

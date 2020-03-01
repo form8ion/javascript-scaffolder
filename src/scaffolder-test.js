@@ -175,6 +175,7 @@ suite('javascript project scaffolder', () => {
       .withArgs({
         configs,
         projectRoot,
+        projectType,
         tests,
         vcs: vcsDetails,
         transpileLint,
