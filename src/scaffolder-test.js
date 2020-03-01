@@ -264,7 +264,7 @@ suite('javascript project scaffolder', () => {
         async () => {
           const {verificationCommand} = await scaffold(options);
 
-          assert.equal(verificationCommand, 'npm test');
+          assert.equal(verificationCommand, 'npm run generate:* && npm test');
         }
       );
     });

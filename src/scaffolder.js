@@ -114,7 +114,7 @@ export async function scaffold(options) {
     badges: buildBadgesDetails(contributors),
     documentation: scaffoldDocumentation({projectTypeResults}),
     vcsIgnore: buildVcsIgnoreLists(contributors),
-    verificationCommand: 'npm test',
+    verificationCommand: 'npm run generate:* && npm test',
     projectDetails: {...projectHomepage && {homepage: projectHomepage}},
     nextSteps: contributors
       .reduce((acc, contributor) => (contributor.nextSteps ? [...acc, ...contributor.nextSteps] : acc), [])
