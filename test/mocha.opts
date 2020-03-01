@@ -1,4 +1,0 @@
---ui tdd
---require @babel/register
---require ./test/mocha-setup.js
-
