@@ -122,7 +122,7 @@ suite('linting scaffolder', () => {
     );
   });
 
-  test('that remark is not scaffolded when a config is not defined', async () => {
+  test('that remark  defaults to the form8ion config when a config is not defined', async () => {
     const result = await scaffold({
       projectRoot,
       tests: {unit: unitTested},
@@ -132,7 +132,7 @@ suite('linting scaffolder', () => {
       eslintConfigs
     });
 
-    assert.notCalled(scaffoldRemark.default);
+    assert.calledWith(scaffoldRemark.default, {projectRoot, vcs, config: '@form8ion/remark-lint-preset'});
     assert.deepEqual(
       result.devDependencies,
       ['lockfile-lint', ...eslintDevDependencies, ...banSensitiveFilesDevDependencies]
