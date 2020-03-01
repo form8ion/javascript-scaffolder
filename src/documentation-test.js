@@ -22,6 +22,7 @@ $ npm test
     assert.deepEqual(
       scaffoldDocumentation({projectTypeResults}),
       {
+        toc: '',
         ...projectTypeResults.documentation,
         contributing: contributionDocumentation
       }
@@ -33,7 +34,10 @@ $ npm test
 
     assert.deepEqual(
       scaffoldDocumentation({projectTypeResults}),
-      {contributing: contributionDocumentation}
+      {
+        toc: '',
+        contributing: contributionDocumentation
+      }
     );
   });
 });

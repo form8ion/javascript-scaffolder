@@ -1,5 +1,6 @@
 export default function ({projectTypeResults}) {
   return {
+    toc: '',
     ...projectTypeResults.documentation,
     contributing: `### Dependencies
 

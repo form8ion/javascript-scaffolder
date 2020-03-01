@@ -27,6 +27,7 @@ export function assertThatDocumentationResultsAreReturnedCorrectly(
   visibility,
   results
 ) {
+  assert.equal(results.documentation.toc, '');
   assert.equal(
     results.documentation.contributing,
     '### Dependencies\n\n```sh\n$ nvm install\n$ npm install\n```\n\n### Verification\n\n```sh\n$ npm test\n```'
