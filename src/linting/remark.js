@@ -27,7 +27,7 @@ exports.plugins = [
     devDependencies: [config, 'remark-cli', 'remark-toc'],
     scripts: {
       'lint:md': 'remark . --frail',
-      'generate:md': 'remark . --frail --quiet'
+      'generate:md': 'remark . --output'
     }
   };
 }

@@ -23,7 +23,7 @@ suite('remark config scaffolder', () => {
       await scaffoldRemark({config, projectRoot, vcs: any.simpleObject()}),
       {
         devDependencies: [config, 'remark-cli', 'remark-toc'],
-        scripts: {'lint:md': 'remark . --frail', 'generate:md': 'remark . --frail --quiet'}
+        scripts: {'lint:md': 'remark . --frail', 'generate:md': 'remark . --output'}
       }
     );
     assert.calledWith(
