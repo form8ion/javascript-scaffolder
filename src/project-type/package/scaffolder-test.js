@@ -3,11 +3,13 @@ import mustache from 'mustache';
 import sinon from 'sinon';
 import {assert} from 'chai';
 import any from '@travi/any';
+import * as mkdir from '../../../third-party-wrappers/make-dir';
+import * as touch from '../../../third-party-wrappers/touch';
 import * as templatePath from '../../template-path';
-import * as defineBadges from './badges';
-import * as documentationScaffolder from './documentation';
-import * as packageChooser from '../prompt';
 import * as choiceScaffolder from '../../choice-scaffolder';
+import * as packageChooser from '../prompt';
+import * as documentationScaffolder from './documentation';
+import * as defineBadges from './badges';
 import scaffoldPackage from './scaffolder';
 
 suite('package project-type', () => {
@@ -43,6 +45,8 @@ suite('package project-type', () => {
   setup(() => {
     sandbox = sinon.createSandbox();
 
+    sandbox.stub(mkdir, 'default');
+    sandbox.stub(touch, 'default');
     sandbox.stub(fsPromises, 'copyFile');
     sandbox.stub(fsPromises, 'readFile');
     sandbox.stub(fsPromises, 'writeFile');
@@ -115,8 +119,10 @@ suite('package project-type', () => {
 
   test('that the runkit badge is included for public projects', async () => {
     const typeScaffoldingResults = any.simpleObject();
+    const pathToCreatedSrcDirectory = any.string();
     defineBadges.default.withArgs(packageName, 'Public').returns(badges);
     choiceScaffolder.default.withArgs(packageTypes, chosenType, {projectRoot, tests}).returns(typeScaffoldingResults);
+    mkdir.default.withArgs(`${projectRoot}/src`).resolves(pathToCreatedSrcDirectory);
 
     const results = await scaffoldPackage({
       projectRoot,
@@ -149,6 +155,7 @@ suite('package project-type', () => {
     );
     assert.calledWith(fsPromises.copyFile, pathToRollupTemplate, `${projectRoot}/rollup.config.js`);
     assert.calledWith(fsPromises.writeFile, `${projectRoot}/example.js`, exampleContent);
+    assert.calledWith(touch.default, `${pathToCreatedSrcDirectory}/index.js`);
   });
 
   test('that build details are not included when the project will not be transpiled', async () => {

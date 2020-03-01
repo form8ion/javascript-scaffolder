@@ -15,6 +15,7 @@ export async function assertThatDocumentationIsDefinedAppropriately(
 /* eslint-disable-next-line no-unused-vars */
 import ${projectName} from './src';
 `);
+    assert.isTrue(existsSync(`${process.cwd()}/src/index.js`));
   } else {
     assert.isFalse(existsSync(pathToExampleFile));
   }

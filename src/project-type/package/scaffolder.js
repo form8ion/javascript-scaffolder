@@ -1,11 +1,13 @@
 import {promises as fsPromises} from 'fs';
 import mustache from 'mustache';
 import {info} from '@travi/cli-messages';
+import touch from '../../../third-party-wrappers/touch';
+import mkdir from '../../../third-party-wrappers/make-dir';
 import determinePathToTemplateFile from '../../template-path';
-import defineBadges from './badges';
-import scaffoldPackageDocumentation from './documentation';
-import choosePackageType from '../prompt';
 import scaffoldChosenPackageType from '../../choice-scaffolder';
+import choosePackageType from '../prompt';
+import scaffoldPackageDocumentation from './documentation';
+import defineBadges from './badges';
 
 const defaultBuildDirectory = 'lib';
 
@@ -53,6 +55,7 @@ export default async function ({
     const chosenType = await choosePackageType({types: packageTypes, projectType: 'package', decisions});
     const results = await scaffoldChosenPackageType(packageTypes, chosenType, {projectRoot, tests});
 
+    const pathToCreatedSrcDirectory = await mkdir(`${projectRoot}/src`);
     await Promise.all([
       fsPromises.copyFile(determinePathToTemplateFile('rollup.config.js'), `${projectRoot}/rollup.config.js`),
       fsPromises.writeFile(
@@ -61,7 +64,8 @@ export default async function ({
           await fsPromises.readFile(determinePathToTemplateFile('example.mustache'), 'utf8'),
           {projectName}
         )
-      )
+      ),
+      touch(`${pathToCreatedSrcDirectory}/index.js`)
     ]);
 
     return {
