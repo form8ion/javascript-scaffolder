@@ -3,6 +3,7 @@ Feature: Package Project Type
   Scenario: Minimal Options w/o Versioning
     Given the project will be a "Package"
     And the project will not be versioned
+    And the project will have "Private" visibility
     And the default answers are chosen
     And the npm cli is logged in
     And nvm is properly configured

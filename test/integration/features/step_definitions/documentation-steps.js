@@ -19,3 +19,43 @@ import ${projectName} from './src';
     assert.isFalse(existsSync(pathToExampleFile));
   }
 }
+
+export function assertThatDocumentationResultsAreReturnedCorrectly(
+  projectType,
+  scope,
+  projectName,
+  visibility,
+  results
+) {
+  assert.equal(
+    results.documentation.contributing,
+    '### Dependencies\n\n```sh\n$ nvm install\n$ npm install\n```\n\n### Verification\n\n```sh\n$ npm test\n```'
+  );
+
+  if ('package' === projectType) {
+    if ('Public' === visibility) {
+      assert.equal(
+        results.documentation.usage,
+        `### Installation
+
+\`\`\`sh
+$ npm install @${scope}/${projectName}
+\`\`\``
+      );
+    }
+
+    if ('Private' === visibility) {
+      assert.equal(
+        results.documentation.usage,
+        `### Installation
+
+:warning: this is a private package, so you will need to use an npm token with
+access to private packages under \`@${scope}\`
+
+\`\`\`sh
+$ npm install @${scope}/${projectName}
+\`\`\``
+      );
+    }
+  }
+}

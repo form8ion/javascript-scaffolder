@@ -14,7 +14,10 @@ import {
 } from './npm-steps';
 import * as execa from '../../../../third-party-wrappers/execa';
 import {scaffold, questionNames} from '../../../../src';
-import {assertThatDocumentationIsDefinedAppropriately} from './documentation-steps';
+import {
+  assertThatDocumentationIsDefinedAppropriately,
+  assertThatDocumentationResultsAreReturnedCorrectly
+} from './documentation-steps';
 
 const {readFile} = fsPromises;
 
@@ -157,4 +160,11 @@ Then('the expected results for a(n) {string} are returned to the project scaffol
 
   assertThatProperDirectoriesAreIgnoredFromVersionControl(projectType);
   assertThatProperFilesAreIgnoredFromVersionControl(projectType);
+  assertThatDocumentationResultsAreReturnedCorrectly(
+    projectType,
+    this.npmAccount,
+    this.projectName,
+    this.visibility,
+    scaffoldResult
+  );
 });
