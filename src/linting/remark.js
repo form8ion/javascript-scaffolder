@@ -1,6 +1,6 @@
 import {promises as fsPromises} from 'fs';
 
-export default async function ({config, projectRoot, projectType, vcs}) {
+export default async function ({config, projectRoot, projectType, vcs, transpileLint}) {
   await fsPromises.writeFile(
     `${projectRoot}/.remarkrc.js`,
     `// https://github.com/remarkjs/remark/tree/master/packages/remark-stringify#options
@@ -17,7 +17,7 @@ exports.plugins = [
   [require('remark-toc'), {tight: true}]${
   'Package' === projectType
     ? `,
-  ['remark-usage', {heading: 'example', main: './src'}]`
+  ['remark-usage', {heading: 'example'}]`
     : ''
 }${
   !vcs
@@ -32,6 +32,7 @@ exports.plugins = [
     devDependencies: [config, 'remark-cli', 'remark-toc', ...'Package' === projectType ? ['remark-usage'] : []],
     scripts: {
       'lint:md': 'remark . --frail',
+      ...transpileLint && {'pregenerate:md': 'npm run build'},
       'generate:md': 'remark . --output'
     }
   };

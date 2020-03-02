@@ -22,7 +22,13 @@ export default async function ({
         additionalConfigs: eslintConfigs
       })
       : null,
-    scaffoldRemark({projectRoot, projectType, config: configs.remark || '@form8ion/remark-lint-preset', vcs}),
+    scaffoldRemark({
+      projectRoot,
+      projectType,
+      vcs,
+      transpileLint,
+      config: configs.remark || '@form8ion/remark-lint-preset'
+    }),
     vcs ? scaffoldBanSensitiveFiles() : null
   ]);
 

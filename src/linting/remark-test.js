@@ -71,8 +71,18 @@ exports.settings = {
 exports.plugins = [
   '${config}',
   [require('remark-toc'), {tight: true}],
-  ['remark-usage', {heading: 'example', main: './src'}]
+  ['remark-usage', {heading: 'example'}]
 ];`
+    );
+  });
+
+  test('that the project is built before generating the markdown when the project will be transpiled', async () => {
+    const config = any.string();
+    const projectRoot = any.string();
+
+    assert.deepEqual(
+      (await scaffoldRemark({config, projectRoot, vcs: any.simpleObject(), transpileLint: true})).scripts,
+      {'lint:md': 'remark . --frail', 'generate:md': 'remark . --output', 'pregenerate:md': 'npm run build'}
     );
   });
 
