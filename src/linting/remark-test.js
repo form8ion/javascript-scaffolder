@@ -52,7 +52,7 @@ exports.plugins = [
     assert.deepEqual(
       await scaffoldRemark({config, projectRoot, projectType: 'Package', vcs: any.simpleObject()}),
       {
-        devDependencies: [config, 'remark-cli', 'remark-toc'],
+        devDependencies: [config, 'remark-cli', 'remark-toc', 'remark-usage'],
         scripts: {'lint:md': 'remark . --frail', 'generate:md': 'remark . --output'}
       }
     );

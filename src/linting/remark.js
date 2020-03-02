@@ -29,7 +29,7 @@ exports.plugins = [
   );
 
   return {
-    devDependencies: [config, 'remark-cli', 'remark-toc'],
+    devDependencies: [config, 'remark-cli', 'remark-toc', ...'Package' === projectType ? ['remark-usage'] : []],
     scripts: {
       'lint:md': 'remark . --frail',
       'generate:md': 'remark . --output'
