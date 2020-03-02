@@ -19,6 +19,7 @@ suite('prompts', () => {
   const vcs = any.simpleObject();
   const ciServices = any.simpleObject();
   const visibility = any.word();
+  const answers = any.simpleObject();
 
   setup(() => {
     sandbox = sinon.createSandbox();
@@ -48,7 +49,6 @@ suite('prompts', () => {
     const hosts = any.simpleObject();
     const scopeValidator = () => undefined;
     const scopePromptShouldBePresented = () => undefined;
-    const answers = any.simpleObject();
     npmConf.default.returns({get});
     execa.default.withArgs('npm', ['whoami']).resolves({stdout: npmUser});
     get.withArgs('init.author.name').returns(authorName);
@@ -119,7 +119,23 @@ suite('prompts', () => {
       ], decisions)
       .resolves(answers);
 
-    assert.equal(await prompt({}, ciServices, hosts, visibility, vcs, decisions), answers);
+    assert.deepEqual(
+      await prompt({}, ciServices, hosts, visibility, vcs, decisions),
+      {...answers, [questionNames.TRANSPILE_LINT]: true}
+    );
+  });
+
+  test('that the transpile/lint value is not overriden when set to `false`', async () => {
+    const npmUser = any.word();
+    const get = sinon.stub();
+    npmConf.default.returns({get});
+    execa.default.withArgs('npm', ['whoami']).resolves({stdout: npmUser});
+    prompts.prompt.resolves({...answers, [questionNames.TRANSPILE_LINT]: false});
+
+    assert.deepEqual(
+      await prompt({}, ciServices, {}, visibility, vcs, decisions),
+      {...answers, [questionNames.TRANSPILE_LINT]: false}
+    );
   });
 
   test('that defaults are overridden by the provided options', () => {
@@ -127,6 +143,7 @@ suite('prompts', () => {
     const author = {name: any.string(), email: any.string(), url: any.url()};
     const get = sinon.stub();
     npmConf.default.returns({get});
+    prompts.prompt.resolves(answers);
 
     return prompt({npmAccount, author}, ciServices, {}, visibility, vcs).then(() => {
       assert.calledWith(
@@ -160,6 +177,7 @@ suite('prompts', () => {
     execa.default.withArgs('npm', ['whoami']).resolves({stdout: any.word()});
     npmConf.default.returns({get: () => undefined});
     commonPrompts.questions.withArgs({vcs, ciServices, visibility: 'Private'}).returns(commonQuestions);
+    prompts.prompt.resolves(answers);
 
     await prompt({}, ciServices, {}, 'Private', vcs);
 

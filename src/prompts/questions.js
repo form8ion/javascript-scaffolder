@@ -35,7 +35,7 @@ function authorQuestions({name, email, url}) {
 export async function prompt({npmAccount, author}, ciServices, hosts, visibility, vcs, decisions) {
   const npmConf = npmConfFactory();
 
-  return promptWithInquirer([
+  const answers = await promptWithInquirer([
     {
       name: questionNames.NODE_VERSION_CATEGORY,
       message: 'What node.js version should be used?',
@@ -84,4 +84,6 @@ export async function prompt({npmAccount, author}, ciServices, hosts, visibility
       choices: [...Object.keys(hosts), new Separator(), 'Other']
     }
   ], decisions);
+
+  return {...answers, ...false !== answers[questionNames.TRANSPILE_LINT] && {[questionNames.TRANSPILE_LINT]: true}};
 }
