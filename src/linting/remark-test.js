@@ -76,12 +76,18 @@ exports.plugins = [
     );
   });
 
-  test('that the project is built before generating the markdown when the project will be transpiled', async () => {
+  test('that the project is built before linting/generating the md when the package will be transpiled', async () => {
     const config = any.string();
     const projectRoot = any.string();
 
     assert.deepEqual(
-      (await scaffoldRemark({config, projectRoot, vcs: any.simpleObject(), transpileLint: true})).scripts,
+      (await scaffoldRemark({
+        config,
+        projectRoot,
+        projectType: 'Package',
+        vcs: any.simpleObject(),
+        transpileLint: true
+      })).scripts,
       {
         'lint:md': 'remark . --frail',
         'generate:md': 'remark . --output',
@@ -90,6 +96,24 @@ exports.plugins = [
       }
     );
   });
+
+  test(
+    'that the project isnt built before linting/generating the md when the non-package will be transpiled',
+    async () => {
+      const config = any.string();
+      const projectRoot = any.string();
+
+      const {'prelint:md': prelint, 'pregenerate:md': pregenerate} = (await scaffoldRemark({
+        config,
+        projectRoot,
+        vcs: any.simpleObject(),
+        transpileLint: true
+      })).scripts;
+
+      assert.isUndefined(prelint);
+      assert.isUndefined(pregenerate);
+    }
+  );
 
   test('that the config configures validate-links when the project will not be versioned', async () => {
     const config = any.string();

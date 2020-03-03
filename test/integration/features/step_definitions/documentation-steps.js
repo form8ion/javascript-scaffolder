@@ -7,10 +7,10 @@ export async function assertThatDocumentationIsDefinedAppropriately(
   shouldBeTranspiledAndLinted
 ) {
   const pathToExampleFile = `${process.cwd()}/example.js`;
+  const packageDetails = JSON.parse(await fs.readFile(`${process.cwd()}/package.json`));
 
   if ('package' === projectType && shouldBeTranspiledAndLinted) {
     const exampleContents = (await fs.readFile(pathToExampleFile)).toString();
-    const packageDetails = JSON.parse(await fs.readFile(`${process.cwd()}/package.json`));
 
     assert.equal(exampleContents, `// remark-usage-ignore-next
 /* eslint-disable-next-line no-unused-vars */
@@ -19,8 +19,10 @@ import ${projectName} from './lib/index.cjs';
     assert.isTrue(existsSync(`${process.cwd()}/src/index.js`));
     assert.isDefined(packageDetails.scripts['generate:md']);
     assert.isDefined(packageDetails.scripts['pregenerate:md']);
+    assert.isDefined(packageDetails.scripts['prelint:md']);
   } else {
     assert.isFalse(existsSync(pathToExampleFile));
+    assert.isUndefined(packageDetails.scripts['prelint:md']);
   }
 }
 
