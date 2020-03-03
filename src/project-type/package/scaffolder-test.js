@@ -162,7 +162,7 @@ suite('package project-type', () => {
     defineBadges.default.withArgs(packageName, visibility).returns(badges);
 
     assert.deepEqual(
-      await scaffoldPackage({projectRoot, transpileLint: false, packageName, visibility, scope}),
+      await scaffoldPackage({projectRoot, transpileLint: false, packageName, projectName, visibility, scope}),
       {
         scripts: {},
         badges,
@@ -172,7 +172,8 @@ suite('package project-type', () => {
         nextSteps: commonNextSteps
       }
     );
+    assert.calledWith(fsPromises.writeFile, `${projectRoot}/example.js`, `import ${projectName} from '.';\n`);
+    assert.calledWith(touch.default, `${projectRoot}/index.js`);
     assert.neverCalledWith(fsPromises.copyFile, pathToRollupTemplate, `${projectRoot}/rollup.config.js`);
-    assert.neverCalledWith(fsPromises.copyFile, pathToExampleTemplate, `${projectRoot}/example.js`);
   });
 });

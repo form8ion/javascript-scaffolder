@@ -12,7 +12,11 @@ suite('package documentation', () => {
 
 \`\`\`sh
 $ npm install ${packageName}
-\`\`\``);
+\`\`\`
+
+### Example
+
+run \`npm run generate:md\` to inject the usage example`);
   });
 
   test('that an access note is provided for private packages', () => {
@@ -28,6 +32,10 @@ access to private packages under \`@${scope}\`
 
 \`\`\`sh
 $ npm install ${packageName}
-\`\`\``);
+\`\`\`
+
+### Example
+
+run \`npm run generate:md\` to inject the usage example`);
   });
 });

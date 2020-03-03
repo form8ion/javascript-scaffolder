@@ -109,6 +109,11 @@ export default async function ({
     };
   }
 
+  await Promise.all([
+    touch(`${projectRoot}/index.js`),
+    fsPromises.writeFile(`${projectRoot}/example.js`, `import ${projectName} from '.';\n`)
+  ]);
+
   return {
     ...commonResults,
     scripts: {},
