@@ -1,3 +1,4 @@
+import deepmerge from 'deepmerge';
 import {info} from '@travi/cli-messages';
 import chooseApplicationType from './prompt';
 import scaffoldChosenApplicationType from '../choice-scaffolder';
@@ -17,25 +18,23 @@ export default async function ({applicationTypes, projectRoot, projectName, tran
 
     const buildDirectory = results.buildDirectory || defaultBuildDirectory;
 
-    return {
-      scripts: {
-        clean: `rimraf ./${buildDirectory}`,
-        start: `node ./${buildDirectory}/index.js`,
-        prebuild: 'run-s clean',
-        ...results.scripts
-      },
-      dependencies: [...results.dependencies ? results.dependencies : []],
-      devDependencies: ['rimraf', ...results.devDependencies ? results.devDependencies : []],
-      vcsIgnore: {
-        files: [...results.vcsIgnore ? results.vcsIgnore.files : [], '.env'],
-        directories: [...results.vcsIgnore ? results.vcsIgnore.directories : [], `/${buildDirectory}/`]
-      },
-      buildDirectory,
-      packageProperties: {private: true},
-      ...results.documentation && {documentation: results.documentation},
-      eslintConfigs: results.eslintConfigs || [],
-      nextSteps: []
-    };
+    return deepmerge(
+      results,
+      {
+        scripts: {
+          clean: `rimraf ./${buildDirectory}`,
+          start: `node ./${buildDirectory}/index.js`,
+          prebuild: 'run-s clean'
+        },
+        dependencies: [],
+        devDependencies: ['rimraf'],
+        vcsIgnore: {files: ['.env'], directories: [`/${buildDirectory}/`]},
+        buildDirectory,
+        packageProperties: {private: true},
+        eslintConfigs: [],
+        nextSteps: []
+      }
+    );
   }
 
   return {

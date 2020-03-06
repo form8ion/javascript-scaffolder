@@ -33,7 +33,6 @@ suite('application project-type', () => {
     const buildDirectory = any.string();
     const decisions = any.simpleObject();
     const typeScaffoldingResults = {
-      ...any.simpleObject(),
       dependencies: scaffoldedTypeDependencies,
       devDependencies: scaffoldedTypeDevDependencies,
       scripts: scaffoldedTypeScripts,
@@ -59,7 +58,7 @@ suite('application project-type', () => {
           ...scaffoldedTypeScripts
         },
         dependencies: scaffoldedTypeDependencies,
-        devDependencies: ['rimraf', ...scaffoldedTypeDevDependencies],
+        devDependencies: [...scaffoldedTypeDevDependencies, 'rimraf'],
         vcsIgnore: {
           files: [...scaffoldedFilesToIgnore, '.env'],
           directories: [...scaffoldedDirectoriesToIgnore, `/${buildDirectory}/`]
