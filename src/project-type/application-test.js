@@ -28,6 +28,7 @@ suite('application project-type', () => {
     const scaffoldedDirectoriesToIgnore = any.listOf(any.string);
     const documentation = any.simpleObject();
     const projectName = any.word();
+    const packageName = any.word();
     const tests = any.simpleObject();
     const eslintConfigs = any.listOf(any.string);
     const buildDirectory = any.string();
@@ -45,11 +46,11 @@ suite('application project-type', () => {
       .withArgs({types: applicationTypes, projectType: 'application', decisions})
       .resolves(chosenApplicationType);
     choiceScaffolder.default
-      .withArgs(applicationTypes, chosenApplicationType, {projectRoot, projectName, tests})
+      .withArgs(applicationTypes, chosenApplicationType, {projectRoot, projectName, packageName, tests})
       .resolves(typeScaffoldingResults);
 
     assert.deepEqual(
-      await scaffoldApplication({projectRoot, projectName, applicationTypes, tests, decisions}),
+      await scaffoldApplication({projectRoot, projectName, packageName, applicationTypes, tests, decisions}),
       {
         scripts: {
           clean: `rimraf ./${buildDirectory}`,

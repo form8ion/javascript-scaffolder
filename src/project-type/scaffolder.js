@@ -38,7 +38,15 @@ export default async function ({
     case 'Application':
       return deepmerge(
         buildCommonDetails(visibility, vcs),
-        await scaffoldApplicationType({projectRoot, projectName, applicationTypes, transpileLint, tests, decisions})
+        await scaffoldApplicationType({
+          projectRoot,
+          projectName,
+          packageName,
+          applicationTypes,
+          transpileLint,
+          tests,
+          decisions
+        })
       );
     case 'CLI':
       return deepmerge(
