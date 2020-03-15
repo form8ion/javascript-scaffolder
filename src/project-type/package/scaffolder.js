@@ -20,7 +20,6 @@ export default async function ({
   scope,
   packageTypes,
   tests,
-  vcs,
   decisions
 }) {
   info('Scaffolding Package Details');
@@ -43,10 +42,7 @@ export default async function ({
     eslintConfigs: [],
     nextSteps: [
       {summary: 'Add the appropriate `save` flag to the installation instructions in the README'},
-      {summary: 'Publish pre-release versions to npm until package is stable enough to publish v1.0.0'},
-      ...('Public' === visibility && vcs && 'GitHub' === vcs.host)
-        ? [{summary: 'Add this repository to the Greenkeeper GitHub App list once v1.0.0 has been published'}]
-        : []
+      {summary: 'Publish pre-release versions to npm until package is stable enough to publish v1.0.0'}
     ]
   };
 

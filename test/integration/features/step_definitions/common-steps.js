@@ -153,7 +153,6 @@ Then('the expected results for a(n) {string} are returned to the project scaffol
     [
       'commit-convention',
       'commitizen',
-      ...this.vcs && 'Public' === this.visibility ? ['greenkeeper'] : [],
       ...['Package', 'CLI'].includes(this.projectType) ? ['semantic-release'] : []
     ]
   );
