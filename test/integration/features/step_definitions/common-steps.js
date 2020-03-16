@@ -93,7 +93,7 @@ Given(/^the project will have "([^"]*)" visibility$/, function (visibility) {
 
 When(/^the project is scaffolded$/, async function () {
   const shouldBeScopedAnswer = true;
-  this.projectName = any.word();
+  this.projectName = `${any.word()}-${any.word()}`;
 
   scaffoldResult = await scaffold({
     projectRoot: process.cwd(),

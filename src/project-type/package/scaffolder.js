@@ -1,6 +1,7 @@
 import {promises as fsPromises} from 'fs';
 import mustache from 'mustache';
 import {info} from '@travi/cli-messages';
+import camelcase from '../../../third-party-wrappers/camelcase';
 import touch from '../../../third-party-wrappers/touch';
 import mkdir from '../../../third-party-wrappers/make-dir';
 import determinePathToTemplateFile from '../../template-path';
@@ -58,7 +59,7 @@ export default async function ({
         `${projectRoot}/example.js`,
         mustache.render(
           await fsPromises.readFile(determinePathToTemplateFile('example.mustache'), 'utf8'),
-          {projectName}
+          {projectName: camelcase(projectName)}
         )
       ),
       touch(`${pathToCreatedSrcDirectory}/index.js`)

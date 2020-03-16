@@ -3,6 +3,7 @@ import mustache from 'mustache';
 import sinon from 'sinon';
 import {assert} from 'chai';
 import any from '@travi/any';
+import * as camelcase from '../../../third-party-wrappers/camelcase';
 import * as mkdir from '../../../third-party-wrappers/make-dir';
 import * as touch from '../../../third-party-wrappers/touch';
 import * as templatePath from '../../template-path';
@@ -43,10 +44,13 @@ suite('package project-type', () => {
   const exampleContent = any.string();
 
   setup(() => {
+    const camelizedProjectName = any.word();
+
     sandbox = sinon.createSandbox();
 
     sandbox.stub(mkdir, 'default');
     sandbox.stub(touch, 'default');
+    sandbox.stub(camelcase, 'default');
     sandbox.stub(fsPromises, 'copyFile');
     sandbox.stub(fsPromises, 'readFile');
     sandbox.stub(fsPromises, 'writeFile');
@@ -63,7 +67,8 @@ suite('package project-type', () => {
     templatePath.default.withArgs('rollup.config.js').returns(pathToRollupTemplate);
     templatePath.default.withArgs('example.mustache').returns(pathToExampleTemplate);
     fsPromises.readFile.withArgs(pathToExampleTemplate, 'utf8').resolves(exampleTemplateContent);
-    mustache.render.withArgs(exampleTemplateContent, {projectName}).returns(exampleContent);
+    camelcase.default.withArgs(projectName).returns(camelizedProjectName);
+    mustache.render.withArgs(exampleTemplateContent, {projectName: camelizedProjectName}).returns(exampleContent);
   });
 
   teardown(() => sandbox.restore());

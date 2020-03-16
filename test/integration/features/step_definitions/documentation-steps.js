@@ -1,5 +1,6 @@
 import {existsSync, promises as fs} from 'fs';
 import {assert} from 'chai';
+import camelcase from 'camelcase';
 
 export async function assertThatDocumentationIsDefinedAppropriately(
   projectType,
@@ -14,7 +15,7 @@ export async function assertThatDocumentationIsDefinedAppropriately(
 
     assert.equal(exampleContents, `// remark-usage-ignore-next
 /* eslint-disable-next-line no-unused-vars */
-import ${projectName} from './lib/index.cjs';
+import ${camelcase(projectName)} from './lib/index.cjs';
 `);
     assert.isTrue(existsSync(`${process.cwd()}/src/index.js`));
     assert.isDefined(packageDetails.scripts['generate:md']);
