@@ -5,12 +5,21 @@ function projectWillBeTested(contributors) {
     .find(scriptName => scriptName.startsWith('test:'));
 }
 
+function projectShouldBeBuildForVerification(contributorScripts) {
+  return 'npm run build' === contributorScripts['pregenerate:md'];
+}
+
 function defineScripts(contributors) {
   const contributorScripts = contributors.map(contributor => contributor.scripts);
+  const flattenedContributorScripts = contributorScripts.reduce((acc, scripts) => ({...acc, ...scripts}), {});
 
   return {
-    test: `npm-run-all --print-label --parallel lint:*${projectWillBeTested(contributors) ? ' --parallel test:*' : ''}`,
-    ...contributorScripts.reduce((acc, scripts) => ({...acc, ...scripts}), {})
+    test: `npm-run-all --print-label${
+      projectShouldBeBuildForVerification(flattenedContributorScripts) ? ' build' : ''
+    } --parallel lint:*${
+      projectWillBeTested(contributors) ? ' --parallel test:*' : ''
+    }`,
+    ...flattenedContributorScripts
   };
 }
 

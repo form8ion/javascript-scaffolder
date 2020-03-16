@@ -31,10 +31,7 @@ exports.plugins = [
   return {
     devDependencies: [config, 'remark-cli', 'remark-toc', ...'Package' === projectType ? ['remark-usage'] : []],
     scripts: {
-      ...'Package' === projectType && transpileLint && {
-        'prelint:md': 'npm run build',
-        'pregenerate:md': 'npm run build'
-      },
+      ...'Package' === projectType && transpileLint && {'pregenerate:md': 'npm run build'},
       'lint:md': 'remark . --frail',
       'generate:md': 'remark . --output'
     }

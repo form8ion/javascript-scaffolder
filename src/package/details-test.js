@@ -188,6 +188,20 @@ suite('package details builder', () => {
         assert.equal(packageDetails.scripts.test, 'npm-run-all --print-label --parallel lint:*');
       });
 
+      test('that `test` script includes building a generate script for markdown is included', () => {
+        const packageDetails = buildPackageDetails({
+          vcs: {},
+          author: {},
+          configs: {},
+          contributors: [
+            ...any.listOf(() => ({...any.simpleObject(), scripts: any.simpleObject()})),
+            {...any.simpleObject(), scripts: {...any.simpleObject(), 'pregenerate:md': 'npm run build'}}
+          ]
+        });
+
+        assert.equal(packageDetails.scripts.test, 'npm-run-all --print-label build --parallel lint:*');
+      });
+
       test('that the `test` script includes running tests when the project will be tested', () => {
         const packageDetails = buildPackageDetails({
           vcs: {},

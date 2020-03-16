@@ -64,8 +64,12 @@ export async function assertThatPackageDetailsAreConfiguredCorrectlyFor({
 }) {
   const packageDetails = JSON.parse(await promises.readFile(`${process.cwd()}/package.json`));
 
-  if (tested) {
+  if (tested && 'package' === projectType && transpileAndLint) {
+    assert.equal(packageDetails.scripts.test, 'npm-run-all --print-label build --parallel lint:* --parallel test:*');
+  } else if (tested) {
     assert.equal(packageDetails.scripts.test, 'npm-run-all --print-label --parallel lint:* --parallel test:*');
+  // } else if ('package' === projectType && transpileAndLint) {
+  //   assert.equal(packageDetails.scripts.test, 'npm-run-all --print-label build --parallel lint:*');
   } else {
     assert.equal(packageDetails.scripts.test, 'npm-run-all --print-label --parallel lint:*');
   }
