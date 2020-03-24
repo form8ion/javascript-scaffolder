@@ -1,5 +1,5 @@
 import {info} from '@travi/cli-messages';
-import install from './install';
+import install, {DEV_DEPENDENCY_TYPE, PROD_DEPENDENCY_TYPE} from './install';
 
 export default async function ({contributors}) {
   info('Installing dependencies');
@@ -9,7 +9,7 @@ export default async function ({contributors}) {
       .map(contributor => contributor.dependencies)
       .filter(Boolean)
       .reduce((acc, dependencies) => ([...acc, ...dependencies]), []),
-    'prod'
+    PROD_DEPENDENCY_TYPE
   );
 
   await install(
@@ -20,6 +20,6 @@ export default async function ({contributors}) {
         .filter(Boolean)
         .reduce((acc, devDependencies) => ([...acc, ...devDependencies]), [])
     ],
-    'dev'
+    DEV_DEPENDENCY_TYPE
   );
 }
