@@ -18,20 +18,23 @@ function assertThatPackageSpecificDetailsAreDefinedCorrectly(
   if (transpileAndLint) {
     assert.equal(packageDetails.main, 'lib/index.cjs.js');
     assert.equal(packageDetails.module, 'lib/index.es.js');
-    assert.deepEqual(packageDetails.files, ['lib/']);
+    assert.deepEqual(packageDetails.files, ['example.js', 'lib/']);
     assert.isFalse(packageDetails.sideEffects);
   } else {
-    assert.deepEqual(packageDetails.files, ['index.js']);
+    assert.deepEqual(packageDetails.files, ['example.js', 'index.js']);
 
     assert.isUndefined(packageDetails.main);
     assert.isUndefined(packageDetails.module);
     assert.isUndefined(packageDetails.sideEffects);
   }
 
-  assert.deepEqual(
-    packageDetails.publishConfig,
-    {access: 'Private' === visibility ? 'restricted' : 'public'}
-  );
+  if ('Public' === visibility) {
+    assert.equal(packageDetails.runkitExampleFilename, './example.js');
+    assert.deepEqual(packageDetails.publishConfig, {access: 'public'});
+  } else {
+    assert.isUndefined(packageDetails.runkitExampleFilename);
+    assert.deepEqual(packageDetails.publishConfig, {access: 'restricted'});
+  }
 }
 
 function assertThatApplicationSpecificDetailsAreDefinedCorrectly(packageDetails, projectName) {

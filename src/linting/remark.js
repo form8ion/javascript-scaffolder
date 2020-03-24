@@ -1,4 +1,5 @@
 import {promises as fsPromises} from 'fs';
+import deepmerge from 'deepmerge';
 
 export default async function ({config, projectRoot, projectType, vcs, transpileLint}) {
   await fsPromises.writeFile(
@@ -28,12 +29,19 @@ exports.plugins = [
 ];`
   );
 
-  return {
-    devDependencies: [config, 'remark-cli', 'remark-toc', ...'Package' === projectType ? ['remark-usage'] : []],
-    scripts: {
-      ...'Package' === projectType && transpileLint && {'pregenerate:md': 'npm run build'},
-      'lint:md': 'remark . --frail',
-      'generate:md': 'remark . --output'
+  return deepmerge(
+    {
+      devDependencies: [config, 'remark-cli', 'remark-toc'],
+      scripts: {
+        'lint:md': 'remark . --frail',
+        'generate:md': 'remark . --output'
+      }
+    },
+    {
+      ...'Package' === projectType && {
+        devDependencies: ['remark-usage'],
+        ...transpileLint && {scripts: {'pregenerate:md': 'npm run build'}}
+      }
     }
-  };
+  );
 }

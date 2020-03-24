@@ -110,7 +110,7 @@ suite('package project-type', () => {
           sideEffects: false,
           main: 'lib/index.cjs.js',
           module: 'lib/index.es.js',
-          files: ['lib/'],
+          files: ['example.js', 'lib/'],
           publishConfig: {access: 'restricted'}
         },
         documentation,
@@ -154,8 +154,9 @@ suite('package project-type', () => {
         sideEffects: false,
         main: 'lib/index.cjs.js',
         module: 'lib/index.es.js',
-        files: ['lib/'],
-        publishConfig: {access: 'public'}
+        files: ['example.js', 'lib/'],
+        publishConfig: {access: 'public'},
+        runkitExampleFilename: './example.js'
       }
     );
     assert.calledWith(fsPromises.copyFile, pathToRollupTemplate, `${projectRoot}/rollup.config.js`);
@@ -171,7 +172,11 @@ suite('package project-type', () => {
       {
         scripts: {},
         badges,
-        packageProperties: {...commonPackageProperties, files: ['index.js'], publishConfig: {access: 'restricted'}},
+        packageProperties: {
+          ...commonPackageProperties,
+          files: ['example.js', 'index.js'],
+          publishConfig: {access: 'restricted'}
+        },
         documentation,
         eslintConfigs: [],
         nextSteps: commonNextSteps
