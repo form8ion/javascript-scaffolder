@@ -33,7 +33,6 @@ suite('package project-type', () => {
   const scaffoldedTypeScripts = any.simpleObject();
   const scaffoldedFilesToIgnore = any.listOf(any.string);
   const scaffoldedDirectoriesToIgnore = any.listOf(any.string);
-  const scaffoldedDocumentation = any.listOf(any.string);
   const eslintConfigs = any.listOf(any.string);
   const chosenType = any.word();
   const tests = any.simpleObject();
@@ -75,24 +74,21 @@ suite('package project-type', () => {
 
   test('that details specific to a package project-type are scaffolded', async () => {
     const typeScaffoldingResults = {
-      ...any.simpleObject(),
       dependencies: scaffoldedTypeDependencies,
       devDependencies: scaffoldedTypeDevDependencies,
       scripts: scaffoldedTypeScripts,
       vcsIgnore: {files: scaffoldedFilesToIgnore, directories: scaffoldedDirectoriesToIgnore},
-      documentation: scaffoldedDocumentation,
       eslintConfigs
     };
     templatePath.default.withArgs('rollup.config.js').returns(pathToRollupTemplate);
     defineBadges.default.withArgs(packageName, visibility).returns(badges);
-    documentationScaffolder.default.withArgs({scope, packageName, visibility}).returns(documentation);
     choiceScaffolder.default.withArgs(packageTypes, chosenType, {projectRoot, tests}).returns(typeScaffoldingResults);
 
     assert.deepEqual(
       await scaffoldPackage({projectRoot, projectName, packageName, visibility, scope, packageTypes, tests, decisions}),
       {
         dependencies: scaffoldedTypeDependencies,
-        devDependencies: ['rimraf', 'rollup', 'rollup-plugin-auto-external', ...scaffoldedTypeDevDependencies],
+        devDependencies: [...scaffoldedTypeDevDependencies, 'rimraf', 'rollup', 'rollup-plugin-auto-external'],
         scripts: {
           clean: 'rimraf ./lib',
           prebuild: 'run-s clean',
@@ -102,7 +98,7 @@ suite('package project-type', () => {
           prepack: 'run-s build',
           ...scaffoldedTypeScripts
         },
-        vcsIgnore: {directories: ['/lib/', ...scaffoldedDirectoriesToIgnore], files: scaffoldedFilesToIgnore},
+        vcsIgnore: {directories: [...scaffoldedDirectoriesToIgnore, '/lib/'], files: scaffoldedFilesToIgnore},
         buildDirectory: 'lib',
         badges,
         packageProperties: {

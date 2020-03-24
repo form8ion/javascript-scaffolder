@@ -30,41 +30,33 @@ async function buildDetails(packageTypes, decisions, projectRoot, tests, project
     touch(`${pathToCreatedSrcDirectory}/index.js`)
   ]);
 
-  return {
-    dependencies: results.dependencies,
-    devDependencies: [
-      'rimraf',
-      'rollup',
-      'rollup-plugin-auto-external',
-      ...results.devDependencies ? results.devDependencies : []
-    ],
-    scripts: {
-      clean: `rimraf ./${defaultBuildDirectory}`,
-      prebuild: 'run-s clean',
-      build: 'npm-run-all --print-label --parallel build:*',
-      'build:js': 'rollup --config',
-      watch: 'run-s \'build:js -- --watch\'',
-      prepack: 'run-s build',
-      ...results.scripts
-    },
-    eslintConfigs: [...results.eslintConfigs ? results.eslintConfigs : []],
-    vcsIgnore: {
-      files: [...results.vcsIgnore ? results.vcsIgnore.files : []],
-      directories: [`/${defaultBuildDirectory}/`, ...results.vcsIgnore ? results.vcsIgnore.directories : []]
-    },
-    buildDirectory: defaultBuildDirectory,
-    badges: {
-      consumer: {
-        ...'Public' === visibility && {
-          runkit: {
-            img: `https://badge.runkitcdn.com/${packageName}.svg`,
-            text: `Try ${packageName} on RunKit`,
-            link: `https://npm.runkit.com/${packageName}`
+  return deepmerge(
+    results,
+    {
+      devDependencies: ['rimraf', 'rollup', 'rollup-plugin-auto-external'],
+      scripts: {
+        clean: `rimraf ./${defaultBuildDirectory}`,
+        prebuild: 'run-s clean',
+        build: 'npm-run-all --print-label --parallel build:*',
+        'build:js': 'rollup --config',
+        watch: 'run-s \'build:js -- --watch\'',
+        prepack: 'run-s build'
+      },
+      vcsIgnore: {directories: [`/${defaultBuildDirectory}/`]},
+      buildDirectory: defaultBuildDirectory,
+      badges: {
+        consumer: {
+          ...'Public' === visibility && {
+            runkit: {
+              img: `https://badge.runkitcdn.com/${packageName}.svg`,
+              text: `Try ${packageName} on RunKit`,
+              link: `https://npm.runkit.com/${packageName}`
+            }
           }
         }
       }
     }
-  };
+  );
 }
 
 async function buildDetailsForNonTranspiledProject(projectRoot, projectName) {
