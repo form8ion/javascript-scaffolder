@@ -15,7 +15,7 @@ const defaultBuildDirectory = 'lib';
 
 async function buildDetails(packageTypes, decisions, projectRoot, tests, projectName, visibility, packageName) {
   const chosenType = await choosePackageType({types: packageTypes, projectType: 'package', decisions});
-  const results = await scaffoldChosenPackageType(packageTypes, chosenType, {projectRoot, tests});
+  const results = await scaffoldChosenPackageType(packageTypes, chosenType, {projectRoot, projectName, tests});
 
   const pathToCreatedSrcDirectory = await mkdir(`${projectRoot}/src`);
   await Promise.all([

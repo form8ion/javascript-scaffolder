@@ -82,7 +82,9 @@ suite('package project-type', () => {
     };
     templatePath.default.withArgs('rollup.config.js').returns(pathToRollupTemplate);
     defineBadges.default.withArgs(packageName, visibility).returns(badges);
-    choiceScaffolder.default.withArgs(packageTypes, chosenType, {projectRoot, tests}).returns(typeScaffoldingResults);
+    choiceScaffolder.default
+      .withArgs(packageTypes, chosenType, {projectRoot, projectName, tests})
+      .returns(typeScaffoldingResults);
 
     assert.deepEqual(
       await scaffoldPackage({projectRoot, projectName, packageName, visibility, scope, packageTypes, tests, decisions}),
