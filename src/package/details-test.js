@@ -38,6 +38,23 @@ suite('package details builder', () => {
     });
   });
 
+  suite('keywords', () => {
+    test('that the provided keywords are included', () => {
+      const keywords = any.listOf(any.word);
+
+      const packageDetails = buildPackageDetails({
+        keywords,
+        tests: {},
+        vcs: {},
+        author: {},
+        configs: {},
+        contributors: []
+      });
+
+      assert.equal(packageDetails.keywords, keywords);
+    });
+  });
+
   suite('author', () => {
     const name = any.string();
     const email = any.string();

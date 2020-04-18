@@ -12,7 +12,8 @@ export default async function ({
   vcs,
   author,
   description,
-  packageProperties
+  packageProperties,
+  keywords
 }) {
   info('Configuring package.json');
 
@@ -24,7 +25,8 @@ export default async function ({
     author,
     description,
     contributors,
-    packageProperties
+    packageProperties,
+    keywords
   });
 
   await fsPromises.writeFile(`${projectRoot}/package.json`, JSON.stringify(packageData));

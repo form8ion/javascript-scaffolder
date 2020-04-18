@@ -41,13 +41,15 @@ export default function ({
   author,
   description,
   contributors,
-  packageProperties
+  packageProperties,
+  keywords
 }) {
   return {
     name: packageName,
     description,
     license,
     ...packageProperties,
+    keywords,
     ...defineVcsHostDetails(vcs, projectType, packageName),
     author: `${author.name}${author.email ? ` <${author.email}>` : ''}${author.url ? ` (${author.url})` : ''}`,
     scripts: defineScripts(contributors)

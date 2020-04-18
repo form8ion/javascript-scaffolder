@@ -69,12 +69,14 @@ suite('javascript project scaffolder', () => {
   const transpileLint = any.boolean();
   const projectTypeBuildDirectory = any.string();
   const packageProperties = any.simpleObject();
+  const projectTypeTags = any.listOf(any.word);
   const projectTypeResults = {
     ...any.simpleObject(),
     buildDirectory: projectTypeBuildDirectory,
     packageProperties,
     eslintConfigs: projectTypeEslintConfigs,
-    nextSteps: projectTypeNextSteps
+    nextSteps: projectTypeNextSteps,
+    tags: projectTypeTags
   };
   const contributors = [
     hostResults,
@@ -95,7 +97,8 @@ suite('javascript project scaffolder', () => {
     vcs: vcsDetails,
     author: {name: authorName, email: authorEmail, url: authorUrl},
     description,
-    packageProperties
+    packageProperties,
+    keywords: projectTypeTags
   };
   const commonPromptAnswers = {
     [questionNames.NODE_VERSION_CATEGORY]: any.word(),
@@ -293,9 +296,10 @@ suite('javascript project scaffolder', () => {
         optionsValidator.validate
           .returns({projectRoot, projectName, visibility, vcs: {}, configs: {}, ciServices, scope});
 
-        const {documentation: documentationContent} = await scaffold(options);
+        const {documentation: documentationContent, tags} = await scaffold(options);
 
         assert.equal(documentationContent, docs);
+        assert.equal(tags, projectTypeTags);
       });
     });
 

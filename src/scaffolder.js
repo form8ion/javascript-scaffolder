@@ -108,12 +108,14 @@ export async function scaffold(options) {
     vcs,
     author: {name: authorName, email: authorEmail, url: authorUrl},
     description,
-    packageProperties: projectTypeResults.packageProperties
+    packageProperties: projectTypeResults.packageProperties,
+    keywords: projectTypeResults.tags
   });
 
   return {
     badges: buildBadgesDetails(contributors),
     documentation: scaffoldDocumentation({projectTypeResults}),
+    tags: projectTypeResults.tags,
     vcsIgnore: buildVcsIgnoreLists(contributors),
     verificationCommand: 'npm run generate:md && npm test',
     projectDetails: {...projectHomepage && {homepage: projectHomepage}},

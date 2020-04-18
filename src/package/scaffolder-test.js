@@ -31,6 +31,7 @@ suite('package scaffolder', () => {
     const description = any.sentence();
     const contributors = any.simpleObject();
     const packageProperties = any.simpleObject();
+    const keywords = any.listOf(any.word);
     buildPackageDetails.default
       .withArgs({
         packageName,
@@ -40,7 +41,8 @@ suite('package scaffolder', () => {
         author,
         description,
         contributors,
-        packageProperties
+        packageProperties,
+        keywords
       })
       .resolves(packageDetails);
 
@@ -54,7 +56,8 @@ suite('package scaffolder', () => {
         vcs,
         author,
         description,
-        packageProperties
+        packageProperties,
+        keywords
       }),
       {homepage}
     );
