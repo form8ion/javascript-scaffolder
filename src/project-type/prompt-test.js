@@ -21,7 +21,7 @@ suite('project-type prompts', () => {
     const chosenType = any.word();
     const projectType = any.word();
     const decisions = any.simpleObject();
-    const answers = {...any.simpleObject(), type: chosenType};
+    const answers = {...any.simpleObject(), [questionNames.PROJECT_TYPE_CHOICE]: chosenType};
     const types = any.simpleObject();
     prompts.prompt
       .withArgs([{

@@ -12,5 +12,5 @@ export default async function ({types, projectType, decisions}) {
     choices: [...Object.keys(types), new Separator(), 'Other']
   }], decisions);
 
-  return answers.type;
+  return answers[questionNames.PROJECT_TYPE_CHOICE];
 }
