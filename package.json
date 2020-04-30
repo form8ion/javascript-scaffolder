@@ -56,7 +56,7 @@
     "@travi/eslint-config": "1.0.34",
     "@travi/eslint-config-cucumber": "1.0.5",
     "@travi/eslint-config-mocha": "1.0.8",
-    "@travi/project-scaffolder": "8.10.1",
+    "@travi/project-scaffolder": "8.10.3",
     "@travi/travis-scaffolder-javascript": "3.2.0",
     "ban-sensitive-files": "1.9.7",
     "chai": "4.2.0",
