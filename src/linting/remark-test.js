@@ -40,7 +40,7 @@ exports.settings = {
 
 exports.plugins = [
   '${config}',
-  [require('remark-toc'), {tight: true}]
+  ['remark-toc', {tight: true}]
 ];`
     );
   });
@@ -70,7 +70,7 @@ exports.settings = {
 
 exports.plugins = [
   '${config}',
-  [require('remark-toc'), {tight: true}],
+  ['remark-toc', {tight: true}],
   ['remark-usage', {heading: 'example'}]
 ];`
     );
@@ -133,7 +133,7 @@ exports.settings = {
 
 exports.plugins = [
   '${config}',
-  [require('remark-toc'), {tight: true}],
+  ['remark-toc', {tight: true}],
   ['validate-links', {repository: false}]
 ];`
     );

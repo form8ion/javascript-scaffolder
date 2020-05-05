@@ -15,7 +15,7 @@ exports.settings = {
 
 exports.plugins = [
   '${config}',
-  [require('remark-toc'), {tight: true}]${
+  ['remark-toc', {tight: true}]${
   'Package' === projectType
     ? `,
   ['remark-usage', {heading: 'example'}]`
