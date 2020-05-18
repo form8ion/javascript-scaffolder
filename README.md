@@ -42,7 +42,11 @@ opinionated scaffolder for JavaScript projects
 * Scaffolds the `package.json`
   * Enables linting of:
     * JavaScript with [ESLint](https://eslint.org/)
-    * The `.travis.yml` using [`travis.rb`](https://github.com/travis-ci/travis.rb#lint),
+    * Markdown with [remark-lint](https://github.com/remarkjs/remark-lint/tree/master/packages/remark-lint)
+    * Peer-dependency compatibiltiy (by running `npm ls` and ensuring a `0`
+      exit code)
+    * Sensitive files to prevent commiting secrets using [ban-sensitive-files](https://github.com/bahmutov/ban-sensitive-files)
+    * The `.travis.yml` using [travis-lint](https://github.com/pwmckenna/node-travis-lint),
       when [Travis](https://travis-ci.com) is the chosen CI
 * Enables transpilation with [Babel](https://babeljs.io)
 * Defines and enforces the [commit message convention](https://conventionalcommits.org/)
