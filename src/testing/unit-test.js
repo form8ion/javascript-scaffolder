@@ -1,7 +1,7 @@
+import * as mocha from '@form8ion/mocha-scaffolder';
 import sinon from 'sinon';
 import {assert} from 'chai';
 import any from '@travi/any';
-import * as mocha from './mocha';
 import * as nyc from '../config/nyc';
 import scaffoldUnitTesting from './unit';
 
@@ -20,10 +20,10 @@ suite('unit testing scaffolder', () => {
   setup(() => {
     sandbox = sinon.createSandbox();
 
-    sandbox.stub(mocha, 'default');
+    sandbox.stub(mocha, 'scaffold');
     sandbox.stub(nyc, 'default');
 
-    mocha.default
+    mocha.scaffold
       .withArgs({projectRoot})
       .resolves({
         devDependencies: mochaDevDependencies,

@@ -62,9 +62,25 @@ Before(async function () {
   stubbedFs({
     templates: {
       'rollup.config.js': await readFile(resolve(__dirname, '../../../../', 'templates/rollup.config.js')),
-      'canary-test.txt': await readFile(resolve(__dirname, '../../../../', 'templates/canary-test.txt')),
-      'example.mustache': await readFile(resolve(__dirname, '../../../../', 'templates/example.mustache')),
-      'mocha-setup.txt': await readFile(resolve(__dirname, '../../../../', 'templates/mocha-setup.txt'))
+      'example.mustache': await readFile(resolve(__dirname, '../../../../', 'templates/example.mustache'))
+    },
+    node_modules: {
+      '@form8ion': {
+        'mocha-scaffolder': {
+          templates: {
+            'canary-test.txt': await readFile(resolve(
+              __dirname,
+              '../../../../',
+              'node_modules/@form8ion/mocha-scaffolder/templates/canary-test.txt'
+            )),
+            'mocha-setup.txt': await readFile(resolve(
+              __dirname,
+              '../../../../',
+              'node_modules/@form8ion/mocha-scaffolder/templates/mocha-setup.txt'
+            ))
+          }
+        }
+      }
     }
   });
 
