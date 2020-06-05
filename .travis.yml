@@ -4,6 +4,4 @@ notifications:
 import:
   - source: form8ion/.travis-ci:node.yml
   - source: travi/.travis-ci:authenticated-semantic-release.yml
-before_install: curl ifconfig.co
-before_script: npm ls --production >/dev/null
 after_success: npm run coverage:report
