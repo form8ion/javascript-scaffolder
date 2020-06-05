@@ -5,7 +5,7 @@ function projectWillBeTested(contributors) {
     .find(scriptName => scriptName.startsWith('test:'));
 }
 
-function projectShouldBeBuildForVerification(contributorScripts) {
+function projectShouldBeBuiltForVerification(contributorScripts) {
   return 'npm run build' === contributorScripts['pregenerate:md'];
 }
 
@@ -15,7 +15,7 @@ function defineScripts(contributors) {
 
   return {
     test: `npm-run-all --print-label${
-      projectShouldBeBuildForVerification(flattenedContributorScripts) ? ' build' : ''
+      projectShouldBeBuiltForVerification(flattenedContributorScripts) ? ' build' : ''
     } --parallel lint:*${
       projectWillBeTested(contributors) ? ' --parallel test:*' : ''
     }`,
