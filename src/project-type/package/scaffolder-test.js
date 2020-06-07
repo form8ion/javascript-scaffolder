@@ -41,10 +41,9 @@ suite('package project-type', () => {
   const pathToExampleTemplate = any.string();
   const exampleTemplateContent = any.string();
   const exampleContent = any.string();
+  const camelizedProjectName = any.word();
 
   setup(() => {
-    const camelizedProjectName = any.word();
-
     sandbox = sinon.createSandbox();
 
     sandbox.stub(mkdir, 'default');
@@ -180,7 +179,7 @@ suite('package project-type', () => {
         nextSteps: commonNextSteps
       }
     );
-    assert.calledWith(fsPromises.writeFile, `${projectRoot}/example.js`, `import ${projectName} from '.';\n`);
+    assert.calledWith(fsPromises.writeFile, `${projectRoot}/example.js`, `import ${camelizedProjectName} from '.';\n`);
     assert.calledWith(touch.default, `${projectRoot}/index.js`);
     assert.neverCalledWith(fsPromises.copyFile, pathToRollupTemplate, `${projectRoot}/rollup.config.js`);
   });

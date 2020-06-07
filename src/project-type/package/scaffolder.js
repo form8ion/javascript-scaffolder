@@ -62,7 +62,7 @@ async function buildDetails(packageTypes, decisions, projectRoot, tests, project
 async function buildDetailsForNonTranspiledProject(projectRoot, projectName) {
   await Promise.all([
     touch(`${projectRoot}/index.js`),
-    fs.writeFile(`${projectRoot}/example.js`, `import ${projectName} from '.';\n`)
+    fs.writeFile(`${projectRoot}/example.js`, `import ${camelcase(projectName)} from '.';\n`)
   ]);
 
   return {};

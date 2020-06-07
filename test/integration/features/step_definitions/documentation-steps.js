@@ -23,7 +23,7 @@ import ${camelcase(projectName)} from './lib/index.cjs';
   } else if ('package' === projectType && !shouldBeTranspiledAndLinted) {
     const exampleContents = (await fs.readFile(pathToExampleFile)).toString();
 
-    assert.equal(exampleContents, `import ${projectName} from '.';\n`);
+    assert.equal(exampleContents, `import ${camelcase(projectName)} from '.';\n`);
     assert.isTrue(existsSync(`${process.cwd()}/index.js`));
     assert.isDefined(packageDetails.scripts['generate:md']);
     assert.isUndefined(packageDetails.scripts['pregenerate:md']);
