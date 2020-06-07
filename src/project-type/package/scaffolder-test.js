@@ -179,7 +179,11 @@ suite('package project-type', () => {
         nextSteps: commonNextSteps
       }
     );
-    assert.calledWith(fsPromises.writeFile, `${projectRoot}/example.js`, `import ${camelizedProjectName} from '.';\n`);
+    assert.calledWith(
+      fsPromises.writeFile,
+      `${projectRoot}/example.js`,
+      `const ${camelizedProjectName} = require('.');\n`
+    );
     assert.calledWith(touch.default, `${projectRoot}/index.js`);
     assert.neverCalledWith(fsPromises.copyFile, pathToRollupTemplate, `${projectRoot}/rollup.config.js`);
   });
