@@ -1,7 +1,7 @@
+import * as jsCore from '@form8ion/javascript-core';
 import sinon from 'sinon';
 import {assert} from 'chai';
 import any from '@travi/any';
-import * as unitTestingScaffolder from './unit';
 import scaffoldTesting from './scaffolder';
 
 suite('testing scaffolder', () => {
@@ -19,9 +19,9 @@ suite('testing scaffolder', () => {
   setup(() => {
     sandbox = sinon.createSandbox();
 
-    sandbox.stub(unitTestingScaffolder, 'default');
+    sandbox.stub(jsCore, 'scaffoldUnitTesting');
 
-    unitTestingScaffolder.default
+    jsCore.scaffoldUnitTesting
       .withArgs({projectRoot, visibility, vcs})
       .resolves({
         devDependencies: unitTestingDevDependencies,
