@@ -1,7 +1,7 @@
 import deepmerge from 'deepmerge';
+import {scaffoldChoice as scaffoldChosenApplicationType} from '@form8ion/javascript-core';
 import {info} from '@travi/cli-messages';
 import chooseApplicationType from './prompt';
-import scaffoldChosenApplicationType from '../choice-scaffolder';
 
 const defaultBuildDirectory = 'lib';
 

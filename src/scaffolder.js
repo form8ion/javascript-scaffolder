@@ -1,9 +1,9 @@
+import {scaffoldChoice} from '@form8ion/javascript-core';
 import {info} from '@travi/cli-messages';
 import {questionNames as commonQuestionNames} from '@travi/language-scaffolder-prompts';
 import {validate} from './options-validator';
 import {prompt} from './prompts/questions';
 import scaffoldTesting from './testing';
-import scaffoldChoice from './choice-scaffolder';
 import scaffoldBabel from './config/babel';
 import scaffoldLinting from './linting';
 import scaffoldNpmConfig from './config/npm';

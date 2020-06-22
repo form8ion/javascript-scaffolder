@@ -1,5 +1,6 @@
 import {promises as fsPromises} from 'fs';
 import mustache from 'mustache';
+import * as jsCore from '@form8ion/javascript-core';
 import sinon from 'sinon';
 import {assert} from 'chai';
 import any from '@travi/any';
@@ -7,7 +8,6 @@ import * as camelcase from '../../../third-party-wrappers/camelcase';
 import * as mkdir from '../../../third-party-wrappers/make-dir';
 import * as touch from '../../../third-party-wrappers/touch';
 import * as templatePath from '../../template-path';
-import * as choiceScaffolder from '../../choice-scaffolder';
 import * as packageChooser from '../prompt';
 import * as documentationScaffolder from './documentation';
 import * as defineBadges from './badges';
@@ -56,7 +56,7 @@ suite('package project-type', () => {
     sandbox.stub(defineBadges, 'default');
     sandbox.stub(documentationScaffolder, 'default');
     sandbox.stub(packageChooser, 'default');
-    sandbox.stub(choiceScaffolder, 'default');
+    sandbox.stub(jsCore, 'scaffoldChoice');
     sandbox.stub(mustache, 'render');
 
     documentationScaffolder.default.withArgs({scope, packageName, visibility}).returns(documentation);
@@ -81,7 +81,7 @@ suite('package project-type', () => {
     };
     templatePath.default.withArgs('rollup.config.js').returns(pathToRollupTemplate);
     defineBadges.default.withArgs(packageName, visibility).returns(badges);
-    choiceScaffolder.default
+    jsCore.scaffoldChoice
       .withArgs(packageTypes, chosenType, {projectRoot, projectName, tests})
       .returns(typeScaffoldingResults);
 
@@ -123,7 +123,7 @@ suite('package project-type', () => {
     const typeScaffoldingResults = any.simpleObject();
     const pathToCreatedSrcDirectory = any.string();
     defineBadges.default.withArgs(packageName, 'Public').returns(badges);
-    choiceScaffolder.default.withArgs(packageTypes, chosenType, {projectRoot, tests}).returns(typeScaffoldingResults);
+    jsCore.scaffoldChoice.withArgs(packageTypes, chosenType, {projectRoot, tests}).returns(typeScaffoldingResults);
     mkdir.default.withArgs(`${projectRoot}/src`).resolves(pathToCreatedSrcDirectory);
 
     const results = await scaffoldPackage({

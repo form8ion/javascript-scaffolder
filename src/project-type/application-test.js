@@ -1,8 +1,8 @@
+import * as jsCore from '@form8ion/javascript-core';
 import {assert} from 'chai';
 import any from '@travi/any';
 import sinon from 'sinon';
 import * as applicationChooser from './prompt';
-import * as choiceScaffolder from '../choice-scaffolder';
 import scaffoldApplication from './application';
 
 suite('application project-type', () => {
@@ -14,7 +14,7 @@ suite('application project-type', () => {
     sandbox = sinon.createSandbox();
 
     sandbox.stub(applicationChooser, 'default');
-    sandbox.stub(choiceScaffolder, 'default');
+    sandbox.stub(jsCore, 'scaffoldChoice');
   });
 
   teardown(() => sandbox.restore());
@@ -45,7 +45,7 @@ suite('application project-type', () => {
     applicationChooser.default
       .withArgs({types: applicationTypes, projectType: 'application', decisions})
       .resolves(chosenApplicationType);
-    choiceScaffolder.default
+    jsCore.scaffoldChoice
       .withArgs(applicationTypes, chosenApplicationType, {projectRoot, projectName, packageName, tests})
       .resolves(typeScaffoldingResults);
 
@@ -74,7 +74,7 @@ suite('application project-type', () => {
   });
 
   test('that missing details do not result in errors', async () => {
-    choiceScaffolder.default.resolves({});
+    jsCore.scaffoldChoice.resolves({});
 
     assert.deepEqual(
       await scaffoldApplication({projectRoot, applicationTypes}),

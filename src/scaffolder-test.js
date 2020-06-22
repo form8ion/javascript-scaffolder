@@ -1,3 +1,4 @@
+import * as jsCore from '@form8ion/javascript-core';
 import {questionNames as commonQuestionNames} from '@travi/language-scaffolder-prompts';
 import {assert} from 'chai';
 import any from '@travi/any';
@@ -6,7 +7,6 @@ import * as prompts from './prompts/questions';
 import * as installer from './package/install';
 import * as optionsValidator from './options-validator';
 import * as testing from './testing/scaffolder';
-import * as choiceScaffolder from './choice-scaffolder';
 import * as babel from './config/babel';
 import * as linting from './linting/scaffolder';
 import * as npmConfig from './config/npm';
@@ -125,7 +125,7 @@ suite('javascript project scaffolder', () => {
     sandbox.stub(prompts, 'prompt');
     sandbox.stub(optionsValidator, 'validate');
     sandbox.stub(testing, 'default');
-    sandbox.stub(choiceScaffolder, 'default');
+    sandbox.stub(jsCore, 'scaffoldChoice');
     sandbox.stub(babel, 'default');
     sandbox.stub(linting, 'default');
     sandbox.stub(npmConfig, 'default');
@@ -159,7 +159,7 @@ suite('javascript project scaffolder', () => {
     prompts.prompt
       .withArgs(overrides, ciServices, hosts, visibility, vcsDetails, decisions)
       .resolves(commonPromptAnswers);
-    choiceScaffolder.default
+    jsCore.scaffoldChoice
       .withArgs(
         ciServices,
         chosenCiService,
@@ -213,7 +213,7 @@ suite('javascript project scaffolder', () => {
 
   suite('config files', () => {
     test('that config files are created', async () => {
-      choiceScaffolder.default
+      jsCore.scaffoldChoice
         .withArgs(
           hosts,
           chosenHost,
@@ -230,7 +230,7 @@ suite('javascript project scaffolder', () => {
 
   suite('data passed downstream', () => {
     setup(
-      () => choiceScaffolder.default
+      () => jsCore.scaffoldChoice
         .withArgs(
           hosts,
           chosenHost,

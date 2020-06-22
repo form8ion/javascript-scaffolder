@@ -1,12 +1,12 @@
 import {promises as fs} from 'fs';
 import deepmerge from 'deepmerge';
 import mustache from 'mustache';
+import {scaffoldChoice as scaffoldChosenPackageType} from '@form8ion/javascript-core';
 import {info} from '@travi/cli-messages';
 import camelcase from '../../../third-party-wrappers/camelcase';
 import touch from '../../../third-party-wrappers/touch';
 import mkdir from '../../../third-party-wrappers/make-dir';
 import determinePathToTemplateFile from '../../template-path';
-import scaffoldChosenPackageType from '../../choice-scaffolder';
 import choosePackageType from '../prompt';
 import scaffoldPackageDocumentation from './documentation';
 import defineBadges from './badges';
