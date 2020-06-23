@@ -1,0 +1,8 @@
+# Snyk (https://snyk.io) policy file, patches or ignores known vulnerabilities.
+version: v1.16.0
+ignore: {}
+# patches apply the minimum changes required to fix a vulnerability
+patch:
+  SNYK-JS-LODASH-567746:
+    - '@form8ion/javascript-core > @form8ion/overridable-prompts > inquirer > lodash':
+        patched: '2020-06-23T20:57:18.180Z'
