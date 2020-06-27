@@ -138,7 +138,8 @@ When(/^the project is scaffolded$/, async function () {
         [questionNames.SHOULD_BE_SCOPED]: shouldBeScopedAnswer,
         ...shouldBeScopedAnswer && {[questionNames.SCOPE]: this.npmAccount}
       }
-    }
+    },
+    unitTestFrameworks: {}
   });
 });
 

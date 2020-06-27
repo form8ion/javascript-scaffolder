@@ -35,7 +35,8 @@ suite('options validator', () => {
       visibility: 'Public',
       license: any.string(),
       vcs: {host: any.word(), owner: any.word(), name: any.word()},
-      description: any.string()
+      description: any.string(),
+      unitTestFrameworks: {}
     }));
 
     test('that `Private` is an allowed `visibility`', () => validate({
@@ -44,7 +45,8 @@ suite('options validator', () => {
       visibility: 'Private',
       license: any.string(),
       vcs: {host: any.word(), owner: any.word(), name: any.word()},
-      description: any.string()
+      description: any.string(),
+      unitTestFrameworks: {}
     }));
 
     test('that `visibility` values other than `Public` or `Private` are invalid', () => assert.throws(
@@ -245,7 +247,8 @@ suite('options validator', () => {
         license: any.string(),
         vcs: {host: any.word(), owner: any.word(), name: any.word()},
         description: any.string(),
-        configs: {remark: any.string()}
+        configs: {remark: any.string()},
+        unitTestFrameworks: {}
       }));
 
       test('that the config is optional', () => validate({
@@ -255,7 +258,8 @@ suite('options validator', () => {
         license: any.string(),
         vcs: {host: any.word(), owner: any.word(), name: any.word()},
         description: any.string(),
-        configs: {}
+        configs: {},
+        unitTestFrameworks: {}
       }));
     });
   });
@@ -271,7 +275,8 @@ suite('options validator', () => {
         license: any.string(),
         vcs: {host: any.word(), owner: any.word(), name: any.word()},
         description: any.string(),
-        overrides: {npmAccount: any.word()}
+        overrides: {npmAccount: any.word()},
+        unitTestFrameworks: {}
       });
     });
 
@@ -284,7 +289,8 @@ suite('options validator', () => {
           license: any.string(),
           vcs: {host: any.word(), owner: any.word(), name: any.word()},
           description: any.string(),
-          overrides: {author: {name: any.string(), email, url: any.url()}}
+          overrides: {author: {name: any.string(), email, url: any.url()}},
+          unitTestFrameworks: {}
         });
       });
     });
@@ -365,7 +371,8 @@ suite('options validator', () => {
       license: any.string(),
       vcs: {host: any.word(), owner: any.word(), name: any.word()},
       description: any.string(),
-      ciServices: {[ciServiceName]: {scaffolder: options => options, public: any.boolean()}}
+      ciServices: {[ciServiceName]: {scaffolder: options => options, public: any.boolean()}},
+      unitTestFrameworks: {}
     }));
 
     test('that a provided ci-service scaffolder can be enabled for private projects', () => validate({
@@ -375,7 +382,8 @@ suite('options validator', () => {
       license: any.string(),
       vcs: {host: any.word(), owner: any.word(), name: any.word()},
       description: any.string(),
-      ciServices: {[ciServiceName]: {scaffolder: options => options, private: any.boolean()}}
+      ciServices: {[ciServiceName]: {scaffolder: options => options, private: any.boolean()}},
+      unitTestFrameworks: {}
     }));
   });
 
@@ -441,7 +449,8 @@ suite('options validator', () => {
       license: any.string(),
       vcs: {host: any.word(), owner: any.word(), name: any.word()},
       description: any.string(),
-      hosts: {[hostName]: {scaffolder: options => options, projectTypes: ['static']}}
+      hosts: {[hostName]: {scaffolder: options => options, projectTypes: ['static']}},
+      unitTestFrameworks: {}
     }));
 
     test('that `node` is a valid option for `projectTypes`', () => validate({
@@ -451,7 +460,8 @@ suite('options validator', () => {
       license: any.string(),
       vcs: {host: any.word(), owner: any.word(), name: any.word()},
       description: any.string(),
-      hosts: {[hostName]: {scaffolder: options => options, projectTypes: ['node']}}
+      hosts: {[hostName]: {scaffolder: options => options, projectTypes: ['node']}},
+      unitTestFrameworks: {}
     }));
 
     test('that `projectTypes` defaults to an empty list`', () => {
@@ -462,7 +472,8 @@ suite('options validator', () => {
         license: any.string(),
         vcs: {host: any.word(), owner: any.word(), name: any.word()},
         description: any.string(),
-        hosts: {[hostName]: {scaffolder: options => options}}
+        hosts: {[hostName]: {scaffolder: options => options}},
+        unitTestFrameworks: {}
       });
 
       assert.deepEqual(validated.hosts[hostName].projectTypes, []);
@@ -521,7 +532,8 @@ suite('options validator', () => {
       projectName: any.string(),
       visibility: any.fromList(['Public', 'Private']),
       license: any.string(),
-      applicationTypes: {[key]: {scaffolder: options => options}}
+      applicationTypes: {[key]: {scaffolder: options => options}},
+      unitTestFrameworks: {}
     }));
   });
 
@@ -577,7 +589,8 @@ suite('options validator', () => {
       projectName: any.string(),
       visibility: any.fromList(['Public', 'Private']),
       license: any.string(),
-      packageTypes: {[key]: {scaffolder: options => options}}
+      packageTypes: {[key]: {scaffolder: options => options}},
+      unitTestFrameworks: {}
     }));
   });
 
@@ -591,7 +604,8 @@ suite('options validator', () => {
         visibility: any.fromList(['Public', 'Private']),
         license: any.string(),
         vcs: {host: any.word(), owner: any.word(), name: any.word()},
-        description: any.string()
+        description: any.string(),
+        unitTestFrameworks: {}
       };
 
       const validated = validate(options);
@@ -609,7 +623,8 @@ suite('options validator', () => {
       projectName: any.string(),
       visibility: any.fromList(['Public', 'Private']),
       license: any.string(),
-      decisions: any.simpleObject()
+      decisions: any.simpleObject(),
+      unitTestFrameworks: {}
     };
 
     validate(options);
