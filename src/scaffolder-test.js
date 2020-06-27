@@ -31,6 +31,7 @@ suite('javascript project scaffolder', () => {
   const packageName = any.string();
   const homepage = any.url();
   const decisions = any.simpleObject();
+  const unitTestFrameworks = any.simpleObject();
   const visibility = any.fromList(['Private', 'Public']);
   const version = any.string();
   const commitConventionDevDependencies = any.listOf(any.string);
@@ -173,7 +174,9 @@ suite('javascript project scaffolder', () => {
         }
       )
       .resolves(ciServiceResults);
-    testing.default.withArgs({projectRoot, tests, visibility, vcs: vcsDetails}).resolves(testingResults);
+    testing.default
+      .withArgs({projectRoot, tests, visibility, vcs: vcsDetails, unitTestFrameworks, decisions})
+      .resolves(testingResults);
     linting.default
       .withArgs({
         configs,
@@ -205,7 +208,8 @@ suite('javascript project scaffolder', () => {
         description,
         applicationTypes,
         packageTypes,
-        decisions
+        decisions,
+        unitTestFrameworks
       });
   });
 

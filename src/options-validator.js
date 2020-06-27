@@ -1,5 +1,6 @@
 import * as joi from '@hapi/joi';
 import hoek from '@hapi/hoek';
+import {unitTestFrameworksSchema} from '@form8ion/javascript-core';
 
 export function validate(options) {
   const schema = joi.object().required()
@@ -64,7 +65,8 @@ export function validate(options) {
     })
     .keys({
       decisions: joi.object()
-    });
+    })
+    .keys({unitTestFrameworks: unitTestFrameworksSchema});
   const {error, value} = schema.validate(options);
 
   hoek.assert(!error, error);

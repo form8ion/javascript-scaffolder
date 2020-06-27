@@ -15,6 +15,8 @@ suite('testing scaffolder', () => {
   const unitTestFilesToIgnoreFromVcs = any.listOf(any.string);
   const unitTestDirectoriesToIgnoreFromVcs = any.listOf(any.string);
   const vcs = any.simpleObject();
+  const unitTestFrameworks = any.simpleObject();
+  const decisions = any.simpleObject();
 
   setup(() => {
     sandbox = sinon.createSandbox();
@@ -22,7 +24,7 @@ suite('testing scaffolder', () => {
     sandbox.stub(jsCore, 'scaffoldUnitTesting');
 
     jsCore.scaffoldUnitTesting
-      .withArgs({projectRoot, visibility, vcs})
+      .withArgs({projectRoot, visibility, vcs, frameworks: unitTestFrameworks, decisions})
       .resolves({
         devDependencies: unitTestingDevDependencies,
         scripts: unitTestScripts,
@@ -36,7 +38,7 @@ suite('testing scaffolder', () => {
 
   test('that unit testing is scaffolded if the project will be unit tested', async () => {
     assert.deepEqual(
-      await scaffoldTesting({projectRoot, visibility, tests: {unit: true}, vcs}),
+      await scaffoldTesting({projectRoot, visibility, tests: {unit: true}, vcs, unitTestFrameworks, decisions}),
       {
         devDependencies: ['@travi/any', ...unitTestingDevDependencies],
         scripts: unitTestScripts,
