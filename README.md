@@ -30,6 +30,7 @@ opinionated scaffolder for JavaScript projects
       * [`overrides` __object__ (_optional_)](#overrides-object-optional)
       * [`ciServices` __object__ (_optional_)](#ciservices-object-optional)
       * [`applicationTypes` __object__ (_optional_)](#applicationtypes-object-optional)
+      * [`unitTestFrameworks` __object__ (_required_)](#unittestframeworks-object-required)
 * [Contributing](#contributing)
   * [Dependencies](#dependencies-1)
   * [Verification](#verification)
@@ -208,6 +209,11 @@ short summary of the project
 * keys: __string__ Name of the type of application
 * values: __object__
   * `scaffolder` __function__ (_required_) scaffolds the application
+
+##### `unitTestFrameworks` __object__ (_required_)
+
+[frameworks](https://github.com/form8ion/awesome#unit-testing-frameworks) to be
+passed to the [unit-testing scaffolder](https://github.com/form8ion/javascript-core#frameworks-object-required)
 
 ## Contributing
 
