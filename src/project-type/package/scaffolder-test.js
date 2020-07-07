@@ -1,5 +1,6 @@
 import {promises as fsPromises} from 'fs';
 import mustache from 'mustache';
+import * as core from '@form8ion/core';
 import * as jsCore from '@form8ion/javascript-core';
 import sinon from 'sinon';
 import {assert} from 'chai';
@@ -42,6 +43,7 @@ suite('package project-type', () => {
   const exampleTemplateContent = any.string();
   const exampleContent = any.string();
   const camelizedProjectName = any.word();
+  const pathToExample = `${projectRoot}/example.js`;
 
   setup(() => {
     sandbox = sinon.createSandbox();
@@ -56,6 +58,7 @@ suite('package project-type', () => {
     sandbox.stub(defineBadges, 'default');
     sandbox.stub(documentationScaffolder, 'default');
     sandbox.stub(packageChooser, 'default');
+    sandbox.stub(core, 'fileExists');
     sandbox.stub(jsCore, 'scaffoldChoice');
     sandbox.stub(mustache, 'render');
 
@@ -81,6 +84,7 @@ suite('package project-type', () => {
     };
     templatePath.default.withArgs('rollup.config.js').returns(pathToRollupTemplate);
     defineBadges.default.withArgs(packageName, visibility).returns(badges);
+    core.fileExists.withArgs(pathToExample).resolves(false);
     jsCore.scaffoldChoice
       .withArgs(packageTypes, chosenType, {projectRoot, projectName, tests})
       .returns(typeScaffoldingResults);
@@ -116,13 +120,22 @@ suite('package project-type', () => {
       }
     );
     assert.calledWith(fsPromises.copyFile, pathToRollupTemplate, `${projectRoot}/rollup.config.js`);
-    assert.calledWith(fsPromises.writeFile, `${projectRoot}/example.js`, exampleContent);
+    assert.calledWith(fsPromises.writeFile, pathToExample, exampleContent);
+  });
+
+  test('that an existing example file is not overwritten', async () => {
+    core.fileExists.withArgs(pathToExample).resolves(true);
+
+    await scaffoldPackage({projectRoot, projectName, packageName, visibility, scope, packageTypes, tests, decisions});
+
+    assert.neverCalledWith(fsPromises.writeFile, pathToExample);
   });
 
   test('that the runkit badge is included for public projects', async () => {
     const typeScaffoldingResults = any.simpleObject();
     const pathToCreatedSrcDirectory = any.string();
     defineBadges.default.withArgs(packageName, 'Public').returns(badges);
+    core.fileExists.withArgs(pathToExample).resolves(false);
     jsCore.scaffoldChoice.withArgs(packageTypes, chosenType, {projectRoot, tests}).returns(typeScaffoldingResults);
     mkdir.default.withArgs(`${projectRoot}/src`).resolves(pathToCreatedSrcDirectory);
 
@@ -157,7 +170,7 @@ suite('package project-type', () => {
       }
     );
     assert.calledWith(fsPromises.copyFile, pathToRollupTemplate, `${projectRoot}/rollup.config.js`);
-    assert.calledWith(fsPromises.writeFile, `${projectRoot}/example.js`, exampleContent);
+    assert.calledWith(fsPromises.writeFile, pathToExample, exampleContent);
     assert.calledWith(touch.default, `${pathToCreatedSrcDirectory}/index.js`);
   });
 
@@ -181,7 +194,7 @@ suite('package project-type', () => {
     );
     assert.calledWith(
       fsPromises.writeFile,
-      `${projectRoot}/example.js`,
+      pathToExample,
       `const ${camelizedProjectName} = require('.');\n`
     );
     assert.calledWith(touch.default, `${projectRoot}/index.js`);
