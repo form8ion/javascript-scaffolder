@@ -60,6 +60,7 @@
     "@travi/eslint-config-cucumber": "1.0.5",
     "@travi/eslint-config-mocha": "1.0.8",
     "@travi/project-scaffolder": "8.10.3",
+    "@travi/travis-lint": "1.0.1",
     "@travi/travis-scaffolder-javascript": "3.2.2",
     "ban-sensitive-files": "1.9.7",
     "chai": "4.2.0",
@@ -83,8 +84,7 @@
     "rollup": "2.21.0",
     "rollup-plugin-auto-external": "2.0.0",
     "rollup-plugin-node-resolve": "5.2.0",
-    "sinon": "9.0.2",
-    "travis-lint": "1.0.0"
+    "sinon": "9.0.2"
   },
   "dependencies": {
     "@form8ion/core": "^1.0.0-alpha.1",
