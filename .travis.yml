@@ -1,12 +1,21 @@
 version: ~> 1.0
 notifications:
   email: false
+
 import:
   - source: form8ion/.travis-ci:node.yml
-  - source: travi/.travis-ci:authenticated-semantic-release.yml
+  - source: travi/.travis-ci:authenticated-semantic-release-stage.yml
+
+
 node_js:
-  - 12.0.0
-  - 12
-  - 14
-  - 15
-after_success: npm run coverage:report
+  - '12.0.0'
+  - '12'
+  - '14'
+jobs:
+  include:
+    - stage: test
+      after_success:
+        - npm run coverage:report
+stages:
+  - test
+  - deploy
