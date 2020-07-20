@@ -1,5 +1,5 @@
 /* eslint import/no-extraneous-dependencies: ['error', {'devDependencies': true}] */
-import nodeResolve from 'rollup-plugin-node-resolve';
+import nodeResolve from '@rollup/plugin-node-resolve';
 import autoExternal from 'rollup-plugin-auto-external';
 
 export default {

@@ -1,6 +1,6 @@
 import {Before, Given} from 'cucumber';
 import any from '@travi/any';
-import * as exec from '../../../../third-party-wrappers/exec-as-promised';
+import td from 'testdouble';
 
 function versionSegment() {
   return any.integer({max: 20});
@@ -13,15 +13,14 @@ function semverStringFactory() {
 }
 
 Before(function () {
-  this.sinonSandbox.stub(exec, 'default');
+  this.shell.exec = td.func();
 });
 
 Given(/^nvm is properly configured$/, function () {
   this.latestLtsMajorVersion = majorVersion;
   this.latestLtsVersion = semverStringFactory();
 
-  exec.default
-    .withArgs('. ~/.nvm/nvm.sh && nvm ls-remote --lts')
-    .resolves([...any.listOf(semverStringFactory), this.latestLtsVersion, ''].join('\n'));
-  exec.default.withArgs('. ~/.nvm/nvm.sh && nvm install').resolves();
+  td.when(this.shell.exec('. ~/.nvm/nvm.sh && nvm ls-remote --lts', {silent: true}))
+    .thenCallback(0, [...any.listOf(semverStringFactory), this.latestLtsVersion, ''].join('\n'));
+  td.when(this.shell.exec('. ~/.nvm/nvm.sh && nvm install', {silent: false})).thenCallback(0);
 });

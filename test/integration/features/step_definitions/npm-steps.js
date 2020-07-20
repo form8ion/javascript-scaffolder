@@ -3,7 +3,7 @@ import {promises} from 'fs';
 import {Given} from 'cucumber';
 import any from '@travi/any';
 import {assert} from 'chai';
-import * as execa from '../../../../third-party-wrappers/execa';
+import td from 'testdouble';
 
 function assertThatPackageSpecificDetailsAreDefinedCorrectly(
   packageDetails,
@@ -119,5 +119,5 @@ export async function assertThatNpmConfigDetailsAreConfiguredCorrectlyFor(projec
 Given(/^the npm cli is logged in$/, function () {
   this.npmAccount = any.word();
 
-  execa.default.withArgs('npm', ['whoami']).resolves({stdout: this.npmAccount});
+  td.when(this.execa('npm', ['whoami'])).thenResolve({stdout: this.npmAccount});
 });

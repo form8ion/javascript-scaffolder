@@ -5,25 +5,24 @@ import {questionNames as commonQuestionNames} from '@travi/language-scaffolder-p
 import {After, Before, Given, setWorldConstructor, Then, When} from 'cucumber';
 import stubbedFs from 'mock-fs';
 import any from '@travi/any';
-import sinon from 'sinon';
+import td from 'testdouble';
 import {assert} from 'chai';
 import {World} from '../support/world';
 import {
   assertThatNpmConfigDetailsAreConfiguredCorrectlyFor,
   assertThatPackageDetailsAreConfiguredCorrectlyFor
 } from './npm-steps';
-import * as execa from '../../../../third-party-wrappers/execa';
-import {scaffold, questionNames} from '../../../../src';
 import {
   assertThatDocumentationIsDefinedAppropriately,
   assertThatDocumentationResultsAreReturnedCorrectly
 } from './documentation-steps';
 
 const {readFile} = fsPromises;
+const packagePreviewDirectory = '../__package_previews__/javascript-scaffolder';
 
 setWorldConstructor(World);
 
-let scaffoldResult;
+let scaffoldResult, scaffold, questionNames;
 
 async function assertThatProperDirectoriesAreIgnoredFromEslint(projectType, transpileAndLint) {
   if (transpileAndLint) {
@@ -59,33 +58,44 @@ function assertThatProperFilesAreIgnoredFromVersionControl(projectType) {
 }
 
 Before(async function () {
+  this.shell = td.replace('shelljs');
+  this.execa = td.replace('execa');
+
+  // eslint-disable-next-line import/no-extraneous-dependencies,import/no-unresolved
+  const jsScaffolder = require('@travi/javascript-scaffolder');
+  scaffold = jsScaffolder.scaffold;
+  questionNames = jsScaffolder.questionNames;
+
   stubbedFs({
-    templates: {
-      'rollup.config.js': await readFile(resolve(__dirname, '../../../../', 'templates/rollup.config.js')),
-      'example.mustache': await readFile(resolve(__dirname, '../../../../', 'templates/example.mustache'))
-    },
-    node_modules: {
-      '@form8ion': {
-        'mocha-scaffolder': {
+    [packagePreviewDirectory]: {
+      '@travi': {
+        'javascript-scaffolder': {
           templates: {
-            'canary-test.txt': await readFile(resolve(
-              __dirname,
-              '../../../../',
-              'node_modules/@form8ion/mocha-scaffolder/templates/canary-test.txt'
-            )),
-            'mocha-setup.txt': await readFile(resolve(
-              __dirname,
-              '../../../../',
-              'node_modules/@form8ion/mocha-scaffolder/templates/mocha-setup.txt'
-            ))
+            'rollup.config.js': await readFile(resolve(__dirname, '../../../../', 'templates/rollup.config.js')),
+            'example.mustache': await readFile(resolve(__dirname, '../../../../', 'templates/example.mustache'))
+          }
+        }
+      },
+      node_modules: {
+        '@form8ion': {
+          'mocha-scaffolder': {
+            templates: {
+              'canary-test.txt': await readFile(resolve(
+                __dirname,
+                '../../../../',
+                'node_modules/@form8ion/mocha-scaffolder/templates/canary-test.txt'
+              )),
+              'mocha-setup.txt': await readFile(resolve(
+                __dirname,
+                '../../../../',
+                'node_modules/@form8ion/mocha-scaffolder/templates/mocha-setup.txt'
+              ))
+            }
           }
         }
       }
     }
   });
-
-  this.sinonSandbox = sinon.createSandbox();
-  this.sinonSandbox.stub(execa, 'default');
 
   this.transpileAndLint = true;
   this.tested = true;
@@ -94,7 +104,7 @@ Before(async function () {
 
 After(function () {
   stubbedFs.restore();
-  this.sinonSandbox.restore();
+  td.reset();
 });
 
 Given(/^the default answers are chosen$/, async function () {
