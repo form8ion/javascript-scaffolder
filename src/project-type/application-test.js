@@ -59,10 +59,10 @@ suite('application project-type', () => {
           ...scaffoldedTypeScripts
         },
         dependencies: scaffoldedTypeDependencies,
-        devDependencies: [...scaffoldedTypeDevDependencies, 'rimraf'],
+        devDependencies: ['rimraf', ...scaffoldedTypeDevDependencies],
         vcsIgnore: {
-          files: [...scaffoldedFilesToIgnore, '.env'],
-          directories: [...scaffoldedDirectoriesToIgnore, `/${buildDirectory}/`]
+          files: ['.env', ...scaffoldedFilesToIgnore],
+          directories: [`/${buildDirectory}/`, ...scaffoldedDirectoriesToIgnore]
         },
         buildDirectory,
         packageProperties: {private: true},

@@ -27,7 +27,6 @@ export default async function ({
     const buildDirectory = results.buildDirectory || defaultBuildDirectory;
 
     return deepmerge(
-      results,
       {
         scripts: {
           clean: `rimraf ./${buildDirectory}`,
@@ -41,7 +40,8 @@ export default async function ({
         packageProperties: {private: true},
         eslintConfigs: [],
         nextSteps: []
-      }
+      },
+      results
     );
   }
 
