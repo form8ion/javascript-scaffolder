@@ -1,5 +1,6 @@
 import {info} from '@travi/cli-messages';
-import install, {DEV_DEPENDENCY_TYPE, PROD_DEPENDENCY_TYPE} from './install';
+import {DEV_DEPENDENCY_TYPE, PROD_DEPENDENCY_TYPE} from '@form8ion/javascript-core';
+import install from './install';
 
 export default async function ({contributors}) {
   info('Installing dependencies');

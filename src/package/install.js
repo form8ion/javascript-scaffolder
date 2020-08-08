@@ -1,9 +1,7 @@
 import uniq from 'lodash.uniq';
 import {info, warn} from '@travi/cli-messages';
+import {DEV_DEPENDENCY_TYPE} from '@form8ion/javascript-core';
 import execa from '../../third-party-wrappers/execa';
-
-export const DEV_DEPENDENCY_TYPE = 'dev';
-export const PROD_DEPENDENCY_TYPE = 'prod';
 
 export default async function (dependencies, dependenciesType) {
   if (dependencies.length) {

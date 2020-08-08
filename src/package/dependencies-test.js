@@ -1,10 +1,9 @@
+import {DEV_DEPENDENCY_TYPE, PROD_DEPENDENCY_TYPE} from '@form8ion/javascript-core';
 import sinon from 'sinon';
 import {assert} from 'chai';
 import any from '@travi/any';
 import * as dependencyInstaller from './install';
 import installDependencies from './dependencies';
-import {PROD_DEPENDENCY_TYPE} from './install';
-import {DEV_DEPENDENCY_TYPE} from './install';
 
 suite('dependencies', () => {
   let sandbox;

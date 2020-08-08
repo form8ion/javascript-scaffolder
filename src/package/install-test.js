@@ -1,8 +1,9 @@
+import {DEV_DEPENDENCY_TYPE} from '@form8ion/javascript-core';
 import {assert} from 'chai';
 import sinon from 'sinon';
 import any from '@travi/any';
 import * as execa from '../../third-party-wrappers/execa';
-import npmInstall, {DEV_DEPENDENCY_TYPE, PROD_DEPENDENCY_TYPE} from './install';
+import npmInstall from './install';
 
 suite('npm install', () => {
   let sandbox;
@@ -14,11 +15,6 @@ suite('npm install', () => {
   });
 
   teardown(() => sandbox.restore());
-
-  test('that the types match the installation flags', () => {
-    assert.equal(DEV_DEPENDENCY_TYPE, 'dev');
-    assert.equal(PROD_DEPENDENCY_TYPE, 'prod');
-  });
 
   test('that `npm install` is not run when no dependencies need to be installed', async () => {
     await npmInstall([]);
