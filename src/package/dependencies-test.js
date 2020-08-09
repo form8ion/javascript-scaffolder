@@ -1,8 +1,7 @@
-import {DEV_DEPENDENCY_TYPE, PROD_DEPENDENCY_TYPE} from '@form8ion/javascript-core';
+import * as jsCore from '@form8ion/javascript-core';
 import sinon from 'sinon';
 import {assert} from 'chai';
 import any from '@travi/any';
-import * as dependencyInstaller from './install';
 import installDependencies from './dependencies';
 
 suite('dependencies', () => {
@@ -24,7 +23,7 @@ suite('dependencies', () => {
   setup(() => {
     sandbox = sinon.createSandbox();
 
-    sandbox.stub(dependencyInstaller, 'default');
+    sandbox.stub(jsCore, 'installDependencies');
   });
 
   teardown(() => sandbox.restore());
@@ -32,8 +31,8 @@ suite('dependencies', () => {
   test('that dependencies get installed', async () => {
     await installDependencies({contributors});
 
-    assert.calledWith(dependencyInstaller.default, dependenciesFromAllContributors, PROD_DEPENDENCY_TYPE);
-    assert.calledWith(dependencyInstaller.default, defaultDevDependencies, DEV_DEPENDENCY_TYPE);
+    assert.calledWith(jsCore.installDependencies, dependenciesFromAllContributors, jsCore.PROD_DEPENDENCY_TYPE);
+    assert.calledWith(jsCore.installDependencies, defaultDevDependencies, jsCore.DEV_DEPENDENCY_TYPE);
   });
 
   test('that a contirbutor without `devDependencies` does not throw an error', async () => {

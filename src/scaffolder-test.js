@@ -4,7 +4,6 @@ import {assert} from 'chai';
 import any from '@travi/any';
 import sinon from 'sinon';
 import * as prompts from './prompts/questions';
-import * as installer from './package/install';
 import * as optionsValidator from './options-validator';
 import * as testing from './testing/scaffolder';
 import * as babel from './config/babel';
@@ -122,7 +121,6 @@ suite('javascript project scaffolder', () => {
   setup(() => {
     sandbox = sinon.createSandbox();
 
-    sandbox.stub(installer, 'default');
     sandbox.stub(prompts, 'prompt');
     sandbox.stub(optionsValidator, 'validate');
     sandbox.stub(testing, 'default');

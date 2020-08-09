@@ -1,11 +1,10 @@
 import {info} from '@travi/cli-messages';
-import {DEV_DEPENDENCY_TYPE, PROD_DEPENDENCY_TYPE} from '@form8ion/javascript-core';
-import install from './install';
+import {DEV_DEPENDENCY_TYPE, PROD_DEPENDENCY_TYPE, installDependencies} from '@form8ion/javascript-core';
 
 export default async function ({contributors}) {
   info('Installing dependencies');
 
-  await install(
+  await installDependencies(
     contributors
       .map(contributor => contributor.dependencies)
       .filter(Boolean)
@@ -13,7 +12,7 @@ export default async function ({contributors}) {
     PROD_DEPENDENCY_TYPE
   );
 
-  await install(
+  await installDependencies(
     [
       'npm-run-all',
       ...contributors
