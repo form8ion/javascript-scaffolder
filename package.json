@@ -86,7 +86,7 @@
     "remark-usage": "8.0.0",
     "rollup": "2.23.1",
     "rollup-plugin-auto-external": "2.0.0",
-    "sinon": "9.0.2",
+    "sinon": "9.0.3",
     "testdouble": "3.16.1"
   },
   "dependencies": {
