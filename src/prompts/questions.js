@@ -1,6 +1,7 @@
 import {Separator} from 'inquirer';
 import {prompt as promptWithInquirer} from '@form8ion/overridable-prompts';
 import {questions as commonQuestions} from '@travi/language-scaffolder-prompts';
+import {warn} from '@travi/cli-messages';
 import execa from '../../third-party-wrappers/execa';
 import {
   packageTypeIsApplication,
@@ -35,6 +36,13 @@ function authorQuestions({name, email, url}) {
 export async function prompt({npmAccount, author}, ciServices, hosts, visibility, vcs, decisions) {
   const npmConf = npmConfFactory();
 
+  let maybeLoggedInNpmUsername;
+  try {
+    maybeLoggedInNpmUsername = (await execa('npm', ['whoami'])).stdout;
+  } catch (failedExecutionResult) {
+    warn('No logged in user found with `npm whoami`. Login with `npm login` to enable default project scoping.');
+  }
+
   const answers = await promptWithInquirer([
     {
       name: questionNames.NODE_VERSION_CATEGORY,
@@ -62,7 +70,7 @@ export async function prompt({npmAccount, author}, ciServices, hosts, visibility
       message: 'What is the scope?',
       when: scopePromptShouldBePresentedFactory(visibility),
       validate: validateScope(visibility),
-      default: npmAccount || (await execa('npm', ['whoami'])).stdout
+      default: npmAccount || maybeLoggedInNpmUsername
     },
     ...authorQuestions(author || {
       name: npmConf.get('init.author.name'),
