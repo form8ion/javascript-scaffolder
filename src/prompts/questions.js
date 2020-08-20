@@ -40,7 +40,8 @@ export async function prompt({npmAccount, author}, ciServices, hosts, visibility
   try {
     maybeLoggedInNpmUsername = (await execa('npm', ['whoami'])).stdout;
   } catch (failedExecutionResult) {
-    warn('No logged in user found with `npm whoami`. Login with `npm login` to enable default project scoping.');
+    warn('No logged in user found with `npm whoami`. Login with `npm login` '
+      + 'to use your npm account name as the package scope default.');
   }
 
   const answers = await promptWithInquirer([
