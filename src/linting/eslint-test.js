@@ -41,7 +41,12 @@ suite('eslint config scaffolder', () => {
     test('that the base config is added to the root of the project if the config scope is provided', async () => {
       await scaffoldEsLint({projectRoot, config: {packageName, scope}});
 
-      assert.calledWith(fsPromises.writeFile, `${projectRoot}/.eslintrc.yml`, `extends: '${scope}'`);
+      assert.calledWith(
+        fsPromises.writeFile,
+        `${projectRoot}/.eslintrc.yml`,
+        `root: true
+extends: '${scope}'`
+      );
     });
 
     test('that the additional configs are added if the config scope is provided', async () => {
@@ -59,7 +64,10 @@ suite('eslint config scaffolder', () => {
       assert.calledWith(
         fsPromises.writeFile,
         `${projectRoot}/.eslintrc.yml`,
-        `extends:\n  - '${scope}'\n  - '${scope}/${additionalConfigs.join(`'\n  - '${scope}/`)}'`
+        `root: true
+extends:
+  - '${scope}'
+  - '${scope}/${additionalConfigs.join(`'\n  - '${scope}/`)}'`
       );
       assert.deepEqual(
         result.devDependencies,
@@ -70,7 +78,12 @@ suite('eslint config scaffolder', () => {
     test('that no additional configs are added if the additional list is empty', async () => {
       await scaffoldEsLint({projectRoot, config: {packageName, scope}, additionalConfigs: []});
 
-      assert.calledWith(fsPromises.writeFile, `${projectRoot}/.eslintrc.yml`, `extends: '${scope}'`);
+      assert.calledWith(
+        fsPromises.writeFile,
+        `${projectRoot}/.eslintrc.yml`,
+        `root: true
+extends: '${scope}'`
+      );
     });
 
     test('that a file pattern can be specified for a config', async () => {
@@ -91,7 +104,8 @@ suite('eslint config scaffolder', () => {
       assert.calledWith(
         fsPromises.writeFile,
         `${projectRoot}/.eslintrc.yml`,
-        `extends:
+        `root: true
+extends:
   - '${scope}'
   - '${scope}/${stringConfigs.join(`'\n  - '${scope}/`)}'
 

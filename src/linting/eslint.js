@@ -7,8 +7,8 @@ function buildConfig(scope, additionalConfigs) {
     .filter(additionalConfig => 'object' === typeof additionalConfig);
 
   const baseConfigs = stringConfigs && stringConfigs.length
-    ? `extends:\n  - '${scope}'\n  - '${scope}/${stringConfigs.join(`'\n  - '${scope}/`)}'`
-    : `extends: '${scope}'`;
+    ? `root: true\nextends:\n  - '${scope}'\n  - '${scope}/${stringConfigs.join(`'\n  - '${scope}/`)}'`
+    : `root: true\nextends: '${scope}'`;
 
   return complexConfigs && complexConfigs.length
     ? `${baseConfigs}
