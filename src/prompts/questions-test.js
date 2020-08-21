@@ -186,4 +186,18 @@ suite('prompts', () => {
       sinon.match(value => 1 === value.filter(question => questionNames.SHOULD_BE_SCOPED === question.name).length)
     );
   });
+
+  test('that no logged in user is handled gracefully', async () => {
+    execa.default.withArgs('npm', ['whoami']).rejects();
+    npmConf.default.returns({get: () => undefined});
+    commonPrompts.questions.withArgs({vcs, ciServices, visibility: 'Public'}).returns(commonQuestions);
+    prompts.prompt.resolves(answers);
+
+    await prompt({}, ciServices, {}, 'Public', vcs);
+
+    assert.calledWith(
+      prompts.prompt,
+      sinon.match(value => 1 === value.filter(question => questionNames.SHOULD_BE_SCOPED === question.name).length)
+    );
+  });
 });
