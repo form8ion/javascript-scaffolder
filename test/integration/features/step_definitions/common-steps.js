@@ -76,24 +76,7 @@ Before(async function () {
           }
         }
       },
-      node_modules: {
-        '@form8ion': {
-          'mocha-scaffolder': {
-            templates: {
-              'canary-test.txt': await readFile(resolve(
-                __dirname,
-                '../../../../',
-                'node_modules/@form8ion/mocha-scaffolder/templates/canary-test.txt'
-              )),
-              'mocha-setup.txt': await readFile(resolve(
-                __dirname,
-                '../../../../',
-                'node_modules/@form8ion/mocha-scaffolder/templates/mocha-setup.txt'
-              ))
-            }
-          }
-        }
-      }
+      node_modules: stubbedFs.load(resolve(__dirname, '../../../../', 'node_modules'))
     }
   });
 
