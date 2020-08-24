@@ -67,6 +67,7 @@ Before(async function () {
   questionNames = jsScaffolder.questionNames;
 
   stubbedFs({
+    node_modules: stubbedFs.load(resolve(__dirname, '../../../../', 'node_modules')),
     [packagePreviewDirectory]: {
       '@travi': {
         'javascript-scaffolder': {
