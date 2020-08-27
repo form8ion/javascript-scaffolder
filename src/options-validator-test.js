@@ -164,6 +164,21 @@ suite('options validator', () => {
           `"configs.eslint.scope" with value "${scope}" fails to match the scope pattern`
         );
       });
+
+      test('that scope can contain a `-`', () => {
+        const scope = `@${any.word()}-${any.word()}`;
+
+        validate({
+          projectRoot: any.string(),
+          projectName: any.string(),
+          visibility: any.fromList(['Public', 'Private']),
+          license: any.string(),
+          vcs: {host: any.word(), owner: any.word(), name: any.word()},
+          description: any.string(),
+          configs: {eslint: {scope}},
+          unitTestFrameworks: {}
+        });
+      });
     });
 
     suite('commitlint', () => {
