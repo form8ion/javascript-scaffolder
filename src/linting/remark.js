@@ -1,5 +1,6 @@
 import {promises as fsPromises} from 'fs';
 import deepmerge from 'deepmerge';
+import {projectTypes} from '@form8ion/javascript-core';
 
 export default async function ({config, projectRoot, projectType, vcs, transpileLint}) {
   await fsPromises.writeFile(
@@ -16,7 +17,7 @@ exports.settings = {
 exports.plugins = [
   '${config}',
   ['remark-toc', {tight: true}]${
-  'Package' === projectType
+  projectTypes.PACKAGE === projectType
     ? `,
   ['remark-usage', {heading: 'example'}]`
     : ''
@@ -38,7 +39,7 @@ exports.plugins = [
       }
     },
     {
-      ...'Package' === projectType && {
+      ...projectTypes.PACKAGE === projectType && {
         devDependencies: ['remark-usage'],
         ...transpileLint && {scripts: {'pregenerate:md': 'npm run build'}}
       }

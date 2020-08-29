@@ -1,5 +1,6 @@
 import inquirer from 'inquirer';
 import * as prompts from '@form8ion/overridable-prompts';
+import {projectTypes} from '@form8ion/javascript-core';
 import * as commonPrompts from '@travi/language-scaffolder-prompts';
 import sinon from 'sinon';
 import {assert} from 'chai';
@@ -70,8 +71,8 @@ suite('prompts', () => {
           name: questionNames.PROJECT_TYPE,
           message: 'What type of JavaScript project is this?',
           type: 'list',
-          choices: ['Application', 'Package', 'CLI'],
-          default: 'Package'
+          choices: Object.values(projectTypes),
+          default: projectTypes.PACKAGE
         },
         {
           name: questionNames.SHOULD_BE_SCOPED,
@@ -113,7 +114,7 @@ suite('prompts', () => {
           name: questionNames.HOST,
           type: 'list',
           message: 'Where will the application be hosted?',
-          when: conditionals.packageTypeIsApplication,
+          when: conditionals.projectIsApplication,
           choices: [...Object.keys(hosts), new inquirer.Separator(), 'Other']
         }
       ], decisions)

@@ -1,4 +1,5 @@
 import {promises as fsPromises} from 'fs';
+import {projectTypes} from '@form8ion/javascript-core';
 import {assert} from 'chai';
 import any from '@travi/any';
 import sinon from 'sinon';
@@ -17,19 +18,19 @@ suite('npm config scaffolder', () => {
   teardown(() => sandbox.restore());
 
   test('that applications save exact versions of dependencies', async () => {
-    await scaffoldNpmConfig({projectRoot, projectType: 'Application'});
+    await scaffoldNpmConfig({projectRoot, projectType: projectTypes.APPLICATION});
 
     assert.calledWith(fsPromises.writeFile, `${projectRoot}/.npmrc`, 'update-notifier=false\nsave-exact=true\n');
   });
 
   test('that cli-applications save exact versions of dependencies', async () => {
-    await scaffoldNpmConfig({projectRoot, projectType: 'CLI'});
+    await scaffoldNpmConfig({projectRoot, projectType: projectTypes.CLI});
 
     assert.calledWith(fsPromises.writeFile, `${projectRoot}/.npmrc`, 'update-notifier=false\nsave-exact=true\n');
   });
 
   test('that packages are allowed to use semver ranges', async () => {
-    await scaffoldNpmConfig({projectRoot, projectType: 'Package'});
+    await scaffoldNpmConfig({projectRoot, projectType: projectTypes.PACKAGE});
 
     assert.calledWith(fsPromises.writeFile, `${projectRoot}/.npmrc`, 'update-notifier=false\n');
   });

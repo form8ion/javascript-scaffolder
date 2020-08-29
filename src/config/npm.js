@@ -1,12 +1,13 @@
-import {promises as fsPromises} from 'fs';
+import {promises as fs} from 'fs';
+import {projectTypes} from '@form8ion/javascript-core';
 
 export default function ({projectRoot, projectType}) {
   const config = [
     'update-notifier=false',
-    ...'Application' === projectType || 'CLI' === projectType ? ['save-exact=true'] : []
+    ...projectTypes.APPLICATION === projectType || projectTypes.CLI === projectType ? ['save-exact=true'] : []
   ];
 
-  fsPromises.writeFile(`${projectRoot}/.npmrc`, `${config.join('\n')}\n`);
+  fs.writeFile(`${projectRoot}/.npmrc`, `${config.join('\n')}\n`);
 
   return {scripts: {'lint:peer': 'npm ls >/dev/null'}};
 }

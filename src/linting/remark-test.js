@@ -1,4 +1,5 @@
 import {promises as fsPromises} from 'fs';
+import {projectTypes} from '@form8ion/javascript-core';
 import {assert} from 'chai';
 import any from '@travi/any';
 import sinon from 'sinon';
@@ -50,7 +51,7 @@ exports.plugins = [
     const projectRoot = any.string();
 
     assert.deepEqual(
-      await scaffoldRemark({config, projectRoot, projectType: 'Package', vcs: any.simpleObject()}),
+      await scaffoldRemark({config, projectRoot, projectType: projectTypes.PACKAGE, vcs: any.simpleObject()}),
       {
         devDependencies: [config, 'remark-cli', 'remark-toc', 'remark-usage'],
         scripts: {'lint:md': 'remark . --frail', 'generate:md': 'remark . --output'}
@@ -84,7 +85,7 @@ exports.plugins = [
       (await scaffoldRemark({
         config,
         projectRoot,
-        projectType: 'Package',
+        projectType: projectTypes.PACKAGE,
         vcs: any.simpleObject(),
         transpileLint: true
       })).scripts,

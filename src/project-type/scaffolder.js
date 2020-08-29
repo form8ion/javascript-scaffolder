@@ -1,4 +1,5 @@
 import deepmerge from 'deepmerge';
+import {projectTypes} from '@form8ion/javascript-core';
 import scaffoldPackageType from './package';
 import scaffoldApplicationType from './application';
 import scaffoldCliType from './cli';
@@ -19,7 +20,7 @@ export default async function ({
   decisions
 }) {
   switch (projectType) {
-    case 'Package':
+    case projectTypes.PACKAGE:
       return deepmerge(
         buildCommonDetails(visibility, vcs),
         await scaffoldPackageType({
@@ -35,7 +36,7 @@ export default async function ({
           decisions
         })
       );
-    case 'Application':
+    case projectTypes.APPLICATION:
       return deepmerge(
         buildCommonDetails(visibility, vcs),
         await scaffoldApplicationType({
@@ -48,7 +49,7 @@ export default async function ({
           decisions
         })
       );
-    case 'CLI':
+    case projectTypes.CLI:
       return deepmerge(
         buildCommonDetails(visibility, vcs),
         await scaffoldCliType({packageName, visibility, projectRoot})

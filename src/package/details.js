@@ -1,3 +1,5 @@
+import {projectTypes} from '@form8ion/javascript-core';
+
 function projectWillBeTested(contributors) {
   return contributors
     .filter(contributor => contributor.scripts)
@@ -27,7 +29,7 @@ function defineVcsHostDetails(vcs, packageType, packageName) {
   return vcs && 'GitHub' === vcs.host && {
     repository: `${vcs.owner}/${vcs.name}`,
     bugs: `https://github.com/${vcs.owner}/${vcs.name}/issues`,
-    homepage: ('Package' === packageType)
+    homepage: (projectTypes.PACKAGE === packageType)
       ? `https://npm.im/${packageName}`
       : `https://github.com/${vcs.owner}/${vcs.name}#readme`
   };

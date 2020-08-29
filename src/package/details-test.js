@@ -1,3 +1,4 @@
+import {projectTypes} from '@form8ion/javascript-core';
 import any from '@travi/any';
 import {assert} from 'chai';
 import buildPackageDetails from './details';
@@ -134,7 +135,7 @@ suite('package details builder', () => {
 
     test('that the homepage is set to npm for packages', () => {
       const packageDetails = buildPackageDetails({
-        projectType: 'Package',
+        projectType: projectTypes.PACKAGE,
         packageName,
         tests: {},
         vcs: {host: 'GitHub', name: repoName, owner},

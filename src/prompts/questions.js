@@ -1,10 +1,11 @@
 import {Separator} from 'inquirer';
+import {projectTypes} from '@form8ion/javascript-core';
 import {prompt as promptWithInquirer} from '@form8ion/overridable-prompts';
 import {questions as commonQuestions} from '@travi/language-scaffolder-prompts';
 import {warn} from '@travi/cli-messages';
 import execa from '../../third-party-wrappers/execa';
 import {
-  packageTypeIsApplication,
+  projectIsApplication,
   scopePromptShouldBePresentedFactory,
   shouldBeScopedPromptShouldBePresented,
   transpilationAndLintingPromptShouldBePresented
@@ -56,8 +57,8 @@ export async function prompt({npmAccount, author}, ciServices, hosts, visibility
       name: questionNames.PROJECT_TYPE,
       message: 'What type of JavaScript project is this?',
       type: 'list',
-      choices: ['Application', 'Package', 'CLI'],
-      default: 'Package'
+      choices: Object.values(projectTypes),
+      default: projectTypes.PACKAGE
     },
     ...'Private' === visibility ? [] : [{
       name: questionNames.SHOULD_BE_SCOPED,
@@ -89,7 +90,7 @@ export async function prompt({npmAccount, author}, ciServices, hosts, visibility
       name: questionNames.HOST,
       type: 'list',
       message: 'Where will the application be hosted?',
-      when: packageTypeIsApplication,
+      when: projectIsApplication,
       choices: [...Object.keys(hosts), new Separator(), 'Other']
     }
   ], decisions);

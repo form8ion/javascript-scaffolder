@@ -1,3 +1,4 @@
+import {projectTypes} from '@form8ion/javascript-core';
 import sinon from 'sinon';
 import any from '@travi/any';
 import {assert} from 'chai';
@@ -54,7 +55,7 @@ suite('project-type scaffolder', () => {
 
     assert.deepEqual(
       await projectTypeScaffolder({
-        projectType: 'Package',
+        projectType: projectTypes.PACKAGE,
         projectRoot,
         transpileLint,
         projectName,
@@ -81,7 +82,7 @@ suite('project-type scaffolder', () => {
 
     assert.deepEqual(
       await projectTypeScaffolder({
-        projectType: 'Application',
+        projectType: projectTypes.APPLICATION,
         projectRoot,
         projectName,
         packageName,
@@ -103,7 +104,7 @@ suite('project-type scaffolder', () => {
     cliTypeScaffolder.default.withArgs({packageName, visibility, projectRoot}).resolves(results);
 
     assert.deepEqual(
-      await projectTypeScaffolder({projectType: 'CLI', packageName, visibility, vcs, projectRoot}),
+      await projectTypeScaffolder({projectType: projectTypes.CLI, packageName, visibility, vcs, projectRoot}),
       {...commonDetails, ...results}
     );
   });

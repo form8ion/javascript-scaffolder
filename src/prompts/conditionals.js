@@ -1,12 +1,17 @@
+import {projectTypes} from '@form8ion/javascript-core';
 import {questionNames as commonQuestionNames} from '@travi/language-scaffolder-prompts';
 import {questionNames} from './question-names';
 
 function projectIsPackage(answers) {
-  return 'Package' === answers[questionNames.PROJECT_TYPE];
+  return projectTypes.PACKAGE === answers[questionNames.PROJECT_TYPE];
 }
 
 function projectIsCLI(answers) {
-  return 'CLI' === answers[questionNames.PROJECT_TYPE];
+  return projectTypes.CLI === answers[questionNames.PROJECT_TYPE];
+}
+
+export function projectIsApplication(answers) {
+  return projectTypes.APPLICATION === answers[questionNames.PROJECT_TYPE];
 }
 
 function packageShouldBeScoped(visibility, answers) {
@@ -23,10 +28,6 @@ export function shouldBeScopedPromptShouldBePresented(answers) {
 
 export function scopePromptShouldBePresentedFactory(visibility) {
   return answers => willBePublishedToNpm(answers) && packageShouldBeScoped(visibility, answers);
-}
-
-export function packageTypeIsApplication(answers) {
-  return 'Application' === answers[questionNames.PROJECT_TYPE];
 }
 
 export function transpilationAndLintingPromptShouldBePresented({
