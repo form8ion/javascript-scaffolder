@@ -20,7 +20,6 @@ suite('project-type scaffolder', () => {
   const decisions = any.simpleObject();
   const commonDetails = any.simpleObject();
   const vcs = any.simpleObject();
-  const scope = any.word();
 
   setup(() => {
     sandbox = sinon.createSandbox();
@@ -36,6 +35,7 @@ suite('project-type scaffolder', () => {
   teardown(() => sandbox.restore());
 
   test('that the package-type scaffolder is applied when the project-type is `Package`', async () => {
+    const scope = any.word();
     const packageTypes = any.simpleObject();
 
     packageTypeScaffolder.default
@@ -77,7 +77,7 @@ suite('project-type scaffolder', () => {
   test('that the application-type scaffolder is applied when the project-type is `Application`', async () => {
     const applicationTypes = any.simpleObject();
     applicationTypeScaffolder.default
-      .withArgs({projectRoot, projectName, packageName, transpileLint, applicationTypes, tests, decisions, scope})
+      .withArgs({projectRoot, projectName, packageName, transpileLint, applicationTypes, tests, decisions})
       .resolves(results);
 
     assert.deepEqual(
@@ -91,8 +91,7 @@ suite('project-type scaffolder', () => {
         tests,
         decisions,
         visibility,
-        vcs,
-        scope
+        vcs
       }),
       {
         ...commonDetails,
