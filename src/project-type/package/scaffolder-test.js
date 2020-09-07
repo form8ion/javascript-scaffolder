@@ -72,7 +72,7 @@ suite('package project-type', () => {
     documentationScaffolder.default.withArgs({scope, packageName, visibility}).returns(documentation);
     packageChooser.default.withArgs({types: packageTypes, projectType: 'package', decisions}).returns(chosenType);
     jsCore.scaffoldChoice
-      .withArgs(packageTypes, chosenType, {projectRoot, projectName, tests})
+      .withArgs(packageTypes, chosenType, {projectRoot, projectName, tests, scope})
       .returns(typeScaffoldingResults);
 
     templatePath.default.withArgs('rollup.config.js').returns(pathToRollupTemplate);
@@ -144,7 +144,8 @@ suite('package project-type', () => {
       visibility: 'Public',
       packageTypes,
       tests,
-      decisions
+      decisions,
+      scope
     });
 
     assert.deepEqual(

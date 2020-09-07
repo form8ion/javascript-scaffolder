@@ -87,7 +87,11 @@ export default async function ({
   info('Scaffolding Package Details');
 
   const chosenType = await choosePackageType({types: packageTypes, projectType: 'package', decisions});
-  const results = await scaffoldChosenPackageType(packageTypes, chosenType, {projectRoot, projectName, tests});
+  const results = await scaffoldChosenPackageType(
+    packageTypes,
+    chosenType,
+    {projectRoot, projectName, tests, scope}
+  );
 
   return deepmerge.all([
     {
