@@ -31,9 +31,6 @@ async function createExample(projectRoot, projectName) {
 }
 
 async function buildDetails(packageTypes, decisions, projectRoot, tests, projectName, visibility, packageName) {
-  const chosenType = await choosePackageType({types: packageTypes, projectType: 'package', decisions});
-  const results = await scaffoldChosenPackageType(packageTypes, chosenType, {projectRoot, projectName, tests});
-
   const pathToCreatedSrcDirectory = await mkdir(`${projectRoot}/src`);
   await Promise.all([
     fs.copyFile(determinePathToTemplateFile('rollup.config.js'), `${projectRoot}/rollup.config.js`),
@@ -41,33 +38,30 @@ async function buildDetails(packageTypes, decisions, projectRoot, tests, project
     touch(`${pathToCreatedSrcDirectory}/index.js`)
   ]);
 
-  return deepmerge(
-    results,
-    {
-      devDependencies: ['rimraf', 'rollup', 'rollup-plugin-auto-external'],
-      scripts: {
-        clean: `rimraf ./${defaultBuildDirectory}`,
-        prebuild: 'run-s clean',
-        build: 'npm-run-all --print-label --parallel build:*',
-        'build:js': 'rollup --config',
-        watch: 'run-s \'build:js -- --watch\'',
-        prepack: 'run-s build'
-      },
-      vcsIgnore: {directories: [`/${defaultBuildDirectory}/`]},
-      buildDirectory: defaultBuildDirectory,
-      badges: {
-        consumer: {
-          ...'Public' === visibility && {
-            runkit: {
-              img: `https://badge.runkitcdn.com/${packageName}.svg`,
-              text: `Try ${packageName} on RunKit`,
-              link: `https://npm.runkit.com/${packageName}`
-            }
+  return {
+    devDependencies: ['rimraf', 'rollup', 'rollup-plugin-auto-external'],
+    scripts: {
+      clean: `rimraf ./${defaultBuildDirectory}`,
+      prebuild: 'run-s clean',
+      build: 'npm-run-all --print-label --parallel build:*',
+      'build:js': 'rollup --config',
+      watch: 'run-s \'build:js -- --watch\'',
+      prepack: 'run-s build'
+    },
+    vcsIgnore: {directories: [`/${defaultBuildDirectory}/`]},
+    buildDirectory: defaultBuildDirectory,
+    badges: {
+      consumer: {
+        ...'Public' === visibility && {
+          runkit: {
+            img: `https://badge.runkitcdn.com/${packageName}.svg`,
+            text: `Try ${packageName} on RunKit`,
+            link: `https://npm.runkit.com/${packageName}`
           }
         }
       }
     }
-  );
+  };
 }
 
 async function buildDetailsForNonTranspiledProject(projectRoot, projectName) {
@@ -92,6 +86,9 @@ export default async function ({
 }) {
   info('Scaffolding Package Details');
 
+  const chosenType = await choosePackageType({types: packageTypes, projectType: 'package', decisions});
+  const results = await scaffoldChosenPackageType(packageTypes, chosenType, {projectRoot, projectName, tests});
+
   return deepmerge.all([
     {
       packageProperties: {
@@ -109,6 +106,7 @@ export default async function ({
       scripts: {},
       badges: defineBadges(packageName, visibility)
     },
+    results,
     {
       ...false !== transpileLint && {
         packageProperties: {

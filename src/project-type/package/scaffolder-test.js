@@ -44,6 +44,13 @@ suite('package project-type', () => {
   const exampleContent = any.string();
   const camelizedProjectName = any.word();
   const pathToExample = `${projectRoot}/example.js`;
+  const typeScaffoldingResults = {
+    dependencies: scaffoldedTypeDependencies,
+    devDependencies: scaffoldedTypeDevDependencies,
+    scripts: scaffoldedTypeScripts,
+    vcsIgnore: {files: scaffoldedFilesToIgnore, directories: scaffoldedDirectoriesToIgnore},
+    eslintConfigs
+  };
 
   setup(() => {
     sandbox = sinon.createSandbox();
@@ -64,6 +71,9 @@ suite('package project-type', () => {
 
     documentationScaffolder.default.withArgs({scope, packageName, visibility}).returns(documentation);
     packageChooser.default.withArgs({types: packageTypes, projectType: 'package', decisions}).returns(chosenType);
+    jsCore.scaffoldChoice
+      .withArgs(packageTypes, chosenType, {projectRoot, projectName, tests})
+      .returns(typeScaffoldingResults);
 
     templatePath.default.withArgs('rollup.config.js').returns(pathToRollupTemplate);
     templatePath.default.withArgs('example.mustache').returns(pathToExampleTemplate);
@@ -75,19 +85,9 @@ suite('package project-type', () => {
   teardown(() => sandbox.restore());
 
   test('that details specific to a package project-type are scaffolded', async () => {
-    const typeScaffoldingResults = {
-      dependencies: scaffoldedTypeDependencies,
-      devDependencies: scaffoldedTypeDevDependencies,
-      scripts: scaffoldedTypeScripts,
-      vcsIgnore: {files: scaffoldedFilesToIgnore, directories: scaffoldedDirectoriesToIgnore},
-      eslintConfigs
-    };
     templatePath.default.withArgs('rollup.config.js').returns(pathToRollupTemplate);
     defineBadges.default.withArgs(packageName, visibility).returns(badges);
     core.fileExists.withArgs(pathToExample).resolves(false);
-    jsCore.scaffoldChoice
-      .withArgs(packageTypes, chosenType, {projectRoot, projectName, tests})
-      .returns(typeScaffoldingResults);
 
     assert.deepEqual(
       await scaffoldPackage({projectRoot, projectName, packageName, visibility, scope, packageTypes, tests, decisions}),
@@ -132,11 +132,9 @@ suite('package project-type', () => {
   });
 
   test('that the runkit badge is included for public projects', async () => {
-    const typeScaffoldingResults = any.simpleObject();
     const pathToCreatedSrcDirectory = any.string();
     defineBadges.default.withArgs(packageName, 'Public').returns(badges);
     core.fileExists.withArgs(pathToExample).resolves(false);
-    jsCore.scaffoldChoice.withArgs(packageTypes, chosenType, {projectRoot, tests}).returns(typeScaffoldingResults);
     mkdir.default.withArgs(`${projectRoot}/src`).resolves(pathToCreatedSrcDirectory);
 
     const results = await scaffoldPackage({
@@ -178,9 +176,22 @@ suite('package project-type', () => {
     defineBadges.default.withArgs(packageName, visibility).returns(badges);
 
     assert.deepEqual(
-      await scaffoldPackage({projectRoot, transpileLint: false, packageName, projectName, visibility, scope}),
+      await scaffoldPackage({
+        projectRoot,
+        transpileLint: false,
+        packageName,
+        projectName,
+        visibility,
+        scope,
+        decisions,
+        packageTypes,
+        tests
+      }),
       {
-        scripts: {},
+        dependencies: scaffoldedTypeDependencies,
+        devDependencies: scaffoldedTypeDevDependencies,
+        scripts: scaffoldedTypeScripts,
+        vcsIgnore: {directories: scaffoldedDirectoriesToIgnore, files: scaffoldedFilesToIgnore},
         badges,
         packageProperties: {
           ...commonPackageProperties,
@@ -188,7 +199,7 @@ suite('package project-type', () => {
           publishConfig: {access: 'restricted'}
         },
         documentation,
-        eslintConfigs: [],
+        eslintConfigs,
         nextSteps: commonNextSteps
       }
     );
