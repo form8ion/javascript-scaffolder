@@ -25,7 +25,7 @@ suite('husky config', () => {
     assert.calledWith(
       fsPromises.writeFile,
       `${projectRoot}/.huskyrc.json`,
-      JSON.stringify({hooks: {'pre-commit': 'npm test', 'commit-msg': 'commitlint -e'}})
+      JSON.stringify({hooks: {'pre-commit': 'npm test', 'commit-msg': 'commitlint --edit'}})
     );
   });
 });
