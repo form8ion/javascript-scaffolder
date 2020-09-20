@@ -4,6 +4,7 @@ import {assert} from 'chai';
 import * as scaffoldEslint from './eslint';
 import * as scaffoldRemark from './remark';
 import * as scaffoldBanSensitiveFiles from './ban-sensitive-files';
+import * as scaffoldLockfileLint from './lockfile';
 import scaffold from './index';
 
 suite('linting scaffolder', () => {
@@ -12,6 +13,8 @@ suite('linting scaffolder', () => {
   const eslintFilesIgnoredFromVcs = any.listOf(any.string);
   const banSensitiveFilesDevDependencies = any.listOf(any.string);
   const banSensitiveFilesScripts = any.simpleObject();
+  const lockfileDevDependencies = any.listOf(any.string);
+  const lockfileScripts = any.simpleObject();
   const projectRoot = any.string();
   const projectType = any.word();
   const unitTested = any.boolean();
@@ -31,6 +34,7 @@ suite('linting scaffolder', () => {
     sandbox.stub(scaffoldEslint, 'default');
     sandbox.stub(scaffoldRemark, 'default');
     sandbox.stub(scaffoldBanSensitiveFiles, 'default');
+    sandbox.stub(scaffoldLockfileLint, 'default');
 
     scaffoldRemark.default
       .withArgs({projectRoot, projectType, config: configForRemark, vcs, transpileLint})
@@ -44,6 +48,7 @@ suite('linting scaffolder', () => {
       });
     scaffoldBanSensitiveFiles.default
       .resolves({devDependencies: banSensitiveFilesDevDependencies, scripts: banSensitiveFilesScripts});
+    scaffoldLockfileLint.default.resolves({devDependencies: lockfileDevDependencies, scripts: lockfileScripts});
   });
 
   teardown(() => sandbox.restore());
@@ -62,13 +67,18 @@ suite('linting scaffolder', () => {
 
     assert.deepEqual(
       result.devDependencies,
-      ['lockfile-lint', ...eslintDevDependencies, ...remarkDevDependencies, ...banSensitiveFilesDevDependencies]
+      [
+        ...lockfileDevDependencies,
+        ...eslintDevDependencies,
+        ...remarkDevDependencies,
+        ...banSensitiveFilesDevDependencies
+      ]
     );
     assert.deepEqual(result.vcsIgnore.files, eslintFilesIgnoredFromVcs);
     assert.deepEqual(
       result.scripts,
       {
-        'lint:lockfile': 'lockfile-lint --path package-lock.json --type npm --validate-https --allowed-hosts npm',
+        ...lockfileScripts,
         ...eslintScripts,
         ...remarkScripts,
         ...banSensitiveFilesScripts
@@ -88,16 +98,9 @@ suite('linting scaffolder', () => {
 
     assert.deepEqual(
       result.devDependencies,
-      ['lockfile-lint', ...remarkDevDependencies, ...banSensitiveFilesDevDependencies]
+      [...lockfileDevDependencies, ...remarkDevDependencies, ...banSensitiveFilesDevDependencies]
     );
-    assert.deepEqual(
-      result.scripts,
-      {
-        'lint:lockfile': 'lockfile-lint --path package-lock.json --type npm --validate-https --allowed-hosts npm',
-        ...remarkScripts,
-        ...banSensitiveFilesScripts
-      }
-    );
+    assert.deepEqual(result.scripts, {...lockfileScripts, ...remarkScripts, ...banSensitiveFilesScripts});
   });
 
   test('that eslint is not scaffolded when `transpileLint` is false', async () => {
@@ -116,16 +119,9 @@ suite('linting scaffolder', () => {
 
     assert.deepEqual(
       result.devDependencies,
-      ['lockfile-lint', ...remarkDevDependencies, ...banSensitiveFilesDevDependencies]
+      [...lockfileDevDependencies, ...remarkDevDependencies, ...banSensitiveFilesDevDependencies]
     );
-    assert.deepEqual(
-      result.scripts,
-      {
-        'lint:lockfile': 'lockfile-lint --path package-lock.json --type npm --validate-https --allowed-hosts npm',
-        ...remarkScripts,
-        ...banSensitiveFilesScripts
-      }
-    );
+    assert.deepEqual(result.scripts, {...lockfileScripts, ...remarkScripts, ...banSensitiveFilesScripts});
   });
 
   test('that remark defaults to the form8ion config when a config is not defined', async () => {
@@ -146,13 +142,18 @@ suite('linting scaffolder', () => {
 
     assert.deepEqual(
       result.devDependencies,
-      ['lockfile-lint', ...eslintDevDependencies, ...remarkDevDependencies, ...banSensitiveFilesDevDependencies]
+      [
+        ...lockfileDevDependencies,
+        ...eslintDevDependencies,
+        ...remarkDevDependencies,
+        ...banSensitiveFilesDevDependencies
+      ]
     );
     assert.deepEqual(result.vcsIgnore.files, eslintFilesIgnoredFromVcs);
     assert.deepEqual(
       result.scripts,
       {
-        'lint:lockfile': 'lockfile-lint --path package-lock.json --type npm --validate-https --allowed-hosts npm',
+        ...lockfileScripts,
         ...eslintScripts,
         ...remarkScripts,
         ...banSensitiveFilesScripts
@@ -176,15 +177,11 @@ suite('linting scaffolder', () => {
       transpileLint
     });
 
-    assert.deepEqual(result.devDependencies, ['lockfile-lint', ...eslintDevDependencies, ...remarkDevDependencies]);
-    assert.deepEqual(result.vcsIgnore.files, eslintFilesIgnoredFromVcs);
     assert.deepEqual(
-      result.scripts,
-      {
-        'lint:lockfile': 'lockfile-lint --path package-lock.json --type npm --validate-https --allowed-hosts npm',
-        ...eslintScripts,
-        ...remarkScripts
-      }
+      result.devDependencies,
+      [...lockfileDevDependencies, ...eslintDevDependencies, ...remarkDevDependencies]
     );
+    assert.deepEqual(result.vcsIgnore.files, eslintFilesIgnoredFromVcs);
+    assert.deepEqual(result.scripts, {...lockfileScripts, ...eslintScripts, ...remarkScripts});
   });
 });

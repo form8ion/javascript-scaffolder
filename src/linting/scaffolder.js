@@ -2,6 +2,7 @@ import deepmerge from 'deepmerge';
 import scaffoldEslint from './eslint';
 import scaffoldRemark from './remark';
 import scaffoldBanSensitiveFiles from './ban-sensitive-files';
+import scaffoldLockfileLint from './lockfile';
 
 export default async function ({
   projectRoot,
@@ -13,7 +14,8 @@ export default async function ({
   buildDirectory,
   eslintConfigs
 }) {
-  const [eslintResult, remarkResult, banSensitiveFilesResult] = await Promise.all([
+  return deepmerge.all(await Promise.all([
+    scaffoldLockfileLint(),
     configs.eslint && false !== transpileLint
       ? scaffoldEslint({
         projectRoot,
@@ -31,17 +33,5 @@ export default async function ({
       config: configs.remark || '@form8ion/remark-lint-preset'
     }),
     vcs ? scaffoldBanSensitiveFiles() : {}
-  ]);
-
-  return deepmerge.all([
-    {
-      devDependencies: ['lockfile-lint'],
-      scripts: {
-        'lint:lockfile': 'lockfile-lint --path package-lock.json --type npm --validate-https --allowed-hosts npm'
-      }
-    },
-    eslintResult,
-    remarkResult,
-    banSensitiveFilesResult
-  ]);
+  ]));
 }
