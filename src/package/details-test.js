@@ -213,7 +213,7 @@ suite('package details builder', () => {
           configs: {},
           contributors: [
             ...any.listOf(() => ({...any.simpleObject(), scripts: any.simpleObject()})),
-            {...any.simpleObject(), scripts: {...any.simpleObject(), 'pregenerate:md': 'npm run build'}}
+            {...any.simpleObject(), scripts: {...any.simpleObject(), 'pregenerate:md': 'run-s build'}}
           ]
         });
 

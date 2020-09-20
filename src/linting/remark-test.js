@@ -92,7 +92,7 @@ exports.plugins = [
       {
         'lint:md': 'remark . --frail',
         'generate:md': 'remark . --output',
-        'pregenerate:md': 'npm run build'
+        'pregenerate:md': 'run-s build'
       }
     );
   });

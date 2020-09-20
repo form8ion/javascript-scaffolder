@@ -8,7 +8,7 @@ function projectWillBeTested(contributors) {
 }
 
 function projectShouldBeBuiltForVerification(contributorScripts) {
-  return 'npm run build' === contributorScripts['pregenerate:md'];
+  return 'run-s build' === contributorScripts['pregenerate:md'];
 }
 
 function defineScripts(contributors) {

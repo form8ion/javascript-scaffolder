@@ -41,7 +41,7 @@ exports.plugins = [
     {
       ...projectTypes.PACKAGE === projectType && {
         devDependencies: ['remark-usage'],
-        ...transpileLint && {scripts: {'pregenerate:md': 'npm run build'}}
+        ...transpileLint && {scripts: {'pregenerate:md': 'run-s build'}}
       }
     }
   );
