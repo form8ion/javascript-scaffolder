@@ -1,3 +1,4 @@
+import deepmerge from 'deepmerge';
 import scaffoldEslint from './eslint';
 import scaffoldRemark from './remark';
 import scaffoldBanSensitiveFiles from './ban-sensitive-files';
@@ -21,7 +22,7 @@ export default async function ({
         buildDirectory,
         additionalConfigs: eslintConfigs
       })
-      : null,
+      : {},
     scaffoldRemark({
       projectRoot,
       projectType,
@@ -29,22 +30,18 @@ export default async function ({
       transpileLint,
       config: configs.remark || '@form8ion/remark-lint-preset'
     }),
-    vcs ? scaffoldBanSensitiveFiles() : null
+    vcs ? scaffoldBanSensitiveFiles() : {}
   ]);
 
-  return {
-    devDependencies: [
-      'lockfile-lint',
-      ...eslintResult ? eslintResult.devDependencies : [],
-      ...remarkResult ? remarkResult.devDependencies : [],
-      ...banSensitiveFilesResult ? banSensitiveFilesResult.devDependencies : []
-    ],
-    scripts: {
-      'lint:lockfile': 'lockfile-lint --path package-lock.json --type npm --validate-https --allowed-hosts npm',
-      ...eslintResult && eslintResult.scripts,
-      ...remarkResult && remarkResult.scripts,
-      ...banSensitiveFilesResult && banSensitiveFilesResult.scripts
+  return deepmerge.all([
+    {
+      devDependencies: ['lockfile-lint'],
+      scripts: {
+        'lint:lockfile': 'lockfile-lint --path package-lock.json --type npm --validate-https --allowed-hosts npm'
+      }
     },
-    vcsIgnore: {files: [...eslintResult ? eslintResult.vcsIgnore.files : []], directories: []}
-  };
+    eslintResult,
+    remarkResult,
+    banSensitiveFilesResult
+  ]);
 }

@@ -65,7 +65,6 @@ suite('linting scaffolder', () => {
       ['lockfile-lint', ...eslintDevDependencies, ...remarkDevDependencies, ...banSensitiveFilesDevDependencies]
     );
     assert.deepEqual(result.vcsIgnore.files, eslintFilesIgnoredFromVcs);
-    assert.deepEqual(result.vcsIgnore.directories, []);
     assert.deepEqual(
       result.scripts,
       {
@@ -91,8 +90,6 @@ suite('linting scaffolder', () => {
       result.devDependencies,
       ['lockfile-lint', ...remarkDevDependencies, ...banSensitiveFilesDevDependencies]
     );
-    assert.deepEqual(result.vcsIgnore.files, []);
-    assert.deepEqual(result.vcsIgnore.directories, []);
     assert.deepEqual(
       result.scripts,
       {
@@ -121,8 +118,6 @@ suite('linting scaffolder', () => {
       result.devDependencies,
       ['lockfile-lint', ...remarkDevDependencies, ...banSensitiveFilesDevDependencies]
     );
-    assert.deepEqual(result.vcsIgnore.files, []);
-    assert.deepEqual(result.vcsIgnore.directories, []);
     assert.deepEqual(
       result.scripts,
       {
@@ -134,6 +129,10 @@ suite('linting scaffolder', () => {
   });
 
   test('that remark defaults to the form8ion config when a config is not defined', async () => {
+    scaffoldRemark.default
+      .withArgs({projectRoot, projectType, vcs, transpileLint, config: '@form8ion/remark-lint-preset'})
+      .resolves({devDependencies: remarkDevDependencies, scripts: remarkScripts});
+
     const result = await scaffold({
       projectRoot,
       projectType,
@@ -145,21 +144,17 @@ suite('linting scaffolder', () => {
       transpileLint
     });
 
-    assert.calledWith(
-      scaffoldRemark.default,
-      {projectRoot, projectType, vcs, transpileLint, config: '@form8ion/remark-lint-preset'}
-    );
     assert.deepEqual(
       result.devDependencies,
-      ['lockfile-lint', ...eslintDevDependencies, ...banSensitiveFilesDevDependencies]
+      ['lockfile-lint', ...eslintDevDependencies, ...remarkDevDependencies, ...banSensitiveFilesDevDependencies]
     );
     assert.deepEqual(result.vcsIgnore.files, eslintFilesIgnoredFromVcs);
-    assert.deepEqual(result.vcsIgnore.directories, []);
     assert.deepEqual(
       result.scripts,
       {
         'lint:lockfile': 'lockfile-lint --path package-lock.json --type npm --validate-https --allowed-hosts npm',
         ...eslintScripts,
+        ...remarkScripts,
         ...banSensitiveFilesScripts
       }
     );
@@ -183,7 +178,6 @@ suite('linting scaffolder', () => {
 
     assert.deepEqual(result.devDependencies, ['lockfile-lint', ...eslintDevDependencies, ...remarkDevDependencies]);
     assert.deepEqual(result.vcsIgnore.files, eslintFilesIgnoredFromVcs);
-    assert.deepEqual(result.vcsIgnore.directories, []);
     assert.deepEqual(
       result.scripts,
       {
