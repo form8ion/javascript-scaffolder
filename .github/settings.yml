@@ -29,3 +29,5 @@ labels:
 collaborators:
   - username: travi-bot
     permission: push
+  - username: trevtrich
+    permission: pull
