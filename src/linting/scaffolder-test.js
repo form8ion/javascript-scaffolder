@@ -48,7 +48,9 @@ suite('linting scaffolder', () => {
       });
     scaffoldBanSensitiveFiles.default
       .resolves({devDependencies: banSensitiveFilesDevDependencies, scripts: banSensitiveFilesScripts});
-    scaffoldLockfileLint.default.resolves({devDependencies: lockfileDevDependencies, scripts: lockfileScripts});
+    scaffoldLockfileLint.default
+      .withArgs({projectRoot})
+      .resolves({devDependencies: lockfileDevDependencies, scripts: lockfileScripts});
   });
 
   teardown(() => sandbox.restore());

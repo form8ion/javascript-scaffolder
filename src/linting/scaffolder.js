@@ -15,7 +15,7 @@ export default async function ({
   eslintConfigs
 }) {
   return deepmerge.all(await Promise.all([
-    scaffoldLockfileLint(),
+    scaffoldLockfileLint({projectRoot}),
     configs.eslint && false !== transpileLint
       ? scaffoldEslint({
         projectRoot,
