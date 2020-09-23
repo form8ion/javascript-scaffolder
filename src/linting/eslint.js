@@ -40,7 +40,10 @@ export default async function ({config, projectRoot, unitTested, buildDirectory,
         })
         : []
     ],
-    scripts: {'lint:js': 'eslint . --cache'},
+    scripts: {
+      'lint:js': 'eslint . --cache',
+      'lint:js:fix': 'run-s lint:js -- --fix'
+    },
     vcsIgnore: {files: ['.eslintcache']}
   };
 }
