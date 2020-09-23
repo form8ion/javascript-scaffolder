@@ -26,7 +26,13 @@ suite('eslint config scaffolder', () => {
   });
 
   test('that the script is defined', async () => {
-    assert.deepEqual((await scaffoldEsLint({config: {packageName}})).scripts, {'lint:js': 'eslint . --cache'});
+    assert.deepEqual(
+      (await scaffoldEsLint({config: {packageName}})).scripts,
+      {
+        'lint:js': 'eslint . --cache',
+        'lint:js:fix': 'run-s lint:js -- --fix'
+      }
+    );
   });
 
   test('that the cache file is ignored from version control', async () => {
