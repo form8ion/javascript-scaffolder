@@ -9,7 +9,10 @@ export default async function ({projectRoot, preset, transpileLint}) {
   }
 
   if (preset) {
-    await fsPromises.writeFile(`${projectRoot}/.babelrc`, JSON.stringify({presets: [preset.name], ignore: ['./lib/']}));
+    await fsPromises.writeFile(
+      `${projectRoot}/.babelrc`,
+      JSON.stringify({presets: [preset.name], ignore: ['./lib/'], env: {test: {plugins: ['istanbul']}}})
+    );
   } else warn('Not configuring transpilation since no babel-config was provided');
 
   return {

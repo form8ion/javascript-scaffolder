@@ -33,7 +33,7 @@ suite('babel config', () => {
     assert.calledWith(
       fsPromises.writeFile,
       `${projectRoot}/.babelrc`,
-      JSON.stringify({presets: [babelPresetName], ignore: ['./lib/']})
+      JSON.stringify({presets: [babelPresetName], ignore: ['./lib/'], env: {test: {plugins: ['istanbul']}}})
     );
   });
 
