@@ -22,7 +22,28 @@ suite('babel config', () => {
     const babelPreset = {name: babelPresetName, packageName: babelPresetPackageName};
 
     assert.deepEqual(
-      await scaffoldBabel({preset: babelPreset, projectRoot}),
+      await scaffoldBabel({preset: babelPreset, projectRoot, tests: {unit: true}}),
+      {
+        devDependencies: ['@babel/register', babelPresetPackageName, 'babel-plugin-istanbul'],
+        scripts: {},
+        vcsIgnore: {files: [], directories: []}
+      }
+    );
+
+    assert.calledWith(
+      fsPromises.writeFile,
+      `${projectRoot}/.babelrc`,
+      JSON.stringify({presets: [babelPresetName], ignore: ['./lib/'], env: {test: {plugins: ['istanbul']}}})
+    );
+  });
+
+  test('that the istanbul plugin dependency is not included if unit testing is not desired', async () => {
+    const babelPresetName = any.string();
+    const babelPresetPackageName = any.word();
+    const babelPreset = {name: babelPresetName, packageName: babelPresetPackageName};
+
+    assert.deepEqual(
+      await scaffoldBabel({preset: babelPreset, projectRoot, tests: {unit: false}}),
       {
         devDependencies: ['@babel/register', babelPresetPackageName],
         scripts: {},
@@ -40,7 +61,11 @@ suite('babel config', () => {
   test('that the babelrc is not written if a preset is not defined', async () => {
     assert.deepEqual(
       await scaffoldBabel({preset: undefined, projectRoot}),
-      {devDependencies: ['@babel/register'], scripts: {}, vcsIgnore: {files: [], directories: []}}
+      {
+        devDependencies: [],
+        scripts: {},
+        vcsIgnore: {files: [], directories: []}
+      }
     );
 
     assert.notCalled(fsPromises.writeFile);
