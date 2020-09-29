@@ -187,7 +187,7 @@ suite('javascript project scaffolder', () => {
         eslintConfigs: [...testingEslintConfigs, ...projectTypeEslintConfigs]
       })
       .resolves(lintingResults);
-    babel.default.withArgs({projectRoot, preset: babelPreset, transpileLint}).resolves(babelResults);
+    babel.default.withArgs({projectRoot, preset: babelPreset, transpileLint, tests}).resolves(babelResults);
     npmConfig.default.resolves(npmResults);
     commitConvention.default.withArgs({projectRoot, configs}).resolves(commitConventionResults);
     nodeVersionScaffolder.default.withArgs({projectRoot, nodeVersionCategory: versionCategory}).resolves(version);
@@ -225,7 +225,7 @@ suite('javascript project scaffolder', () => {
 
       await scaffold(options);
 
-      assert.calledWith(babel.default, {preset: babelPreset, projectRoot, transpileLint});
+      assert.calledWith(babel.default, {preset: babelPreset, projectRoot, transpileLint, tests});
       assert.calledWith(npmConfig.default, {projectRoot, projectType});
     });
   });
