@@ -62,7 +62,7 @@ suite('babel config', () => {
     assert.deepEqual(
       await scaffoldBabel({preset: undefined, projectRoot}),
       {
-        devDependencies: ['@babel/register'],
+        devDependencies: [],
         scripts: {},
         vcsIgnore: {files: [], directories: []}
       }
