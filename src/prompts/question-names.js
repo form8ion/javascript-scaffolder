@@ -1,5 +1,3 @@
-import {questionNames as languageQuestionNames} from '@travi/language-scaffolder-prompts';
-
 export const questionNames = {
   NODE_VERSION_CATEGORY: 'nodeVersionCategory',
   PROJECT_TYPE: 'projectType',
@@ -10,6 +8,5 @@ export const questionNames = {
   AUTHOR_EMAIL: 'authorEmail',
   AUTHOR_URL: 'authorUrl',
   HOST: 'host',
-  TRANSPILE_LINT: 'transpileLint',
-  ...languageQuestionNames
+  TRANSPILE_LINT: 'transpileLint'
 };
