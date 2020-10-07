@@ -86,6 +86,30 @@ export default async function ({
 }) {
   info('Scaffolding Package Details');
 
+  const details = {
+    ...false !== transpileLint && {
+      packageProperties: {
+        main: 'lib/index.cjs.js',
+        module: 'lib/index.es.js',
+        sideEffects: false,
+        files: ['lib/']
+      },
+      ...await buildDetails(
+        packageTypes,
+        decisions,
+        projectRoot,
+        tests,
+        projectName,
+        visibility,
+        packageName
+      )
+    },
+    ...false === transpileLint && {
+      packageProperties: {files: ['index.js']},
+      ...await buildDetailsForNonTranspiledProject(projectRoot, projectName)
+    }
+  };
+
   const chosenType = await choosePackageType({types: packageTypes, projectType: 'package', decisions});
   const results = await scaffoldChosenPackageType(
     packageTypes,
@@ -111,28 +135,6 @@ export default async function ({
       badges: defineBadges(packageName, visibility)
     },
     results,
-    {
-      ...false !== transpileLint && {
-        packageProperties: {
-          main: 'lib/index.cjs.js',
-          module: 'lib/index.es.js',
-          sideEffects: false,
-          files: ['lib/']
-        },
-        ...await buildDetails(
-          packageTypes,
-          decisions,
-          projectRoot,
-          tests,
-          projectName,
-          visibility,
-          packageName
-        )
-      },
-      ...false === transpileLint && {
-        packageProperties: {files: ['index.js']},
-        ...await buildDetailsForNonTranspiledProject(projectRoot, projectName)
-      }
-    }
+    details
   ]);
 }
