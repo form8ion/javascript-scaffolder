@@ -1,7 +1,6 @@
 import {promises as fsPromises} from 'fs';
 import {info} from '@travi/cli-messages';
 import buildPackageDetails from './details';
-import installDependencies from './dependencies';
 
 export default async function ({
   projectRoot,
@@ -12,8 +11,7 @@ export default async function ({
   vcs,
   author,
   description,
-  packageProperties,
-  keywords
+  packageProperties
 }) {
   info('Configuring package.json');
 
@@ -25,13 +23,10 @@ export default async function ({
     author,
     description,
     contributors,
-    packageProperties,
-    keywords
+    packageProperties
   });
 
   await fsPromises.writeFile(`${projectRoot}/package.json`, JSON.stringify(packageData));
-
-  await installDependencies({contributors});
 
   return {homepage: packageData.homepage};
 }
