@@ -114,7 +114,8 @@ export async function scaffold(options) {
     packageProperties: projectTypeResults.packageProperties
   });
 
-  await lift({results: deepmerge.all([{devDependencies: ['npm-run-all']}, ...contributors]), projectRoot});
+  const {eslintConfigs, ...results} = deepmerge.all([{devDependencies: ['npm-run-all']}, ...contributors]);
+  await lift({results, projectRoot});
 
   return {
     badges: buildBadgesDetails(contributors),
