@@ -75,10 +75,7 @@ extends:
   - '${scope}'
   - '${scope}/${additionalConfigs.join(`'\n  - '${scope}/`)}'`
       );
-      assert.deepEqual(
-        result.devDependencies,
-        [`${scope}/eslint-config`, ...additionalConfigs.map(config => `${scope}/eslint-config-${config}`)]
-      );
+      assert.deepEqual(result.devDependencies, [`${scope}/eslint-config`]);
     });
 
     test('that no additional configs are added if the additional list is empty', async () => {
@@ -120,14 +117,7 @@ overrides:
     extends: '${scope}/${configName}'
 `
       );
-      assert.deepEqual(
-        result.devDependencies,
-        [
-          `${scope}/eslint-config`,
-          ...stringConfigs.map(config => `${scope}/eslint-config-${config}`),
-          `${scope}/eslint-config-${configName}`
-        ]
-      );
+      assert.deepEqual(result.devDependencies, [`${scope}/eslint-config`]);
     });
 
     suite('eslint-ignore', () => {

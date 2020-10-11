@@ -30,16 +30,7 @@ export default async function ({config, projectRoot, unitTested, buildDirectory,
   ]);
 
   return {
-    devDependencies: [
-      `${scope}/eslint-config`,
-      ...additionalConfigs
-        ? additionalConfigs.map(supportingConfig => {
-          if ('string' === typeof supportingConfig) return `${scope}/eslint-config-${supportingConfig}`;
-
-          return `${scope}/eslint-config-${supportingConfig.name}`;
-        })
-        : []
-    ],
+    devDependencies: [`${scope}/eslint-config`],
     scripts: {
       'lint:js': 'eslint . --cache',
       'lint:js:fix': 'run-s lint:js -- --fix'
