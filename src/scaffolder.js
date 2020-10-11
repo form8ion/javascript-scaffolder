@@ -1,4 +1,6 @@
+import deepmerge from 'deepmerge';
 import {scaffoldChoice} from '@form8ion/javascript-core';
+import {lift} from '@form8ion/lift-javascript';
 import {info} from '@travi/cli-messages';
 import {questionNames as commonQuestionNames} from '@travi/language-scaffolder-prompts';
 import {validate} from './options-validator';
@@ -109,9 +111,11 @@ export async function scaffold(options) {
     vcs,
     author: {name: authorName, email: authorEmail, url: authorUrl},
     description,
-    packageProperties: projectTypeResults.packageProperties,
-    keywords: projectTypeResults.tags
+    packageProperties: projectTypeResults.packageProperties
   });
+
+  const {eslintConfigs, ...results} = deepmerge.all([{devDependencies: ['npm-run-all']}, ...contributors]);
+  await lift({results, projectRoot});
 
   return {
     badges: buildBadgesDetails(contributors),

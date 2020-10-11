@@ -3,7 +3,6 @@ import sinon from 'sinon';
 import any from '@travi/any';
 import {assert} from 'chai';
 import * as buildPackageDetails from './details';
-import * as dependencyInstaller from './dependencies';
 import scaffold from './index';
 
 suite('package scaffolder', () => {
@@ -14,7 +13,6 @@ suite('package scaffolder', () => {
 
     sandbox.stub(fsPromises, 'writeFile');
     sandbox.stub(buildPackageDetails, 'default');
-    sandbox.stub(dependencyInstaller, 'default');
   });
 
   teardown(() => sandbox.restore());
@@ -31,7 +29,6 @@ suite('package scaffolder', () => {
     const description = any.sentence();
     const contributors = any.simpleObject();
     const packageProperties = any.simpleObject();
-    const keywords = any.listOf(any.word);
     buildPackageDetails.default
       .withArgs({
         packageName,
@@ -41,8 +38,7 @@ suite('package scaffolder', () => {
         author,
         description,
         contributors,
-        packageProperties,
-        keywords
+        packageProperties
       })
       .resolves(packageDetails);
 
@@ -56,13 +52,11 @@ suite('package scaffolder', () => {
         vcs,
         author,
         description,
-        packageProperties,
-        keywords
+        packageProperties
       }),
       {homepage}
     );
 
     assert.calledWith(fsPromises.writeFile, `${projectRoot}/package.json`, JSON.stringify(packageDetails));
-    assert.calledWith(dependencyInstaller.default, {contributors});
   });
 });

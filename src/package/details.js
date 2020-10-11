@@ -20,8 +20,7 @@ function defineScripts(contributors) {
       projectShouldBeBuiltForVerification(flattenedContributorScripts) ? ' build' : ''
     } --parallel lint:*${
       projectWillBeTested(contributors) ? ' --parallel test:*' : ''
-    }`,
-    ...flattenedContributorScripts
+    }`
   };
 }
 
@@ -43,15 +42,13 @@ export default function ({
   author,
   description,
   contributors,
-  packageProperties,
-  keywords
+  packageProperties
 }) {
   return {
     name: packageName,
     description,
     license,
     ...packageProperties,
-    keywords,
     ...defineVcsHostDetails(vcs, projectType, packageName),
     author: `${author.name}${author.email ? ` <${author.email}>` : ''}${author.url ? ` (${author.url})` : ''}`,
     scripts: defineScripts(contributors)

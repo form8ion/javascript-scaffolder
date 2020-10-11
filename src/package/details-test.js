@@ -39,23 +39,6 @@ suite('package details builder', () => {
     });
   });
 
-  suite('keywords', () => {
-    test('that the provided keywords are included', () => {
-      const keywords = any.listOf(any.word);
-
-      const packageDetails = buildPackageDetails({
-        keywords,
-        tests: {},
-        vcs: {},
-        author: {},
-        configs: {},
-        contributors: []
-      });
-
-      assert.equal(packageDetails.keywords, keywords);
-    });
-  });
-
   suite('author', () => {
     const name = any.string();
     const email = any.string();
@@ -167,30 +150,6 @@ suite('package details builder', () => {
   });
 
   suite('scripts', () => {
-    test('that scripts from each contributor are included', () => {
-      const contributors = any.listOf(() => ({...any.simpleObject(), scripts: any.simpleObject()}));
-      const scriptsFromAllContributors = contributors
-        .map(contributor => contributor.scripts)
-        .reduce((acc, scripts) => ({...acc, ...scripts}), {});
-
-      const packageDetails = buildPackageDetails({
-        projectType: any.word(),
-        tests: {},
-        vcs: {},
-        author: {},
-        configs: {},
-        contributors
-      });
-
-      assert.deepEqual(
-        packageDetails.scripts,
-        {
-          test: 'npm-run-all --print-label --parallel lint:*',
-          ...scriptsFromAllContributors
-        }
-      );
-    });
-
     suite('verification', () => {
       test('that the `test` script is defined', () => {
         const packageDetails = buildPackageDetails({

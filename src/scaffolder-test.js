@@ -1,4 +1,6 @@
+import deepmerge from 'deepmerge';
 import * as jsCore from '@form8ion/javascript-core';
+import * as jsLifter from '@form8ion/lift-javascript';
 import {questionNames as commonQuestionNames} from '@travi/language-scaffolder-prompts';
 import {assert} from 'chai';
 import any from '@travi/any';
@@ -97,8 +99,7 @@ suite('javascript project scaffolder', () => {
     vcs: vcsDetails,
     author: {name: authorName, email: authorEmail, url: authorUrl},
     description,
-    packageProperties,
-    keywords: projectTypeTags
+    packageProperties
   };
   const commonPromptAnswers = {
     [questionNames.NODE_VERSION_CATEGORY]: any.word(),
@@ -125,6 +126,7 @@ suite('javascript project scaffolder', () => {
     sandbox.stub(optionsValidator, 'validate');
     sandbox.stub(testing, 'default');
     sandbox.stub(jsCore, 'scaffoldChoice');
+    sandbox.stub(jsLifter, 'lift');
     sandbox.stub(babel, 'default');
     sandbox.stub(linting, 'default');
     sandbox.stub(npmConfig, 'default');
@@ -227,6 +229,16 @@ suite('javascript project scaffolder', () => {
 
       assert.calledWith(babel.default, {preset: babelPreset, projectRoot, transpileLint, tests});
       assert.calledWith(npmConfig.default, {projectRoot, projectType});
+      assert.calledWith(
+        jsLifter.lift,
+        {
+          results: deepmerge.all([
+            {devDependencies: ['npm-run-all']},
+            ...contributors.map(({eslintConfigs, ...rest}) => rest)
+          ]),
+          projectRoot
+        }
+      );
     });
   });
 
