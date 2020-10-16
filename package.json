@@ -88,7 +88,7 @@
     "rollup-plugin-auto-external": "2.0.0",
     "sinon": "9.1.0",
     "testdouble": "3.16.1",
-    "yargs": "16.0.3"
+    "yargs": "16.1.0"
   },
   "dependencies": {
     "@form8ion/core": "1.0.0",
