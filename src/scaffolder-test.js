@@ -231,7 +231,7 @@ suite('javascript project scaffolder', () => {
       assert.calledWith(npmConfig.default, {projectRoot, projectType});
       assert.calledWith(
         jsLifter.lift,
-        {results: deepmerge.all([{devDependencies: ['npm-run-all']}, ...contributors]), projectRoot}
+        {results: deepmerge.all([{devDependencies: ['npm-run-all']}, ...contributors]), projectRoot, configs}
       );
     });
   });
