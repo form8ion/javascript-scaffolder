@@ -19,6 +19,7 @@ import {
 
 const {readFile} = fsPromises;
 const packagePreviewDirectory = '../__package_previews__/javascript-scaffolder';
+const stubbedNodeModules = stubbedFs.load(resolve(__dirname, '../../../../', 'node_modules'));
 
 setWorldConstructor(World);
 
@@ -67,7 +68,7 @@ Before(async function () {
   questionNames = jsScaffolder.questionNames;
 
   stubbedFs({
-    node_modules: stubbedFs.load(resolve(__dirname, '../../../../', 'node_modules')),
+    node_modules: stubbedNodeModules,
     [packagePreviewDirectory]: {
       '@travi': {
         'javascript-scaffolder': {
@@ -77,7 +78,7 @@ Before(async function () {
           }
         }
       },
-      node_modules: stubbedFs.load(resolve(__dirname, '../../../../', 'node_modules'))
+      node_modules: stubbedNodeModules
     }
   });
 
