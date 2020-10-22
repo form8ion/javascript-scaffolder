@@ -72,7 +72,7 @@ suite('package project-type', () => {
     documentationScaffolder.default.withArgs({scope, packageName, visibility}).returns(documentation);
     packageChooser.default.withArgs({types: packageTypes, projectType: 'package', decisions}).returns(chosenType);
     jsCore.scaffoldChoice
-      .withArgs(packageTypes, chosenType, {projectRoot, projectName, tests, scope})
+      .withArgs(packageTypes, chosenType, {projectRoot, projectName, packageName, tests, scope})
       .returns(typeScaffoldingResults);
 
     templatePath.default.withArgs('rollup.config.js').returns(pathToRollupTemplate);

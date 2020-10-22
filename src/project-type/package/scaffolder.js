@@ -114,7 +114,7 @@ export default async function ({
   const results = await scaffoldChosenPackageType(
     packageTypes,
     chosenType,
-    {projectRoot, projectName, tests, scope}
+    {projectRoot, projectName, packageName, tests, scope}
   );
 
   return deepmerge.all([
