@@ -89,7 +89,7 @@
     "yargs": "16.1.1"
   },
   "dependencies": {
-    "@form8ion/core": "1.1.0",
+    "@form8ion/core": "1.2.1",
     "@form8ion/javascript-core": "2.7.0",
     "@form8ion/lift-javascript": "^1.7.0",
     "@form8ion/overridable-prompts": "^1.0.0",
