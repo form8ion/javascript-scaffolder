@@ -36,7 +36,8 @@ export async function scaffold(options) {
     applicationTypes,
     packageTypes,
     decisions,
-    unitTestFrameworks
+    unitTestFrameworks,
+    pathWithinParent
   } = validate(options);
 
   const {
@@ -51,7 +52,7 @@ export async function scaffold(options) {
     [questionNames.AUTHOR_EMAIL]: authorEmail,
     [questionNames.AUTHOR_URL]: authorUrl,
     [questionNames.TRANSPILE_LINT]: transpileLint
-  } = await prompt(overrides, ciServices, hosts, visibility, vcs, decisions);
+  } = await prompt(overrides, ciServices, hosts, visibility, vcs, decisions, pathWithinParent);
 
   info('Writing project files', {level: 'secondary'});
 

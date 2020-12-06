@@ -18,6 +18,7 @@ suite('prompts', () => {
   const commonQuestions = any.listOf(any.simpleObject);
   const decisions = any.simpleObject();
   const vcs = any.simpleObject();
+  const pathWithinParent = any.string();
   const ciServices = any.simpleObject();
   const visibility = any.word();
   const answers = any.simpleObject();
@@ -34,7 +35,7 @@ suite('prompts', () => {
     sandbox.stub(commonPrompts, 'questions');
 
     visibilityFilterForChoices.default.withArgs({}).returns({});
-    commonPrompts.questions.withArgs({vcs, ciServices, visibility}).returns(commonQuestions);
+    commonPrompts.questions.withArgs({vcs, ciServices, visibility, pathWithinParent}).returns(commonQuestions);
   });
 
   teardown(() => sandbox.restore());
@@ -121,7 +122,7 @@ suite('prompts', () => {
       .resolves(answers);
 
     assert.deepEqual(
-      await prompt({}, ciServices, hosts, visibility, vcs, decisions),
+      await prompt({}, ciServices, hosts, visibility, vcs, decisions, pathWithinParent),
       {...answers, [questionNames.TRANSPILE_LINT]: true}
     );
   });
@@ -134,53 +135,55 @@ suite('prompts', () => {
     prompts.prompt.resolves({...answers, [questionNames.TRANSPILE_LINT]: false});
 
     assert.deepEqual(
-      await prompt({}, ciServices, {}, visibility, vcs, decisions),
+      await prompt({}, ciServices, {}, visibility, vcs, decisions, pathWithinParent),
       {...answers, [questionNames.TRANSPILE_LINT]: false}
     );
   });
 
-  test('that defaults are overridden by the provided options', () => {
+  test('that defaults are overridden by the provided options', async () => {
     const npmAccount = any.word();
     const author = {name: any.string(), email: any.string(), url: any.url()};
     const get = sinon.stub();
     npmConf.default.returns({get});
     prompts.prompt.resolves(answers);
 
-    return prompt({npmAccount, author}, ciServices, {}, visibility, vcs).then(() => {
-      assert.calledWith(
-        prompts.prompt,
-        sinon.match(value => 1 === value.filter((
-          question => questionNames.SCOPE === question.name && npmAccount === question.default
-        )).length)
-      );
-      assert.calledWith(
-        prompts.prompt,
-        sinon.match(value => 1 === value.filter((
-          question => questionNames.AUTHOR_NAME === question.name && author.name === question.default
-        )).length)
-      );
-      assert.calledWith(
-        prompts.prompt,
-        sinon.match(value => 1 === value.filter((
-          question => questionNames.AUTHOR_EMAIL === question.name && author.email === question.default
-        )).length)
-      );
-      assert.calledWith(
-        prompts.prompt,
-        sinon.match(value => 1 === value.filter((
-          question => questionNames.AUTHOR_URL === question.name && author.url === question.default
-        )).length)
-      );
-    });
+    await prompt({npmAccount, author}, ciServices, {}, visibility, vcs, null, pathWithinParent);
+
+    assert.calledWith(
+      prompts.prompt,
+      sinon.match(value => 1 === value.filter((
+        question => questionNames.SCOPE === question.name && npmAccount === question.default
+      )).length)
+    );
+    assert.calledWith(
+      prompts.prompt,
+      sinon.match(value => 1 === value.filter((
+        question => questionNames.AUTHOR_NAME === question.name && author.name === question.default
+      )).length)
+    );
+    assert.calledWith(
+      prompts.prompt,
+      sinon.match(value => 1 === value.filter((
+        question => questionNames.AUTHOR_EMAIL === question.name && author.email === question.default
+      )).length)
+    );
+    assert.calledWith(
+      prompts.prompt,
+      sinon.match(value => 1 === value.filter((
+        question => questionNames.AUTHOR_URL === question.name && author.url === question.default
+      )).length)
+    );
   });
 
   test('that private packages are not asked about whether they should be scoped', async () => {
     execa.default.withArgs('npm', ['whoami']).resolves({stdout: any.word()});
     npmConf.default.returns({get: () => undefined});
-    commonPrompts.questions.withArgs({vcs, ciServices, visibility: 'Private'}).returns(commonQuestions);
+    commonPrompts.questions
+      .withArgs({vcs, ciServices, visibility: 'Private', pathWithinParent})
+      .returns(commonQuestions);
     prompts.prompt.resolves(answers);
 
-    await prompt({}, ciServices, {}, 'Private', vcs);
+    await prompt({}, ciServices, {}, 'Private', vcs, null, pathWithinParent);
 
     assert.neverCalledWith(
       prompts.prompt,
@@ -191,10 +194,12 @@ suite('prompts', () => {
   test('that no logged in user is handled gracefully', async () => {
     execa.default.withArgs('npm', ['whoami']).rejects();
     npmConf.default.returns({get: () => undefined});
-    commonPrompts.questions.withArgs({vcs, ciServices, visibility: 'Public'}).returns(commonQuestions);
+    commonPrompts.questions
+      .withArgs({vcs, ciServices, visibility: 'Public', pathWithinParent})
+      .returns(commonQuestions);
     prompts.prompt.resolves(answers);
 
-    await prompt({}, ciServices, {}, 'Public', vcs);
+    await prompt({}, ciServices, {}, 'Public', vcs, null, pathWithinParent);
 
     assert.calledWith(
       prompts.prompt,

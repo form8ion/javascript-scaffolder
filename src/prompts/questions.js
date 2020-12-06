@@ -34,7 +34,7 @@ function authorQuestions({name, email, url}) {
   ];
 }
 
-export async function prompt({npmAccount, author}, ciServices, hosts, visibility, vcs, decisions) {
+export async function prompt({npmAccount, author}, ciServices, hosts, visibility, vcs, decisions, pathWithinParent) {
   const npmConf = npmConfFactory();
 
   let maybeLoggedInNpmUsername;
@@ -79,7 +79,7 @@ export async function prompt({npmAccount, author}, ciServices, hosts, visibility
       email: npmConf.get('init.author.email'),
       url: npmConf.get('init.author.url')
     }),
-    ...commonQuestions(({vcs, ciServices, visibility})),
+    ...commonQuestions(({vcs, ciServices, visibility, pathWithinParent})),
     {
       name: questionNames.TRANSPILE_LINT,
       message: 'Will there be source code that should be transpiled or linted?',

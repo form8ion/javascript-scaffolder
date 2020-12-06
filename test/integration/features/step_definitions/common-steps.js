@@ -126,7 +126,7 @@ When(/^the project is scaffolded$/, async function () {
       [questionNames.AUTHOR_URL]: any.url(),
       [commonQuestionNames.UNIT_TESTS]: this.unitTestAnswer,
       [commonQuestionNames.INTEGRATION_TESTS]: this.integrationTestAnswer,
-      [commonQuestionNames.CI_SERVICE]: this.ciAnswer || 'Other',
+      ...null !== this.ciAnswer && {[commonQuestionNames.CI_SERVICE]: this.ciAnswer || 'Other'},
       [questionNames.TRANSPILE_LINT]: this.transpileAndLint,
       [questionNames.PROJECT_TYPE_CHOICE]: 'Other',
       ...['Package', 'CLI'].includes(this.projectType) && {
@@ -134,7 +134,8 @@ When(/^the project is scaffolded$/, async function () {
         ...shouldBeScopedAnswer && {[questionNames.SCOPE]: this.npmAccount}
       }
     },
-    unitTestFrameworks: {}
+    unitTestFrameworks: {},
+    pathWithinParent: this.pathWithinParent
   });
 });
 

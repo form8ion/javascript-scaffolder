@@ -30,6 +30,7 @@ suite('javascript project scaffolder', () => {
   const projectRoot = any.string();
   const projectName = any.string();
   const packageName = any.string();
+  const pathWithinParent = any.string();
   const homepage = any.url();
   const decisions = any.simpleObject();
   const unitTestFrameworks = any.simpleObject();
@@ -158,7 +159,7 @@ suite('javascript project scaffolder', () => {
       .resolves(projectTypeResults);
     packageScaffolder.default.withArgs(packageScaffoldingInputs).resolves({...any.simpleObject(), homepage});
     prompts.prompt
-      .withArgs(overrides, ciServices, hosts, visibility, vcsDetails, decisions)
+      .withArgs(overrides, ciServices, hosts, visibility, vcsDetails, decisions, pathWithinParent)
       .resolves(commonPromptAnswers);
     jsCore.scaffoldChoice
       .withArgs(
@@ -209,7 +210,8 @@ suite('javascript project scaffolder', () => {
         applicationTypes,
         packageTypes,
         decisions,
-        unitTestFrameworks
+        unitTestFrameworks,
+        pathWithinParent
       });
   });
 
