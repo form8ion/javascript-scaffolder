@@ -24,9 +24,15 @@ function defineScripts(contributors) {
   };
 }
 
-function defineVcsHostDetails(vcs, packageType, packageName) {
+function defineVcsHostDetails(vcs, packageType, packageName, pathWithinParent) {
   return vcs && 'GitHub' === vcs.host && {
-    repository: `${vcs.owner}/${vcs.name}`,
+    repository: pathWithinParent
+      ? {
+        type: 'git',
+        url: `https://github.com/${vcs.owner}/${vcs.name}.git`,
+        path: pathWithinParent
+      }
+      : `${vcs.owner}/${vcs.name}`,
     bugs: `https://github.com/${vcs.owner}/${vcs.name}/issues`,
     homepage: (projectTypes.PACKAGE === packageType)
       ? `https://npm.im/${packageName}`
@@ -42,14 +48,15 @@ export default function ({
   author,
   description,
   contributors,
-  packageProperties
+  packageProperties,
+  pathWithinParent
 }) {
   return {
     name: packageName,
     description,
     license,
     ...packageProperties,
-    ...defineVcsHostDetails(vcs, projectType, packageName),
+    ...defineVcsHostDetails(vcs, projectType, packageName, pathWithinParent),
     author: `${author.name}${author.email ? ` <${author.email}>` : ''}${author.url ? ` (${author.url})` : ''}`,
     scripts: defineScripts(contributors)
   };

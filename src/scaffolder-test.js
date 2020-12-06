@@ -100,7 +100,8 @@ suite('javascript project scaffolder', () => {
     vcs: vcsDetails,
     author: {name: authorName, email: authorEmail, url: authorUrl},
     description,
-    packageProperties
+    packageProperties,
+    pathWithinParent
   };
   const commonPromptAnswers = {
     [questionNames.NODE_VERSION_CATEGORY]: any.word(),

@@ -112,7 +112,8 @@ export async function scaffold(options) {
     vcs,
     author: {name: authorName, email: authorEmail, url: authorUrl},
     description,
-    packageProperties: projectTypeResults.packageProperties
+    packageProperties: projectTypeResults.packageProperties,
+    pathWithinParent
   });
 
   await lift({results: deepmerge.all([{devDependencies: ['npm-run-all']}, ...contributors]), projectRoot, configs});

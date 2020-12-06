@@ -129,6 +129,28 @@ suite('package details builder', () => {
 
       assert.equal(packageDetails.homepage, `https://npm.im/${packageName}`);
     });
+
+    test('that the path within a parent project is included, when provided', () => {
+      const pathWithinParent = any.string();
+
+      const packageDetails = buildPackageDetails({
+        tests: {},
+        vcs: {host: 'GitHub', name: repoName, owner},
+        author: {},
+        configs: {},
+        contributors: [],
+        pathWithinParent
+      });
+
+      assert.deepEqual(
+        packageDetails.repository,
+        {
+          type: 'git',
+          url: `https://github.com/${owner}/${repoName}.git`,
+          path: pathWithinParent
+        }
+      );
+    });
   });
 
   suite('other vcs', () => {

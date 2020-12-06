@@ -29,6 +29,7 @@ suite('package scaffolder', () => {
     const description = any.sentence();
     const contributors = any.simpleObject();
     const packageProperties = any.simpleObject();
+    const pathWithinParent = any.string();
     buildPackageDetails.default
       .withArgs({
         packageName,
@@ -38,7 +39,8 @@ suite('package scaffolder', () => {
         author,
         description,
         contributors,
-        packageProperties
+        packageProperties,
+        pathWithinParent
       })
       .resolves(packageDetails);
 
@@ -52,7 +54,8 @@ suite('package scaffolder', () => {
         vcs,
         author,
         description,
-        packageProperties
+        packageProperties,
+        pathWithinParent
       }),
       {homepage}
     );

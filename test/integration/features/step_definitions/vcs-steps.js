@@ -25,3 +25,16 @@ Then('repository details will be defined using the shorthand', async function ()
 
   assert.equal(repository, `${repoOwner}/${repoName}`);
 });
+
+Then('the repository details include the path within the parent project', async function () {
+  const {repository} = JSON.parse(await fs.readFile(`${process.cwd()}/package.json`));
+
+  assert.deepEqual(
+    repository,
+    {
+      type: 'git',
+      url: `https://github.com/${repoOwner}/${repoName}.git`,
+      path: this.pathWithinParent
+    }
+  );
+});
