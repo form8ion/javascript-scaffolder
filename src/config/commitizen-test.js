@@ -27,7 +27,18 @@ suite('commitizen', () => {
     );
     assert.deepEqual(
       result,
-      {devDependencies: ['cz-conventional-changelog'], scripts: {}, vcsIgnore: {files: [], directories: []}}
+      {
+        devDependencies: ['cz-conventional-changelog'],
+        badges: {
+          contribution: {
+            commitizen: {
+              img: 'https://img.shields.io/badge/commitizen-friendly-brightgreen.svg',
+              text: 'Commitizen friendly',
+              link: 'http://commitizen.github.io/cz-cli/'
+            }
+          }
+        }
+      }
     );
   });
 });

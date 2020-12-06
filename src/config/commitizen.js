@@ -6,5 +6,16 @@ export default async function ({projectRoot}) {
     JSON.stringify({path: './node_modules/cz-conventional-changelog'})
   );
 
-  return {devDependencies: ['cz-conventional-changelog'], scripts: {}, vcsIgnore: {files: [], directories: []}};
+  return {
+    devDependencies: ['cz-conventional-changelog'],
+    badges: {
+      contribution: {
+        commitizen: {
+          img: 'https://img.shields.io/badge/commitizen-friendly-brightgreen.svg',
+          text: 'Commitizen friendly',
+          link: 'http://commitizen.github.io/cz-cli/'
+        }
+      }
+    }
+  };
 }
