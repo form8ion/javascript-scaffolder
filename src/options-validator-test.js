@@ -64,6 +64,15 @@ suite('options validator', () => {
     '"license" is required'
   ));
 
+  test('that `pathWithinParent` is allowed', () => validate({
+    projectRoot: any.string(),
+    projectName: any.string(),
+    visibility: any.fromList(['Public', 'Private']),
+    license: any.string(),
+    unitTestFrameworks: {},
+    pathWithinParent: any.string()
+  }));
+
   suite('vcs', () => {
     test('that `vcs.host` is required', () => assert.throws(
       () => validate({

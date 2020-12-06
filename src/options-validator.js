@@ -9,7 +9,8 @@ export function validate(options) {
       projectName: joi.string().regex(/^@\w*\//, {invert: true}).required(),
       visibility: joi.string().valid('Public', 'Private').required(),
       license: joi.string().required(),
-      description: joi.string()
+      description: joi.string(),
+      pathWithinParent: joi.string()
     })
     .keys({
       vcs: joi.object({
