@@ -35,7 +35,9 @@ suite('prompts', () => {
     sandbox.stub(commonPrompts, 'questions');
 
     visibilityFilterForChoices.default.withArgs({}).returns({});
-    commonPrompts.questions.withArgs({vcs, ciServices, visibility, pathWithinParent}).returns(commonQuestions);
+    commonPrompts.questions
+      .withArgs({vcs, ciServices, visibility, pathWithinParent: undefined})
+      .returns(commonQuestions);
   });
 
   teardown(() => sandbox.restore());
@@ -122,7 +124,7 @@ suite('prompts', () => {
       .resolves(answers);
 
     assert.deepEqual(
-      await prompt({}, ciServices, hosts, visibility, vcs, decisions, pathWithinParent),
+      await prompt({}, ciServices, hosts, visibility, vcs, decisions),
       {...answers, [questionNames.TRANSPILE_LINT]: true}
     );
   });
@@ -135,7 +137,7 @@ suite('prompts', () => {
     prompts.prompt.resolves({...answers, [questionNames.TRANSPILE_LINT]: false});
 
     assert.deepEqual(
-      await prompt({}, ciServices, {}, visibility, vcs, decisions, pathWithinParent),
+      await prompt({}, ciServices, {}, visibility, vcs, decisions),
       {...answers, [questionNames.TRANSPILE_LINT]: false}
     );
   });
@@ -147,7 +149,7 @@ suite('prompts', () => {
     npmConf.default.returns({get});
     prompts.prompt.resolves(answers);
 
-    await prompt({npmAccount, author}, ciServices, {}, visibility, vcs, null, pathWithinParent);
+    await prompt({npmAccount, author}, ciServices, {}, visibility, vcs);
 
     assert.calledWith(
       prompts.prompt,
@@ -175,6 +177,22 @@ suite('prompts', () => {
     );
   });
 
+  test('that sub-projects are not asked about node version since the parent project already defines', async () => {
+    execa.default.withArgs('npm', ['whoami']).resolves({stdout: any.word()});
+    npmConf.default.returns({get: () => undefined});
+    commonPrompts.questions
+      .withArgs({vcs, ciServices, visibility: 'Private', pathWithinParent})
+      .returns(commonQuestions);
+    prompts.prompt.resolves(answers);
+
+    await prompt({}, ciServices, {}, 'Private', vcs, null, pathWithinParent);
+
+    assert.neverCalledWith(
+      prompts.prompt,
+      sinon.match(value => 1 === value.filter(question => questionNames.NODE_VERSION_CATEGORY === question.name).length)
+    );
+  });
+
   test('that private packages are not asked about whether they should be scoped', async () => {
     execa.default.withArgs('npm', ['whoami']).resolves({stdout: any.word()});
     npmConf.default.returns({get: () => undefined});
@@ -191,7 +209,7 @@ suite('prompts', () => {
     );
   });
 
-  test('that no logged in user is handled gracefully', async () => {
+  test('that no logged-in-user is handled gracefully', async () => {
     execa.default.withArgs('npm', ['whoami']).rejects();
     npmConf.default.returns({get: () => undefined});
     commonPrompts.questions

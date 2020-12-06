@@ -19,7 +19,7 @@ suite('node-version scaffolder', () => {
 
   teardown(() => sandbox.restore());
 
-  test('that mvn is configured with the desired version', async () => {
+  test('that nvm is configured with the desired version', async () => {
     const nodeVersionCategory = any.word();
     const version = any.word();
     nodeVersionTasks.determineLatestVersionOf.withArgs(nodeVersionCategory).resolves(version);
@@ -27,5 +27,9 @@ suite('node-version scaffolder', () => {
     assert.equal(await scaffoldNodeVersion({projectRoot, nodeVersionCategory}), version);
     assert.calledWith(nodeVersionTasks.install, nodeVersionCategory);
     assert.calledWith(fsPromises.writeFile, `${projectRoot}/.nvmrc`, version);
+  });
+
+  test('that `undefined` is returned when a category is not defined', async () => {
+    assert.isUndefined(await scaffoldNodeVersion({projectRoot}));
   });
 });

@@ -46,13 +46,13 @@ export async function prompt({npmAccount, author}, ciServices, hosts, visibility
   }
 
   const answers = await promptWithInquirer([
-    {
+    ...pathWithinParent ? [] : [{
       name: questionNames.NODE_VERSION_CATEGORY,
       message: 'What node.js version should be used?',
       type: 'list',
       choices: ['LTS', 'Latest'],
       default: 'LTS'
-    },
+    }],
     {
       name: questionNames.PROJECT_TYPE,
       message: 'What type of JavaScript project is this?',

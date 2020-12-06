@@ -8,3 +8,4 @@ Feature: Monorepo
     And nvm is properly configured
     When the project is scaffolded
     Then the repository details include the path within the parent project
+    And project-level tools are not installed for a sub-project

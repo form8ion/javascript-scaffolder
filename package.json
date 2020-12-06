@@ -26,7 +26,7 @@
     "test:integration:base": "cucumber-js test/integration --profile base",
     "test:integration:debug": "DEBUG=test run-s test:integration",
     "test:integration:wip": "run-s 'test:integration:base -- --profile wip'",
-    "test:integration:focus": "run-s 'test:integration:base -- --profile focus'",
+    "test:integration:focus": "NODE_OPTIONS=--enable-source-maps run-s 'test:integration:base -- --profile focus'",
     "coverage:report": "nyc report --reporter=text-lcov > coverage.lcov && codecov",
     "pregenerate:md": "run-s build:js",
     "generate:md": "remark . --output",

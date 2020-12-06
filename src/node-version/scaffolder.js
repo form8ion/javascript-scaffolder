@@ -3,6 +3,8 @@ import {info} from '@travi/cli-messages';
 import {determineLatestVersionOf, install as installNodeVersion} from './tasks';
 
 export default async function ({projectRoot, nodeVersionCategory}) {
+  if (!nodeVersionCategory) return undefined;
+
   const lowerCaseCategory = nodeVersionCategory.toLowerCase();
   info(`Configuring ${lowerCaseCategory} version of node`);
 
