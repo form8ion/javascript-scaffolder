@@ -38,6 +38,10 @@ suite('commit-convention scaffolder', () => {
 
   teardown(() => sandbox.restore());
 
+  test('that tools for the commit-convention are not configured for a sub-project', async () => {
+    assert.deepEqual(await scaffoldCommitConvention({pathWithinParent: any.string()}), {});
+  });
+
   test('that the convention is configured', async () => {
     const commitlintConfig = any.simpleObject();
     const commitlintDevDependencies = any.listOf(any.string);

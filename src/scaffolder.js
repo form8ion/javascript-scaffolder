@@ -96,7 +96,7 @@ export async function scaffold(options) {
       }),
       scaffoldChoice(ciServices, ci, {projectRoot, vcs, visibility, projectType, nodeVersion, tests}),
       scaffoldBabel({preset: configs.babelPreset, projectRoot, transpileLint, tests}),
-      scaffoldCommitConvention({projectRoot, configs})
+      scaffoldCommitConvention({projectRoot, configs, pathWithinParent})
     ])),
     projectTypeResults,
     testingResults,

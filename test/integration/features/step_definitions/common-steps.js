@@ -23,7 +23,7 @@ const stubbedNodeModules = stubbedFs.load(resolve(__dirname, '../../../../', 'no
 
 setWorldConstructor(World);
 
-let scaffoldResult, scaffold, questionNames;
+let scaffold, questionNames;
 
 async function assertThatProperDirectoriesAreIgnoredFromEslint(projectType, transpileAndLint) {
   if (transpileAndLint) {
@@ -39,7 +39,7 @@ async function assertThatProperDirectoriesAreIgnoredFromEslint(projectType, tran
   } else assert.isFalse(existsSync(`${process.cwd()}/.eslintrc.yml`));
 }
 
-function assertThatProperDirectoriesAreIgnoredFromVersionControl(projectType) {
+function assertThatProperDirectoriesAreIgnoredFromVersionControl(scaffoldResult, projectType) {
   assert.include(scaffoldResult.vcsIgnore.directories, '/node_modules/');
   if ('cli' === projectType) {
     assert.include(scaffoldResult.vcsIgnore.directories, '/bin/');
@@ -50,7 +50,7 @@ function assertThatProperDirectoriesAreIgnoredFromVersionControl(projectType) {
   }
 }
 
-function assertThatProperFilesAreIgnoredFromVersionControl(projectType) {
+function assertThatProperFilesAreIgnoredFromVersionControl(scaffoldResult, projectType) {
   if ('application' === projectType) {
     assert.include(scaffoldResult.vcsIgnore.files, '.env');
   } else {
@@ -106,7 +106,7 @@ When(/^the project is scaffolded$/, async function () {
   const shouldBeScopedAnswer = true;
   this.projectName = `${any.word()}-${any.word()}`;
 
-  scaffoldResult = await scaffold({
+  this.scaffoldResult = await scaffold({
     projectRoot: process.cwd(),
     projectName: this.projectName,
     visibility: this.visibility,
@@ -114,7 +114,8 @@ When(/^the project is scaffolded$/, async function () {
     vcs: this.vcs,
     configs: {
       eslint: {scope: `@${any.word()}`},
-      babelPreset: {name: any.word(), packageName: any.word()}
+      babelPreset: {name: any.word(), packageName: any.word()},
+      commitlint: {name: any.word(), packageName: any.word()}
     },
     ciServices: {[any.word()]: {scaffolder: foo => ({foo}), public: true}},
     applicationTypes: {[any.word()]: {scaffolder: foo => ({foo})}},
@@ -140,9 +141,6 @@ When(/^the project is scaffolded$/, async function () {
 });
 
 Then('the expected files for a(n) {string} are generated', async function (projectType) {
-  const nvmRc = await readFile(`${process.cwd()}/.nvmrc`);
-
-  assert.equal(nvmRc.toString(), `v${this.latestLtsMajorVersion}`);
   assert.equal(existsSync(`${process.cwd()}/.babelrc`), this.transpileAndLint);
 
   await Promise.all([
@@ -161,22 +159,17 @@ Then('the expected files for a(n) {string} are generated', async function (proje
 });
 
 Then('the expected results for a(n) {string} are returned to the project scaffolder', async function (projectType) {
-  assert.containsAllKeys(
-    scaffoldResult.badges.contribution,
-    [
-      'commit-convention',
-      'commitizen',
-      ...['Package', 'CLI'].includes(this.projectType) ? ['semantic-release'] : []
-    ]
-  );
+  if (['Package', 'CLI'].includes(this.projectType)) {
+    assert.include(Object.keys(this.scaffoldResult.badges.contribution), 'semantic-release');
+  }
 
-  assertThatProperDirectoriesAreIgnoredFromVersionControl(projectType);
-  assertThatProperFilesAreIgnoredFromVersionControl(projectType);
+  assertThatProperDirectoriesAreIgnoredFromVersionControl(this.scaffoldResult, projectType);
+  assertThatProperFilesAreIgnoredFromVersionControl(this.scaffoldResult, projectType);
   assertThatDocumentationResultsAreReturnedCorrectly(
     projectType,
     this.npmAccount,
     this.projectName,
     this.visibility,
-    scaffoldResult
+    this.scaffoldResult
   );
 });

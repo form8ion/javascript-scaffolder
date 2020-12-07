@@ -8,6 +8,7 @@ Feature: Application Project Type
     And the npm cli is logged in
     And nvm is properly configured
     When the project is scaffolded
+    And the expected details are provided for a root-level project
     Then the expected files for an "application" are generated
     And repository details will be defined using the shorthand
     And the expected results for an "application" are returned to the project scaffolder
