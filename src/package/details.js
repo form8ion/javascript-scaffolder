@@ -30,7 +30,7 @@ function defineVcsHostDetails(vcs, packageType, packageName, pathWithinParent) {
       ? {
         type: 'git',
         url: `https://github.com/${vcs.owner}/${vcs.name}.git`,
-        path: pathWithinParent
+        directory: pathWithinParent
       }
       : `${vcs.owner}/${vcs.name}`,
     bugs: `https://github.com/${vcs.owner}/${vcs.name}/issues`,

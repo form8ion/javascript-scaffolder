@@ -34,7 +34,7 @@ Then('the repository details include the path within the parent project', async 
     {
       type: 'git',
       url: `https://github.com/${repoOwner}/${repoName}.git`,
-      path: this.pathWithinParent
+      directory: this.pathWithinParent
     }
   );
 });

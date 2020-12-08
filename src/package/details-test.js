@@ -147,7 +147,7 @@ suite('package details builder', () => {
         {
           type: 'git',
           url: `https://github.com/${owner}/${repoName}.git`,
-          path: pathWithinParent
+          directory: pathWithinParent
         }
       );
     });
