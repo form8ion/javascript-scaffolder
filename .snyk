@@ -6,13 +6,13 @@ ignore:
     - '@travi/javascript-scaffolder > snyk > update-notifier > latest-version > package-json > registry-auth-token > rc > minimist':
         reason: None given
         expires: '2020-08-06T22:43:53.399Z'
-      snyk > snyk-nodejs-lockfile-parser > @yarnpkg/core > mkdirp > minimist:
-        reason: None given
-        expires: '2020-08-06T22:49:16.080Z'
     - '@travi/javascript-scaffolder > snyk > update-notifier > latest-version > package-json > registry-url > rc > minimist':
         reason: None given
         expires: '2020-08-06T22:43:53.399Z'
-      snyk > snyk-nodejs-lockfile-parser > @yarnpkg/core > tar > mkdirp > minimist:
+    - snyk > snyk-nodejs-lockfile-parser > @yarnpkg/core > mkdirp > minimist:
+        reason: None given
+        expires: '2020-08-06T22:49:16.080Z'
+    - snyk > snyk-nodejs-lockfile-parser > @yarnpkg/core > tar > mkdirp > minimist:
         reason: None given
         expires: '2020-08-06T22:49:16.080Z'
 # patches apply the minimum changes required to fix a vulnerability
