@@ -130,6 +130,7 @@ When(/^the project is scaffolded$/, async function () {
       ...null !== this.ciAnswer && {[commonQuestionNames.CI_SERVICE]: this.ciAnswer || 'Other'},
       [questionNames.TRANSPILE_LINT]: this.transpileAndLint,
       [questionNames.PROJECT_TYPE_CHOICE]: 'Other',
+      [questionNames.HOST]: 'Other',
       ...['Package', 'CLI'].includes(this.projectType) && {
         [questionNames.SHOULD_BE_SCOPED]: shouldBeScopedAnswer,
         ...shouldBeScopedAnswer && {[questionNames.SCOPE]: this.npmAccount}
