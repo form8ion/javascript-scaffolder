@@ -42,7 +42,7 @@ user in the interactive prompt. Will be called with the following arguments:
 * `projectRoot` __string__ full path to the directory where scaffolder will
   create the JavaScript project
 * `vcs` __object__
-  * `host` __string__ VCS hosting service to generate the repo with (e.g., `github`)
+  * `host` __string__ VCS hosting service to generate the repo with (e.g., `GitHub`)
   * `owner` __string__ account name on the host service for the repository to
     generate (e.g., `form8ion`)
   * `name` __string__ repository name to generate (e.g., `javascript-scaffolder`)
