@@ -30,9 +30,9 @@ example: `CIServiceName`
 
 ### values: __object__
 
-Values in the CI services map define the actual mechanisms and configuration
-that will be used by the JavaScript Scaffolder to scaffold the CI service for
-the user's project.
+Values in the CI services map define the actual plugins and options that will
+be used by the JavaScript Scaffolder to scaffold the CI service for the user's
+project.
 
 #### scaffolder: __function__ (_required_)
 
