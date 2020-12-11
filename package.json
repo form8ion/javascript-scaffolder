@@ -84,7 +84,7 @@
     "remark-usage": "9.0.0",
     "rollup": "2.34.2",
     "rollup-plugin-auto-external": "2.0.0",
-    "sinon": "9.2.1",
+    "sinon": "9.2.2",
     "testdouble": "3.16.1",
     "yargs": "16.2.0"
   },
