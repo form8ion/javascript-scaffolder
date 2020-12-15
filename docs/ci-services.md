@@ -1,6 +1,6 @@
 # CI Services
 
-The CI services map defines the supported CI services the user will be
+The CI services object defines the supported CI services the user will be
 presented with when running the scaffolder.
 
 ## Example
@@ -22,15 +22,15 @@ submitting a PR with a link 😎)!
 
 ### keys: __string__
 
-Keys in the CI services map define the choices the user will be presented with
-when choosing their desired CI service. These have no functional impact on the
-scaffolder.
+Keys in the CI services object define the choices the user will be presented
+with when choosing their desired CI service. These have no functional impact on
+the scaffolder.
 
 example: `CIServiceName`
 
 ### values: __object__
 
-Values in the CI services map define the actual plugins and options that will
+Values in the CI services object define the actual plugins and options that will
 be used by the JavaScript Scaffolder to scaffold the CI service for the user's
 project.
 
@@ -63,17 +63,20 @@ The returned object is commonly used across the project as a way for
 scaffolders to communicate information to the caller. The following are
 currently supported:
 
-* `nextSteps` __array__ list of strings that will be aggregated and displayed
+* `nextSteps` __array__ list of objects that will be aggregated and displayed
   to the user when all scaffolding is complete. This can be used to remind the
   user about steps that the scaffolder is not able to complete or has not been
   developed, but may be needed before considering scaffolding complete.  (e.g.,
-  `['decide whether default dependency automation settings are appropriate']`)
+  `['decide whether default dependency automation settings are appropriate']`).
+  Each object in the list is the following shape:
+  * `summary` __string__ a summary  of the next step
+  * `description` __string__ the details of the next step
 * `devDependencies` __array__ list of strings defining the package names of dev
   dependencies to be installed into the project (e.g.
   `@travi/travis-lint`)
 * `dependencies` __array__ list of strings defining the package names of
   production dependencies to be installed into the project (e.g.  `lodash`)
-* `scripts` __object__ a map of scripts to add to the project's
+* `scripts` __object__ an object of scripts to add to the project's
   `package.json`
   * `keys` __string__ the name of the script you would like added to the
     `package.json` (e.g., `'lint:travis'`)
