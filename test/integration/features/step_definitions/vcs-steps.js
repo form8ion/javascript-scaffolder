@@ -11,7 +11,7 @@ Given(/^the project will not be versioned$/, async function () {
 });
 
 Given(/^the project will be versioned on GitHub$/, async function () {
-  this.vcs = {host: 'GitHub', owner: repoOwner, name: repoName};
+  this.vcs = {host: 'github', owner: repoOwner, name: repoName};
 });
 
 Then('no repository details will be defined', async function () {

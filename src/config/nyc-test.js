@@ -20,7 +20,7 @@ suite('nyc scaffolder', () => {
 
   test('that nyc is scaffolded', async () => {
     assert.deepEqual(
-      await scaffoldNyc({projectRoot, vcs: {owner: vcsOwner, name: vcsName, host: 'GitHub'}, visibility: 'Public'}),
+      await scaffoldNyc({projectRoot, vcs: {owner: vcsOwner, name: vcsName, host: 'github'}, visibility: 'Public'}),
       {
         devDependencies: ['nyc'],
         vcsIgnore: {files: [], directories: ['/coverage/', '/.nyc_output/']},
@@ -63,7 +63,7 @@ suite('nyc scaffolder', () => {
     assert.isUndefined(
       (await scaffoldNyc({
         projectRoot,
-        vcs: {owner: vcsOwner, name: vcsName, host: 'GitHub'},
+        vcs: {owner: vcsOwner, name: vcsName, host: 'github'},
         visibility: 'Private'
       })).badges.status.coverage
     );
