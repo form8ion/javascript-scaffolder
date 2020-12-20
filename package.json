@@ -90,7 +90,7 @@
   },
   "dependencies": {
     "@form8ion/core": "1.4.1",
-    "@form8ion/javascript-core": "2.7.1",
+    "@form8ion/javascript-core": "2.7.2",
     "@form8ion/lift-javascript": "^1.7.0",
     "@form8ion/overridable-prompts": "^1.1.0",
     "@hapi/hoek": "^9.0.3",
