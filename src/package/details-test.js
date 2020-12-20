@@ -105,7 +105,7 @@ suite('package details builder', () => {
     test('that the repository details are defined', () => {
       const packageDetails = buildPackageDetails({
         tests: {},
-        vcs: {host: 'GitHub', name: repoName, owner},
+        vcs: {host: 'github', name: repoName, owner},
         author: {},
         configs: {},
         contributors: []
@@ -121,7 +121,7 @@ suite('package details builder', () => {
         projectType: projectTypes.PACKAGE,
         packageName,
         tests: {},
-        vcs: {host: 'GitHub', name: repoName, owner},
+        vcs: {host: 'github', name: repoName, owner},
         author: {},
         configs: {},
         contributors: []
@@ -135,7 +135,7 @@ suite('package details builder', () => {
 
       const packageDetails = buildPackageDetails({
         tests: {},
-        vcs: {host: 'GitHub', name: repoName, owner},
+        vcs: {host: 'github', name: repoName, owner},
         author: {},
         configs: {},
         contributors: [],

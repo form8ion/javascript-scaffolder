@@ -25,7 +25,7 @@ function defineScripts(contributors) {
 }
 
 function defineVcsHostDetails(vcs, packageType, packageName, pathWithinParent) {
-  return vcs && 'GitHub' === vcs.host && {
+  return vcs && 'github' === vcs.host && {
     repository: pathWithinParent
       ? {
         type: 'git',

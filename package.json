@@ -60,7 +60,7 @@
     "@travi/eslint-config": "1.0.56",
     "@travi/eslint-config-cucumber": "1.0.5",
     "@travi/eslint-config-mocha": "1.0.8",
-    "@travi/project-scaffolder": "8.11.1",
+    "@travi/project-scaffolder": "9.0.0-beta.1",
     "@travi/travis-scaffolder-javascript": "4.0.0",
     "ban-sensitive-files": "1.9.14",
     "chai": "4.2.0",
@@ -108,6 +108,9 @@
     "snyk": "^1.436.0",
     "touch": "^3.1.0",
     "validate-npm-package-name": "^3.0.0"
+  },
+  "peerDependencies": {
+    "@travi/project-scaffolder": ">=9.0.0-beta.1"
   },
   "snyk": true
 }
