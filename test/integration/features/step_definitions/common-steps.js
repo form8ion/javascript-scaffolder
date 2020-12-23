@@ -1,5 +1,4 @@
-import {EOL} from 'os';
-import {existsSync, promises as fsPromises} from 'fs';
+import {existsSync, promises as fs} from 'fs';
 import {resolve} from 'path';
 import {questionNames as commonQuestionNames} from '@travi/language-scaffolder-prompts';
 import {After, Before, Given, setWorldConstructor, Then, When} from 'cucumber';
@@ -16,47 +15,18 @@ import {
   assertThatDocumentationIsDefinedAppropriately,
   assertThatDocumentationResultsAreReturnedCorrectly
 } from './documentation-steps';
+import {
+  assertThatProperDirectoriesAreIgnoredFromVersionControl,
+  assertThatProperFilesAreIgnoredFromVersionControl
+} from './vcs-steps';
+import {assertThatProperDirectoriesAreIgnoredFromEslint} from './config-steps';
 
-const {readFile} = fsPromises;
 const packagePreviewDirectory = '../__package_previews__/javascript-scaffolder';
 const stubbedNodeModules = stubbedFs.load(resolve(__dirname, '../../../../', 'node_modules'));
 
 setWorldConstructor(World);
 
 let scaffold, questionNames;
-
-async function assertThatProperDirectoriesAreIgnoredFromEslint(projectType, transpileAndLint) {
-  if (transpileAndLint) {
-    const eslintIgnoreDetails = (await readFile(`${process.cwd()}/.eslintignore`)).toString().split(EOL);
-
-    if ('cli' === projectType) {
-      assert.include(eslintIgnoreDetails, '/bin/');
-      assert.notInclude(eslintIgnoreDetails, '/lib/');
-    } else {
-      assert.include(eslintIgnoreDetails, '/lib/');
-      assert.notInclude(eslintIgnoreDetails, '/bin/');
-    }
-  } else assert.isFalse(existsSync(`${process.cwd()}/.eslintrc.yml`));
-}
-
-function assertThatProperDirectoriesAreIgnoredFromVersionControl(scaffoldResult, projectType) {
-  assert.include(scaffoldResult.vcsIgnore.directories, '/node_modules/');
-  if ('cli' === projectType) {
-    assert.include(scaffoldResult.vcsIgnore.directories, '/bin/');
-    assert.notInclude(scaffoldResult.vcsIgnore.directories, '/lib/');
-  } else {
-    assert.include(scaffoldResult.vcsIgnore.directories, '/lib/');
-    assert.notInclude(scaffoldResult.vcsIgnore.directories, '/bin/');
-  }
-}
-
-function assertThatProperFilesAreIgnoredFromVersionControl(scaffoldResult, projectType) {
-  if ('application' === projectType) {
-    assert.include(scaffoldResult.vcsIgnore.files, '.env');
-  } else {
-    assert.notInclude(scaffoldResult.vcsIgnore.files, '.env');
-  }
-}
 
 Before(async function () {
   this.execa = td.replace('execa');
@@ -70,8 +40,8 @@ Before(async function () {
       '@travi': {
         'javascript-scaffolder': {
           templates: {
-            'rollup.config.js': await readFile(resolve(__dirname, '../../../../', 'templates/rollup.config.js')),
-            'example.mustache': await readFile(resolve(__dirname, '../../../../', 'templates/example.mustache'))
+            'rollup.config.js': await fs.readFile(resolve(__dirname, '../../../../', 'templates/rollup.config.js')),
+            'example.mustache': await fs.readFile(resolve(__dirname, '../../../../', 'templates/example.mustache'))
           }
         }
       },

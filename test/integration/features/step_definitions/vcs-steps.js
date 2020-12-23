@@ -6,6 +6,25 @@ import {assert} from 'chai';
 const repoOwner = any.word();
 const repoName = any.word();
 
+export function assertThatProperDirectoriesAreIgnoredFromVersionControl(scaffoldResult, projectType) {
+  assert.include(scaffoldResult.vcsIgnore.directories, '/node_modules/');
+  if ('cli' === projectType) {
+    assert.include(scaffoldResult.vcsIgnore.directories, '/bin/');
+    assert.notInclude(scaffoldResult.vcsIgnore.directories, '/lib/');
+  } else {
+    assert.include(scaffoldResult.vcsIgnore.directories, '/lib/');
+    assert.notInclude(scaffoldResult.vcsIgnore.directories, '/bin/');
+  }
+}
+
+export function assertThatProperFilesAreIgnoredFromVersionControl(scaffoldResult, projectType) {
+  if ('application' === projectType) {
+    assert.include(scaffoldResult.vcsIgnore.files, '.env');
+  } else {
+    assert.notInclude(scaffoldResult.vcsIgnore.files, '.env');
+  }
+}
+
 Given(/^the project will not be versioned$/, async function () {
   this.vcs = undefined;
 });
