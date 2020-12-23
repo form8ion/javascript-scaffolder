@@ -1,6 +1,6 @@
 import {EOL} from 'os';
 import {promises} from 'fs';
-import {Given} from 'cucumber';
+import {Given, Then} from 'cucumber';
 import any from '@travi/any';
 import {assert} from 'chai';
 import td from 'testdouble';
@@ -120,4 +120,8 @@ Given(/^the npm cli is logged in$/, function () {
   this.npmAccount = any.word();
 
   td.when(this.execa('npm', ['whoami'])).thenResolve({stdout: this.npmAccount});
+});
+
+Then('the npm cli is configured for use', async function () {
+  await assertThatNpmConfigDetailsAreConfiguredCorrectlyFor(this.projectType.toLowerCase());
 });
