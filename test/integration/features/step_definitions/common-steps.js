@@ -62,9 +62,7 @@ Before(async function () {
   this.execa = td.replace('execa');
 
   // eslint-disable-next-line import/no-extraneous-dependencies,import/no-unresolved
-  const jsScaffolder = require('@travi/javascript-scaffolder');
-  scaffold = jsScaffolder.scaffold;
-  questionNames = jsScaffolder.questionNames;
+  ({scaffold, questionNames} = require('@travi/javascript-scaffolder'));
 
   stubbedFs({
     node_modules: stubbedNodeModules,
