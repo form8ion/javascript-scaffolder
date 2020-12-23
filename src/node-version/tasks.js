@@ -1,10 +1,12 @@
 import {info} from '@travi/cli-messages';
-import exec from '../../third-party-wrappers/exec-as-promised';
+import execa from '../../third-party-wrappers/execa';
 
 export async function determineLatestVersionOf(nodeVersionCategory) {
   info('Determining version of node', {level: 'secondary'});
 
-  const nvmLsOutput = await exec(`. ~/.nvm/nvm.sh && nvm ls-remote${('LTS' === nodeVersionCategory) ? ' --lts' : ''}`);
+  const {
+    stdout: nvmLsOutput
+  } = await execa(`. ~/.nvm/nvm.sh && nvm ls-remote${('LTS' === nodeVersionCategory) ? ' --lts' : ''}`);
 
   const lsLines = nvmLsOutput.split('\n');
   const lsLine = lsLines[lsLines.length - 2];
@@ -15,5 +17,7 @@ export async function determineLatestVersionOf(nodeVersionCategory) {
 export function install(nodeVersionCategory) {
   info(`Installing ${nodeVersionCategory} version of node using nvm`, {level: 'secondary'});
 
-  return exec('. ~/.nvm/nvm.sh && nvm install', {silent: false});
+  const subprocess = execa('. ~/.nvm/nvm.sh && nvm install');
+  subprocess.stdout.pipe(process.stdout);
+  return subprocess;
 }

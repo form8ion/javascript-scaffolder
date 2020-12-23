@@ -1,7 +1,7 @@
 import sinon from 'sinon';
 import any from '@travi/any';
 import {assert} from 'chai';
-import * as exec from '../../third-party-wrappers/exec-as-promised';
+import * as execa from '../../third-party-wrappers/execa';
 import {determineLatestVersionOf, install} from './tasks';
 
 suite('node-version tasks', () => {
@@ -12,30 +12,33 @@ suite('node-version tasks', () => {
   setup(() => {
     sandbox = sinon.createSandbox();
 
-    sandbox.stub(exec, 'default');
+    sandbox.stub(execa, 'default');
   });
 
   teardown(() => sandbox.restore());
 
   test('that the latest node version is returned when latest is requested', async () => {
-    exec.default
+    execa.default
       .withArgs('. ~/.nvm/nvm.sh && nvm ls-remote')
-      .resolves([...any.listOf(any.word), version, ''].join('\n'));
+      .resolves({stdout: [...any.listOf(any.word), version, ''].join('\n')});
 
     assert.equal(await determineLatestVersionOf(any.word()), `v${majorVersion}`);
   });
 
   test('that the latest lts node version is returned when LTS is requested', async () => {
-    exec.default
+    execa.default
       .withArgs('. ~/.nvm/nvm.sh && nvm ls-remote --lts')
-      .resolves([...any.listOf(any.word), version, ''].join('\n'));
+      .resolves({stdout: [...any.listOf(any.word), version, ''].join('\n')});
 
     assert.equal(await determineLatestVersionOf('LTS'), `v${majorVersion}`);
   });
 
   test('that the node version gets installed', async () => {
+    const pipe = sinon.spy();
+    execa.default.withArgs('. ~/.nvm/nvm.sh && nvm install').returns({stdout: {pipe}});
+
     await install();
 
-    assert.calledWith(exec.default, '. ~/.nvm/nvm.sh && nvm install', {silent: false});
+    assert.calledWith(pipe, process.stdout);
   });
 });

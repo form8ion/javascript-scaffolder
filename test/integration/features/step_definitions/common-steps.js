@@ -59,7 +59,6 @@ function assertThatProperFilesAreIgnoredFromVersionControl(scaffoldResult, proje
 }
 
 Before(async function () {
-  this.shell = td.replace('shelljs');
   this.execa = td.replace('execa');
 
   // eslint-disable-next-line import/no-extraneous-dependencies,import/no-unresolved
