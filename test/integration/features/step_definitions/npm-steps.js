@@ -120,8 +120,10 @@ Given(/^the npm cli is logged in$/, function () {
   this.npmAccount = any.word();
 
   td.when(this.execa('npm', ['whoami'])).thenResolve({stdout: this.npmAccount});
+  td.when(this.execa(td.matchers.contains('. ~/.nvm/nvm.sh && nvm use && npm install'))).thenResolve({stdout: ''});
 });
 
 Then('the npm cli is configured for use', async function () {
   await assertThatNpmConfigDetailsAreConfiguredCorrectlyFor(this.projectType.toLowerCase());
+  td.verify(this.execa(td.matchers.contains('. ~/.nvm/nvm.sh && nvm use && npm install')), {ignoreExtraArgs: true});
 });
