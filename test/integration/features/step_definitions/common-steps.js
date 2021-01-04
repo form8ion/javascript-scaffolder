@@ -5,6 +5,8 @@ import {After, Before, Given, setWorldConstructor, Then, When} from 'cucumber';
 import stubbedFs from 'mock-fs';
 import any from '@travi/any';
 import td from 'testdouble';
+import importFresh from 'import-fresh';
+import clearModule from 'clear-module';
 import {assert} from 'chai';
 import {World} from '../support/world';
 import {
@@ -32,7 +34,7 @@ Before(async function () {
   this.execa = td.replace('execa');
 
   // eslint-disable-next-line import/no-extraneous-dependencies,import/no-unresolved
-  ({scaffold, questionNames} = require('@travi/javascript-scaffolder'));
+  ({scaffold, questionNames} = importFresh('@travi/javascript-scaffolder'));
 
   stubbedFs({
     node_modules: stubbedNodeModules,
@@ -57,6 +59,10 @@ Before(async function () {
 After(function () {
   stubbedFs.restore();
   td.reset();
+  clearModule('@travi/javascript-scaffolder');
+  clearModule('@form8ion/lift-javascript');
+  clearModule('@form8ion/javascript-core');
+  clearModule('execa');
 });
 
 Given(/^the default answers are chosen$/, async function () {

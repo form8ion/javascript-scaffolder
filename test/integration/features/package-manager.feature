@@ -15,3 +15,4 @@ Feature: Package manager
     And nvm is properly configured
     And the project will not be tested
     When the project is scaffolded
+    Then the yarn cli is configured for use
