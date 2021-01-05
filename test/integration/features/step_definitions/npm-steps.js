@@ -121,6 +121,7 @@ Given(/^the npm cli is logged in$/, function () {
 
   td.when(this.execa('npm', ['whoami'])).thenResolve({stdout: this.npmAccount});
   td.when(this.execa(td.matchers.contains('. ~/.nvm/nvm.sh && nvm use && npm install'))).thenResolve({stdout: ''});
+  td.when(this.execa('npm', ['ls', 'husky', '--json'])).thenResolve({stdout: JSON.stringify({})});
 });
 
 Then('the npm cli is configured for use', async function () {
