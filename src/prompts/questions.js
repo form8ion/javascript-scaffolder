@@ -1,5 +1,5 @@
 import {Separator} from 'inquirer';
-import {projectTypes} from '@form8ion/javascript-core';
+import {packageManagers, projectTypes} from '@form8ion/javascript-core';
 import {prompt as promptWithInquirer} from '@form8ion/overridable-prompts';
 import {questions as commonQuestions} from '@travi/language-scaffolder-prompts';
 import {warn} from '@travi/cli-messages';
@@ -53,6 +53,13 @@ export async function prompt({npmAccount, author}, ciServices, hosts, visibility
       choices: ['LTS', 'Latest'],
       default: 'LTS'
     }],
+    {
+      name: questionNames.PACKAGE_MANAGER,
+      message: 'Which package manager will be used with this project?',
+      type: 'list',
+      choices: Object.values(packageManagers),
+      default: packageManagers.NPM
+    },
     {
       name: questionNames.PROJECT_TYPE,
       message: 'What type of JavaScript project is this?',

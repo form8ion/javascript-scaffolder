@@ -51,7 +51,8 @@ export async function scaffold(options) {
     [questionNames.AUTHOR_NAME]: authorName,
     [questionNames.AUTHOR_EMAIL]: authorEmail,
     [questionNames.AUTHOR_URL]: authorUrl,
-    [questionNames.TRANSPILE_LINT]: transpileLint
+    [questionNames.TRANSPILE_LINT]: transpileLint,
+    [questionNames.PACKAGE_MANAGER]: packageManager
   } = await prompt(overrides, ciServices, hosts, visibility, vcs, decisions, pathWithinParent);
 
   info('Writing project files', {level: 'secondary'});
@@ -116,7 +117,11 @@ export async function scaffold(options) {
     pathWithinParent
   });
 
-  await lift({results: deepmerge.all([{devDependencies: ['npm-run-all']}, ...contributors]), projectRoot, configs});
+  await lift({
+    results: deepmerge.all([{devDependencies: ['npm-run-all'], packageManager}, ...contributors]),
+    projectRoot,
+    configs
+  });
 
   return {
     badges: buildBadgesDetails(contributors),

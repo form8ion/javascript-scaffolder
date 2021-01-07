@@ -107,7 +107,8 @@ When(/^the project is scaffolded$/, async function () {
       ...['Package', 'CLI'].includes(this.projectType) && {
         [questionNames.SHOULD_BE_SCOPED]: shouldBeScopedAnswer,
         ...shouldBeScopedAnswer && {[questionNames.SCOPE]: this.npmAccount}
-      }
+      },
+      ...this.packageManager && {[questionNames.PACKAGE_MANAGER]: this.packageManager}
     },
     unitTestFrameworks: {},
     pathWithinParent: this.pathWithinParent

@@ -1,6 +1,6 @@
 import inquirer from 'inquirer';
 import * as prompts from '@form8ion/overridable-prompts';
-import {projectTypes} from '@form8ion/javascript-core';
+import {projectTypes, packageManagers} from '@form8ion/javascript-core';
 import * as commonPrompts from '@travi/language-scaffolder-prompts';
 import sinon from 'sinon';
 import {assert} from 'chai';
@@ -69,6 +69,13 @@ suite('prompts', () => {
           type: 'list',
           choices: ['LTS', 'Latest'],
           default: 'LTS'
+        },
+        {
+          name: questionNames.PACKAGE_MANAGER,
+          message: 'Which package manager will be used with this project?',
+          type: 'list',
+          choices: Object.values(packageManagers),
+          default: packageManagers.NPM
         },
         {
           name: questionNames.PROJECT_TYPE,

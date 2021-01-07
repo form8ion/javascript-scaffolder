@@ -73,6 +73,7 @@ suite('javascript project scaffolder', () => {
   const projectTypeBuildDirectory = any.string();
   const packageProperties = any.simpleObject();
   const projectTypeTags = any.listOf(any.word);
+  const packageManager = any.word();
   const projectTypeResults = {
     ...any.simpleObject(),
     buildDirectory: projectTypeBuildDirectory,
@@ -118,7 +119,8 @@ suite('javascript project scaffolder', () => {
     [commonQuestionNames.CI_SERVICE]: chosenCiService,
     [questionNames.HOST]: chosenHost,
     [questionNames.NODE_VERSION_CATEGORY]: versionCategory,
-    [questionNames.TRANSPILE_LINT]: transpileLint
+    [questionNames.TRANSPILE_LINT]: transpileLint,
+    [questionNames.PACKAGE_MANAGER]: packageManager
   };
 
   setup(() => {
@@ -234,7 +236,11 @@ suite('javascript project scaffolder', () => {
       assert.calledWith(npmConfig.default, {projectRoot, projectType});
       assert.calledWith(
         jsLifter.lift,
-        {results: deepmerge.all([{devDependencies: ['npm-run-all']}, ...contributors]), projectRoot, configs}
+        {
+          results: deepmerge.all([{devDependencies: ['npm-run-all'], packageManager}, ...contributors]),
+          projectRoot,
+          configs
+        }
       );
     });
   });

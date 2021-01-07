@@ -117,6 +117,8 @@ export async function assertThatNpmConfigDetailsAreConfiguredCorrectlyFor(projec
 }
 
 Given(/^the npm cli is logged in$/, function () {
+  const {packageManagers} = require('@form8ion/javascript-core');
+  this.packageManager = packageManagers.NPM;
   this.npmAccount = any.word();
 
   td.when(this.execa('npm', ['whoami'])).thenResolve({stdout: this.npmAccount});
