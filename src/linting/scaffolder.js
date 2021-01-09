@@ -7,6 +7,7 @@ import scaffoldLockfileLint from './lockfile';
 export default async function ({
   projectRoot,
   projectType,
+  packageManager,
   tests,
   configs,
   vcs,
@@ -15,7 +16,7 @@ export default async function ({
   eslintConfigs
 }) {
   return deepmerge.all(await Promise.all([
-    scaffoldLockfileLint({projectRoot}),
+    scaffoldLockfileLint({projectRoot, packageManager}),
     configs.eslint && false !== transpileLint
       ? scaffoldEslint({
         projectRoot,

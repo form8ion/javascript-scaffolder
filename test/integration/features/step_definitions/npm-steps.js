@@ -1,5 +1,5 @@
 import {EOL} from 'os';
-import {promises} from 'fs';
+import {promises as fs, promises} from 'fs';
 import {Given, Then} from 'cucumber';
 import any from '@travi/any';
 import {assert} from 'chai';
@@ -127,6 +127,16 @@ Given(/^the npm cli is logged in$/, function () {
 });
 
 Then('the npm cli is configured for use', async function () {
-  await assertThatNpmConfigDetailsAreConfiguredCorrectlyFor(this.projectType.toLowerCase());
+  const {packageManagers} = require('@form8ion/javascript-core');
+  const [lockfileLintConfig] = await Promise.all([
+    fs.readFile(`${process.cwd()}/.lockfile-lintrc.json`, 'utf-8'),
+    assertThatNpmConfigDetailsAreConfiguredCorrectlyFor(this.projectType.toLowerCase())
+  ]);
+
+  const {type, 'allowed-hosts': allowedHosts, path} = JSON.parse(lockfileLintConfig);
+
+  assert.equal(type, packageManagers.NPM);
+  assert.include(allowedHosts, packageManagers.NPM);
+  assert.equal(path, 'package-lock.json');
   td.verify(this.execa(td.matchers.contains('. ~/.nvm/nvm.sh && nvm use && npm install')), {ignoreExtraArgs: true});
 });

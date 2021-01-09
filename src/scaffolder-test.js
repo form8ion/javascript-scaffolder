@@ -186,6 +186,7 @@ suite('javascript project scaffolder', () => {
         configs,
         projectRoot,
         projectType,
+        packageManager,
         tests,
         vcs: vcsDetails,
         transpileLint,

@@ -89,6 +89,7 @@ export async function scaffold(options) {
         configs,
         projectRoot,
         projectType,
+        packageManager,
         tests,
         vcs,
         transpileLint,
