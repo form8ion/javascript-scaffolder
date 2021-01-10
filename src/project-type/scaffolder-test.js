@@ -36,6 +36,7 @@ suite('project-type scaffolder', () => {
 
   test('that the package-type scaffolder is applied when the project-type is `Package`', async () => {
     const scope = any.word();
+    const packageManager = any.word();
     const packageTypes = any.simpleObject();
 
     packageTypeScaffolder.default
@@ -44,6 +45,7 @@ suite('project-type scaffolder', () => {
         transpileLint,
         packageName,
         projectName,
+        packageManager,
         visibility,
         scope,
         packageTypes,
@@ -60,6 +62,7 @@ suite('project-type scaffolder', () => {
         transpileLint,
         projectName,
         packageName,
+        packageManager,
         visibility,
         scope,
         packageTypes,

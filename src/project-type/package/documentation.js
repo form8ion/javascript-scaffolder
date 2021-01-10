@@ -1,4 +1,6 @@
-export default function ({scope, packageName, visibility}) {
+import buildGenerationCommand from '../../documentation/generation-command';
+
+export default function ({scope, packageName, packageManager, visibility}) {
   return {
     usage: `### Installation
 ${'Private' === visibility ? `
@@ -12,6 +14,6 @@ $ npm install ${packageName}
 
 ### Example
 
-run \`npm run generate:md\` to inject the usage example`
+run \`${buildGenerationCommand(packageManager)}\` to inject the usage example`
   };
 }

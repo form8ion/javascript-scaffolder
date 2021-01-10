@@ -153,6 +153,7 @@ suite('javascript project scaffolder', () => {
         transpileLint,
         projectName,
         packageName,
+        packageManager,
         visibility,
         applicationTypes,
         packageTypes,

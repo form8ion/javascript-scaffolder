@@ -65,6 +65,7 @@ export async function scaffold(options) {
     projectRoot,
     projectName,
     packageName,
+    packageManager,
     transpileLint,
     visibility,
     applicationTypes,

@@ -78,6 +78,7 @@ export default async function ({
   transpileLint,
   projectName,
   packageName,
+  packageManager,
   visibility,
   scope,
   packageTypes,
@@ -125,7 +126,7 @@ export default async function ({
         publishConfig: {access: 'Public' === visibility ? 'public' : 'restricted'},
         ...'Public' === visibility && {runkitExampleFilename: './example.js'}
       },
-      documentation: scaffoldPackageDocumentation({packageName, visibility, scope}),
+      documentation: scaffoldPackageDocumentation({packageName, visibility, scope, packageManager}),
       eslintConfigs: [],
       nextSteps: [
         {summary: 'Add the appropriate `save` flag to the installation instructions in the README'},
