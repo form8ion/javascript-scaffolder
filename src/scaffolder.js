@@ -127,7 +127,7 @@ export async function scaffold(options) {
 
   return {
     badges: buildBadgesDetails(contributors),
-    documentation: scaffoldDocumentation({projectTypeResults}),
+    documentation: scaffoldDocumentation({projectTypeResults, packageManager}),
     tags: projectTypeResults.tags,
     vcsIgnore: buildVcsIgnoreLists(contributors),
     verificationCommand: `${buildDocumentationCommand(packageManager)} && ${packageManager} test`,

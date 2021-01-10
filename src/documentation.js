@@ -1,18 +1,20 @@
-export default function ({projectTypeResults}) {
+import buildGenerationCommand from './documentation/generation-command';
+
+export default function ({projectTypeResults, packageManager}) {
   return {
-    toc: 'Run `npm run generate:md` to generate a table of contents',
+    toc: `Run \`${buildGenerationCommand(packageManager)}\` to generate a table of contents`,
     ...projectTypeResults.documentation,
     contributing: `### Dependencies
 
 \`\`\`sh
 $ nvm install
-$ npm install
+$ ${packageManager} install
 \`\`\`
 
 ### Verification
 
 \`\`\`sh
-$ npm test
+$ ${packageManager} test
 \`\`\``
   };
 }

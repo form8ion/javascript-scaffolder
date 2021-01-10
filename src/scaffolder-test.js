@@ -312,7 +312,7 @@ suite('javascript project scaffolder', () => {
     suite('documentation', () => {
       test('that appropriate documentation is passed along', async () => {
         const docs = any.simpleObject();
-        documentation.default.withArgs({projectTypeResults}).returns(docs);
+        documentation.default.withArgs({projectTypeResults, packageManager}).returns(docs);
         optionsValidator.validate
           .returns({projectRoot, projectName, visibility, vcs: {}, configs: {}, ciServices, scope});
 
