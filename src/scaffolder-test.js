@@ -11,7 +11,7 @@ import * as testing from './testing/scaffolder';
 import * as babel from './config/babel';
 import * as linting from './linting/scaffolder';
 import * as npmConfig from './config/npm';
-import * as documentation from './documentation';
+import * as documentation from './documentation/scaffolder';
 import * as nodeVersionScaffolder from './node-version/scaffolder';
 import * as badgeDetailsBuilder from './badges';
 import * as vcsIgnoresBuilder from './vcs-ignore';

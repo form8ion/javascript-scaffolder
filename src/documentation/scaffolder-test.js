@@ -1,8 +1,8 @@
 import {assert} from 'chai';
 import any from '@travi/any';
 import sinon from 'sinon';
-import * as documentationCommandBuilder from './documentation/generation-command';
-import scaffoldDocumentation from './documentation';
+import * as documentationCommandBuilder from './generation-command';
+import scaffoldDocumentation from './scaffolder';
 
 suite('documentation', () => {
   let sandbox;
