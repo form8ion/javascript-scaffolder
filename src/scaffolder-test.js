@@ -19,6 +19,7 @@ import * as commitConvention from './commit-convention/scaffolder';
 import * as packageScaffolder from './package/scaffolder';
 import * as projectTypeScaffolder from './project-type/scaffolder';
 import * as packageNameBuilder from './package-name';
+import * as documentationCommandBuilder from './documentation/generation-command';
 import {scaffold} from './scaffolder';
 import {questionNames} from './prompts/question-names';
 
@@ -142,6 +143,7 @@ suite('javascript project scaffolder', () => {
     sandbox.stub(packageScaffolder, 'default');
     sandbox.stub(packageNameBuilder, 'default');
     sandbox.stub(projectTypeScaffolder, 'default');
+    sandbox.stub(documentationCommandBuilder, 'default');
 
     packageNameBuilder.default.withArgs(projectName, scope).returns(packageName);
     projectTypeScaffolder.default
@@ -281,14 +283,14 @@ suite('javascript project scaffolder', () => {
     });
 
     suite('verification', () => {
-      test(
-        'that `npm test` is defined as the verification command & peer-dependencies are also checked for compatibility',
-        async () => {
-          const {verificationCommand} = await scaffold(options);
+      test('that the verification command enhances documentation before verifying', async () => {
+        const documentationGenerationCommand = any.string();
+        documentationCommandBuilder.default.withArgs(packageManager).returns(documentationGenerationCommand);
 
-          assert.equal(verificationCommand, 'npm run generate:md && npm test');
-        }
-      );
+        const {verificationCommand} = await scaffold(options);
+
+        assert.equal(verificationCommand, `${documentationGenerationCommand} && ${packageManager} test`);
+      });
     });
 
     suite('project details', () => {

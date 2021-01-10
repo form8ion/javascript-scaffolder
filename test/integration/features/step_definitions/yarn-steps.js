@@ -26,5 +26,6 @@ Then('the yarn cli is configured for use', async function () {
   assert.equal(type, packageManagers.YARN);
   assert.include(allowedHosts, packageManagers.YARN);
   assert.equal(path, 'yarn.lock');
+  assert.equal(this.scaffoldResult.verificationCommand, 'yarn generate:md && yarn test');
   td.verify(this.execa(td.matchers.contains('. ~/.nvm/nvm.sh && nvm use && yarn add')), {ignoreExtraArgs: true});
 });

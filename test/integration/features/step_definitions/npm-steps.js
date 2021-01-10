@@ -138,5 +138,6 @@ Then('the npm cli is configured for use', async function () {
   assert.equal(type, packageManagers.NPM);
   assert.include(allowedHosts, packageManagers.NPM);
   assert.equal(path, 'package-lock.json');
+  assert.equal(this.scaffoldResult.verificationCommand, 'npm run generate:md && npm test');
   td.verify(this.execa(td.matchers.contains('. ~/.nvm/nvm.sh && nvm use && npm install')), {ignoreExtraArgs: true});
 });

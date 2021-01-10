@@ -18,6 +18,7 @@ import buildVcsIgnoreLists from './vcs-ignore';
 import scaffoldPackage from './package';
 import buildPackageName from './package-name';
 import scaffoldProjectType from './project-type';
+import buildDocumentationCommand from './documentation/generation-command';
 
 export async function scaffold(options) {
   info('Initializing JavaScript project');
@@ -129,7 +130,7 @@ export async function scaffold(options) {
     documentation: scaffoldDocumentation({projectTypeResults}),
     tags: projectTypeResults.tags,
     vcsIgnore: buildVcsIgnoreLists(contributors),
-    verificationCommand: 'npm run generate:md && npm test',
+    verificationCommand: `${buildDocumentationCommand(packageManager)} && ${packageManager} test`,
     projectDetails: {...projectHomepage && {homepage: projectHomepage}},
     nextSteps: contributors
       .reduce((acc, contributor) => (contributor.nextSteps ? [...acc, ...contributor.nextSteps] : acc), [])
