@@ -69,7 +69,11 @@ export function assertThatDocumentationResultsAreReturnedCorrectly(
         `### Installation
 
 \`\`\`sh
-$ npm install @${scope}/${projectName}
+$ ${
+  packageManagers.NPM === packageManager ? 'npm install' : ''
+}${
+  packageManagers.YARN === packageManager ? 'yarn add' : ''
+} @${scope}/${projectName}
 \`\`\`
 
 ### Example
@@ -91,7 +95,11 @@ run \`${
 access to private packages under \`@${scope}\`
 
 \`\`\`sh
-$ npm install @${scope}/${projectName}
+$ ${
+  packageManagers.NPM === packageManager ? 'npm install' : ''
+}${
+  packageManagers.YARN === packageManager ? 'yarn add' : ''
+} @${scope}/${projectName}
 \`\`\`
 
 ### Example
