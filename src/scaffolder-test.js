@@ -199,7 +199,9 @@ suite('javascript project scaffolder', () => {
       .resolves(lintingResults);
     babel.default.withArgs({projectRoot, preset: babelPreset, transpileLint, tests}).resolves(babelResults);
     npmConfig.default.resolves(npmResults);
-    commitConvention.default.withArgs({projectRoot, configs, pathWithinParent}).resolves(commitConventionResults);
+    commitConvention.default
+      .withArgs({projectRoot, configs, pathWithinParent, packageManager})
+      .resolves(commitConventionResults);
     nodeVersionScaffolder.default.withArgs({projectRoot, nodeVersionCategory: versionCategory}).resolves(version);
     optionsValidator.validate
       .withArgs(options)
