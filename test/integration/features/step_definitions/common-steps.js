@@ -134,17 +134,21 @@ Then('the expected files for a(n) {string} are generated', async function (proje
 });
 
 Then('the expected results for a(n) {string} are returned to the project scaffolder', async function (projectType) {
-  if (['Package', 'CLI'].includes(this.projectType)) {
+  const {projectTypes} = require('@form8ion/javascript-core');
+  const type = 'any' !== projectType ? projectType : this.projectType;
+
+  if ([projectTypes.PACKAGE, projectTypes.CLI].includes(type)) {
     assert.include(Object.keys(this.scaffoldResult.badges.contribution), 'semantic-release');
   }
 
-  assertThatProperDirectoriesAreIgnoredFromVersionControl(this.scaffoldResult, projectType);
-  assertThatProperFilesAreIgnoredFromVersionControl(this.scaffoldResult, projectType);
+  assertThatProperDirectoriesAreIgnoredFromVersionControl(this.scaffoldResult, type);
+  assertThatProperFilesAreIgnoredFromVersionControl(this.scaffoldResult, type);
   assertThatDocumentationResultsAreReturnedCorrectly(
-    projectType,
+    type,
     this.npmAccount,
     this.projectName,
     this.visibility,
-    this.scaffoldResult
+    this.scaffoldResult,
+    this.packageManager
   );
 });

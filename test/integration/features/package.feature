@@ -11,7 +11,7 @@ Feature: Package Project Type
     Then no repository details will be defined
     And the expected details are provided for a root-level project
     And the expected files for a "package" are generated
-    And the expected results for a "package" are returned to the project scaffolder
+    And the expected results for a "Package" are returned to the project scaffolder
 
   Scenario: Minimal Options w/ Versioning
     Given the project will be a "Package"
@@ -24,7 +24,7 @@ Feature: Package Project Type
     Then repository details will be defined using the shorthand
     And the expected details are provided for a root-level project
     And the expected files for a "package" are generated
-    And the expected results for a "package" are returned to the project scaffolder
+    And the expected results for a "Package" are returned to the project scaffolder
 
   Scenario: Without testing, transpilation, or linting
     Given the project will be a "Package"

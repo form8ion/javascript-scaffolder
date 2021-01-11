@@ -7,8 +7,11 @@ const repoOwner = any.word();
 const repoName = any.word();
 
 export function assertThatProperDirectoriesAreIgnoredFromVersionControl(scaffoldResult, projectType) {
+  const {projectTypes} = require('@form8ion/javascript-core');
+
   assert.include(scaffoldResult.vcsIgnore.directories, '/node_modules/');
-  if ('cli' === projectType) {
+
+  if (projectTypes.CLI === projectType) {
     assert.include(scaffoldResult.vcsIgnore.directories, '/bin/');
     assert.notInclude(scaffoldResult.vcsIgnore.directories, '/lib/');
   } else {
@@ -18,7 +21,9 @@ export function assertThatProperDirectoriesAreIgnoredFromVersionControl(scaffold
 }
 
 export function assertThatProperFilesAreIgnoredFromVersionControl(scaffoldResult, projectType) {
-  if ('application' === projectType) {
+  const {projectTypes} = require('@form8ion/javascript-core');
+
+  if (projectTypes.APPLICATION === projectType) {
     assert.include(scaffoldResult.vcsIgnore.files, '.env');
   } else {
     assert.notInclude(scaffoldResult.vcsIgnore.files, '.env');
