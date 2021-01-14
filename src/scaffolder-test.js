@@ -11,7 +11,7 @@ import * as testing from './testing/scaffolder';
 import * as babel from './config/babel';
 import * as linting from './linting/scaffolder';
 import * as npmConfig from './config/npm';
-import * as documentation from './documentation';
+import * as documentation from './documentation/scaffolder';
 import * as nodeVersionScaffolder from './node-version/scaffolder';
 import * as badgeDetailsBuilder from './badges';
 import * as vcsIgnoresBuilder from './vcs-ignore';
@@ -19,6 +19,7 @@ import * as commitConvention from './commit-convention/scaffolder';
 import * as packageScaffolder from './package/scaffolder';
 import * as projectTypeScaffolder from './project-type/scaffolder';
 import * as packageNameBuilder from './package-name';
+import * as documentationCommandBuilder from './documentation/generation-command';
 import {scaffold} from './scaffolder';
 import {questionNames} from './prompts/question-names';
 
@@ -73,6 +74,7 @@ suite('javascript project scaffolder', () => {
   const projectTypeBuildDirectory = any.string();
   const packageProperties = any.simpleObject();
   const projectTypeTags = any.listOf(any.word);
+  const packageManager = any.word();
   const projectTypeResults = {
     ...any.simpleObject(),
     buildDirectory: projectTypeBuildDirectory,
@@ -118,7 +120,8 @@ suite('javascript project scaffolder', () => {
     [commonQuestionNames.CI_SERVICE]: chosenCiService,
     [questionNames.HOST]: chosenHost,
     [questionNames.NODE_VERSION_CATEGORY]: versionCategory,
-    [questionNames.TRANSPILE_LINT]: transpileLint
+    [questionNames.TRANSPILE_LINT]: transpileLint,
+    [questionNames.PACKAGE_MANAGER]: packageManager
   };
 
   setup(() => {
@@ -140,6 +143,7 @@ suite('javascript project scaffolder', () => {
     sandbox.stub(packageScaffolder, 'default');
     sandbox.stub(packageNameBuilder, 'default');
     sandbox.stub(projectTypeScaffolder, 'default');
+    sandbox.stub(documentationCommandBuilder, 'default');
 
     packageNameBuilder.default.withArgs(projectName, scope).returns(packageName);
     projectTypeScaffolder.default
@@ -149,6 +153,7 @@ suite('javascript project scaffolder', () => {
         transpileLint,
         projectName,
         packageName,
+        packageManager,
         visibility,
         applicationTypes,
         packageTypes,
@@ -184,6 +189,7 @@ suite('javascript project scaffolder', () => {
         configs,
         projectRoot,
         projectType,
+        packageManager,
         tests,
         vcs: vcsDetails,
         transpileLint,
@@ -193,7 +199,9 @@ suite('javascript project scaffolder', () => {
       .resolves(lintingResults);
     babel.default.withArgs({projectRoot, preset: babelPreset, transpileLint, tests}).resolves(babelResults);
     npmConfig.default.resolves(npmResults);
-    commitConvention.default.withArgs({projectRoot, configs, pathWithinParent}).resolves(commitConventionResults);
+    commitConvention.default
+      .withArgs({projectRoot, configs, pathWithinParent, packageManager})
+      .resolves(commitConventionResults);
     nodeVersionScaffolder.default.withArgs({projectRoot, nodeVersionCategory: versionCategory}).resolves(version);
     optionsValidator.validate
       .withArgs(options)
@@ -234,7 +242,11 @@ suite('javascript project scaffolder', () => {
       assert.calledWith(npmConfig.default, {projectRoot, projectType});
       assert.calledWith(
         jsLifter.lift,
-        {results: deepmerge.all([{devDependencies: ['npm-run-all']}, ...contributors]), projectRoot, configs}
+        {
+          results: deepmerge.all([{devDependencies: ['npm-run-all'], packageManager}, ...contributors]),
+          projectRoot,
+          configs
+        }
       );
     });
   });
@@ -274,14 +286,14 @@ suite('javascript project scaffolder', () => {
     });
 
     suite('verification', () => {
-      test(
-        'that `npm test` is defined as the verification command & peer-dependencies are also checked for compatibility',
-        async () => {
-          const {verificationCommand} = await scaffold(options);
+      test('that the verification command enhances documentation before verifying', async () => {
+        const documentationGenerationCommand = any.string();
+        documentationCommandBuilder.default.withArgs(packageManager).returns(documentationGenerationCommand);
 
-          assert.equal(verificationCommand, 'npm run generate:md && npm test');
-        }
-      );
+        const {verificationCommand} = await scaffold(options);
+
+        assert.equal(verificationCommand, `${documentationGenerationCommand} && ${packageManager} test`);
+      });
     });
 
     suite('project details', () => {
@@ -303,7 +315,7 @@ suite('javascript project scaffolder', () => {
     suite('documentation', () => {
       test('that appropriate documentation is passed along', async () => {
         const docs = any.simpleObject();
-        documentation.default.withArgs({projectTypeResults}).returns(docs);
+        documentation.default.withArgs({projectTypeResults, packageManager}).returns(docs);
         optionsValidator.validate
           .returns({projectRoot, projectName, visibility, vcs: {}, configs: {}, ciServices, scope});
 

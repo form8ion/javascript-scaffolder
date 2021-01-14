@@ -38,27 +38,51 @@ export function assertThatDocumentationResultsAreReturnedCorrectly(
   scope,
   projectName,
   visibility,
-  results
+  results,
+  packageManager
 ) {
-  assert.equal(results.documentation.toc, 'Run `npm run generate:md` to generate a table of contents');
+  const {packageManagers} = require('@form8ion/javascript-core');
+
+  assert.equal(
+    results.documentation.toc,
+    `Run \`${
+      packageManagers.NPM === packageManager ? 'npm run' : ''
+    }${
+      packageManagers.YARN === packageManager ? 'yarn' : ''
+    } generate:md\` to generate a table of contents`
+  );
   assert.equal(
     results.documentation.contributing,
-    '### Dependencies\n\n```sh\n$ nvm install\n$ npm install\n```\n\n### Verification\n\n```sh\n$ npm test\n```'
+    `### Dependencies
+
+\`\`\`sh\n$ nvm install\n$ ${packageManager} install\n\`\`\`
+
+### Verification
+
+\`\`\`sh\n$ ${packageManager} test\n\`\`\``
   );
 
-  if ('package' === projectType) {
+  if ('Package' === projectType) {
     if ('Public' === visibility) {
       assert.equal(
         results.documentation.usage,
         `### Installation
 
 \`\`\`sh
-$ npm install @${scope}/${projectName}
+$ ${
+  packageManagers.NPM === packageManager ? 'npm install' : ''
+}${
+  packageManagers.YARN === packageManager ? 'yarn add' : ''
+} @${scope}/${projectName}
 \`\`\`
 
 ### Example
 
-run \`npm run generate:md\` to inject the usage example`
+run \`${
+  packageManagers.NPM === packageManager ? 'npm run' : ''
+}${
+  packageManagers.YARN === packageManager ? 'yarn' : ''
+} generate:md\` to inject the usage example`
       );
     }
 
@@ -71,12 +95,20 @@ run \`npm run generate:md\` to inject the usage example`
 access to private packages under \`@${scope}\`
 
 \`\`\`sh
-$ npm install @${scope}/${projectName}
+$ ${
+  packageManagers.NPM === packageManager ? 'npm install' : ''
+}${
+  packageManagers.YARN === packageManager ? 'yarn add' : ''
+} @${scope}/${projectName}
 \`\`\`
 
 ### Example
 
-run \`npm run generate:md\` to inject the usage example`
+run \`${
+  packageManagers.NPM === packageManager ? 'npm run' : ''
+}${
+  packageManagers.YARN === packageManager ? 'yarn' : ''
+} generate:md\` to inject the usage example`
       );
     }
   }

@@ -11,4 +11,4 @@ Feature: Application Project Type
     And the expected details are provided for a root-level project
     Then the expected files for an "application" are generated
     And repository details will be defined using the shorthand
-    And the expected results for an "application" are returned to the project scaffolder
+    And the expected results for an "Application" are returned to the project scaffolder

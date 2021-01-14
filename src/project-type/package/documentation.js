@@ -1,4 +1,17 @@
-export default function ({scope, packageName, visibility}) {
+import {packageManagers} from '@form8ion/javascript-core';
+import buildGenerationCommand from '../../documentation/generation-command';
+
+function getInstallationCommand(packageManager) {
+  if (packageManagers.NPM === packageManager) return 'npm install';
+  if (packageManagers.YARN === packageManager) return 'yarn add';
+
+  throw new Error(
+    `The ${packageManager} package manager is currently not supported. `
+    + `Only ${Object.values(packageManagers).join(' and ')} are currently supported.`
+  );
+}
+
+export default function ({scope, packageName, packageManager, visibility}) {
   return {
     usage: `### Installation
 ${'Private' === visibility ? `
@@ -7,11 +20,11 @@ access to private packages under \`@${scope}\`
 ` : ''
 }
 \`\`\`sh
-$ npm install ${packageName}
+$ ${getInstallationCommand(packageManager)} ${packageName}
 \`\`\`
 
 ### Example
 
-run \`npm run generate:md\` to inject the usage example`
+run \`${buildGenerationCommand(packageManager)}\` to inject the usage example`
   };
 }

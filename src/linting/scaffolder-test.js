@@ -17,6 +17,7 @@ suite('linting scaffolder', () => {
   const lockfileScripts = any.simpleObject();
   const projectRoot = any.string();
   const projectType = any.word();
+  const packageManager = any.word();
   const unitTested = any.boolean();
   const configForEslint = any.simpleObject();
   const eslintScripts = any.simpleObject();
@@ -49,7 +50,7 @@ suite('linting scaffolder', () => {
     scaffoldBanSensitiveFiles.default
       .resolves({devDependencies: banSensitiveFilesDevDependencies, scripts: banSensitiveFilesScripts});
     scaffoldLockfileLint.default
-      .withArgs({projectRoot})
+      .withArgs({projectRoot, packageManager})
       .resolves({devDependencies: lockfileDevDependencies, scripts: lockfileScripts});
   });
 
@@ -64,7 +65,8 @@ suite('linting scaffolder', () => {
       vcs,
       buildDirectory,
       eslintConfigs,
-      transpileLint
+      transpileLint,
+      packageManager
     });
 
     assert.deepEqual(
@@ -95,7 +97,8 @@ suite('linting scaffolder', () => {
       tests: {unit: unitTested},
       configs: {remark: configForRemark},
       vcs,
-      transpileLint
+      transpileLint,
+      packageManager
     });
 
     assert.deepEqual(
@@ -116,7 +119,8 @@ suite('linting scaffolder', () => {
       tests: {unit: unitTested},
       configs: {eslint: configForEslint, remark: configForRemark},
       vcs,
-      transpileLint: false
+      transpileLint: false,
+      packageManager
     });
 
     assert.deepEqual(
@@ -139,7 +143,8 @@ suite('linting scaffolder', () => {
       vcs,
       buildDirectory,
       eslintConfigs,
-      transpileLint
+      transpileLint,
+      packageManager
     });
 
     assert.deepEqual(
@@ -176,7 +181,8 @@ suite('linting scaffolder', () => {
       vcs: undefined,
       buildDirectory,
       eslintConfigs,
-      transpileLint
+      transpileLint,
+      packageManager
     });
 
     assert.deepEqual(

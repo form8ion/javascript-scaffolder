@@ -11,4 +11,4 @@ Feature: CLI Project Type
     Then repository details will be defined using the shorthand
     And the expected details are provided for a root-level project
     And the expected files for a "cli" are generated
-    And the expected results for a "cli" are returned to the project scaffolder
+    And the expected results for a "CLI" are returned to the project scaffolder

@@ -20,6 +20,7 @@ suite('package project-type', () => {
   const packageTypes = any.simpleObject();
   const projectName = any.word();
   const packageName = any.word();
+  const packageManager = any.word();
   const visibility = 'Private';
   const scope = any.word();
   const badges = {consumer: any.simpleObject(), contribution: any.simpleObject(), status: any.simpleObject()};
@@ -69,7 +70,7 @@ suite('package project-type', () => {
     sandbox.stub(jsCore, 'scaffoldChoice');
     sandbox.stub(mustache, 'render');
 
-    documentationScaffolder.default.withArgs({scope, packageName, visibility}).returns(documentation);
+    documentationScaffolder.default.withArgs({scope, packageName, visibility, packageManager}).returns(documentation);
     packageChooser.default.withArgs({types: packageTypes, projectType: 'package', decisions}).returns(chosenType);
     jsCore.scaffoldChoice
       .withArgs(packageTypes, chosenType, {projectRoot, projectName, packageName, tests, scope})
@@ -90,7 +91,17 @@ suite('package project-type', () => {
     core.fileExists.withArgs(pathToExample).resolves(false);
 
     assert.deepEqual(
-      await scaffoldPackage({projectRoot, projectName, packageName, visibility, scope, packageTypes, tests, decisions}),
+      await scaffoldPackage({
+        projectRoot,
+        projectName,
+        packageName,
+        packageManager,
+        visibility,
+        scope,
+        packageTypes,
+        tests,
+        decisions
+      }),
       {
         dependencies: scaffoldedTypeDependencies,
         devDependencies: [...scaffoldedTypeDevDependencies, 'rimraf', 'rollup', 'rollup-plugin-auto-external'],
@@ -126,7 +137,17 @@ suite('package project-type', () => {
   test('that an existing example file is not overwritten', async () => {
     core.fileExists.withArgs(pathToExample).resolves(true);
 
-    await scaffoldPackage({projectRoot, projectName, packageName, visibility, scope, packageTypes, tests, decisions});
+    await scaffoldPackage({
+      projectRoot,
+      projectName,
+      packageName,
+      packageManager,
+      visibility,
+      scope,
+      packageTypes,
+      tests,
+      decisions
+    });
 
     assert.neverCalledWith(fsPromises.writeFile, pathToExample);
   });
@@ -182,6 +203,7 @@ suite('package project-type', () => {
         transpileLint: false,
         packageName,
         projectName,
+        packageManager,
         visibility,
         scope,
         decisions,

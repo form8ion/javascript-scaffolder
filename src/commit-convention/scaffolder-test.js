@@ -9,6 +9,7 @@ import scaffoldCommitConvention from './index';
 suite('commit-convention scaffolder', () => {
   let sandbox;
   const projectRoot = any.string();
+  const packageManager = any.word();
   const commitizenScripts = any.simpleObject();
   const commitizenDevDependencies = any.listOf(any.string);
   const huskyScripts = any.simpleObject();
@@ -29,7 +30,7 @@ suite('commit-convention scaffolder', () => {
     sandbox.stub(commitizenScaffolder, 'default');
 
     huskyScaffolder.default
-      .withArgs({projectRoot})
+      .withArgs({projectRoot, packageManager})
       .resolves({devDependencies: huskyDevDependencies, scripts: huskyScripts});
     commitizenScaffolder.default
       .withArgs({projectRoot})
@@ -50,7 +51,7 @@ suite('commit-convention scaffolder', () => {
       .resolves({devDependencies: commitlintDevDependencies});
 
     assert.deepEqual(
-      await scaffoldCommitConvention({projectRoot, configs: {commitlint: commitlintConfig}}),
+      await scaffoldCommitConvention({projectRoot, packageManager, configs: {commitlint: commitlintConfig}}),
       {
         devDependencies: [...commitizenDevDependencies, ...huskyDevDependencies, ...commitlintDevDependencies],
         scripts: {...commitizenScripts, ...huskyScripts},
@@ -62,7 +63,7 @@ suite('commit-convention scaffolder', () => {
 
   test('that commitlint is not configured if no config is provided', async () => {
     assert.deepEqual(
-      await scaffoldCommitConvention({projectRoot, configs: {}}),
+      await scaffoldCommitConvention({projectRoot, configs: {}, packageManager}),
       {
         devDependencies: [...commitizenDevDependencies, ...huskyDevDependencies],
         scripts: {...commitizenScripts, ...huskyScripts},

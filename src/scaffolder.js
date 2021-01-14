@@ -18,6 +18,7 @@ import buildVcsIgnoreLists from './vcs-ignore';
 import scaffoldPackage from './package';
 import buildPackageName from './package-name';
 import scaffoldProjectType from './project-type';
+import buildDocumentationCommand from './documentation/generation-command';
 
 export async function scaffold(options) {
   info('Initializing JavaScript project');
@@ -51,7 +52,8 @@ export async function scaffold(options) {
     [questionNames.AUTHOR_NAME]: authorName,
     [questionNames.AUTHOR_EMAIL]: authorEmail,
     [questionNames.AUTHOR_URL]: authorUrl,
-    [questionNames.TRANSPILE_LINT]: transpileLint
+    [questionNames.TRANSPILE_LINT]: transpileLint,
+    [questionNames.PACKAGE_MANAGER]: packageManager
   } = await prompt(overrides, ciServices, hosts, visibility, vcs, decisions, pathWithinParent);
 
   info('Writing project files', {level: 'secondary'});
@@ -63,6 +65,7 @@ export async function scaffold(options) {
     projectRoot,
     projectName,
     packageName,
+    packageManager,
     transpileLint,
     visibility,
     applicationTypes,
@@ -88,6 +91,7 @@ export async function scaffold(options) {
         configs,
         projectRoot,
         projectType,
+        packageManager,
         tests,
         vcs,
         transpileLint,
@@ -96,7 +100,7 @@ export async function scaffold(options) {
       }),
       scaffoldChoice(ciServices, ci, {projectRoot, vcs, visibility, projectType, nodeVersion, tests}),
       scaffoldBabel({preset: configs.babelPreset, projectRoot, transpileLint, tests}),
-      scaffoldCommitConvention({projectRoot, configs, pathWithinParent})
+      scaffoldCommitConvention({projectRoot, configs, pathWithinParent, packageManager})
     ])),
     projectTypeResults,
     testingResults,
@@ -116,14 +120,18 @@ export async function scaffold(options) {
     pathWithinParent
   });
 
-  await lift({results: deepmerge.all([{devDependencies: ['npm-run-all']}, ...contributors]), projectRoot, configs});
+  await lift({
+    results: deepmerge.all([{devDependencies: ['npm-run-all'], packageManager}, ...contributors]),
+    projectRoot,
+    configs
+  });
 
   return {
     badges: buildBadgesDetails(contributors),
-    documentation: scaffoldDocumentation({projectTypeResults}),
+    documentation: scaffoldDocumentation({projectTypeResults, packageManager}),
     tags: projectTypeResults.tags,
     vcsIgnore: buildVcsIgnoreLists(contributors),
-    verificationCommand: 'npm run generate:md && npm test',
+    verificationCommand: `${buildDocumentationCommand(packageManager)} && ${packageManager} test`,
     projectDetails: {...projectHomepage && {homepage: projectHomepage}},
     nextSteps: contributors
       .reduce((acc, contributor) => (contributor.nextSteps ? [...acc, ...contributor.nextSteps] : acc), [])

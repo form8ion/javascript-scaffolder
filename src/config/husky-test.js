@@ -7,6 +7,7 @@ import scaffoldHusky from './husky';
 suite('husky config', () => {
   let sandbox;
   const projectRoot = any.string();
+  const packageManager = any.word();
 
   setup(() => {
     sandbox = sinon.createSandbox();
@@ -18,14 +19,14 @@ suite('husky config', () => {
 
   test('that the config file is created', async () => {
     assert.deepEqual(
-      await scaffoldHusky({projectRoot}),
+      await scaffoldHusky({projectRoot, packageManager}),
       {devDependencies: ['husky'], scripts: {}, vcsIgnore: {files: [], directories: []}}
     );
 
     assert.calledWith(
       fsPromises.writeFile,
       `${projectRoot}/.huskyrc.json`,
-      JSON.stringify({hooks: {'pre-commit': 'npm test', 'commit-msg': 'commitlint --edit'}})
+      JSON.stringify({hooks: {'pre-commit': `${packageManager} test`, 'commit-msg': 'commitlint --edit'}})
     );
   });
 });

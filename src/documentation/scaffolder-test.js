@@ -1,27 +1,42 @@
 import {assert} from 'chai';
 import any from '@travi/any';
-import scaffoldDocumentation from './documentation';
+import sinon from 'sinon';
+import * as documentationCommandBuilder from './generation-command';
+import scaffoldDocumentation from './scaffolder';
 
 suite('documentation', () => {
-  const tocMessage = 'Run `npm run generate:md` to generate a table of contents';
+  let sandbox;
+  const packageManager = any.word();
+  const documentationGenerationCommand = any.string();
+  const tocMessage = `Run \`${documentationGenerationCommand}\` to generate a table of contents`;
   const contributionDocumentation = `### Dependencies
 
 \`\`\`sh
 $ nvm install
-$ npm install
+$ ${packageManager} install
 \`\`\`
 
 ### Verification
 
 \`\`\`sh
-$ npm test
+$ ${packageManager} test
 \`\`\``;
+
+  setup(() => {
+    sandbox = sinon.createSandbox();
+
+    sandbox.stub(documentationCommandBuilder, 'default');
+
+    documentationCommandBuilder.default.withArgs(packageManager).returns(documentationGenerationCommand);
+  });
+
+  teardown(() => sandbox.restore());
 
   test('that project-type documentation and contribution details are provided', () => {
     const projectTypeResults = {documentation: any.simpleObject()};
 
     assert.deepEqual(
-      scaffoldDocumentation({projectTypeResults}),
+      scaffoldDocumentation({projectTypeResults, packageManager}),
       {
         toc: tocMessage,
         ...projectTypeResults.documentation,
@@ -34,7 +49,7 @@ $ npm test
     const projectTypeResults = {documentation: undefined};
 
     assert.deepEqual(
-      scaffoldDocumentation({projectTypeResults}),
+      scaffoldDocumentation({projectTypeResults, packageManager}),
       {
         toc: tocMessage,
         contributing: contributionDocumentation
