@@ -57,7 +57,7 @@
     "@rollup/plugin-node-resolve": "11.1.1",
     "@travi/any": "2.0.15",
     "@travi/babel-preset": "3.0.38",
-    "@travi/eslint-config": "1.0.59",
+    "@travi/eslint-config": "1.0.60",
     "@travi/eslint-config-cucumber": "1.0.5",
     "@travi/eslint-config-mocha": "1.0.8",
     "@travi/project-scaffolder": "9.0.4",
