@@ -53,7 +53,7 @@
     }
   },
   "devDependencies": {
-    "@babel/register": "7.12.10",
+    "@babel/register": "7.12.13",
     "@rollup/plugin-node-resolve": "11.1.1",
     "@travi/any": "2.0.15",
     "@travi/babel-preset": "3.0.38",
