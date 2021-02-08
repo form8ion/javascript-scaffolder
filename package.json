@@ -59,7 +59,7 @@
     "@travi/babel-preset": "3.0.39",
     "@travi/eslint-config": "1.0.60",
     "@travi/eslint-config-cucumber": "1.0.5",
-    "@travi/eslint-config-mocha": "1.0.8",
+    "@travi/eslint-config-mocha": "1.0.9",
     "@travi/project-scaffolder": "9.0.4",
     "@travi/travis-scaffolder-javascript": "4.0.1",
     "ban-sensitive-files": "1.9.15",
