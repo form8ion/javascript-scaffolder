@@ -63,7 +63,7 @@
     "@travi/project-scaffolder": "9.0.5",
     "@travi/travis-scaffolder-javascript": "4.0.1",
     "ban-sensitive-files": "1.9.15",
-    "chai": "4.3.1",
+    "chai": "4.3.3",
     "chai-as-promised": "7.1.1",
     "check-engine": "1.10.0",
     "clear-module": "4.1.1",
