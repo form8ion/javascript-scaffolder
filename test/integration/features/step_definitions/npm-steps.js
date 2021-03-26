@@ -121,9 +121,14 @@ Given(/^the npm cli is logged in$/, function () {
   this.packageManager = packageManagers.NPM;
   this.npmAccount = any.word();
 
+  const error = new Error('Command failed with exit code 1: npm ls husky --json');
+  error.exitCode = 1;
+  error.stdout = JSON.stringify({});
+  error.command = 'npm ls husky --json';
+
   td.when(this.execa('npm', ['whoami'])).thenResolve({stdout: this.npmAccount});
   td.when(this.execa(td.matchers.contains('. ~/.nvm/nvm.sh && nvm use && npm install'))).thenResolve({stdout: ''});
-  td.when(this.execa('npm', ['ls', 'husky', '--json'])).thenResolve({stdout: JSON.stringify({})});
+  td.when(this.execa('npm', ['ls', 'husky', '--json'])).thenReject(error);
 });
 
 Then('the npm cli is configured for use', async function () {

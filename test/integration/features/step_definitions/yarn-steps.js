@@ -10,8 +10,14 @@ Given('the yarn cli is logged in', async function () {
   this.packageManager = packageManagers.YARN;
   this.npmAccount = any.word();
 
+  const error = new Error('Command failed with exit code 1: npm ls husky --json');
+  error.exitCode = 1;
+  error.stdout = JSON.stringify({});
+  error.command = 'npm ls husky --json';
+
   td.when(this.execa(td.matchers.contains('. ~/.nvm/nvm.sh && nvm use && yarn add'))).thenResolve({stdout: ''});
   td.when(this.execa('npm', ['ls', 'husky', '--json'])).thenResolve({stdout: JSON.stringify({})});
+  td.when(this.execa('npm', ['ls', 'husky', '--json'])).thenReject(error);
 });
 
 Then('the yarn cli is configured for use', async function () {
