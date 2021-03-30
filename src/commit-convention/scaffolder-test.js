@@ -1,7 +1,7 @@
 import sinon from 'sinon';
 import any from '@travi/any';
 import {assert} from 'chai';
-import * as huskyScaffolder from '../config/husky';
+import * as huskyScaffolder from '@form8ion/husky';
 import * as commitizenScaffolder from '../config/commitizen';
 import * as commitlintScaffolder from './commitlint';
 import scaffoldCommitConvention from './index';
@@ -26,10 +26,10 @@ suite('commit-convention scaffolder', () => {
     sandbox = sinon.createSandbox();
 
     sandbox.stub(commitlintScaffolder, 'default');
-    sandbox.stub(huskyScaffolder, 'default');
+    sandbox.stub(huskyScaffolder, 'scaffold');
     sandbox.stub(commitizenScaffolder, 'default');
 
-    huskyScaffolder.default
+    huskyScaffolder.scaffold
       .withArgs({projectRoot, packageManager})
       .resolves({devDependencies: huskyDevDependencies, scripts: huskyScripts});
     commitizenScaffolder.default

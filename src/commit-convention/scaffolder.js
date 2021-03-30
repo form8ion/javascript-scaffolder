@@ -1,16 +1,17 @@
 import deepmerge from 'deepmerge';
+import {scaffold} from '@form8ion/husky';
 import scaffoldCommitizen from '../config/commitizen';
-import scaffoldHusky from '../config/husky';
 import scaffoldCommitlint from './commitlint';
 
 export default async function ({projectRoot, configs, pathWithinParent, packageManager}) {
   if (pathWithinParent) return {};
 
-  const [huskyResults, commitizenResults, commitlintResults] = await Promise.all([
-    scaffoldHusky({projectRoot, packageManager}),
+  const [commitizenResults, commitlintResults] = await Promise.all([
     scaffoldCommitizen({projectRoot}),
     configs.commitlint && scaffoldCommitlint({projectRoot, config: configs.commitlint})
   ]);
+
+  const huskyResults = await scaffold({projectRoot, packageManager});
 
   return deepmerge.all([
     commitizenResults,

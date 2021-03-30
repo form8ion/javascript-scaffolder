@@ -21,7 +21,6 @@ Then('the expected details are provided for a root-level project', async functio
   const nvmRc = await fs.readFile(`${process.cwd()}/.nvmrc`);
 
   assert.equal(nvmRc.toString(), `v${this.latestLtsMajorVersion}`);
-  assert.isTrue(await fileExists(`${process.cwd()}/.huskyrc.json`));
   assert.isTrue(await fileExists(`${process.cwd()}/.czrc`));
   assert.isTrue(await fileExists(`${process.cwd()}/.commitlintrc.js`));
   assert.containsAllKeys(this.scaffoldResult.badges.contribution, ['commit-convention', 'commitizen']);
