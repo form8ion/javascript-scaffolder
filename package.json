@@ -103,7 +103,7 @@
     "camelcase": "^6.0.0",
     "deepmerge": "^4.2.2",
     "execa": "^5.0.0",
-    "inquirer": "^7.0.0",
+    "inquirer": "^8.0.0",
     "make-dir": "3.1.0",
     "mustache": "^4.0.0",
     "npm-conf": "1.1.3",
