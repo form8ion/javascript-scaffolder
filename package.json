@@ -35,7 +35,7 @@
     "watch": "run-s 'build:js -- --watch'",
     "prepack": "run-s build",
     "snyk-protect": "snyk protect",
-    "prepare": "npm run snyk-protect"
+    "prepare": "husky install"
   },
   "publishConfig": {
     "access": "public"
