@@ -119,7 +119,7 @@ Then('the expected files for a(n) {string} are generated', async function (proje
   assert.equal(existsSync(`${process.cwd()}/.babelrc`), this.transpileAndLint);
 
   await Promise.all([
-    assertThatProperDirectoriesAreIgnoredFromEslint(projectType, this.transpileAndLint),
+    assertThatProperDirectoriesAreIgnoredFromEslint(projectType, this.transpileAndLint, this.tested),
     assertThatPackageDetailsAreConfiguredCorrectlyFor({
       projectType,
       visibility: this.visibility,

@@ -4,7 +4,7 @@ import {assert} from 'chai';
 import {Then} from 'cucumber';
 import {EOL} from 'os';
 
-export async function assertThatProperDirectoriesAreIgnoredFromEslint(projectType, transpileAndLint) {
+export async function assertThatProperDirectoriesAreIgnoredFromEslint(projectType, transpileAndLint, unitTested) {
   if (transpileAndLint) {
     const eslintIgnoreDetails = (await fs.readFile(`${process.cwd()}/.eslintignore`)).toString().split(EOL);
 
@@ -14,6 +14,12 @@ export async function assertThatProperDirectoriesAreIgnoredFromEslint(projectTyp
     } else {
       assert.include(eslintIgnoreDetails, '/lib/');
       assert.notInclude(eslintIgnoreDetails, '/bin/');
+    }
+
+    if (unitTested) {
+      assert.include(eslintIgnoreDetails, '/coverage/');
+    } else {
+      assert.notInclude(eslintIgnoreDetails, '/coverage/');
     }
   } else assert.isFalse(await fileExists(`${process.cwd()}/.eslintrc.yml`));
 }
