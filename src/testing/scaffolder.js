@@ -13,5 +13,5 @@ export default async function ({
     ? await scaffoldUnitTesting({projectRoot, visibility, vcs, frameworks: unitTestFrameworks, decisions})
     : {};
 
-  return deepmerge({devDependencies: [...(unit || integration) ? ['@travi/any'] : []], eslintConfigs: []}, unitResults);
+  return deepmerge({devDependencies: [...(unit || integration) ? ['@travi/any'] : []]}, unitResults);
 }
