@@ -194,7 +194,7 @@ suite('javascript project scaffolder', () => {
         vcs: vcsDetails,
         transpileLint,
         buildDirectory: projectTypeBuildDirectory,
-        eslintConfigs: [...testingEslintConfigs, ...projectTypeEslintConfigs]
+        eslint: {configs: [...testingEslintConfigs, ...projectTypeEslintConfigs]}
       })
       .resolves(lintingResults);
     babel.default.withArgs({projectRoot, preset: babelPreset, transpileLint, tests}).resolves(babelResults);

@@ -41,7 +41,13 @@ suite('linting scaffolder', () => {
       .withArgs({projectRoot, projectType, config: configForRemark, vcs, transpileLint})
       .resolves({devDependencies: remarkDevDependencies, scripts: remarkScripts});
     scaffoldEslint.default
-      .withArgs({projectRoot, unitTested, config: configForEslint, buildDirectory, additionalConfigs: eslintConfigs})
+      .withArgs({
+        projectRoot,
+        unitTested,
+        config: configForEslint,
+        buildDirectory,
+        additionalConfiguration: {configs: eslintConfigs}
+      })
       .resolves({
         devDependencies: eslintDevDependencies,
         vcsIgnore: {files: eslintFilesIgnoredFromVcs},
@@ -64,7 +70,7 @@ suite('linting scaffolder', () => {
       configs: {eslint: configForEslint, remark: configForRemark},
       vcs,
       buildDirectory,
-      eslintConfigs,
+      eslint: {configs: eslintConfigs},
       transpileLint,
       packageManager
     });
@@ -142,7 +148,7 @@ suite('linting scaffolder', () => {
       configs: {eslint: configForEslint},
       vcs,
       buildDirectory,
-      eslintConfigs,
+      eslint: {configs: eslintConfigs},
       transpileLint,
       packageManager
     });
@@ -180,7 +186,7 @@ suite('linting scaffolder', () => {
       configs: {eslint: configForEslint, remark: configForRemark},
       vcs: undefined,
       buildDirectory,
-      eslintConfigs,
+      eslint: {configs: eslintConfigs},
       transpileLint,
       packageManager
     });

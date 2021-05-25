@@ -29,7 +29,12 @@ suite('eslint config scaffolder', () => {
       .resolves(results);
 
     assert.equal(
-      await scaffoldEsLint({projectRoot, buildDirectory, config: {packageName, scope}, additionalConfigs}),
+      await scaffoldEsLint({
+        projectRoot,
+        buildDirectory,
+        config: {packageName, scope},
+        additionalConfiguration: {configs: additionalConfigs}
+      }),
       results
     );
   });
@@ -44,7 +49,7 @@ suite('eslint config scaffolder', () => {
         projectRoot,
         buildDirectory,
         config: {packageName, scope},
-        additionalConfigs,
+        additionalConfiguration: {configs: additionalConfigs},
         unitTested: true
       }),
       results

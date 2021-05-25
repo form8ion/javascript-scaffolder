@@ -96,7 +96,7 @@ export async function scaffold(options) {
         vcs,
         transpileLint,
         buildDirectory: projectTypeResults.buildDirectory,
-        eslintConfigs: deepmerge(testingResults.eslintConfigs, projectTypeResults.eslintConfigs)
+        eslint: {configs: deepmerge(testingResults.eslintConfigs, projectTypeResults.eslintConfigs)}
       }),
       scaffoldChoice(ciServices, ci, {projectRoot, vcs, visibility, projectType, nodeVersion, tests}),
       scaffoldBabel({preset: configs.babelPreset, projectRoot, transpileLint, tests}),

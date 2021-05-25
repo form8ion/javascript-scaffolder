@@ -13,7 +13,7 @@ export default async function ({
   vcs,
   transpileLint,
   buildDirectory,
-  eslintConfigs
+  eslint
 }) {
   return deepmerge.all(await Promise.all([
     scaffoldLockfileLint({projectRoot, packageManager}),
@@ -23,7 +23,7 @@ export default async function ({
         unitTested: tests.unit,
         config: configs.eslint,
         buildDirectory,
-        additionalConfigs: eslintConfigs
+        additionalConfiguration: eslint
       })
       : {},
     scaffoldRemark({
