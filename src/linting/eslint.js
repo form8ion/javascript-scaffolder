@@ -1,9 +1,10 @@
 import {scaffold} from '@form8ion/eslint';
+import deepmerge from 'deepmerge';
 
-export default async function ({config, projectRoot, unitTested, buildDirectory, additionalConfiguration}) {
+export default async function ({config, projectRoot, buildDirectory, additionalConfiguration}) {
   const {scope} = config;
-  const {configs} = additionalConfiguration;
-  const ignoreDirectories = [`/${buildDirectory}/`, ...unitTested ? ['/coverage/'] : []];
+  const {configs, ignore} = additionalConfiguration;
+  const ignores = deepmerge(ignore, {directories: [`/${buildDirectory}/`]});
 
-  return scaffold({scope, projectRoot, additionalConfigs: configs, ignore: {directories: ignoreDirectories}});
+  return scaffold({scope, projectRoot, additionalConfigs: configs, ignore: {directories: ignores.directories}});
 }

@@ -39,6 +39,7 @@ suite('javascript project scaffolder', () => {
   const version = any.string();
   const commitConventionDevDependencies = any.listOf(any.string);
   const testingEslintConfigs = any.listOf(any.string);
+  const testingEslintOtherDetails = any.simpleObject();
   const testingNextSteps = any.listOf(any.simpleObject);
   const ciServiceNextSteps = any.listOf(any.simpleObject);
   const projectTypeEslintConfigs = any.listOf(any.string);
@@ -64,7 +65,12 @@ suite('javascript project scaffolder', () => {
   const babelPreset = {name: babelPresetName};
   const configs = {babelPreset, ...any.simpleObject()};
   const versionCategory = any.word();
-  const testingResults = {...any.simpleObject(), eslintConfigs: testingEslintConfigs, nextSteps: testingNextSteps};
+  const testingResults = {
+    ...any.simpleObject(),
+    eslint: {configs: testingEslintConfigs, ...testingEslintOtherDetails},
+    eslintConfigs: testingEslintConfigs,
+    nextSteps: testingNextSteps
+  };
   const lintingResults = any.simpleObject();
   const ciServiceResults = {...any.simpleObject(), nextSteps: ciServiceNextSteps};
   const commitConventionResults = any.simpleObject();
@@ -190,11 +196,13 @@ suite('javascript project scaffolder', () => {
         projectRoot,
         projectType,
         packageManager,
-        tests,
         vcs: vcsDetails,
         transpileLint,
         buildDirectory: projectTypeBuildDirectory,
-        eslint: {configs: [...testingEslintConfigs, ...projectTypeEslintConfigs]}
+        eslint: {
+          ...testingEslintOtherDetails,
+          configs: [...testingEslintConfigs, ...testingEslintConfigs, ...projectTypeEslintConfigs]
+        }
       })
       .resolves(lintingResults);
     babel.default.withArgs({projectRoot, preset: babelPreset, transpileLint, tests}).resolves(babelResults);

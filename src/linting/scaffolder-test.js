@@ -18,7 +18,6 @@ suite('linting scaffolder', () => {
   const projectRoot = any.string();
   const projectType = any.word();
   const packageManager = any.word();
-  const unitTested = any.boolean();
   const configForEslint = any.simpleObject();
   const eslintScripts = any.simpleObject();
   const vcs = any.simpleObject();
@@ -43,7 +42,6 @@ suite('linting scaffolder', () => {
     scaffoldEslint.default
       .withArgs({
         projectRoot,
-        unitTested,
         config: configForEslint,
         buildDirectory,
         additionalConfiguration: {configs: eslintConfigs}
@@ -66,7 +64,6 @@ suite('linting scaffolder', () => {
     const result = await scaffold({
       projectRoot,
       projectType,
-      tests: {unit: unitTested},
       configs: {eslint: configForEslint, remark: configForRemark},
       vcs,
       buildDirectory,
@@ -100,7 +97,6 @@ suite('linting scaffolder', () => {
     const result = await scaffold({
       projectRoot,
       projectType,
-      tests: {unit: unitTested},
       configs: {remark: configForRemark},
       vcs,
       transpileLint,
@@ -122,7 +118,6 @@ suite('linting scaffolder', () => {
     const result = await scaffold({
       projectRoot,
       projectType,
-      tests: {unit: unitTested},
       configs: {eslint: configForEslint, remark: configForRemark},
       vcs,
       transpileLint: false,
@@ -144,7 +139,6 @@ suite('linting scaffolder', () => {
     const result = await scaffold({
       projectRoot,
       projectType,
-      tests: {unit: unitTested},
       configs: {eslint: configForEslint},
       vcs,
       buildDirectory,
@@ -182,7 +176,6 @@ suite('linting scaffolder', () => {
     const result = await scaffold({
       projectRoot,
       projectType,
-      tests: {unit: unitTested},
       configs: {eslint: configForEslint, remark: configForRemark},
       vcs: undefined,
       buildDirectory,

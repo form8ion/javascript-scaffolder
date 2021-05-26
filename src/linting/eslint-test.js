@@ -7,12 +7,6 @@ import scaffoldEsLint from './eslint';
 
 suite('eslint config scaffolder', () => {
   let sandbox;
-  const packageName = any.word();
-  const scope = any.string();
-  const projectRoot = any.string();
-  const buildDirectory = any.string();
-  const additionalConfigs = any.listOf(any.word);
-  const results = any.simpleObject();
 
   setup(() => {
     sandbox = sinon.createSandbox();
@@ -24,8 +18,20 @@ suite('eslint config scaffolder', () => {
   teardown(() => sandbox.restore());
 
   test('that initial config is created', async () => {
+    const packageName = any.word();
+    const scope = any.string();
+    const projectRoot = any.string();
+    const buildDirectory = any.string();
+    const additionalConfigs = any.listOf(any.word);
+    const additionalIgnoredDirectories = any.listOf(any.word);
+    const results = any.simpleObject();
     eslint.scaffold
-      .withArgs({scope, projectRoot, additionalConfigs, ignore: {directories: [`/${buildDirectory}/`]}})
+      .withArgs({
+        scope,
+        projectRoot,
+        additionalConfigs,
+        ignore: {directories: [...additionalIgnoredDirectories, `/${buildDirectory}/`]}
+      })
       .resolves(results);
 
     assert.equal(
@@ -33,24 +39,7 @@ suite('eslint config scaffolder', () => {
         projectRoot,
         buildDirectory,
         config: {packageName, scope},
-        additionalConfiguration: {configs: additionalConfigs}
-      }),
-      results
-    );
-  });
-
-  test('that the coverage directory is excluded when the project is unit tested', async () => {
-    eslint.scaffold
-      .withArgs({scope, projectRoot, additionalConfigs, ignore: {directories: [`/${buildDirectory}/`, '/coverage/']}})
-      .resolves(results);
-
-    assert.equal(
-      await scaffoldEsLint({
-        projectRoot,
-        buildDirectory,
-        config: {packageName, scope},
-        additionalConfiguration: {configs: additionalConfigs},
-        unitTested: true
+        additionalConfiguration: {configs: additionalConfigs, ignore: {directories: additionalIgnoredDirectories}}
       }),
       results
     );

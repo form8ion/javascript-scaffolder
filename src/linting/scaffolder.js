@@ -8,7 +8,6 @@ export default async function ({
   projectRoot,
   projectType,
   packageManager,
-  tests,
   configs,
   vcs,
   transpileLint,
@@ -20,7 +19,6 @@ export default async function ({
     configs.eslint && false !== transpileLint
       ? scaffoldEslint({
         projectRoot,
-        unitTested: tests.unit,
         config: configs.eslint,
         buildDirectory,
         additionalConfiguration: eslint
