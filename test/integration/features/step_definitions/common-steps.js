@@ -21,7 +21,7 @@ import {
   assertThatProperDirectoriesAreIgnoredFromVersionControl,
   assertThatProperFilesAreIgnoredFromVersionControl
 } from './vcs-steps';
-import {assertThatProperDirectoriesAreIgnoredFromEslint} from './config-steps';
+import {assertThatProperDirectoriesAreIgnoredFromEslint} from './eslint-steps';
 
 const packagePreviewDirectory = '../__package_previews__/javascript-scaffolder';
 const stubbedNodeModules = stubbedFs.load(resolve(__dirname, '../../../../', 'node_modules'));
