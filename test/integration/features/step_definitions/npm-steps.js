@@ -1,6 +1,6 @@
 import {EOL} from 'os';
 import {promises as fs, promises} from 'fs';
-import {Given, Then} from 'cucumber';
+import {Given, Then} from '@cucumber/cucumber';
 import any from '@travi/any';
 import {assert} from 'chai';
 import td from 'testdouble';

@@ -1,4 +1,4 @@
-import {Given} from 'cucumber';
+import {Given} from '@cucumber/cucumber';
 
 Given(/^the project will not be tested$/, async function () {
   this.unitTestAnswer = false;

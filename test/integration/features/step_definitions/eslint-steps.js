@@ -3,7 +3,7 @@ import {EOL} from 'os';
 import {load} from 'js-yaml';
 import {assert} from 'chai';
 import {fileExists} from '@form8ion/core';
-import {Then} from 'cucumber';
+import {Then} from '@cucumber/cucumber';
 
 export async function assertThatProperDirectoriesAreIgnoredFromEslint(projectType, transpileAndLint, unitTested) {
   if (transpileAndLint) {

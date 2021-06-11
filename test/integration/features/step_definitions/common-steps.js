@@ -1,7 +1,7 @@
 import {existsSync, promises as fs} from 'fs';
 import {resolve} from 'path';
 import {questionNames as commonQuestionNames} from '@travi/language-scaffolder-prompts';
-import {After, Before, Given, setWorldConstructor, Then, When} from 'cucumber';
+import {After, Before, Given, setWorldConstructor, Then, When} from '@cucumber/cucumber';
 import stubbedFs from 'mock-fs';
 import any from '@travi/any';
 import td from 'testdouble';

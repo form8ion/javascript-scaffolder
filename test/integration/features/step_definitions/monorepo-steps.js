@@ -1,5 +1,5 @@
 import {fileExists} from '@form8ion/core';
-import {Given, Then} from 'cucumber';
+import {Given, Then} from '@cucumber/cucumber';
 import any from '@travi/any';
 import {assert} from 'chai';
 
