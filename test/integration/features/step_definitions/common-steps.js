@@ -54,6 +54,7 @@ Before(async function () {
   this.transpileAndLint = true;
   this.tested = true;
   this.visibility = any.fromList(['Public', 'Private']);
+  this.eslintScope = `@${any.word()}`;
 });
 
 After(function () {
@@ -86,7 +87,7 @@ When(/^the project is scaffolded$/, async function () {
     license: any.string(),
     vcs: this.vcs,
     configs: {
-      eslint: {scope: `@${any.word()}`},
+      eslint: {scope: this.eslintScope},
       babelPreset: {name: any.word(), packageName: any.word()},
       commitlint: {name: any.word(), packageName: any.word()}
     },

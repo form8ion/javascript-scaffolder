@@ -1,7 +1,9 @@
 import {promises as fs} from 'fs';
 import {EOL} from 'os';
+import {load} from 'js-yaml';
 import {assert} from 'chai';
 import {fileExists} from '@form8ion/core';
+import {Then} from 'cucumber';
 
 export async function assertThatProperDirectoriesAreIgnoredFromEslint(projectType, transpileAndLint, unitTested) {
   if (transpileAndLint) {
@@ -22,3 +24,9 @@ export async function assertThatProperDirectoriesAreIgnoredFromEslint(projectTyp
     }
   } else assert.isFalse(await fileExists(`${process.cwd()}/.eslintrc.yml`));
 }
+
+Then('the base ESLint config is extended', async function () {
+  const config = load(await fs.readFile(`${process.cwd()}/.eslintrc.yml`));
+
+  assert.equal(config.extends, this.eslintScope);
+});
