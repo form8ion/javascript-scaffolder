@@ -28,13 +28,13 @@ const stubbedNodeModules = stubbedFs.load(resolve(__dirname, '../../../../', 'no
 
 setWorldConstructor(World);
 
-let scaffold, questionNames;
+let scaffold, questionNames, jsCoreQuestionNames;
 
 Before(async function () {
   this.execa = td.replace('execa');
 
-  // eslint-disable-next-line import/no-extraneous-dependencies,import/no-unresolved
   ({scaffold, questionNames} = importFresh('@travi/javascript-scaffolder'));
+  ({questionNames: jsCoreQuestionNames} = importFresh('@form8ion/javascript-core'));
 
   stubbedFs({
     node_modules: stubbedNodeModules,
@@ -55,6 +55,7 @@ Before(async function () {
   this.tested = true;
   this.visibility = any.fromList(['Public', 'Private']);
   this.eslintScope = `@${any.word()}`;
+  this.barUnitTestFrameworkEslintConfigs = any.listOf(any.word);
 });
 
 After(function () {
@@ -68,6 +69,7 @@ After(function () {
 
 Given(/^the default answers are chosen$/, async function () {
   this.unitTestAnswer = true;
+  this.unitTestFrameworkAnswer = 'foo';
   this.integrationTestAnswer = true;
   this.transpilationLintAnswer = null;
 });
@@ -100,6 +102,7 @@ When(/^the project is scaffolded$/, async function () {
       [questionNames.AUTHOR_EMAIL]: any.email(),
       [questionNames.AUTHOR_URL]: any.url(),
       [commonQuestionNames.UNIT_TESTS]: this.unitTestAnswer,
+      ...this.unitTestAnswer && {[jsCoreQuestionNames.UNIT_TEST_FRAMEWORK]: this.unitTestFrameworkAnswer},
       [commonQuestionNames.INTEGRATION_TESTS]: this.integrationTestAnswer,
       ...null !== this.ciAnswer && {[commonQuestionNames.CI_SERVICE]: this.ciAnswer || 'Other'},
       [questionNames.TRANSPILE_LINT]: this.transpileAndLint,
@@ -111,7 +114,10 @@ When(/^the project is scaffolded$/, async function () {
       },
       ...this.packageManager && {[questionNames.PACKAGE_MANAGER]: this.packageManager}
     },
-    unitTestFrameworks: {},
+    unitTestFrameworks: {
+      foo: {scaffolder: ({foo}) => ({foo})},
+      bar: {scaffolder: ({bar}) => ({eslint: {configs: this.barUnitTestFrameworkEslintConfigs}, bar})}
+    },
     pathWithinParent: this.pathWithinParent
   });
 });

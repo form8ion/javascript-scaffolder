@@ -3,7 +3,7 @@ import {EOL} from 'os';
 import {load} from 'js-yaml';
 import {assert} from 'chai';
 import {fileExists} from '@form8ion/core';
-import {Then} from '@cucumber/cucumber';
+import {Given, Then} from '@cucumber/cucumber';
 
 export async function assertThatProperDirectoriesAreIgnoredFromEslint(projectType, transpileAndLint, unitTested) {
   if (transpileAndLint) {
@@ -25,8 +25,26 @@ export async function assertThatProperDirectoriesAreIgnoredFromEslint(projectTyp
   } else assert.isFalse(await fileExists(`${process.cwd()}/.eslintrc.yml`));
 }
 
+Given('the chosen unit-test framework defines simple ESLint configs', async function () {
+  this.unitTestAnswer = true;
+  this.unitTestFrameworkAnswer = 'bar';
+});
+
 Then('the base ESLint config is extended', async function () {
   const config = load(await fs.readFile(`${process.cwd()}/.eslintrc.yml`));
 
-  assert.equal(config.extends, this.eslintScope);
+  if ('bar' === this.unitTestFrameworkAnswer) {
+    assert.equal(config.extends[0], this.eslintScope);
+  } else {
+    assert.deepEqual(config.extends, this.eslintScope);
+  }
+});
+
+Then('the additional ESLint configs are extended', async function () {
+  const config = load(await fs.readFile(`${process.cwd()}/.eslintrc.yml`));
+
+  assert.includeMembers(
+    config.extends,
+    this.barUnitTestFrameworkEslintConfigs.map(configName => `${this.eslintScope}/${configName}`)
+  );
 });
