@@ -116,7 +116,13 @@ When(/^the project is scaffolded$/, async function () {
     },
     unitTestFrameworks: {
       foo: {scaffolder: ({foo}) => ({foo})},
-      bar: {scaffolder: ({bar}) => ({eslint: {configs: this.barUnitTestFrameworkEslintConfigs}, bar})}
+      bar: {
+        scaffolder: ({bar}) => ({
+          eslint: {configs: this.barUnitTestFrameworkEslintConfigs},
+          eslintConfigs: this.barUnitTestFrameworkEslintConfigs,
+          bar
+        })
+      }
     },
     pathWithinParent: this.pathWithinParent
   });
