@@ -30,6 +30,11 @@ Given('the chosen unit-test framework defines simple ESLint configs', async func
   this.unitTestFrameworkAnswer = 'bar';
 });
 
+Given('the chosen application plugin defines override ESLint configs', async function () {
+  this.integrationTestAnswer = true;
+  this.projectTypeChoiceAnswer = 'foo';
+});
+
 Then('the base ESLint config is extended', async function () {
   const config = load(await fs.readFile(`${process.cwd()}/.eslintrc.yml`));
 
@@ -46,5 +51,14 @@ Then('the additional ESLint configs are extended', async function () {
   assert.includeMembers(
     config.extends,
     this.barUnitTestFrameworkEslintConfigs.map(configName => `${this.eslintScope}/${configName}`)
+  );
+});
+
+Then('the ESLint overrides are defined', async function () {
+  const config = load(await fs.readFile(`${process.cwd()}/.eslintrc.yml`));
+
+  assert.includeDeepMembers(
+    config.overrides,
+    this.fooApplicationEslintConfigs.map(cfg => ({files: cfg.files, extends: `${this.eslintScope}/${cfg.name}`}))
   );
 });
