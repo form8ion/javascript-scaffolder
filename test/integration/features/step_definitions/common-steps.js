@@ -56,6 +56,8 @@ Before(async function () {
   this.visibility = any.fromList(['Public', 'Private']);
   this.eslintScope = `@${any.word()}`;
   this.barUnitTestFrameworkEslintConfigs = any.listOf(any.word);
+  // this.fooApplicationEslintConfigs = any.listOf(() => ({name: any.word(), files: any.word()}));
+  this.fooApplicationEslintConfigs = [(() => ({name: any.word(), files: any.word()}))()];
 });
 
 After(function () {
@@ -94,7 +96,9 @@ When(/^the project is scaffolded$/, async function () {
       commitlint: {name: any.word(), packageName: any.word()}
     },
     ciServices: {[any.word()]: {scaffolder: foo => ({foo}), public: true}},
-    applicationTypes: {[any.word()]: {scaffolder: foo => ({foo})}},
+    applicationTypes: {
+      foo: {scaffolder: foo => ({foo, eslintConfigs: this.fooApplicationEslintConfigs})}
+    },
     decisions: {
       [questionNames.NODE_VERSION_CATEGORY]: 'LTS',
       [questionNames.PROJECT_TYPE]: this.projectType,
@@ -106,7 +110,7 @@ When(/^the project is scaffolded$/, async function () {
       [commonQuestionNames.INTEGRATION_TESTS]: this.integrationTestAnswer,
       ...null !== this.ciAnswer && {[commonQuestionNames.CI_SERVICE]: this.ciAnswer || 'Other'},
       [questionNames.TRANSPILE_LINT]: this.transpileAndLint,
-      [questionNames.PROJECT_TYPE_CHOICE]: 'Other',
+      [questionNames.PROJECT_TYPE_CHOICE]: this.projectTypeChoiceAnswer || 'Other',
       [questionNames.HOST]: 'Other',
       ...['Package', 'CLI'].includes(this.projectType) && {
         [questionNames.SHOULD_BE_SCOPED]: shouldBeScopedAnswer,
