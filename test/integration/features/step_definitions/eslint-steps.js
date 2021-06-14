@@ -48,9 +48,9 @@ Then('the base ESLint config is extended', async function () {
 Then('the additional ESLint configs are extended', async function () {
   const config = load(await fs.readFile(`${process.cwd()}/.eslintrc.yml`));
 
-  assert.includeMembers(
+  assert.deepEqual(
     config.extends,
-    this.barUnitTestFrameworkEslintConfigs.map(configName => `${this.eslintScope}/${configName}`)
+    [this.eslintScope, ...this.barUnitTestFrameworkEslintConfigs.map(configName => `${this.eslintScope}/${configName}`)]
   );
 });
 
