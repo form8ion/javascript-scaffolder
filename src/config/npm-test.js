@@ -47,6 +47,22 @@ suite('npm config scaffolder', () => {
     );
   });
 
+  test('that scoped registries are added to the contig when provided', async () => {
+    const registries = any.objectWithKeys(any.listOf(any.word), {factory: any.word});
+
+    await scaffoldNpmConfig({projectRoot, projectType: any.word(), registries});
+
+    assert.calledWith(
+      fsPromises.writeFile,
+      `${projectRoot}/.npmrc`,
+      `update-notifier=false\nengine-strict=true\n${
+        Object.entries(registries)
+          .map(([scope, url]) => `@${scope}:registry=${url}`)
+          .join('\n')
+      }\n`
+    );
+  });
+
   test('that the script to enforce peer-dependency compatibility is defined', async () => {
     const results = await scaffoldNpmConfig({projectRoot, projectType: any.word()});
 
