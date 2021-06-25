@@ -67,7 +67,8 @@ export function validate(options) {
     .keys({
       decisions: joi.object()
     })
-    .keys({unitTestFrameworks: unitTestFrameworksSchema});
+    .keys({unitTestFrameworks: unitTestFrameworksSchema})
+    .keys({registries: joi.object().pattern(joi.string(), joi.string().uri())});
   const {error, value} = schema.validate(options);
 
   hoek.assert(!error, error);

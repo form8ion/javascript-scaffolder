@@ -194,6 +194,11 @@ short summary of the project
   * `email` __string__ (_optional_) defaults to `$npm config get init.author.email`
   * `url` __string__ (_optional_) defaults to `$npm config get init.author.url`
 
+##### `registries` __object__ (_optional_)
+
+* keys: __string__ Scope of packages related to this registry (without the `@`)
+* values: __string__ URL for the registry
+
 ##### `ciServices` __object__ (_optional_)
 
 * keys: __string__ Name of the service

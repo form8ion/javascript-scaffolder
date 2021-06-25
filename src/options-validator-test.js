@@ -618,6 +618,55 @@ suite('options validator', () => {
     }));
   });
 
+  suite('registries', () => {
+    const key = any.word();
+
+    test('that a `registries` must be an object`', () => assert.throws(
+      () => validate({
+        projectRoot: any.string(),
+        projectName: any.string(),
+        visibility: any.fromList(['Public', 'Private']),
+        license: any.string(),
+        unitTestFrameworks: {},
+        registries: any.word()
+      }),
+      '"registries" must be of type object'
+    ));
+
+    test('that the values of `registries` must be strings`', () => assert.throws(
+      () => validate({
+        projectRoot: any.string(),
+        projectName: any.string(),
+        visibility: any.fromList(['Public', 'Private']),
+        license: any.string(),
+        unitTestFrameworks: {},
+        registries: {[key]: any.integer()}
+      }),
+      `"registries.${key}" must be a string`
+    ));
+
+    test('that the values of `registries` must be URIs`', () => assert.throws(
+      () => validate({
+        projectRoot: any.string(),
+        projectName: any.string(),
+        visibility: any.fromList(['Public', 'Private']),
+        license: any.string(),
+        unitTestFrameworks: {},
+        registries: {[key]: any.string()}
+      }),
+      `"registries.${key}" must be a valid uri`
+    ));
+
+    test('that valid `registries` definition does not throw an error`', () => validate({
+      projectRoot: any.string(),
+      projectName: any.string(),
+      visibility: any.fromList(['Public', 'Private']),
+      license: any.string(),
+      unitTestFrameworks: {},
+      registries: {[key]: any.url()}
+    }));
+  });
+
   test(
     'that `configs`, `overrides`, `hosts`, `ciServices`, `applicationTypes`, and `packageTypes`'
     + ' default to empty objects',
