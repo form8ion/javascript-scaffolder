@@ -32,6 +32,7 @@ suite('javascript project scaffolder', () => {
   const projectName = any.string();
   const packageName = any.string();
   const pathWithinParent = any.string();
+  const registries = any.simpleObject();
   const homepage = any.url();
   const decisions = any.simpleObject();
   const unitTestFrameworks = any.simpleObject();
@@ -228,7 +229,8 @@ suite('javascript project scaffolder', () => {
         packageTypes,
         decisions,
         unitTestFrameworks,
-        pathWithinParent
+        pathWithinParent,
+        registries
       });
   });
 
@@ -247,7 +249,7 @@ suite('javascript project scaffolder', () => {
       await scaffold(options);
 
       assert.calledWith(babel.default, {preset: babelPreset, projectRoot, transpileLint, tests});
-      assert.calledWith(npmConfig.default, {projectRoot, projectType});
+      assert.calledWith(npmConfig.default, {projectRoot, projectType, registries});
       assert.calledWith(
         jsLifter.lift,
         {

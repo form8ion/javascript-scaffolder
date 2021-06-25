@@ -38,7 +38,8 @@ export async function scaffold(options) {
     packageTypes,
     decisions,
     unitTestFrameworks,
-    pathWithinParent
+    pathWithinParent,
+    registries
   } = validate(options);
 
   const {
@@ -78,7 +79,7 @@ export async function scaffold(options) {
   const testingResults = await scaffoldTesting({projectRoot, tests, visibility, vcs, unitTestFrameworks, decisions});
   const [nodeVersion, npmResults] = await Promise.all([
     scaffoldNodeVersion({projectRoot, nodeVersionCategory}),
-    scaffoldNpmConfig({projectType, projectRoot})
+    scaffoldNpmConfig({projectType, projectRoot, registries})
   ]);
   const contributors = [
     ...(await Promise.all([
