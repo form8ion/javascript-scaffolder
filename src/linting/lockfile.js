@@ -11,14 +11,14 @@ function determineLockfilePathFor(packageManager) {
   );
 }
 
-export default async function ({projectRoot, packageManager}) {
+export default async function ({projectRoot, packageManager, registries}) {
   await fs.writeFile(
     `${projectRoot}/.lockfile-lintrc.json`,
     JSON.stringify({
       path: determineLockfilePathFor(packageManager),
       type: packageManager,
       'validate-https': true,
-      'allowed-hosts': [packageManager]
+      'allowed-hosts': [packageManager, ...registries ? Object.values(registries) : []]
     })
   );
 

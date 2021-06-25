@@ -1,6 +1,5 @@
 Feature: Registries
 
-  @wip
   Scenario: registries defined for scopes
     Given the project will be an "any"
     And the npm cli is logged in

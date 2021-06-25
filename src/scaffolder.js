@@ -93,6 +93,7 @@ export async function scaffold(options) {
         projectRoot,
         projectType,
         packageManager,
+        registries,
         vcs,
         transpileLint,
         buildDirectory: projectTypeResults.buildDirectory,

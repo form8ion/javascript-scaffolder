@@ -34,6 +34,29 @@ suite('lockfile linting', () => {
     assert.equal(scripts['lint:lockfile'], 'lockfile-lint');
   });
 
+  test('that additional registries are defined when provided', async () => {
+    const registries = any.simpleObject();
+
+    const {devDependencies, scripts} = await scaffoldLockfileLint({
+      projectRoot,
+      packageManager: packageManagers.NPM,
+      registries
+    });
+
+    assert.calledWith(
+      fs.writeFile,
+      `${projectRoot}/.lockfile-lintrc.json`,
+      JSON.stringify({
+        path: 'package-lock.json',
+        type: packageManagers.NPM,
+        'validate-https': true,
+        'allowed-hosts': [packageManagers.NPM, ...Object.values(registries)]
+      })
+    );
+    assert.deepEqual(devDependencies, ['lockfile-lint']);
+    assert.equal(scripts['lint:lockfile'], 'lockfile-lint');
+  });
+
   test('that it is configured properly for yarn', async () => {
     const {devDependencies, scripts} = await scaffoldLockfileLint({projectRoot, packageManager: packageManagers.YARN});
 
