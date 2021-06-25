@@ -128,7 +128,8 @@ When(/^the project is scaffolded$/, async function () {
         })
       }
     },
-    pathWithinParent: this.pathWithinParent
+    pathWithinParent: this.pathWithinParent,
+    ...this.registries && {registries: this.registries}
   });
 });
 
