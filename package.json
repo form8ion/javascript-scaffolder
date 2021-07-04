@@ -63,7 +63,7 @@
     "@travi/eslint-config-mocha": "1.0.12",
     "@travi/project-scaffolder": "10.1.2",
     "@travi/travis-scaffolder-javascript": "4.0.2",
-    "ban-sensitive-files": "1.9.15",
+    "ban-sensitive-files": "1.9.16",
     "chai": "4.3.4",
     "chai-as-promised": "7.1.1",
     "check-engine": "1.10.0",
