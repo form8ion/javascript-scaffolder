@@ -183,6 +183,7 @@ suite('javascript project scaffolder', () => {
           vcs: vcsDetails,
           visibility,
           projectType,
+          projectName,
           nodeVersion: version,
           tests
         }
