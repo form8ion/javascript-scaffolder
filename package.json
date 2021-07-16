@@ -30,7 +30,7 @@
     "coverage:report": "nyc report --reporter=text-lcov > coverage.lcov && codecov",
     "pregenerate:md": "run-s build:js",
     "generate:md": "remark . --output",
-    "build:js": "rollup -c",
+    "build:js": "rollup --config",
     "build": "run-s clean build:*",
     "watch": "run-s 'build:js -- --watch'",
     "prepack": "run-s build",
