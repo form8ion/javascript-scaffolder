@@ -44,8 +44,8 @@ suite('cli project-type', () => {
         devDependencies: [
           'rimraf',
           'rollup',
-          '@rollup/plugin-auto-external',
           '@rollup/plugin-json',
+          'rollup-plugin-auto-external',
           'rollup-plugin-executable'
         ],
         vcsIgnore: {files: [], directories: ['/bin/']},
