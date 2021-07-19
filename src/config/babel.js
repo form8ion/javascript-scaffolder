@@ -1,7 +1,7 @@
 import {promises as fsPromises} from 'fs';
 import {warn} from '@travi/cli-messages';
 
-export default async function ({projectRoot, preset, transpileLint, tests}) {
+export default async function ({projectRoot, preset, transpileLint, tests, buildDirectory}) {
   if (false === transpileLint || !preset) {
     warn('Not configuring transpilation');
 
@@ -12,7 +12,7 @@ export default async function ({projectRoot, preset, transpileLint, tests}) {
     `${projectRoot}/.babelrc`,
     JSON.stringify({
       presets: [preset.name],
-      ignore: ['./lib/'],
+      ignore: [`./${buildDirectory}/`],
       ...tests.unit && {env: {test: {plugins: ['istanbul']}}}
     })
   );

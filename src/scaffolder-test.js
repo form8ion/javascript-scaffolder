@@ -208,7 +208,9 @@ suite('javascript project scaffolder', () => {
         }
       })
       .resolves(lintingResults);
-    babel.default.withArgs({projectRoot, preset: babelPreset, transpileLint, tests}).resolves(babelResults);
+    babel.default
+      .withArgs({projectRoot, preset: babelPreset, transpileLint, tests, buildDirectory: projectTypeBuildDirectory})
+      .resolves(babelResults);
     npmConfig.default.resolves(npmResults);
     commitConvention.default
       .withArgs({projectRoot, configs, pathWithinParent, packageManager})
@@ -250,7 +252,10 @@ suite('javascript project scaffolder', () => {
 
       await scaffold(options);
 
-      assert.calledWith(babel.default, {preset: babelPreset, projectRoot, transpileLint, tests});
+      assert.calledWith(
+        babel.default,
+        {preset: babelPreset, projectRoot, transpileLint, tests, buildDirectory: projectTypeBuildDirectory}
+      );
       assert.calledWith(npmConfig.default, {projectRoot, projectType, registries});
       assert.calledWith(
         jsLifter.lift,
