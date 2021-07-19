@@ -2,7 +2,7 @@ import {promises as fsPromises} from 'fs';
 import {assert} from 'chai';
 import any from '@travi/any';
 import sinon from 'sinon';
-import * as templatePath from '../template-path';
+import * as rollupScaffolder from '../build/rollup';
 import * as defineBadges from './package/badges';
 import scaffoldCli from './cli';
 
@@ -17,7 +17,7 @@ suite('cli project-type', () => {
     sandbox = sinon.createSandbox();
 
     sandbox.stub(fsPromises, 'copyFile');
-    sandbox.stub(templatePath, 'default');
+    sandbox.stub(rollupScaffolder, 'scaffold');
     sandbox.stub(defineBadges, 'default');
   });
 
@@ -25,27 +25,24 @@ suite('cli project-type', () => {
 
   test('that details specific to a cli project-type are scaffolded', async () => {
     const visibility = 'Private';
-    const pathToTemplate = any.string();
-    templatePath.default.withArgs('rollup.config.js').returns(pathToTemplate);
+    const rollupResults = any.simpleObject();
+    rollupScaffolder.scaffold.withArgs({projectRoot}).resolves(rollupResults);
     defineBadges.default.withArgs(packageName, visibility).returns(badges);
 
     assert.deepEqual(
       await scaffoldCli({projectRoot, configs, packageName, visibility}),
       {
+        ...rollupResults,
         scripts: {
           clean: 'rimraf ./bin',
           prebuild: 'run-s clean',
           build: 'npm-run-all --print-label --parallel build:*',
-          'build:js': 'rollup --config',
-          watch: 'run-s \'build:js -- --watch\'',
           prepack: 'run-s build'
         },
         dependencies: ['update-notifier'],
         devDependencies: [
           'rimraf',
-          'rollup',
           '@rollup/plugin-json',
-          'rollup-plugin-auto-external',
           'rollup-plugin-executable'
         ],
         vcsIgnore: {files: [], directories: ['/bin/']},
@@ -61,7 +58,6 @@ suite('cli project-type', () => {
         nextSteps: []
       }
     );
-    assert.calledWith(fsPromises.copyFile, pathToTemplate, `${projectRoot}/rollup.config.js`);
   });
 
   test('that the package is published publically when the visibility is `Public`', async () => {

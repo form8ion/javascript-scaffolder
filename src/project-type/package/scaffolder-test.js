@@ -9,6 +9,7 @@ import * as camelcase from '../../../third-party-wrappers/camelcase';
 import * as mkdir from '../../../third-party-wrappers/make-dir';
 import * as touch from '../../../third-party-wrappers/touch';
 import * as templatePath from '../../template-path';
+import * as rollupScaffolder from '../../build/rollup';
 import * as packageChooser from '../prompt';
 import * as documentationScaffolder from './documentation';
 import * as defineBadges from './badges';
@@ -39,7 +40,6 @@ suite('package project-type', () => {
   const chosenType = any.word();
   const tests = any.simpleObject();
   const decisions = any.simpleObject();
-  const pathToRollupTemplate = any.string();
   const pathToExampleTemplate = any.string();
   const exampleTemplateContent = any.string();
   const exampleContent = any.string();
@@ -63,6 +63,7 @@ suite('package project-type', () => {
     sandbox.stub(fsPromises, 'readFile');
     sandbox.stub(fsPromises, 'writeFile');
     sandbox.stub(templatePath, 'default');
+    sandbox.stub(rollupScaffolder, 'scaffold');
     sandbox.stub(defineBadges, 'default');
     sandbox.stub(documentationScaffolder, 'default');
     sandbox.stub(packageChooser, 'default');
@@ -76,7 +77,6 @@ suite('package project-type', () => {
       .withArgs(packageTypes, chosenType, {projectRoot, projectName, packageName, tests, scope})
       .returns(typeScaffoldingResults);
 
-    templatePath.default.withArgs('rollup.config.js').returns(pathToRollupTemplate);
     templatePath.default.withArgs('example.mustache').returns(pathToExampleTemplate);
     fsPromises.readFile.withArgs(pathToExampleTemplate, 'utf8').resolves(exampleTemplateContent);
     camelcase.default.withArgs(projectName).returns(camelizedProjectName);
@@ -86,7 +86,8 @@ suite('package project-type', () => {
   teardown(() => sandbox.restore());
 
   test('that details specific to a package project-type are scaffolded', async () => {
-    templatePath.default.withArgs('rollup.config.js').returns(pathToRollupTemplate);
+    const rollupResults = any.simpleObject();
+    rollupScaffolder.scaffold.withArgs({projectRoot}).resolves(rollupResults);
     defineBadges.default.withArgs(packageName, visibility).returns(badges);
     core.fileExists.withArgs(pathToExample).resolves(false);
 
@@ -103,14 +104,13 @@ suite('package project-type', () => {
         decisions
       }),
       {
+        ...rollupResults,
         dependencies: scaffoldedTypeDependencies,
-        devDependencies: [...scaffoldedTypeDevDependencies, 'rimraf', 'rollup', 'rollup-plugin-auto-external'],
+        devDependencies: [...scaffoldedTypeDevDependencies, 'rimraf'],
         scripts: {
           clean: 'rimraf ./lib',
           prebuild: 'run-s clean',
           build: 'npm-run-all --print-label --parallel build:*',
-          'build:js': 'rollup --config',
-          watch: 'run-s \'build:js -- --watch\'',
           prepack: 'run-s build',
           ...scaffoldedTypeScripts
         },
@@ -130,7 +130,6 @@ suite('package project-type', () => {
         nextSteps: commonNextSteps
       }
     );
-    assert.calledWith(fsPromises.copyFile, pathToRollupTemplate, `${projectRoot}/rollup.config.js`);
     assert.calledWith(fsPromises.writeFile, pathToExample, exampleContent);
   });
 
@@ -189,7 +188,6 @@ suite('package project-type', () => {
         runkitExampleFilename: './example.js'
       }
     );
-    assert.calledWith(fsPromises.copyFile, pathToRollupTemplate, `${projectRoot}/rollup.config.js`);
     assert.calledWith(fsPromises.writeFile, pathToExample, exampleContent);
     assert.calledWith(touch.default, `${pathToCreatedSrcDirectory}/index.js`);
   });
@@ -232,6 +230,5 @@ suite('package project-type', () => {
       `const ${camelizedProjectName} = require('.');\n`
     );
     assert.calledWith(touch.default, `${projectRoot}/index.js`);
-    assert.neverCalledWith(fsPromises.copyFile, pathToRollupTemplate, `${projectRoot}/rollup.config.js`);
   });
 });

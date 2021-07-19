@@ -8,6 +8,7 @@ import camelcase from '../../../third-party-wrappers/camelcase';
 import touch from '../../../third-party-wrappers/touch';
 import mkdir from '../../../third-party-wrappers/make-dir';
 import determinePathToTemplateFile from '../../template-path';
+import {scaffold as scaffoldRollup} from '../../build/rollup';
 import choosePackageType from '../prompt';
 import scaffoldPackageDocumentation from './documentation';
 import defineBadges from './badges';
@@ -32,36 +33,37 @@ async function createExample(projectRoot, projectName) {
 
 async function buildDetails(packageTypes, decisions, projectRoot, tests, projectName, visibility, packageName) {
   const pathToCreatedSrcDirectory = await mkdir(`${projectRoot}/src`);
-  await Promise.all([
-    fs.copyFile(determinePathToTemplateFile('rollup.config.js'), `${projectRoot}/rollup.config.js`),
+  const [rollupResults] = await Promise.all([
+    scaffoldRollup({projectRoot}),
     await createExample(projectRoot, projectName),
     touch(`${pathToCreatedSrcDirectory}/index.js`)
   ]);
 
-  return {
-    devDependencies: ['rimraf', 'rollup', 'rollup-plugin-auto-external'],
-    scripts: {
-      clean: `rimraf ./${defaultBuildDirectory}`,
-      prebuild: 'run-s clean',
-      build: 'npm-run-all --print-label --parallel build:*',
-      'build:js': 'rollup --config',
-      watch: 'run-s \'build:js -- --watch\'',
-      prepack: 'run-s build'
-    },
-    vcsIgnore: {directories: [`/${defaultBuildDirectory}/`]},
-    buildDirectory: defaultBuildDirectory,
-    badges: {
-      consumer: {
-        ...'Public' === visibility && {
-          runkit: {
-            img: `https://badge.runkitcdn.com/${packageName}.svg`,
-            text: `Try ${packageName} on RunKit`,
-            link: `https://npm.runkit.com/${packageName}`
+  return deepmerge(
+    rollupResults,
+    {
+      devDependencies: ['rimraf'],
+      scripts: {
+        clean: `rimraf ./${defaultBuildDirectory}`,
+        prebuild: 'run-s clean',
+        build: 'npm-run-all --print-label --parallel build:*',
+        prepack: 'run-s build'
+      },
+      vcsIgnore: {directories: [`/${defaultBuildDirectory}/`]},
+      buildDirectory: defaultBuildDirectory,
+      badges: {
+        consumer: {
+          ...'Public' === visibility && {
+            runkit: {
+              img: `https://badge.runkitcdn.com/${packageName}.svg`,
+              text: `Try ${packageName} on RunKit`,
+              link: `https://npm.runkit.com/${packageName}`
+            }
           }
         }
       }
     }
-  };
+  );
 }
 
 async function buildDetailsForNonTranspiledProject(projectRoot, projectName) {
