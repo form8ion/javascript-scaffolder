@@ -5,6 +5,10 @@ import any from '@travi/any';
 import {assert} from 'chai';
 import td from 'testdouble';
 
+function isNonConsumable(projectType) {
+  return 'application' === projectType || 'cli' === projectType;
+}
+
 function assertThatPackageSpecificDetailsAreDefinedCorrectly(
   packageDetails,
   npmAccount,
@@ -109,7 +113,7 @@ export async function assertThatNpmConfigDetailsAreConfiguredCorrectlyFor(projec
 
   assert.include(npmConfigDetails, 'update-notifier=false');
 
-  if ('application' === projectType || 'cli' === projectType) {
+  if (isNonConsumable(projectType)) {
     assert.include(npmConfigDetails, 'save-exact=true');
   } else {
     assert.notInclude(npmConfigDetails, 'save-exact=true');

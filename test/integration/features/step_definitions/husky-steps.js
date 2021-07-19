@@ -15,7 +15,7 @@ async function assertHookContainsScript(hook, script) {
 }
 
 Then('husky is configured for a {string} project', async function (packageManager) {
-  td.verify(this.execa(td.matchers.contains('husky')), {ignoreExtraArgs: true});
+  td.verify(this.execa(td.matchers.contains(new RegExp('(npm install|yarn add).*husky'))), {ignoreExtraArgs: true});
 
   await assertHookContainsScript('pre-commit', `${packageManager} test`);
   await assertHookContainsScript('commit-msg', 'npx --no-install commitlint --edit $1');
