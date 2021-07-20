@@ -1,6 +1,6 @@
 import deepmerge from 'deepmerge';
 import {scaffold} from '@form8ion/husky';
-import scaffoldCommitizen from '../config/commitizen';
+import scaffoldCommitizen from './commitizen';
 import scaffoldCommitlint from './commitlint';
 
 export default async function ({projectRoot, configs, pathWithinParent, packageManager}) {

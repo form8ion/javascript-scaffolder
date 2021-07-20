@@ -2,7 +2,7 @@ import sinon from 'sinon';
 import any from '@travi/any';
 import {assert} from 'chai';
 import * as huskyScaffolder from '@form8ion/husky';
-import * as commitizenScaffolder from '../config/commitizen';
+import * as commitizenScaffolder from './commitizen';
 import * as commitlintScaffolder from './commitlint';
 import scaffoldCommitConvention from './index';
 
