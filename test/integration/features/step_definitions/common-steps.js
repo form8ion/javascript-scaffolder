@@ -159,6 +159,10 @@ Then('the expected results for a(n) {string} are returned to the project scaffol
     assert.include(Object.keys(this.scaffoldResult.badges.contribution), 'semantic-release');
   }
 
+  if ('github' === this.vcs?.host && 'Public' === this.visibility) {
+    assert.include(Object.keys(this.scaffoldResult.badges.status), 'coverage');
+  }
+
   assertThatProperDirectoriesAreIgnoredFromVersionControl(this.scaffoldResult, type);
   assertThatProperFilesAreIgnoredFromVersionControl(this.scaffoldResult, type);
   assertThatDocumentationResultsAreReturnedCorrectly(
