@@ -6,7 +6,7 @@ import {questionNames as commonQuestionNames} from '@travi/language-scaffolder-p
 import {validate} from './options-validator';
 import {prompt} from './prompts/questions';
 import scaffoldTesting from './testing';
-import scaffoldBabel from './config/babel';
+import scaffoldDialect from './dialects';
 import scaffoldLinting from './linting';
 import scaffoldNpmConfig from './config/npm';
 import scaffoldCommitConvention from './commit-convention';
@@ -103,13 +103,7 @@ export async function scaffold(options) {
         )
       }),
       scaffoldChoice(ciServices, ci, {projectRoot, vcs, visibility, projectType, projectName, nodeVersion, tests}),
-      scaffoldBabel({
-        preset: configs.babelPreset,
-        projectRoot,
-        transpileLint,
-        tests,
-        buildDirectory: projectTypeResults.buildDirectory
-      }),
+      scaffoldDialect({configs, projectRoot, transpileLint, tests, buildDirectory: projectTypeResults.buildDirectory}),
       scaffoldCommitConvention({projectRoot, configs, pathWithinParent, packageManager})
     ])),
     projectTypeResults,

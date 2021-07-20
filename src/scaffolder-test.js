@@ -8,7 +8,7 @@ import sinon from 'sinon';
 import * as prompts from './prompts/questions';
 import * as optionsValidator from './options-validator';
 import * as testing from './testing/scaffolder';
-import * as babel from './config/babel';
+import * as dialects from './dialects/scaffolder';
 import * as linting from './linting/scaffolder';
 import * as npmConfig from './config/npm';
 import * as documentation from './documentation/scaffolder';
@@ -139,7 +139,7 @@ suite('javascript project scaffolder', () => {
     sandbox.stub(testing, 'default');
     sandbox.stub(jsCore, 'scaffoldChoice');
     sandbox.stub(jsLifter, 'lift');
-    sandbox.stub(babel, 'default');
+    sandbox.stub(dialects, 'default');
     sandbox.stub(linting, 'default');
     sandbox.stub(npmConfig, 'default');
     sandbox.stub(documentation, 'default');
@@ -208,8 +208,8 @@ suite('javascript project scaffolder', () => {
         }
       })
       .resolves(lintingResults);
-    babel.default
-      .withArgs({projectRoot, preset: babelPreset, transpileLint, tests, buildDirectory: projectTypeBuildDirectory})
+    dialects.default
+      .withArgs({projectRoot, configs, transpileLint, tests, buildDirectory: projectTypeBuildDirectory})
       .resolves(babelResults);
     npmConfig.default.resolves(npmResults);
     commitConvention.default
@@ -253,8 +253,8 @@ suite('javascript project scaffolder', () => {
       await scaffold(options);
 
       assert.calledWith(
-        babel.default,
-        {preset: babelPreset, projectRoot, transpileLint, tests, buildDirectory: projectTypeBuildDirectory}
+        dialects.default,
+        {configs, projectRoot, transpileLint, tests, buildDirectory: projectTypeBuildDirectory}
       );
       assert.calledWith(npmConfig.default, {projectRoot, projectType, registries});
       assert.calledWith(

@@ -22,8 +22,6 @@ export default async function ({projectRoot, preset, transpileLint, tests, build
       '@babel/register',
       preset.packageName,
       ...tests.unit ? ['babel-plugin-istanbul'] : []
-    ],
-    scripts: {},
-    vcsIgnore: {files: [], directories: []}
+    ]
   };
 }
