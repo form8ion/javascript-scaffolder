@@ -5,15 +5,20 @@ import {assert} from 'chai';
 import {fileExists} from '@form8ion/core';
 import {Given, Then} from '@cucumber/cucumber';
 
-export async function assertThatProperDirectoriesAreIgnoredFromEslint(projectType, transpileAndLint, unitTested) {
+export async function assertThatProperDirectoriesAreIgnoredFromEslint(
+  projectType,
+  transpileAndLint,
+  unitTested,
+  buildDirectory
+) {
   if (transpileAndLint) {
     const eslintIgnoreDetails = (await fs.readFile(`${process.cwd()}/.eslintignore`)).toString().split(EOL);
 
+    assert.include(eslintIgnoreDetails, `/${buildDirectory}/`);
+
     if ('cli' === projectType) {
-      assert.include(eslintIgnoreDetails, '/bin/');
       assert.notInclude(eslintIgnoreDetails, '/lib/');
     } else {
-      assert.include(eslintIgnoreDetails, '/lib/');
       assert.notInclude(eslintIgnoreDetails, '/bin/');
     }
 

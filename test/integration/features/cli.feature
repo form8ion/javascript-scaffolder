@@ -7,6 +7,7 @@ Feature: CLI Project Type
     And the project will have "Public" visibility
     And the npm cli is logged in
     And nvm is properly configured
+    And a babel preset is provided
     When the project is scaffolded
     Then repository details will be defined using the shorthand
     And the expected details are provided for a root-level project

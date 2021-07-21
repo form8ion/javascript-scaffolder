@@ -7,6 +7,7 @@ Feature: Monorepo
     And the default answers are chosen
     And nvm is properly configured
     And the npm cli is logged in
+    And a babel preset is provided
     When the project is scaffolded
     Then the repository details include the path within the parent project
     And project-level tools are not installed for a sub-project

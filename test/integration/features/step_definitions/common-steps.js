@@ -1,4 +1,4 @@
-import {existsSync, promises as fs} from 'fs';
+import {promises as fs} from 'fs';
 import {resolve} from 'path';
 import {questionNames as commonQuestionNames} from '@travi/language-scaffolder-prompts';
 import {After, Before, Given, setWorldConstructor, Then, When} from '@cucumber/cucumber';
@@ -29,6 +29,21 @@ const stubbedNodeModules = stubbedFs.load(resolve(__dirname, '../../../../', 'no
 setWorldConstructor(World);
 
 let scaffold, questionNames, jsCoreQuestionNames;
+
+function escapeSpecialCharacters(string) {
+  return string.replace(/[.*+?^$\-{}()|[\]\\]/g, '\\$&');
+}
+
+export function assertDevDependencyIsInstalled(execa, dependencyName) {
+  const {DEV_DEPENDENCY_TYPE} = require('@form8ion/javascript-core');
+
+  td.verify(
+    execa(td.matchers.contains(
+      new RegExp(`(npm install|yarn add).*${escapeSpecialCharacters(dependencyName)}.*${DEV_DEPENDENCY_TYPE}`)
+    )),
+    {ignoreExtraArgs: true}
+  );
+}
 
 Before(async function () {
   this.execa = td.replace('execa');
@@ -92,7 +107,7 @@ When(/^the project is scaffolded$/, async function () {
     vcs: this.vcs,
     configs: {
       eslint: {scope: this.eslintScope},
-      babelPreset: {name: any.word(), packageName: any.word()},
+      babelPreset: this.babelPreset,
       commitlint: {name: any.word(), packageName: any.word()}
     },
     ciServices: {[any.word()]: {scaffolder: foo => ({foo}), public: true}},
@@ -134,10 +149,13 @@ When(/^the project is scaffolded$/, async function () {
 });
 
 Then('the expected files for a(n) {string} are generated', async function (projectType) {
-  assert.equal(existsSync(`${process.cwd()}/.babelrc`), this.transpileAndLint);
-
   await Promise.all([
-    assertThatProperDirectoriesAreIgnoredFromEslint(projectType, this.transpileAndLint, this.tested),
+    assertThatProperDirectoriesAreIgnoredFromEslint(
+      projectType,
+      this.transpileAndLint,
+      this.tested,
+      this.buildDirectory
+    ),
     assertThatPackageDetailsAreConfiguredCorrectlyFor({
       projectType,
       visibility: this.visibility,
@@ -163,7 +181,7 @@ Then('the expected results for a(n) {string} are returned to the project scaffol
     assert.include(Object.keys(this.scaffoldResult.badges.status), 'coverage');
   }
 
-  assertThatProperDirectoriesAreIgnoredFromVersionControl(this.scaffoldResult, type);
+  assertThatProperDirectoriesAreIgnoredFromVersionControl(this.scaffoldResult, type, this.buildDirectory);
   assertThatProperFilesAreIgnoredFromVersionControl(this.scaffoldResult, type);
   assertThatDocumentationResultsAreReturnedCorrectly(
     type,

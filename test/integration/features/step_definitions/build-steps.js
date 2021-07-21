@@ -1,22 +1,7 @@
 import {promises as fs} from 'fs';
 import {Then} from '@cucumber/cucumber';
 import {assert} from 'chai';
-import td from 'testdouble';
-
-function escapeSpecialCharacters(string) {
-  return string.replace(/[.*+?^$\-{}()|[\]\\]/g, '\\$&');
-}
-
-function assertDevDependencyIsInstalled(execa, dependencyName) {
-  const {DEV_DEPENDENCY_TYPE} = require('@form8ion/javascript-core');
-
-  td.verify(
-    execa(td.matchers.contains(
-      new RegExp(`(npm install|yarn add).*${escapeSpecialCharacters(dependencyName)}.*${DEV_DEPENDENCY_TYPE}`)
-    )),
-    {ignoreExtraArgs: true}
-  );
-}
+import {assertDevDependencyIsInstalled} from './common-steps';
 
 Then('the package is bundled with rollup', async function () {
   const autoExternal = 'rollup-plugin-auto-external';

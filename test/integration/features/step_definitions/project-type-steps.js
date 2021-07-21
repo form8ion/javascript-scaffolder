@@ -15,6 +15,12 @@ Given('the project will be a(n) {string}', async function (projectType) {
   if (!Object.values(projectTypes).includes(this.projectType)) {
     throw new Error(`invalid project type: ${this.projectType}`);
   }
+
+  if (projectTypes.CLI === this.projectType) {
+    this.buildDirectory = 'bin';
+  } else {
+    this.buildDirectory = 'lib';
+  }
 });
 
 Then('the expected details are provided for a root-level project', async function () {

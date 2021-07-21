@@ -6,16 +6,15 @@ import {assert} from 'chai';
 const repoOwner = any.word();
 const repoName = any.word();
 
-export function assertThatProperDirectoriesAreIgnoredFromVersionControl(scaffoldResult, projectType) {
+export function assertThatProperDirectoriesAreIgnoredFromVersionControl(scaffoldResult, projectType, buildDirectory) {
   const {projectTypes} = require('@form8ion/javascript-core');
 
   assert.include(scaffoldResult.vcsIgnore.directories, '/node_modules/');
+  assert.include(scaffoldResult.vcsIgnore.directories, `/${buildDirectory}/`);
 
   if (projectTypes.CLI === projectType) {
-    assert.include(scaffoldResult.vcsIgnore.directories, '/bin/');
     assert.notInclude(scaffoldResult.vcsIgnore.directories, '/lib/');
   } else {
-    assert.include(scaffoldResult.vcsIgnore.directories, '/lib/');
     assert.notInclude(scaffoldResult.vcsIgnore.directories, '/bin/');
   }
 }

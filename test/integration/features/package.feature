@@ -7,6 +7,7 @@ Feature: Package Project Type
     And the default answers are chosen
     And the npm cli is logged in
     And nvm is properly configured
+    And a babel preset is provided
     When the project is scaffolded
     Then no repository details will be defined
     And the expected details are provided for a root-level project
@@ -21,6 +22,7 @@ Feature: Package Project Type
     And the default answers are chosen
     And the npm cli is logged in
     And nvm is properly configured
+    And a babel preset is provided
     When the project is scaffolded
     Then repository details will be defined using the shorthand
     And the expected details are provided for a root-level project
@@ -33,7 +35,8 @@ Feature: Package Project Type
     And the npm cli is logged in
     And nvm is properly configured
     And the project will not be tested
-    And the project will not be transpiled or linted
+    And a babel preset is provided
+    But the project will not be transpiled or linted
     When the project is scaffolded
     Then repository details will be defined using the shorthand
     And the expected details are provided for a root-level project
