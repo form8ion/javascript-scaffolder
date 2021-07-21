@@ -16,7 +16,7 @@ suite('scaffold dialect', () => {
 
   teardown(() => sandbox.restore());
 
-  test('that the details of the chosen dialect are scaffolded', async () => {
+  test('that babel is scaffolded when chosen', async () => {
     const babelPreset = any.word();
     const transpileLint = any.boolean();
     const tests = any.simpleObject();
@@ -27,8 +27,20 @@ suite('scaffold dialect', () => {
       .resolves(babelResults);
 
     assert.equal(
-      await scaffoldDialect({configs: {babelPreset}, projectRoot, transpileLint, tests, buildDirectory}),
+      await scaffoldDialect({
+        dialect: 'babel',
+        configs: {babelPreset},
+        projectRoot,
+        transpileLint,
+        tests,
+        buildDirectory
+      }),
       babelResults
     );
+  });
+
+  test('that babel is not scaffolded when not chosen', async () => {
+    assert.deepEqual(await scaffoldDialect({dialect: any.word()}), {});
+    assert.notCalled(babel.default);
   });
 });

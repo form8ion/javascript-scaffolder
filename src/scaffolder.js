@@ -54,7 +54,8 @@ export async function scaffold(options) {
     [questionNames.AUTHOR_EMAIL]: authorEmail,
     [questionNames.AUTHOR_URL]: authorUrl,
     [questionNames.TRANSPILE_LINT]: transpileLint,
-    [questionNames.PACKAGE_MANAGER]: packageManager
+    [questionNames.PACKAGE_MANAGER]: packageManager,
+    [questionNames.DIALECT]: dialect
   } = await prompt(overrides, ciServices, hosts, visibility, vcs, decisions, pathWithinParent);
 
   info('Writing project files', {level: 'secondary'});
@@ -103,7 +104,14 @@ export async function scaffold(options) {
         )
       }),
       scaffoldChoice(ciServices, ci, {projectRoot, vcs, visibility, projectType, projectName, nodeVersion, tests}),
-      scaffoldDialect({configs, projectRoot, transpileLint, tests, buildDirectory: projectTypeResults.buildDirectory}),
+      scaffoldDialect({
+        dialect,
+        configs,
+        projectRoot,
+        transpileLint,
+        tests,
+        buildDirectory: projectTypeResults.buildDirectory
+      }),
       scaffoldCommitConvention({projectRoot, configs, pathWithinParent, packageManager})
     ])),
     projectTypeResults,

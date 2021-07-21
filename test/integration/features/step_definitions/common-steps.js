@@ -131,7 +131,8 @@ When(/^the project is scaffolded$/, async function () {
         [questionNames.SHOULD_BE_SCOPED]: shouldBeScopedAnswer,
         ...shouldBeScopedAnswer && {[questionNames.SCOPE]: this.npmAccount}
       },
-      ...this.packageManager && {[questionNames.PACKAGE_MANAGER]: this.packageManager}
+      ...this.packageManager && {[questionNames.PACKAGE_MANAGER]: this.packageManager},
+      [questionNames.DIALECT]: this.dialect
     },
     unitTestFrameworks: {
       foo: {scaffolder: ({foo}) => ({foo})},

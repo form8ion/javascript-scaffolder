@@ -1,8 +1,13 @@
 import {promises as fs} from 'fs';
+import {fileExists} from '@form8ion/core';
 import {Given, Then} from '@cucumber/cucumber';
 import {assert} from 'chai';
 import any from '@travi/any';
 import {assertDevDependencyIsInstalled} from './common-steps';
+
+Given('the project will use the {string} dialect', async function (dialect) {
+  this.dialect = dialect;
+});
 
 Given('a babel preset is provided', async function () {
   this.babelPreset = {name: any.word(), packageName: any.word()};
@@ -19,6 +24,10 @@ Then('the {string} dialect is configured', async function (dialect) {
     assert.deepEqual(presets, [this.babelPreset.name]);
     assert.deepEqual(ignore, [`./${this.buildDirectory}/`]);
     assertDevDependencyIsInstalled(this.execa, this.babelPreset.packageName);
+  }
+
+  if ('common-js' === dialect) {
+    assert.isFalse(await fileExists(`${process.cwd()}/.babelrc`));
   }
 });
 

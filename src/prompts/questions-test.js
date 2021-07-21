@@ -64,6 +64,13 @@ suite('prompts', () => {
     prompts.prompt
       .withArgs([
         {
+          name: questionNames.DIALECT,
+          message: 'Which JavaScript dialect should this project follow?',
+          type: 'list',
+          choices: ['common-js', 'babel'],
+          default: 'babel'
+        },
+        {
           name: questionNames.NODE_VERSION_CATEGORY,
           message: 'What node.js version should be used?',
           type: 'list',

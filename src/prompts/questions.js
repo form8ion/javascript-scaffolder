@@ -46,6 +46,13 @@ export async function prompt({npmAccount, author}, ciServices, hosts, visibility
   }
 
   const answers = await promptWithInquirer([
+    {
+      name: questionNames.DIALECT,
+      message: 'Which JavaScript dialect should this project follow?',
+      type: 'list',
+      choices: ['common-js', 'babel'],
+      default: 'babel'
+    },
     ...pathWithinParent ? [] : [{
       name: questionNames.NODE_VERSION_CATEGORY,
       message: 'What node.js version should be used?',

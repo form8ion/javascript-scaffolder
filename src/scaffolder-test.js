@@ -49,6 +49,7 @@ suite('javascript project scaffolder', () => {
   const babelResults = any.simpleObject();
   const npmResults = any.simpleObject();
   const chosenHost = any.word();
+  const chosenDialect = any.word();
   const projectType = any.word();
   const scope = any.word();
   const license = any.string();
@@ -128,7 +129,8 @@ suite('javascript project scaffolder', () => {
     [questionNames.HOST]: chosenHost,
     [questionNames.NODE_VERSION_CATEGORY]: versionCategory,
     [questionNames.TRANSPILE_LINT]: transpileLint,
-    [questionNames.PACKAGE_MANAGER]: packageManager
+    [questionNames.PACKAGE_MANAGER]: packageManager,
+    [questionNames.DIALECT]: chosenDialect
   };
 
   setup(() => {
@@ -209,7 +211,14 @@ suite('javascript project scaffolder', () => {
       })
       .resolves(lintingResults);
     dialects.default
-      .withArgs({projectRoot, configs, transpileLint, tests, buildDirectory: projectTypeBuildDirectory})
+      .withArgs({
+        projectRoot,
+        configs,
+        transpileLint,
+        tests,
+        buildDirectory: projectTypeBuildDirectory,
+        dialect: chosenDialect
+      })
       .resolves(babelResults);
     npmConfig.default.resolves(npmResults);
     commitConvention.default
@@ -254,7 +263,7 @@ suite('javascript project scaffolder', () => {
 
       assert.calledWith(
         dialects.default,
-        {configs, projectRoot, transpileLint, tests, buildDirectory: projectTypeBuildDirectory}
+        {configs, projectRoot, transpileLint, tests, buildDirectory: projectTypeBuildDirectory, dialect: chosenDialect}
       );
       assert.calledWith(npmConfig.default, {projectRoot, projectType, registries});
       assert.calledWith(
