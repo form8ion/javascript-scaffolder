@@ -10,6 +10,7 @@ export default async function ({
   projectRoot,
   projectName,
   packageName,
+  packageManager,
   transpileLint,
   tests,
   decisions
@@ -21,7 +22,7 @@ export default async function ({
     const results = await scaffoldChosenApplicationType(
       applicationTypes,
       chosenType,
-      {projectRoot, projectName, packageName, tests}
+      {projectRoot, projectName, packageName, packageManager, tests}
     );
 
     const buildDirectory = results.buildDirectory || defaultBuildDirectory;
