@@ -169,7 +169,8 @@ suite('javascript project scaffolder', () => {
         scope,
         tests,
         vcs: vcsDetails,
-        decisions
+        decisions,
+        dialect: chosenDialect
       })
       .resolves(projectTypeResults);
     packageScaffolder.default.withArgs(packageScaffoldingInputs).resolves({...any.simpleObject(), homepage});

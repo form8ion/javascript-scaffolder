@@ -75,7 +75,8 @@ export async function scaffold(options) {
     scope,
     tests,
     vcs,
-    decisions
+    decisions,
+    dialect
   });
   const testingResults = await scaffoldTesting({projectRoot, tests, visibility, vcs, unitTestFrameworks, decisions});
   const [nodeVersion, npmResults] = await Promise.all([
