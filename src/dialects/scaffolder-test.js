@@ -1,3 +1,4 @@
+import {dialects} from '@form8ion/javascript-core';
 import sinon from 'sinon';
 import any from '@travi/any';
 import {assert} from 'chai';
@@ -24,7 +25,7 @@ suite('scaffold dialect', () => {
     babel.default.withArgs({preset: babelPreset, projectRoot, tests, buildDirectory}).resolves(babelResults);
 
     assert.equal(
-      await scaffoldDialect({dialect: 'babel', configs: {babelPreset}, projectRoot, tests, buildDirectory}),
+      await scaffoldDialect({dialect: dialects.BABEL, configs: {babelPreset}, projectRoot, tests, buildDirectory}),
       babelResults
     );
   });

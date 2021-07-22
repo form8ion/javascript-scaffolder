@@ -1,6 +1,6 @@
 import inquirer from 'inquirer';
 import * as prompts from '@form8ion/overridable-prompts';
-import {projectTypes, packageManagers} from '@form8ion/javascript-core';
+import {projectTypes, packageManagers, dialects} from '@form8ion/javascript-core';
 import * as commonPrompts from '@travi/language-scaffolder-prompts';
 import sinon from 'sinon';
 import {assert} from 'chai';
@@ -67,7 +67,7 @@ suite('prompts', () => {
           name: questionNames.DIALECT,
           message: 'Which JavaScript dialect should this project follow?',
           type: 'list',
-          choices: ['common-js', 'babel'],
+          choices: [dialects.COMMON_JS, dialects.BABEL],
           default: 'babel'
         },
         {

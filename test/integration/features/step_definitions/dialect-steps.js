@@ -18,7 +18,9 @@ Given('no babel preset is provided', async function () {
 });
 
 Then('the {string} dialect is configured', async function (dialect) {
-  if ('babel' === dialect) {
+  const {dialects} = require('@form8ion/javascript-core');
+
+  if (dialects.BABEL === dialect) {
     const {presets, ignore} = JSON.parse(await fs.readFile(`${process.cwd()}/.babelrc`, 'utf-8'));
 
     assert.deepEqual(presets, [this.babelPreset.name]);
@@ -26,7 +28,7 @@ Then('the {string} dialect is configured', async function (dialect) {
     assertDevDependencyIsInstalled(this.execa, this.babelPreset.packageName);
   }
 
-  if ('common-js' === dialect) {
+  if (dialects.COMMON_JS === dialect) {
     assert.isFalse(await fileExists(`${process.cwd()}/.babelrc`));
   }
 });

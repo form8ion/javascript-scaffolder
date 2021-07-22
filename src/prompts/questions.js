@@ -1,5 +1,5 @@
 import {Separator} from 'inquirer';
-import {packageManagers, projectTypes} from '@form8ion/javascript-core';
+import {dialects, packageManagers, projectTypes} from '@form8ion/javascript-core';
 import {prompt as promptWithInquirer} from '@form8ion/overridable-prompts';
 import {questions as commonQuestions} from '@travi/language-scaffolder-prompts';
 import {warn} from '@travi/cli-messages';
@@ -50,7 +50,7 @@ export async function prompt({npmAccount, author}, ciServices, hosts, visibility
       name: questionNames.DIALECT,
       message: 'Which JavaScript dialect should this project follow?',
       type: 'list',
-      choices: ['common-js', 'babel'],
+      choices: [dialects.COMMON_JS, dialects.BABEL],
       default: 'babel'
     },
     ...pathWithinParent ? [] : [{
