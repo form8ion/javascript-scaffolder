@@ -18,23 +18,13 @@ suite('scaffold dialect', () => {
 
   test('that babel is scaffolded when chosen', async () => {
     const babelPreset = any.word();
-    const transpileLint = any.boolean();
     const tests = any.simpleObject();
     const buildDirectory = any.string();
     const babelResults = any.simpleObject();
-    babel.default
-      .withArgs({preset: babelPreset, projectRoot, transpileLint, tests, buildDirectory})
-      .resolves(babelResults);
+    babel.default.withArgs({preset: babelPreset, projectRoot, tests, buildDirectory}).resolves(babelResults);
 
     assert.equal(
-      await scaffoldDialect({
-        dialect: 'babel',
-        configs: {babelPreset},
-        projectRoot,
-        transpileLint,
-        tests,
-        buildDirectory
-      }),
+      await scaffoldDialect({dialect: 'babel', configs: {babelPreset}, projectRoot, tests, buildDirectory}),
       babelResults
     );
   });

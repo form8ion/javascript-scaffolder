@@ -211,14 +211,7 @@ suite('javascript project scaffolder', () => {
       })
       .resolves(lintingResults);
     dialects.default
-      .withArgs({
-        projectRoot,
-        configs,
-        transpileLint,
-        tests,
-        buildDirectory: projectTypeBuildDirectory,
-        dialect: chosenDialect
-      })
+      .withArgs({projectRoot, configs, tests, buildDirectory: projectTypeBuildDirectory, dialect: chosenDialect})
       .resolves(babelResults);
     npmConfig.default.resolves(npmResults);
     commitConvention.default
@@ -263,7 +256,7 @@ suite('javascript project scaffolder', () => {
 
       assert.calledWith(
         dialects.default,
-        {configs, projectRoot, transpileLint, tests, buildDirectory: projectTypeBuildDirectory, dialect: chosenDialect}
+        {configs, projectRoot, tests, buildDirectory: projectTypeBuildDirectory, dialect: chosenDialect}
       );
       assert.calledWith(npmConfig.default, {projectRoot, projectType, registries});
       assert.calledWith(

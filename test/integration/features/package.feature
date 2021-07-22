@@ -33,7 +33,7 @@ Feature: Package Project Type
 
   Scenario: Without testing, transpilation, or linting
     Given the project will be a "Package"
-    And the project will use the "babel" dialect
+    And the project will use the "common-js" dialect
     And the project will be versioned on GitHub
     And the npm cli is logged in
     And nvm is properly configured

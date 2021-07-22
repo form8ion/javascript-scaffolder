@@ -104,14 +104,7 @@ export async function scaffold(options) {
         )
       }),
       scaffoldChoice(ciServices, ci, {projectRoot, vcs, visibility, projectType, projectName, nodeVersion, tests}),
-      scaffoldDialect({
-        dialect,
-        configs,
-        projectRoot,
-        transpileLint,
-        tests,
-        buildDirectory: projectTypeResults.buildDirectory
-      }),
+      scaffoldDialect({dialect, configs, projectRoot, tests, buildDirectory: projectTypeResults.buildDirectory}),
       scaffoldCommitConvention({projectRoot, configs, pathWithinParent, packageManager})
     ])),
     projectTypeResults,

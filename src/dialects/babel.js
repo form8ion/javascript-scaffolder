@@ -1,11 +1,11 @@
 import {promises as fsPromises} from 'fs';
 import {warn} from '@travi/cli-messages';
 
-export default async function ({projectRoot, preset, transpileLint, tests, buildDirectory}) {
-  if (false === transpileLint || !preset) {
+export default async function ({projectRoot, preset, tests, buildDirectory}) {
+  if (!preset) {
     warn('Not configuring transpilation');
 
-    return {devDependencies: [], scripts: {}, vcsIgnore: {files: [], directories: []}};
+    return {};
   }
 
   await fsPromises.writeFile(
