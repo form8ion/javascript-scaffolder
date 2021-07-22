@@ -3,6 +3,7 @@ Feature: ESLint
   Scenario: Base Config only
     Given the project will be an "any"
     And the project will use the "babel" dialect
+    And a babel preset is provided
     And the npm cli is logged in
     And the project will not be tested
     And nvm is properly configured
@@ -12,6 +13,7 @@ Feature: ESLint
   Scenario: Base Config with Additional Config
     Given the project will be an "any"
     And the project will use the "babel" dialect
+    And a babel preset is provided
     And the npm cli is logged in
     And the project will not be tested
     And nvm is properly configured
@@ -23,6 +25,7 @@ Feature: ESLint
   Scenario: Base Config with Override Config
     Given the project will be an "Application"
     And the project will use the "babel" dialect
+    And a babel preset is provided
     And the npm cli is logged in
     And the project will not be tested
     And nvm is properly configured

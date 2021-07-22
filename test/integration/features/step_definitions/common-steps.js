@@ -99,54 +99,58 @@ When(/^the project is scaffolded$/, async function () {
   const shouldBeScopedAnswer = true;
   this.projectName = `${any.word()}-${any.word()}`;
 
-  this.scaffoldResult = await scaffold({
-    projectRoot: process.cwd(),
-    projectName: this.projectName,
-    visibility: this.visibility,
-    license: any.string(),
-    vcs: this.vcs,
-    configs: {
-      eslint: {scope: this.eslintScope},
-      babelPreset: this.babelPreset,
-      commitlint: {name: any.word(), packageName: any.word()}
-    },
-    ciServices: {[any.word()]: {scaffolder: foo => ({foo}), public: true}},
-    applicationTypes: {
-      foo: {scaffolder: foo => ({foo, eslintConfigs: this.fooApplicationEslintConfigs})}
-    },
-    decisions: {
-      [questionNames.NODE_VERSION_CATEGORY]: 'LTS',
-      [questionNames.PROJECT_TYPE]: this.projectType,
-      [questionNames.AUTHOR_NAME]: any.word(),
-      [questionNames.AUTHOR_EMAIL]: any.email(),
-      [questionNames.AUTHOR_URL]: any.url(),
-      [commonQuestionNames.UNIT_TESTS]: this.unitTestAnswer,
-      ...this.unitTestAnswer && {[jsCoreQuestionNames.UNIT_TEST_FRAMEWORK]: this.unitTestFrameworkAnswer},
-      [commonQuestionNames.INTEGRATION_TESTS]: this.integrationTestAnswer,
-      ...null !== this.ciAnswer && {[commonQuestionNames.CI_SERVICE]: this.ciAnswer || 'Other'},
-      [questionNames.TRANSPILE_LINT]: this.transpileAndLint,
-      [questionNames.PROJECT_TYPE_CHOICE]: this.projectTypeChoiceAnswer || 'Other',
-      [questionNames.HOST]: 'Other',
-      ...['Package', 'CLI'].includes(this.projectType) && {
-        [questionNames.SHOULD_BE_SCOPED]: shouldBeScopedAnswer,
-        ...shouldBeScopedAnswer && {[questionNames.SCOPE]: this.npmAccount}
+  try {
+    this.scaffoldResult = await scaffold({
+      projectRoot: process.cwd(),
+      projectName: this.projectName,
+      visibility: this.visibility,
+      license: any.string(),
+      vcs: this.vcs,
+      configs: {
+        eslint: {scope: this.eslintScope},
+        babelPreset: this.babelPreset,
+        commitlint: {name: any.word(), packageName: any.word()}
       },
-      ...this.packageManager && {[questionNames.PACKAGE_MANAGER]: this.packageManager},
-      [questionNames.DIALECT]: this.dialect
-    },
-    unitTestFrameworks: {
-      foo: {scaffolder: ({foo}) => ({foo})},
-      bar: {
-        scaffolder: ({bar}) => ({
-          eslint: {configs: this.barUnitTestFrameworkEslintConfigs},
-          eslintConfigs: this.barUnitTestFrameworkEslintConfigs,
-          bar
-        })
-      }
-    },
-    pathWithinParent: this.pathWithinParent,
-    ...this.registries && {registries: this.registries}
-  });
+      ciServices: {[any.word()]: {scaffolder: foo => ({foo}), public: true}},
+      applicationTypes: {
+        foo: {scaffolder: foo => ({foo, eslintConfigs: this.fooApplicationEslintConfigs})}
+      },
+      decisions: {
+        [questionNames.NODE_VERSION_CATEGORY]: 'LTS',
+        [questionNames.PROJECT_TYPE]: this.projectType,
+        [questionNames.AUTHOR_NAME]: any.word(),
+        [questionNames.AUTHOR_EMAIL]: any.email(),
+        [questionNames.AUTHOR_URL]: any.url(),
+        [commonQuestionNames.UNIT_TESTS]: this.unitTestAnswer,
+        ...this.unitTestAnswer && {[jsCoreQuestionNames.UNIT_TEST_FRAMEWORK]: this.unitTestFrameworkAnswer},
+        [commonQuestionNames.INTEGRATION_TESTS]: this.integrationTestAnswer,
+        ...null !== this.ciAnswer && {[commonQuestionNames.CI_SERVICE]: this.ciAnswer || 'Other'},
+        [questionNames.TRANSPILE_LINT]: this.transpileAndLint,
+        [questionNames.PROJECT_TYPE_CHOICE]: this.projectTypeChoiceAnswer || 'Other',
+        [questionNames.HOST]: 'Other',
+        ...['Package', 'CLI'].includes(this.projectType) && {
+          [questionNames.SHOULD_BE_SCOPED]: shouldBeScopedAnswer,
+          ...shouldBeScopedAnswer && {[questionNames.SCOPE]: this.npmAccount}
+        },
+        ...this.packageManager && {[questionNames.PACKAGE_MANAGER]: this.packageManager},
+        [questionNames.DIALECT]: this.dialect
+      },
+      unitTestFrameworks: {
+        foo: {scaffolder: ({foo}) => ({foo})},
+        bar: {
+          scaffolder: ({bar}) => ({
+            eslint: {configs: this.barUnitTestFrameworkEslintConfigs},
+            eslintConfigs: this.barUnitTestFrameworkEslintConfigs,
+            bar
+          })
+        }
+      },
+      pathWithinParent: this.pathWithinParent,
+      ...this.registries && {registries: this.registries}
+    });
+  } catch (e) {
+    this.resultError = e;
+  }
 });
 
 Then('the expected files for a(n) {string} are generated', async function (projectType) {

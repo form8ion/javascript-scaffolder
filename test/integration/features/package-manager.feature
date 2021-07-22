@@ -3,6 +3,7 @@ Feature: Package manager
   Scenario: npm
     Given the project will be an "any"
     And the project will use the "babel" dialect
+    And a babel preset is provided
     And the npm cli is logged in
     And nvm is properly configured
     And the project will not be tested
@@ -14,6 +15,7 @@ Feature: Package manager
   Scenario: yarn
     Given the project will be an "any"
     And the project will use the "babel" dialect
+    And a babel preset is provided
     And the yarn cli is logged in
     And nvm is properly configured
     And the project will not be tested
@@ -25,6 +27,7 @@ Feature: Package manager
   Scenario: yarn package
     Given the project will be an "Package"
     And the project will use the "babel" dialect
+    And a babel preset is provided
     And the yarn cli is logged in
     And nvm is properly configured
     And the project will not be tested

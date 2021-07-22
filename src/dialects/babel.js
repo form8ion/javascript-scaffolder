@@ -1,11 +1,8 @@
 import {promises as fsPromises} from 'fs';
-import {warn} from '@travi/cli-messages';
 
 export default async function ({projectRoot, preset, tests, buildDirectory}) {
   if (!preset) {
-    warn('Not configuring transpilation');
-
-    return {};
+    throw new Error('No babel preset provided. Cannot configure babel transpilation');
   }
 
   await fsPromises.writeFile(

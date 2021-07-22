@@ -55,8 +55,14 @@ suite('babel config', () => {
     );
   });
 
-  test('that the babelrc is not written if a preset is not defined', async () => {
-    assert.deepEqual(await scaffoldBabel({preset: undefined, projectRoot}), {});
-    assert.notCalled(fs.writeFile);
+  test('that an error is thrown if a preset is not defined', async () => {
+    try {
+      await scaffoldBabel({preset: undefined, projectRoot});
+
+      throw new Error('test should have failed, but didnt');
+    } catch (e) {
+      assert.notCalled(fs.writeFile);
+      assert.equal(e.message, 'No babel preset provided. Cannot configure babel transpilation');
+    }
   });
 });

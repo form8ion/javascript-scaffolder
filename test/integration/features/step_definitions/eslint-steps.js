@@ -41,7 +41,7 @@ Given('the chosen application plugin defines override ESLint configs', async fun
 });
 
 Then('the base ESLint config is extended', async function () {
-  const config = load(await fs.readFile(`${process.cwd()}/.eslintrc.yml`));
+  const config = load(await fs.readFile(`${process.cwd()}/.eslintrc.yml`, 'utf-8'));
 
   if ('bar' === this.unitTestFrameworkAnswer) {
     assert.equal(config.extends[0], this.eslintScope);
@@ -51,7 +51,7 @@ Then('the base ESLint config is extended', async function () {
 });
 
 Then('the additional ESLint configs are extended', async function () {
-  const config = load(await fs.readFile(`${process.cwd()}/.eslintrc.yml`));
+  const config = load(await fs.readFile(`${process.cwd()}/.eslintrc.yml`, 'utf-8'));
 
   assert.deepEqual(
     config.extends,

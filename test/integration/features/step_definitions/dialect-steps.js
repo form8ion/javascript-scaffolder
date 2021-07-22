@@ -34,6 +34,5 @@ Then('the {string} dialect is configured', async function (dialect) {
 });
 
 Then('an error is reported about the missing babel preset', async function () {
-  // Write code here that turns the phrase above into concrete actions
-  return 'pending';
+  assert.equal(this.resultError.message, 'No babel preset provided. Cannot configure babel transpilation');
 });

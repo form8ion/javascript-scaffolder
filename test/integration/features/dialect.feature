@@ -10,7 +10,6 @@ Feature: Dialects
     When the project is scaffolded
     Then the "babel" dialect is configured
 
-  @wip
   Scenario: Babel without a preset provided
     Given the project will be an "any"
     And the project will use the "babel" dialect
