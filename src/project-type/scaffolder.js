@@ -46,6 +46,7 @@ export default async function ({
           projectRoot,
           projectName,
           packageName,
+          packageManager,
           applicationTypes,
           transpileLint,
           tests,
