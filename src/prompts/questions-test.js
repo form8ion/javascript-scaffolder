@@ -1,4 +1,4 @@
-import inquirer from 'inquirer';
+import inquirer, {Separator} from 'inquirer';
 import * as prompts from '@form8ion/overridable-prompts';
 import {projectTypes, packageManagers, dialects} from '@form8ion/javascript-core';
 import * as commonPrompts from '@travi/language-scaffolder-prompts';
@@ -88,7 +88,7 @@ suite('prompts', () => {
           name: questionNames.PROJECT_TYPE,
           message: 'What type of JavaScript project is this?',
           type: 'list',
-          choices: Object.values(projectTypes),
+          choices: [...Object.values(projectTypes), new Separator(), 'Other'],
           default: projectTypes.PACKAGE
         },
         {

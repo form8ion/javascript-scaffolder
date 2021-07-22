@@ -71,7 +71,7 @@ export async function prompt({npmAccount, author}, ciServices, hosts, visibility
       name: questionNames.PROJECT_TYPE,
       message: 'What type of JavaScript project is this?',
       type: 'list',
-      choices: Object.values(projectTypes),
+      choices: [...Object.values(projectTypes), new Separator(), 'Other'],
       default: projectTypes.PACKAGE
     },
     ...'Private' === visibility ? [] : [{
