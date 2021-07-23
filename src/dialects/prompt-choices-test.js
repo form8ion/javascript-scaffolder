@@ -4,6 +4,12 @@ import buildDialectChoices from './prompt-choices';
 
 suite('dialect prompt questions', () => {
   test('that the available dialects are listed', () => {
-    assert.deepEqual(buildDialectChoices(), [dialects.COMMON_JS, dialects.BABEL]);
+    assert.deepEqual(
+      buildDialectChoices(),
+      [
+        {name: 'Common JS (no transpilation)', value: dialects.COMMON_JS, short: 'cjs'},
+        {name: 'Modern JavaScript (transpiled)', value: dialects.BABEL, short: 'modern'}
+      ]
+    );
   });
 });
