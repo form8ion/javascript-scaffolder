@@ -35,7 +35,16 @@ function authorQuestions({name, email, url}) {
   ];
 }
 
-export async function prompt({npmAccount, author}, ciServices, hosts, visibility, vcs, decisions, pathWithinParent) {
+export async function prompt(
+  {npmAccount, author},
+  ciServices,
+  hosts,
+  visibility,
+  vcs,
+  decisions,
+  configs,
+  pathWithinParent
+) {
   const npmConf = npmConfFactory();
 
   let maybeLoggedInNpmUsername;
@@ -51,7 +60,7 @@ export async function prompt({npmAccount, author}, ciServices, hosts, visibility
       name: questionNames.DIALECT,
       message: 'Which JavaScript dialect should this project follow?',
       type: 'list',
-      choices: buildDialectChoices(),
+      choices: buildDialectChoices(configs),
       default: 'babel'
     },
     ...pathWithinParent ? [] : [{

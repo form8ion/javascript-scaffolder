@@ -54,6 +54,7 @@ suite('prompts', () => {
     const filteredCiServices = any.objectWithKeys(filteredCiServiceNames);
     const hosts = any.simpleObject();
     const dialects = any.listOf(any.simpleObject);
+    const configs = any.simpleObject();
     const scopeValidator = () => undefined;
     const scopePromptShouldBePresented = () => undefined;
     npmConf.default.returns({get});
@@ -64,7 +65,7 @@ suite('prompts', () => {
     validators.scope.withArgs(visibility).returns(scopeValidator);
     conditionals.scopePromptShouldBePresentedFactory.withArgs(visibility).returns(scopePromptShouldBePresented);
     visibilityFilterForChoices.default.withArgs(ciServices, visibility).returns(filteredCiServices);
-    dialectChoices.default.returns(dialects);
+    dialectChoices.default.withArgs(configs).returns(dialects);
     prompts.prompt
       .withArgs([
         {
@@ -142,7 +143,7 @@ suite('prompts', () => {
       .resolves(answers);
 
     assert.deepEqual(
-      await prompt({}, ciServices, hosts, visibility, vcs, decisions),
+      await prompt({}, ciServices, hosts, visibility, vcs, decisions, configs),
       {...answers, [questionNames.TRANSPILE_LINT]: true}
     );
   });
@@ -203,7 +204,7 @@ suite('prompts', () => {
       .returns(commonQuestions);
     prompts.prompt.resolves(answers);
 
-    await prompt({}, ciServices, {}, 'Private', vcs, null, pathWithinParent);
+    await prompt({}, ciServices, {}, 'Private', vcs, null, null, pathWithinParent);
 
     assert.neverCalledWith(
       prompts.prompt,
@@ -219,7 +220,7 @@ suite('prompts', () => {
       .returns(commonQuestions);
     prompts.prompt.resolves(answers);
 
-    await prompt({}, ciServices, {}, 'Private', vcs, null, pathWithinParent);
+    await prompt({}, ciServices, {}, 'Private', vcs, null, null, pathWithinParent);
 
     assert.neverCalledWith(
       prompts.prompt,
@@ -235,7 +236,7 @@ suite('prompts', () => {
       .returns(commonQuestions);
     prompts.prompt.resolves(answers);
 
-    await prompt({}, ciServices, {}, 'Public', vcs, null, pathWithinParent);
+    await prompt({}, ciServices, {}, 'Public', vcs, null, null, pathWithinParent);
 
     assert.calledWith(
       prompts.prompt,

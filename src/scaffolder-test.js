@@ -175,7 +175,7 @@ suite('javascript project scaffolder', () => {
       .resolves(projectTypeResults);
     packageScaffolder.default.withArgs(packageScaffoldingInputs).resolves({...any.simpleObject(), homepage});
     prompts.prompt
-      .withArgs(overrides, ciServices, hosts, visibility, vcsDetails, decisions, pathWithinParent)
+      .withArgs(overrides, ciServices, hosts, visibility, vcsDetails, decisions, configs, pathWithinParent)
       .resolves(commonPromptAnswers);
     jsCore.scaffoldChoice
       .withArgs(

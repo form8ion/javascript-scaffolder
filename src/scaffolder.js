@@ -56,7 +56,7 @@ export async function scaffold(options) {
     [questionNames.TRANSPILE_LINT]: transpileLint,
     [questionNames.PACKAGE_MANAGER]: packageManager,
     [questionNames.DIALECT]: dialect
-  } = await prompt(overrides, ciServices, hosts, visibility, vcs, decisions, pathWithinParent);
+  } = await prompt(overrides, ciServices, hosts, visibility, vcs, decisions, configs, pathWithinParent);
 
   info('Writing project files', {level: 'secondary'});
 
