@@ -1,16 +1,17 @@
 import {Separator} from 'inquirer';
-import {dialects, packageManagers, projectTypes} from '@form8ion/javascript-core';
+import {packageManagers, projectTypes} from '@form8ion/javascript-core';
 import {prompt as promptWithInquirer} from '@form8ion/overridable-prompts';
 import {questions as commonQuestions} from '@travi/language-scaffolder-prompts';
 import {warn} from '@travi/cli-messages';
 import execa from '../../third-party-wrappers/execa';
+import npmConfFactory from '../../third-party-wrappers/npm-conf';
+import buildDialectChoices from '../dialects/prompt-choices';
 import {
   projectIsApplication,
   scopePromptShouldBePresentedFactory,
   shouldBeScopedPromptShouldBePresented,
   transpilationAndLintingPromptShouldBePresented
 } from './conditionals';
-import npmConfFactory from '../../third-party-wrappers/npm-conf';
 import {questionNames} from './question-names';
 import {scope as validateScope} from './validators';
 
@@ -50,7 +51,7 @@ export async function prompt({npmAccount, author}, ciServices, hosts, visibility
       name: questionNames.DIALECT,
       message: 'Which JavaScript dialect should this project follow?',
       type: 'list',
-      choices: [dialects.COMMON_JS, dialects.BABEL],
+      choices: buildDialectChoices(),
       default: 'babel'
     },
     ...pathWithinParent ? [] : [{

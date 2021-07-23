@@ -1,12 +1,13 @@
 import inquirer, {Separator} from 'inquirer';
 import * as prompts from '@form8ion/overridable-prompts';
-import {projectTypes, packageManagers, dialects} from '@form8ion/javascript-core';
+import {packageManagers, projectTypes} from '@form8ion/javascript-core';
 import * as commonPrompts from '@travi/language-scaffolder-prompts';
 import sinon from 'sinon';
 import {assert} from 'chai';
 import any from '@travi/any';
 import * as execa from '../../third-party-wrappers/execa';
 import * as npmConf from '../../third-party-wrappers/npm-conf';
+import * as dialectChoices from '../dialects/prompt-choices';
 import * as validators from './validators';
 import * as conditionals from './conditionals';
 import * as visibilityFilterForChoices from './filter-by-visibility';
@@ -33,6 +34,7 @@ suite('prompts', () => {
     sandbox.stub(conditionals, 'scopePromptShouldBePresentedFactory');
     sandbox.stub(visibilityFilterForChoices, 'default');
     sandbox.stub(commonPrompts, 'questions');
+    sandbox.stub(dialectChoices, 'default');
 
     visibilityFilterForChoices.default.withArgs({}).returns({});
     commonPrompts.questions
@@ -51,6 +53,7 @@ suite('prompts', () => {
     const filteredCiServiceNames = any.listOf(any.word);
     const filteredCiServices = any.objectWithKeys(filteredCiServiceNames);
     const hosts = any.simpleObject();
+    const dialects = any.listOf(any.simpleObject);
     const scopeValidator = () => undefined;
     const scopePromptShouldBePresented = () => undefined;
     npmConf.default.returns({get});
@@ -61,13 +64,14 @@ suite('prompts', () => {
     validators.scope.withArgs(visibility).returns(scopeValidator);
     conditionals.scopePromptShouldBePresentedFactory.withArgs(visibility).returns(scopePromptShouldBePresented);
     visibilityFilterForChoices.default.withArgs(ciServices, visibility).returns(filteredCiServices);
+    dialectChoices.default.returns(dialects);
     prompts.prompt
       .withArgs([
         {
           name: questionNames.DIALECT,
           message: 'Which JavaScript dialect should this project follow?',
           type: 'list',
-          choices: [dialects.COMMON_JS, dialects.BABEL],
+          choices: dialects,
           default: 'babel'
         },
         {
