@@ -12,7 +12,6 @@ suite('project-type scaffolder', () => {
   let sandbox;
   const results = any.simpleObject();
   const projectRoot = any.string();
-  const transpileLint = any.boolean();
   const projectName = any.word();
   const packageName = any.word();
   const packageManager = any.word();
@@ -60,7 +59,6 @@ suite('project-type scaffolder', () => {
       await projectTypeScaffolder({
         projectType: projectTypes.PACKAGE,
         projectRoot,
-        transpileLint,
         projectName,
         packageName,
         packageManager,
@@ -87,7 +85,6 @@ suite('project-type scaffolder', () => {
         projectName,
         packageName,
         packageManager,
-        transpileLint,
         applicationTypes,
         tests,
         decisions
@@ -101,7 +98,6 @@ suite('project-type scaffolder', () => {
         projectName,
         packageName,
         packageManager,
-        transpileLint,
         applicationTypes,
         tests,
         decisions,

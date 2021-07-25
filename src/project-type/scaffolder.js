@@ -11,7 +11,6 @@ export default async function ({
   projectName,
   packageName,
   packageManager,
-  transpileLint,
   visibility,
   applicationTypes,
   packageTypes,
@@ -48,7 +47,6 @@ export default async function ({
           packageName,
           packageManager,
           applicationTypes,
-          transpileLint,
           tests,
           decisions
         })
