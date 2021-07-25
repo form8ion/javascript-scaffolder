@@ -95,6 +95,7 @@ export async function scaffold(options) {
         projectRoot,
         projectType,
         packageManager,
+        dialect,
         registries,
         vcs,
         transpileLint,

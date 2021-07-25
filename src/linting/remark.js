@@ -1,8 +1,8 @@
 import {promises as fsPromises} from 'fs';
 import deepmerge from 'deepmerge';
-import {projectTypes} from '@form8ion/javascript-core';
+import {dialects, projectTypes} from '@form8ion/javascript-core';
 
-export default async function ({config, projectRoot, projectType, vcs, transpileLint}) {
+export default async function ({config, projectRoot, projectType, vcs, dialect}) {
   await fsPromises.writeFile(
     `${projectRoot}/.remarkrc.js`,
     `// https://github.com/remarkjs/remark/tree/master/packages/remark-stringify#options
@@ -41,7 +41,7 @@ exports.plugins = [
     {
       ...projectTypes.PACKAGE === projectType && {
         devDependencies: ['remark-usage'],
-        ...transpileLint && {scripts: {'pregenerate:md': 'run-s build'}}
+        ...dialects.COMMON_JS !== dialect && {scripts: {'pregenerate:md': 'run-s build'}}
       }
     }
   );

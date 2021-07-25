@@ -201,6 +201,7 @@ suite('javascript project scaffolder', () => {
         projectRoot,
         projectType,
         packageManager,
+        dialect: chosenDialect,
         registries,
         vcs: vcsDetails,
         transpileLint,

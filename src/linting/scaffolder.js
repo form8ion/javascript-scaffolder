@@ -8,6 +8,7 @@ export default async function ({
   projectRoot,
   projectType,
   packageManager,
+  dialect,
   registries,
   configs,
   vcs,
@@ -28,8 +29,8 @@ export default async function ({
     scaffoldRemark({
       projectRoot,
       projectType,
+      dialect,
       vcs,
-      transpileLint,
       config: configs.remark || '@form8ion/remark-lint-preset'
     }),
     vcs ? scaffoldBanSensitiveFiles() : {}
