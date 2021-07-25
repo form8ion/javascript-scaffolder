@@ -12,13 +12,13 @@ export default async function ({
   registries,
   configs,
   vcs,
-  transpileLint,
+  configureLinting,
   buildDirectory,
   eslint
 }) {
   return deepmerge.all(await Promise.all([
     scaffoldLockfileLint({projectRoot, packageManager, registries}),
-    configs.eslint && false !== transpileLint
+    configs.eslint && configureLinting
       ? scaffoldEslint({
         projectRoot,
         config: configs.eslint,

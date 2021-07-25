@@ -127,10 +127,10 @@ suite('prompts', () => {
         },
         ...commonQuestions,
         {
-          name: questionNames.TRANSPILE_LINT,
-          message: 'Will there be source code that should be transpiled or linted?',
+          name: questionNames.CONFIGURE_LINTING,
+          message: 'Will there be source code that should be linted?',
           type: 'confirm',
-          when: conditionals.transpilationAndLintingPromptShouldBePresented
+          when: conditionals.lintingPromptShouldBePresented
         },
         {
           name: questionNames.HOST,
@@ -144,7 +144,7 @@ suite('prompts', () => {
 
     assert.deepEqual(
       await prompt({}, ciServices, hosts, visibility, vcs, decisions, configs),
-      {...answers, [questionNames.TRANSPILE_LINT]: true}
+      {...answers, [questionNames.CONFIGURE_LINTING]: true}
     );
   });
 
@@ -153,11 +153,11 @@ suite('prompts', () => {
     const get = sinon.stub();
     npmConf.default.returns({get});
     execa.default.withArgs('npm', ['whoami']).resolves({stdout: npmUser});
-    prompts.prompt.resolves({...answers, [questionNames.TRANSPILE_LINT]: false});
+    prompts.prompt.resolves({...answers, [questionNames.CONFIGURE_LINTING]: false});
 
     assert.deepEqual(
       await prompt({}, ciServices, {}, visibility, vcs, decisions),
-      {...answers, [questionNames.TRANSPILE_LINT]: false}
+      {...answers, [questionNames.CONFIGURE_LINTING]: false}
     );
   });
 

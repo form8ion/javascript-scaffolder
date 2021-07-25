@@ -27,7 +27,7 @@ suite('linting scaffolder', () => {
   const registries = any.simpleObject();
   const buildDirectory = any.string();
   const eslintConfigs = any.listOf(any.word);
-  const transpileLint = true;
+  const configureLinting = true;
   const dialect = any.word();
 
   setup(() => {
@@ -71,7 +71,7 @@ suite('linting scaffolder', () => {
       vcs,
       buildDirectory,
       eslint: {configs: eslintConfigs},
-      transpileLint,
+      configureLinting,
       packageManager,
       registries
     });
@@ -104,7 +104,7 @@ suite('linting scaffolder', () => {
       dialect,
       configs: {remark: configForRemark},
       vcs,
-      transpileLint,
+      configureLinting,
       packageManager,
       registries
     });
@@ -118,7 +118,7 @@ suite('linting scaffolder', () => {
 
   test('that eslint is not scaffolded when `transpileLint` is false', async () => {
     scaffoldRemark.default
-      .withArgs({projectRoot, projectType, config: configForRemark, vcs, transpileLint: false})
+      .withArgs({projectRoot, projectType, config: configForRemark, vcs, configureLinting: false})
       .resolves({devDependencies: remarkDevDependencies, scripts: remarkScripts});
 
     const result = await scaffold({
@@ -127,7 +127,7 @@ suite('linting scaffolder', () => {
       dialect,
       configs: {eslint: configForEslint, remark: configForRemark},
       vcs,
-      transpileLint: false,
+      configureLinting: false,
       packageManager,
       registries
     });
@@ -152,7 +152,7 @@ suite('linting scaffolder', () => {
       vcs,
       buildDirectory,
       eslint: {configs: eslintConfigs},
-      transpileLint,
+      configureLinting,
       packageManager,
       registries
     });
@@ -191,7 +191,7 @@ suite('linting scaffolder', () => {
       vcs: undefined,
       buildDirectory,
       eslint: {configs: eslintConfigs},
-      transpileLint,
+      configureLinting,
       packageManager,
       registries
     });

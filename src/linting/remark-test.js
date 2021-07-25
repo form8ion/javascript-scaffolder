@@ -93,6 +93,7 @@ exports.plugins = [
         projectRoot,
         projectType: projectTypes.PACKAGE,
         vcs: any.simpleObject(),
+        configureLinting: true,
         dialect: dialects.BABEL
       })).scripts,
       {

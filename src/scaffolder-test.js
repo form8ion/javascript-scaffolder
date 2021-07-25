@@ -78,7 +78,7 @@ suite('javascript project scaffolder', () => {
   const commitConventionResults = any.simpleObject();
   const applicationTypes = any.simpleObject();
   const packageTypes = any.simpleObject();
-  const transpileLint = any.boolean();
+  const configureLinting = any.boolean();
   const projectTypeBuildDirectory = any.string();
   const packageProperties = any.simpleObject();
   const projectTypeTags = any.listOf(any.word);
@@ -128,7 +128,7 @@ suite('javascript project scaffolder', () => {
     [commonQuestionNames.CI_SERVICE]: chosenCiService,
     [questionNames.HOST]: chosenHost,
     [questionNames.NODE_VERSION_CATEGORY]: versionCategory,
-    [questionNames.TRANSPILE_LINT]: transpileLint,
+    [questionNames.CONFIGURE_LINTING]: configureLinting,
     [questionNames.PACKAGE_MANAGER]: packageManager,
     [questionNames.DIALECT]: chosenDialect
   };
@@ -159,7 +159,6 @@ suite('javascript project scaffolder', () => {
       .withArgs({
         projectType,
         projectRoot,
-        transpileLint,
         projectName,
         packageName,
         packageManager,
@@ -204,7 +203,7 @@ suite('javascript project scaffolder', () => {
         dialect: chosenDialect,
         registries,
         vcs: vcsDetails,
-        transpileLint,
+        configureLinting,
         buildDirectory: projectTypeBuildDirectory,
         eslint: {
           ...testingEslintOtherDetails,

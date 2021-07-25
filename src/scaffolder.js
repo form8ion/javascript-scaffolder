@@ -53,7 +53,7 @@ export async function scaffold(options) {
     [questionNames.AUTHOR_NAME]: authorName,
     [questionNames.AUTHOR_EMAIL]: authorEmail,
     [questionNames.AUTHOR_URL]: authorUrl,
-    [questionNames.TRANSPILE_LINT]: transpileLint,
+    [questionNames.CONFIGURE_LINTING]: configureLinting,
     [questionNames.PACKAGE_MANAGER]: packageManager,
     [questionNames.DIALECT]: dialect
   } = await prompt(overrides, ciServices, hosts, visibility, vcs, decisions, configs, pathWithinParent);
@@ -68,7 +68,6 @@ export async function scaffold(options) {
     projectName,
     packageName,
     packageManager,
-    transpileLint,
     visibility,
     applicationTypes,
     packageTypes,
@@ -98,7 +97,7 @@ export async function scaffold(options) {
         dialect,
         registries,
         vcs,
-        transpileLint,
+        configureLinting,
         buildDirectory: projectTypeResults.buildDirectory,
         eslint: deepmerge(
           testingResults.eslint,

@@ -125,7 +125,7 @@ When(/^the project is scaffolded$/, async function () {
         ...this.unitTestAnswer && {[jsCoreQuestionNames.UNIT_TEST_FRAMEWORK]: this.unitTestFrameworkAnswer},
         [commonQuestionNames.INTEGRATION_TESTS]: this.integrationTestAnswer,
         ...null !== this.ciAnswer && {[commonQuestionNames.CI_SERVICE]: this.ciAnswer || 'Other'},
-        [questionNames.TRANSPILE_LINT]: this.transpileAndLint,
+        [questionNames.CONFIGURE_LINTING]: this.transpileAndLint,
         [questionNames.PROJECT_TYPE_CHOICE]: this.projectTypeChoiceAnswer || 'Other',
         [questionNames.HOST]: 'Other',
         ...['Package', 'CLI'].includes(this.projectType) && {

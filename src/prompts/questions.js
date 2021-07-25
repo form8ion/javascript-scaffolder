@@ -10,7 +10,7 @@ import {
   projectIsApplication,
   scopePromptShouldBePresentedFactory,
   shouldBeScopedPromptShouldBePresented,
-  transpilationAndLintingPromptShouldBePresented
+  lintingPromptShouldBePresented
 } from './conditionals';
 import {questionNames} from './question-names';
 import {scope as validateScope} from './validators';
@@ -105,10 +105,10 @@ export async function prompt(
     }),
     ...commonQuestions(({vcs, ciServices, visibility, pathWithinParent})),
     {
-      name: questionNames.TRANSPILE_LINT,
-      message: 'Will there be source code that should be transpiled or linted?',
+      name: questionNames.CONFIGURE_LINTING,
+      message: 'Will there be source code that should be linted?',
       type: 'confirm',
-      when: transpilationAndLintingPromptShouldBePresented
+      when: lintingPromptShouldBePresented
     },
     {
       name: questionNames.HOST,
@@ -119,5 +119,8 @@ export async function prompt(
     }
   ], decisions);
 
-  return {...answers, ...false !== answers[questionNames.TRANSPILE_LINT] && {[questionNames.TRANSPILE_LINT]: true}};
+  return {
+    ...answers,
+    ...false !== answers[questionNames.CONFIGURE_LINTING] && {[questionNames.CONFIGURE_LINTING]: true}
+  };
 }

@@ -9,6 +9,6 @@ export const questionNames = {
   AUTHOR_EMAIL: 'authorEmail',
   AUTHOR_URL: 'authorUrl',
   HOST: 'host',
-  TRANSPILE_LINT: 'transpileLint',
+  CONFIGURE_LINTING: 'configureLint',
   DIALECT: 'dialect'
 };

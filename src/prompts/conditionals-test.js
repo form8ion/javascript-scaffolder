@@ -6,7 +6,7 @@ import {
   projectIsApplication,
   shouldBeScopedPromptShouldBePresented,
   scopePromptShouldBePresentedFactory,
-  transpilationAndLintingPromptShouldBePresented
+  lintingPromptShouldBePresented
 } from './conditionals';
 import {questionNames} from './question-names';
 
@@ -75,15 +75,15 @@ suite('javascript prompt conditionals', () => {
 
   suite('transpilation/linting', () => {
     test('that the prompt is not shown if the project is unit tested', () => {
-      assert.isFalse(transpilationAndLintingPromptShouldBePresented({[commonQuestionNames.UNIT_TESTS]: true}));
+      assert.isFalse(lintingPromptShouldBePresented({[commonQuestionNames.UNIT_TESTS]: true}));
     });
 
     test('that the prompt is not shown if the project is integration tested', () => {
-      assert.isFalse(transpilationAndLintingPromptShouldBePresented({[commonQuestionNames.INTEGRATION_TESTS]: true}));
+      assert.isFalse(lintingPromptShouldBePresented({[commonQuestionNames.INTEGRATION_TESTS]: true}));
     });
 
     test('that the prompt is shown if the project is not tested', () => {
-      assert.isTrue(transpilationAndLintingPromptShouldBePresented({
+      assert.isTrue(lintingPromptShouldBePresented({
         [commonQuestionNames.INTEGRATION_TESTS]: false,
         [commonQuestionNames.UNIT_TESTS]: false
       }));
