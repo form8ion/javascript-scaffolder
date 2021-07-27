@@ -1,12 +1,13 @@
-import inquirer from 'inquirer';
+import inquirer, {Separator} from 'inquirer';
 import * as prompts from '@form8ion/overridable-prompts';
-import {projectTypes, packageManagers} from '@form8ion/javascript-core';
+import {packageManagers, projectTypes} from '@form8ion/javascript-core';
 import * as commonPrompts from '@travi/language-scaffolder-prompts';
 import sinon from 'sinon';
 import {assert} from 'chai';
 import any from '@travi/any';
 import * as execa from '../../third-party-wrappers/execa';
 import * as npmConf from '../../third-party-wrappers/npm-conf';
+import * as dialectChoices from '../dialects/prompt-choices';
 import * as validators from './validators';
 import * as conditionals from './conditionals';
 import * as visibilityFilterForChoices from './filter-by-visibility';
@@ -33,6 +34,7 @@ suite('prompts', () => {
     sandbox.stub(conditionals, 'scopePromptShouldBePresentedFactory');
     sandbox.stub(visibilityFilterForChoices, 'default');
     sandbox.stub(commonPrompts, 'questions');
+    sandbox.stub(dialectChoices, 'default');
 
     visibilityFilterForChoices.default.withArgs({}).returns({});
     commonPrompts.questions
@@ -51,6 +53,8 @@ suite('prompts', () => {
     const filteredCiServiceNames = any.listOf(any.word);
     const filteredCiServices = any.objectWithKeys(filteredCiServiceNames);
     const hosts = any.simpleObject();
+    const dialects = any.listOf(any.simpleObject);
+    const configs = any.simpleObject();
     const scopeValidator = () => undefined;
     const scopePromptShouldBePresented = () => undefined;
     npmConf.default.returns({get});
@@ -61,8 +65,16 @@ suite('prompts', () => {
     validators.scope.withArgs(visibility).returns(scopeValidator);
     conditionals.scopePromptShouldBePresentedFactory.withArgs(visibility).returns(scopePromptShouldBePresented);
     visibilityFilterForChoices.default.withArgs(ciServices, visibility).returns(filteredCiServices);
+    dialectChoices.default.withArgs(configs).returns(dialects);
     prompts.prompt
       .withArgs([
+        {
+          name: questionNames.DIALECT,
+          message: 'Which JavaScript dialect should this project follow?',
+          type: 'list',
+          choices: dialects,
+          default: 'babel'
+        },
         {
           name: questionNames.NODE_VERSION_CATEGORY,
           message: 'What node.js version should be used?',
@@ -81,7 +93,7 @@ suite('prompts', () => {
           name: questionNames.PROJECT_TYPE,
           message: 'What type of JavaScript project is this?',
           type: 'list',
-          choices: Object.values(projectTypes),
+          choices: [...Object.values(projectTypes), new Separator(), 'Other'],
           default: projectTypes.PACKAGE
         },
         {
@@ -115,10 +127,10 @@ suite('prompts', () => {
         },
         ...commonQuestions,
         {
-          name: questionNames.TRANSPILE_LINT,
-          message: 'Will there be source code that should be transpiled or linted?',
+          name: questionNames.CONFIGURE_LINTING,
+          message: 'Will there be source code that should be linted?',
           type: 'confirm',
-          when: conditionals.transpilationAndLintingPromptShouldBePresented
+          when: conditionals.lintingPromptShouldBePresented
         },
         {
           name: questionNames.HOST,
@@ -131,8 +143,8 @@ suite('prompts', () => {
       .resolves(answers);
 
     assert.deepEqual(
-      await prompt({}, ciServices, hosts, visibility, vcs, decisions),
-      {...answers, [questionNames.TRANSPILE_LINT]: true}
+      await prompt({}, ciServices, hosts, visibility, vcs, decisions, configs),
+      {...answers, [questionNames.CONFIGURE_LINTING]: true}
     );
   });
 
@@ -141,11 +153,11 @@ suite('prompts', () => {
     const get = sinon.stub();
     npmConf.default.returns({get});
     execa.default.withArgs('npm', ['whoami']).resolves({stdout: npmUser});
-    prompts.prompt.resolves({...answers, [questionNames.TRANSPILE_LINT]: false});
+    prompts.prompt.resolves({...answers, [questionNames.CONFIGURE_LINTING]: false});
 
     assert.deepEqual(
       await prompt({}, ciServices, {}, visibility, vcs, decisions),
-      {...answers, [questionNames.TRANSPILE_LINT]: false}
+      {...answers, [questionNames.CONFIGURE_LINTING]: false}
     );
   });
 
@@ -192,7 +204,7 @@ suite('prompts', () => {
       .returns(commonQuestions);
     prompts.prompt.resolves(answers);
 
-    await prompt({}, ciServices, {}, 'Private', vcs, null, pathWithinParent);
+    await prompt({}, ciServices, {}, 'Private', vcs, null, null, pathWithinParent);
 
     assert.neverCalledWith(
       prompts.prompt,
@@ -208,7 +220,7 @@ suite('prompts', () => {
       .returns(commonQuestions);
     prompts.prompt.resolves(answers);
 
-    await prompt({}, ciServices, {}, 'Private', vcs, null, pathWithinParent);
+    await prompt({}, ciServices, {}, 'Private', vcs, null, null, pathWithinParent);
 
     assert.neverCalledWith(
       prompts.prompt,
@@ -224,7 +236,7 @@ suite('prompts', () => {
       .returns(commonQuestions);
     prompts.prompt.resolves(answers);
 
-    await prompt({}, ciServices, {}, 'Public', vcs, null, pathWithinParent);
+    await prompt({}, ciServices, {}, 'Public', vcs, null, null, pathWithinParent);
 
     assert.calledWith(
       prompts.prompt,

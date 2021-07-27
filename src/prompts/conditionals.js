@@ -30,7 +30,7 @@ export function scopePromptShouldBePresentedFactory(visibility) {
   return answers => willBePublishedToNpm(answers) && packageShouldBeScoped(visibility, answers);
 }
 
-export function transpilationAndLintingPromptShouldBePresented({
+export function lintingPromptShouldBePresented({
   [commonQuestionNames.UNIT_TESTS]: unitTested,
   [commonQuestionNames.INTEGRATION_TESTS]: integrationTested
 }) {

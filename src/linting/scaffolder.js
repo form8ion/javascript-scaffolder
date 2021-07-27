@@ -8,16 +8,17 @@ export default async function ({
   projectRoot,
   projectType,
   packageManager,
+  dialect,
   registries,
   configs,
   vcs,
-  transpileLint,
+  configureLinting,
   buildDirectory,
   eslint
 }) {
   return deepmerge.all(await Promise.all([
     scaffoldLockfileLint({projectRoot, packageManager, registries}),
-    configs.eslint && false !== transpileLint
+    configs.eslint && configureLinting
       ? scaffoldEslint({
         projectRoot,
         config: configs.eslint,
@@ -28,8 +29,8 @@ export default async function ({
     scaffoldRemark({
       projectRoot,
       projectType,
+      dialect,
       vcs,
-      transpileLint,
       config: configs.remark || '@form8ion/remark-lint-preset'
     }),
     vcs ? scaffoldBanSensitiveFiles() : {}

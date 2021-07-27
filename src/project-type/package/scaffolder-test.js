@@ -101,7 +101,8 @@ suite('package project-type', () => {
         scope,
         packageTypes,
         tests,
-        decisions
+        decisions,
+        dialect: jsCore.dialects.BABEL
       }),
       {
         ...rollupResults,
@@ -165,7 +166,8 @@ suite('package project-type', () => {
       packageTypes,
       tests,
       decisions,
-      scope
+      scope,
+      dialect: jsCore.dialects.BABEL
     });
 
     assert.deepEqual(
@@ -198,7 +200,6 @@ suite('package project-type', () => {
     assert.deepEqual(
       await scaffoldPackage({
         projectRoot,
-        transpileLint: false,
         packageName,
         projectName,
         packageManager,
@@ -206,7 +207,8 @@ suite('package project-type', () => {
         scope,
         decisions,
         packageTypes,
-        tests
+        tests,
+        dialect: jsCore.dialects.COMMON_JS
       }),
       {
         dependencies: scaffoldedTypeDependencies,

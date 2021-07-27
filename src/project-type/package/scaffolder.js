@@ -1,8 +1,7 @@
 import {promises as fs} from 'fs';
 import deepmerge from 'deepmerge';
 import mustache from 'mustache';
-import {fileExists} from '@form8ion/core';
-import {scaffoldChoice as scaffoldChosenPackageType} from '@form8ion/javascript-core';
+import {dialects, scaffoldChoice as scaffoldChosenPackageType} from '@form8ion/javascript-core';
 import {info} from '@travi/cli-messages';
 import camelcase from '../../../third-party-wrappers/camelcase';
 import touch from '../../../third-party-wrappers/touch';
@@ -18,17 +17,13 @@ const defaultBuildDirectory = 'lib';
 async function createExample(projectRoot, projectName) {
   const pathToExample = `${projectRoot}/example.js`;
 
-  if (!await fileExists(pathToExample)) {
-    return fs.writeFile(
-      pathToExample,
-      mustache.render(
-        await fs.readFile(determinePathToTemplateFile('example.mustache'), 'utf8'),
-        {projectName: camelcase(projectName)}
-      )
-    );
-  }
-
-  return undefined;
+  return fs.writeFile(
+    pathToExample,
+    mustache.render(
+      await fs.readFile(determinePathToTemplateFile('example.mustache'), 'utf8'),
+      {projectName: camelcase(projectName)}
+    )
+  );
 }
 
 async function buildDetails(packageTypes, decisions, projectRoot, tests, projectName, visibility, packageName) {
@@ -77,7 +72,6 @@ async function buildDetailsForNonTranspiledProject(projectRoot, projectName) {
 
 export default async function ({
   projectRoot,
-  transpileLint,
   projectName,
   packageName,
   packageManager,
@@ -85,12 +79,13 @@ export default async function ({
   scope,
   packageTypes,
   tests,
-  decisions
+  decisions,
+  dialect
 }) {
   info('Scaffolding Package Details');
 
   const details = {
-    ...false !== transpileLint && {
+    ...dialects.BABEL === dialect && {
       packageProperties: {
         main: 'lib/index.cjs.js',
         module: 'lib/index.es.js',
@@ -107,7 +102,7 @@ export default async function ({
         packageName
       )
     },
-    ...false === transpileLint && {
+    ...dialects.COMMON_JS === dialect && {
       packageProperties: {files: ['index.js']},
       ...await buildDetailsForNonTranspiledProject(projectRoot, projectName)
     }

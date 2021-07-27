@@ -49,6 +49,7 @@ suite('javascript project scaffolder', () => {
   const babelResults = any.simpleObject();
   const npmResults = any.simpleObject();
   const chosenHost = any.word();
+  const chosenDialect = any.word();
   const projectType = any.word();
   const scope = any.word();
   const license = any.string();
@@ -77,7 +78,7 @@ suite('javascript project scaffolder', () => {
   const commitConventionResults = any.simpleObject();
   const applicationTypes = any.simpleObject();
   const packageTypes = any.simpleObject();
-  const transpileLint = any.boolean();
+  const configureLinting = any.boolean();
   const projectTypeBuildDirectory = any.string();
   const packageProperties = any.simpleObject();
   const projectTypeTags = any.listOf(any.word);
@@ -127,8 +128,9 @@ suite('javascript project scaffolder', () => {
     [commonQuestionNames.CI_SERVICE]: chosenCiService,
     [questionNames.HOST]: chosenHost,
     [questionNames.NODE_VERSION_CATEGORY]: versionCategory,
-    [questionNames.TRANSPILE_LINT]: transpileLint,
-    [questionNames.PACKAGE_MANAGER]: packageManager
+    [questionNames.CONFIGURE_LINTING]: configureLinting,
+    [questionNames.PACKAGE_MANAGER]: packageManager,
+    [questionNames.DIALECT]: chosenDialect
   };
 
   setup(() => {
@@ -157,7 +159,6 @@ suite('javascript project scaffolder', () => {
       .withArgs({
         projectType,
         projectRoot,
-        transpileLint,
         projectName,
         packageName,
         packageManager,
@@ -167,12 +168,13 @@ suite('javascript project scaffolder', () => {
         scope,
         tests,
         vcs: vcsDetails,
-        decisions
+        decisions,
+        dialect: chosenDialect
       })
       .resolves(projectTypeResults);
     packageScaffolder.default.withArgs(packageScaffoldingInputs).resolves({...any.simpleObject(), homepage});
     prompts.prompt
-      .withArgs(overrides, ciServices, hosts, visibility, vcsDetails, decisions, pathWithinParent)
+      .withArgs(overrides, ciServices, hosts, visibility, vcsDetails, decisions, configs, pathWithinParent)
       .resolves(commonPromptAnswers);
     jsCore.scaffoldChoice
       .withArgs(
@@ -198,9 +200,10 @@ suite('javascript project scaffolder', () => {
         projectRoot,
         projectType,
         packageManager,
+        dialect: chosenDialect,
         registries,
         vcs: vcsDetails,
-        transpileLint,
+        configureLinting,
         buildDirectory: projectTypeBuildDirectory,
         eslint: {
           ...testingEslintOtherDetails,
@@ -209,7 +212,7 @@ suite('javascript project scaffolder', () => {
       })
       .resolves(lintingResults);
     dialects.default
-      .withArgs({projectRoot, configs, transpileLint, tests, buildDirectory: projectTypeBuildDirectory})
+      .withArgs({projectRoot, configs, tests, buildDirectory: projectTypeBuildDirectory, dialect: chosenDialect})
       .resolves(babelResults);
     npmConfig.default.resolves(npmResults);
     commitConvention.default
@@ -254,7 +257,7 @@ suite('javascript project scaffolder', () => {
 
       assert.calledWith(
         dialects.default,
-        {configs, projectRoot, transpileLint, tests, buildDirectory: projectTypeBuildDirectory}
+        {configs, projectRoot, tests, buildDirectory: projectTypeBuildDirectory, dialect: chosenDialect}
       );
       assert.calledWith(npmConfig.default, {projectRoot, projectType, registries});
       assert.calledWith(

@@ -2,6 +2,7 @@ Feature: Application Project Type
 
   Scenario: Minimal Options for an Application
     Given the project will be an "Application"
+    And the project will use the "babel" dialect
     And the project will be versioned on GitHub
     And the default answers are chosen
     And the project will have "Public" visibility

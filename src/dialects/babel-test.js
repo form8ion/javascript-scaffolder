@@ -1,4 +1,4 @@
-import {promises as fsPromises} from 'fs';
+import {promises as fs} from 'fs';
 import sinon from 'sinon';
 import {assert} from 'chai';
 import any from '@travi/any';
@@ -12,7 +12,7 @@ suite('babel config', () => {
   setup(() => {
     sandbox = sinon.createSandbox();
 
-    sandbox.stub(fsPromises, 'writeFile');
+    sandbox.stub(fs, 'writeFile');
   });
 
   teardown(() => sandbox.restore());
@@ -28,7 +28,7 @@ suite('babel config', () => {
     );
 
     assert.calledWith(
-      fsPromises.writeFile,
+      fs.writeFile,
       `${projectRoot}/.babelrc`,
       JSON.stringify({
         presets: [babelPresetName],
@@ -49,31 +49,20 @@ suite('babel config', () => {
     );
 
     assert.calledWith(
-      fsPromises.writeFile,
+      fs.writeFile,
       `${projectRoot}/.babelrc`,
       JSON.stringify({presets: [babelPresetName], ignore: [`./${buildDirectory}/`]})
     );
   });
 
-  test('that the babelrc is not written if a preset is not defined', async () => {
-    assert.deepEqual(
-      await scaffoldBabel({preset: undefined, projectRoot}),
-      {
-        devDependencies: [],
-        scripts: {},
-        vcsIgnore: {files: [], directories: []}
-      }
-    );
+  test('that an error is thrown if a preset is not defined', async () => {
+    try {
+      await scaffoldBabel({preset: undefined, projectRoot});
 
-    assert.notCalled(fsPromises.writeFile);
-  });
-
-  test('that scaffolding is skipped if `transpileLint` is false', async () => {
-    assert.deepEqual(
-      await scaffoldBabel({preset: any.simpleObject(), projectRoot, transpileLint: false}),
-      {devDependencies: [], scripts: {}, vcsIgnore: {files: [], directories: []}}
-    );
-
-    assert.notCalled(fsPromises.writeFile);
+      throw new Error('test should have failed, but didnt');
+    } catch (e) {
+      assert.notCalled(fs.writeFile);
+      assert.equal(e.message, 'No babel preset provided. Cannot configure babel transpilation');
+    }
   });
 });

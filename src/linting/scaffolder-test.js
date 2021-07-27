@@ -27,7 +27,8 @@ suite('linting scaffolder', () => {
   const registries = any.simpleObject();
   const buildDirectory = any.string();
   const eslintConfigs = any.listOf(any.word);
-  const transpileLint = true;
+  const configureLinting = true;
+  const dialect = any.word();
 
   setup(() => {
     sandbox = sinon.createSandbox();
@@ -38,7 +39,7 @@ suite('linting scaffolder', () => {
     sandbox.stub(scaffoldLockfileLint, 'default');
 
     scaffoldRemark.default
-      .withArgs({projectRoot, projectType, config: configForRemark, vcs, transpileLint})
+      .withArgs({projectRoot, projectType, config: configForRemark, vcs, dialect})
       .resolves({devDependencies: remarkDevDependencies, scripts: remarkScripts});
     scaffoldEslint.default
       .withArgs({
@@ -65,11 +66,12 @@ suite('linting scaffolder', () => {
     const result = await scaffold({
       projectRoot,
       projectType,
+      dialect,
       configs: {eslint: configForEslint, remark: configForRemark},
       vcs,
       buildDirectory,
       eslint: {configs: eslintConfigs},
-      transpileLint,
+      configureLinting,
       packageManager,
       registries
     });
@@ -99,9 +101,10 @@ suite('linting scaffolder', () => {
     const result = await scaffold({
       projectRoot,
       projectType,
+      dialect,
       configs: {remark: configForRemark},
       vcs,
-      transpileLint,
+      configureLinting,
       packageManager,
       registries
     });
@@ -115,15 +118,16 @@ suite('linting scaffolder', () => {
 
   test('that eslint is not scaffolded when `transpileLint` is false', async () => {
     scaffoldRemark.default
-      .withArgs({projectRoot, projectType, config: configForRemark, vcs, transpileLint: false})
+      .withArgs({projectRoot, projectType, config: configForRemark, vcs, configureLinting: false})
       .resolves({devDependencies: remarkDevDependencies, scripts: remarkScripts});
 
     const result = await scaffold({
       projectRoot,
       projectType,
+      dialect,
       configs: {eslint: configForEslint, remark: configForRemark},
       vcs,
-      transpileLint: false,
+      configureLinting: false,
       packageManager,
       registries
     });
@@ -137,17 +141,18 @@ suite('linting scaffolder', () => {
 
   test('that remark defaults to the form8ion config when a config is not defined', async () => {
     scaffoldRemark.default
-      .withArgs({projectRoot, projectType, vcs, transpileLint, config: '@form8ion/remark-lint-preset'})
+      .withArgs({projectRoot, projectType, vcs, dialect, config: '@form8ion/remark-lint-preset'})
       .resolves({devDependencies: remarkDevDependencies, scripts: remarkScripts});
 
     const result = await scaffold({
       projectRoot,
       projectType,
+      dialect,
       configs: {eslint: configForEslint},
       vcs,
       buildDirectory,
       eslint: {configs: eslintConfigs},
-      transpileLint,
+      configureLinting,
       packageManager,
       registries
     });
@@ -175,17 +180,18 @@ suite('linting scaffolder', () => {
 
   test('that ban-sensitive-files is not scaffolded when the project will not be versioned', async () => {
     scaffoldRemark.default
-      .withArgs({projectRoot, projectType, config: configForRemark, vcs: undefined, transpileLint})
+      .withArgs({projectRoot, projectType, config: configForRemark, vcs: undefined, dialect})
       .resolves({devDependencies: remarkDevDependencies, scripts: remarkScripts});
 
     const result = await scaffold({
       projectRoot,
       projectType,
+      dialect,
       configs: {eslint: configForEslint, remark: configForRemark},
       vcs: undefined,
       buildDirectory,
       eslint: {configs: eslintConfigs},
-      transpileLint,
+      configureLinting,
       packageManager,
       registries
     });

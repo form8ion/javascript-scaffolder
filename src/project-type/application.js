@@ -11,47 +11,35 @@ export default async function ({
   projectName,
   packageName,
   packageManager,
-  transpileLint,
   tests,
   decisions
 }) {
   info('Scaffolding Application Details');
 
-  if (false !== transpileLint) {
-    const chosenType = await chooseApplicationType({types: applicationTypes, projectType: 'application', decisions});
-    const results = await scaffoldChosenApplicationType(
-      applicationTypes,
-      chosenType,
-      {projectRoot, projectName, packageName, packageManager, tests}
-    );
+  const chosenType = await chooseApplicationType({types: applicationTypes, projectType: 'application', decisions});
+  const results = await scaffoldChosenApplicationType(
+    applicationTypes,
+    chosenType,
+    {projectRoot, projectName, packageName, packageManager, tests}
+  );
 
-    const buildDirectory = results.buildDirectory || defaultBuildDirectory;
+  const buildDirectory = results.buildDirectory || defaultBuildDirectory;
 
-    return deepmerge(
-      {
-        scripts: {
-          clean: `rimraf ./${buildDirectory}`,
-          start: `node ./${buildDirectory}/index.js`,
-          prebuild: 'run-s clean'
-        },
-        dependencies: [],
-        devDependencies: ['rimraf'],
-        vcsIgnore: {files: ['.env'], directories: [`/${buildDirectory}/`]},
-        buildDirectory,
-        packageProperties: {private: true},
-        eslintConfigs: [],
-        nextSteps: []
+  return deepmerge(
+    {
+      scripts: {
+        clean: `rimraf ./${buildDirectory}`,
+        start: `node ./${buildDirectory}/index.js`,
+        prebuild: 'run-s clean'
       },
-      results
-    );
-  }
-
-  return {
-    dependencies: [],
-    devDependencies: [],
-    scripts: {},
-    vcsIgnore: {files: [], directories: []},
-    eslintConfigs: [],
-    nextSteps: []
-  };
+      dependencies: [],
+      devDependencies: ['rimraf'],
+      vcsIgnore: {files: ['.env'], directories: [`/${buildDirectory}/`]},
+      buildDirectory,
+      packageProperties: {private: true},
+      eslintConfigs: [],
+      nextSteps: []
+    },
+    results
+  );
 }

@@ -11,14 +11,14 @@ export default async function ({
   projectName,
   packageName,
   packageManager,
-  transpileLint,
   visibility,
   applicationTypes,
   packageTypes,
   scope,
   tests,
   vcs,
-  decisions
+  decisions,
+  dialect
 }) {
   switch (projectType) {
     case projectTypes.PACKAGE:
@@ -26,7 +26,6 @@ export default async function ({
         buildCommonDetails(visibility, vcs),
         await scaffoldPackageType({
           projectRoot,
-          transpileLint,
           projectName,
           packageName,
           packageManager,
@@ -35,7 +34,8 @@ export default async function ({
           packageTypes,
           tests,
           vcs,
-          decisions
+          decisions,
+          dialect
         })
       );
     case projectTypes.APPLICATION:
@@ -47,7 +47,6 @@ export default async function ({
           packageName,
           packageManager,
           applicationTypes,
-          transpileLint,
           tests,
           decisions
         })

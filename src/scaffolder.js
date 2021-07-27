@@ -53,9 +53,10 @@ export async function scaffold(options) {
     [questionNames.AUTHOR_NAME]: authorName,
     [questionNames.AUTHOR_EMAIL]: authorEmail,
     [questionNames.AUTHOR_URL]: authorUrl,
-    [questionNames.TRANSPILE_LINT]: transpileLint,
-    [questionNames.PACKAGE_MANAGER]: packageManager
-  } = await prompt(overrides, ciServices, hosts, visibility, vcs, decisions, pathWithinParent);
+    [questionNames.CONFIGURE_LINTING]: configureLinting,
+    [questionNames.PACKAGE_MANAGER]: packageManager,
+    [questionNames.DIALECT]: dialect
+  } = await prompt(overrides, ciServices, hosts, visibility, vcs, decisions, configs, pathWithinParent);
 
   info('Writing project files', {level: 'secondary'});
 
@@ -67,14 +68,14 @@ export async function scaffold(options) {
     projectName,
     packageName,
     packageManager,
-    transpileLint,
     visibility,
     applicationTypes,
     packageTypes,
     scope,
     tests,
     vcs,
-    decisions
+    decisions,
+    dialect
   });
   const testingResults = await scaffoldTesting({projectRoot, tests, visibility, vcs, unitTestFrameworks, decisions});
   const [nodeVersion, npmResults] = await Promise.all([
@@ -93,9 +94,10 @@ export async function scaffold(options) {
         projectRoot,
         projectType,
         packageManager,
+        dialect,
         registries,
         vcs,
-        transpileLint,
+        configureLinting,
         buildDirectory: projectTypeResults.buildDirectory,
         eslint: deepmerge(
           testingResults.eslint,
@@ -103,7 +105,7 @@ export async function scaffold(options) {
         )
       }),
       scaffoldChoice(ciServices, ci, {projectRoot, vcs, visibility, projectType, projectName, nodeVersion, tests}),
-      scaffoldDialect({configs, projectRoot, transpileLint, tests, buildDirectory: projectTypeResults.buildDirectory}),
+      scaffoldDialect({dialect, configs, projectRoot, tests, buildDirectory: projectTypeResults.buildDirectory}),
       scaffoldCommitConvention({projectRoot, configs, pathWithinParent, packageManager})
     ])),
     projectTypeResults,

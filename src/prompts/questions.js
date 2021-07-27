@@ -4,13 +4,14 @@ import {prompt as promptWithInquirer} from '@form8ion/overridable-prompts';
 import {questions as commonQuestions} from '@travi/language-scaffolder-prompts';
 import {warn} from '@travi/cli-messages';
 import execa from '../../third-party-wrappers/execa';
+import npmConfFactory from '../../third-party-wrappers/npm-conf';
+import buildDialectChoices from '../dialects/prompt-choices';
 import {
   projectIsApplication,
   scopePromptShouldBePresentedFactory,
   shouldBeScopedPromptShouldBePresented,
-  transpilationAndLintingPromptShouldBePresented
+  lintingPromptShouldBePresented
 } from './conditionals';
-import npmConfFactory from '../../third-party-wrappers/npm-conf';
 import {questionNames} from './question-names';
 import {scope as validateScope} from './validators';
 
@@ -34,7 +35,16 @@ function authorQuestions({name, email, url}) {
   ];
 }
 
-export async function prompt({npmAccount, author}, ciServices, hosts, visibility, vcs, decisions, pathWithinParent) {
+export async function prompt(
+  {npmAccount, author},
+  ciServices,
+  hosts,
+  visibility,
+  vcs,
+  decisions,
+  configs,
+  pathWithinParent
+) {
   const npmConf = npmConfFactory();
 
   let maybeLoggedInNpmUsername;
@@ -46,6 +56,13 @@ export async function prompt({npmAccount, author}, ciServices, hosts, visibility
   }
 
   const answers = await promptWithInquirer([
+    {
+      name: questionNames.DIALECT,
+      message: 'Which JavaScript dialect should this project follow?',
+      type: 'list',
+      choices: buildDialectChoices(configs),
+      default: 'babel'
+    },
     ...pathWithinParent ? [] : [{
       name: questionNames.NODE_VERSION_CATEGORY,
       message: 'What node.js version should be used?',
@@ -64,7 +81,7 @@ export async function prompt({npmAccount, author}, ciServices, hosts, visibility
       name: questionNames.PROJECT_TYPE,
       message: 'What type of JavaScript project is this?',
       type: 'list',
-      choices: Object.values(projectTypes),
+      choices: [...Object.values(projectTypes), new Separator(), 'Other'],
       default: projectTypes.PACKAGE
     },
     ...'Private' === visibility ? [] : [{
@@ -88,10 +105,10 @@ export async function prompt({npmAccount, author}, ciServices, hosts, visibility
     }),
     ...commonQuestions(({vcs, ciServices, visibility, pathWithinParent})),
     {
-      name: questionNames.TRANSPILE_LINT,
-      message: 'Will there be source code that should be transpiled or linted?',
+      name: questionNames.CONFIGURE_LINTING,
+      message: 'Will there be source code that should be linted?',
       type: 'confirm',
-      when: transpilationAndLintingPromptShouldBePresented
+      when: lintingPromptShouldBePresented
     },
     {
       name: questionNames.HOST,
@@ -102,5 +119,8 @@ export async function prompt({npmAccount, author}, ciServices, hosts, visibility
     }
   ], decisions);
 
-  return {...answers, ...false !== answers[questionNames.TRANSPILE_LINT] && {[questionNames.TRANSPILE_LINT]: true}};
+  return {
+    ...answers,
+    ...false !== answers[questionNames.CONFIGURE_LINTING] && {[questionNames.CONFIGURE_LINTING]: true}
+  };
 }
