@@ -56,6 +56,10 @@ export default async function ({
         buildCommonDetails(visibility, vcs),
         await scaffoldCliType({packageName, visibility, projectRoot})
       );
+    case projectTypes.MONOREPO:
+      return {
+        eslintConfigs: []
+      };
     default:
       throw new Error(`The project-type of ${projectType} is invalid`);
   }
