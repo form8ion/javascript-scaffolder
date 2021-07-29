@@ -6,18 +6,21 @@ import any from '@travi/any';
 
 Given('the project will be a(n) {string}', async function (projectType) {
   const {projectTypes} = require('@form8ion/javascript-core');
+  const projectTypeChoices = [...Object.values(projectTypes), 'Other'];
 
   this.projectType = projectType;
   if ('any' === projectType) {
-    this.projectType = any.fromList(Object.values(projectTypes));
+    this.projectType = any.fromList(projectTypeChoices);
   }
 
-  if (!Object.values(projectTypes).includes(this.projectType)) {
+  if (!projectTypeChoices.includes(this.projectType)) {
     throw new Error(`invalid project type: ${this.projectType}`);
   }
 
   if (projectTypes.CLI === this.projectType) {
     this.buildDirectory = 'bin';
+  } else if ('Other' === this.projectType) {
+    this.buildDirectory = null;
   } else {
     this.buildDirectory = 'lib';
   }

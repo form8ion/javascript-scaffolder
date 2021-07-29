@@ -111,12 +111,19 @@ suite('project-type scaffolder', () => {
     );
   });
 
-  test('that the application-type scaffolder is applied when the project-type is `CLI`', async () => {
+  test('that the cli-type scaffolder is applied when the project-type is `CLI`', async () => {
     cliTypeScaffolder.default.withArgs({packageName, visibility, projectRoot}).resolves(results);
 
     assert.deepEqual(
       await projectTypeScaffolder({projectType: projectTypes.CLI, packageName, visibility, vcs, projectRoot}),
       {...commonDetails, ...results}
+    );
+  });
+
+  test('that no error is thrown when the project-type is `Other`', async () => {
+    assert.deepEqual(
+      await projectTypeScaffolder({projectType: 'Other'}),
+      {eslintConfigs: []}
     );
   });
 

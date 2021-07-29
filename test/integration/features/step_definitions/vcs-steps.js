@@ -10,7 +10,7 @@ export function assertThatProperDirectoriesAreIgnoredFromVersionControl(scaffold
   const {projectTypes} = require('@form8ion/javascript-core');
 
   assert.include(scaffoldResult.vcsIgnore.directories, '/node_modules/');
-  assert.include(scaffoldResult.vcsIgnore.directories, `/${buildDirectory}/`);
+  if (buildDirectory) assert.include(scaffoldResult.vcsIgnore.directories, `/${buildDirectory}/`);
 
   if (projectTypes.CLI === projectType) {
     assert.notInclude(scaffoldResult.vcsIgnore.directories, '/lib/');

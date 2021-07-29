@@ -21,7 +21,7 @@
     "test": "npm-run-all --print-label build --parallel lint:* --parallel test:*",
     "test:unit": "nyc run-s test:unit:base",
     "test:unit:base": "mocha 'src/**/*-test.js'",
-    "pretest:integration": "preview",
+    "pretest:integration:base": "preview",
     "test:integration": "run-s 'test:integration:base -- --profile noWip'",
     "test:integration:base": "NODE_OPTIONS=--enable-source-maps cucumber-js test/integration --profile base",
     "test:integration:debug": "DEBUG=test run-s test:integration",
