@@ -60,6 +60,10 @@ export default async function ({
       return {
         eslintConfigs: []
       };
+    case 'Other':
+      return {
+        eslintConfigs: []
+      };
     default:
       throw new Error(`The project-type of ${projectType} is invalid`);
   }
