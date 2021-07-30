@@ -33,7 +33,7 @@ suite('monorepo project-type', () => {
 
     assert.deepEqual(
       await scaffoldMonorepo({monorepoTypes, decisions, projectRoot, packageManager}),
-      {eslintConfigs: [], ...typeScaffoldingResults}
+      {eslintConfigs: [], packageProperties: {private: true}, ...typeScaffoldingResults}
     );
   });
 });

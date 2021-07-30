@@ -9,5 +9,5 @@ export default async function ({monorepoTypes, projectRoot, packageManager, deci
   const chosenType = await chooseApplicationType({types: monorepoTypes, projectType: projectTypes.MONOREPO, decisions});
   const results = await scaffoldChosenApplicationType(monorepoTypes, chosenType, {projectRoot, packageManager});
 
-  return deepmerge({eslintConfigs: []}, results);
+  return deepmerge({eslintConfigs: [], packageProperties: {private: true}}, results);
 }
