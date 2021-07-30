@@ -62,7 +62,10 @@ export function validate(options) {
       })).default({}),
       packageTypes: joi.object().pattern(/^/, joi.object({
         scaffolder: joi.func().arity(1).required()
-      })).default({})
+      })).default({}),
+      monorepoTypes: joi.object().pattern(/^/, joi.object({
+        scaffolder: joi.func().arity(1).required()
+      }))
     })
     .keys({
       decisions: joi.object()

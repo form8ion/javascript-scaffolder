@@ -1,3 +1,4 @@
+import {promises as fs} from 'fs';
 import {fileExists} from '@form8ion/core';
 import {Given, Then} from '@cucumber/cucumber';
 import any from '@travi/any';
@@ -20,6 +21,7 @@ Then('project-level tools are not installed for a sub-project', async function (
 });
 
 Then('the monorepo scripts are included', async function () {
-  // Write code here that turns the phrase above into concrete actions
-  return 'pending';
+  const {scripts} = JSON.parse(await fs.readFile(`${process.cwd()}/package.json`, 'utf-8'));
+
+  assert.include(scripts, this.fooMonorepoScripts);
 });

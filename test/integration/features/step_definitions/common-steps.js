@@ -73,6 +73,7 @@ Before(async function () {
   this.barUnitTestFrameworkEslintConfigs = any.listOf(any.word);
   // this.fooApplicationEslintConfigs = any.listOf(() => ({name: any.word(), files: any.word()}));
   this.fooApplicationEslintConfigs = [(() => ({name: any.word(), files: any.word()}))()];
+  this.fooMonorepoScripts = any.simpleObject();
 });
 
 After(function () {
@@ -114,6 +115,9 @@ When(/^the project is scaffolded$/, async function () {
       ciServices: {[any.word()]: {scaffolder: foo => ({foo}), public: true}},
       applicationTypes: {
         foo: {scaffolder: foo => ({foo, eslintConfigs: this.fooApplicationEslintConfigs})}
+      },
+      monorepoTypes: {
+        foo: {scaffolder: foo => ({foo, scripts: this.fooMonorepoScripts})}
       },
       decisions: {
         [questionNames.NODE_VERSION_CATEGORY]: 'LTS',
