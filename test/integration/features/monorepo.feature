@@ -15,7 +15,6 @@ Feature: Monorepo
     And the expected files for a "package" are generated
     And the expected results for a "package" are returned to the project scaffolder
 
-  @wip
   Scenario: Create new monorepo
     Given the project will be a "Monorepo"
     And the chosen monorepo plugin defines scripts

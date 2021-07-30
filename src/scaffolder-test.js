@@ -78,6 +78,7 @@ suite('javascript project scaffolder', () => {
   const commitConventionResults = any.simpleObject();
   const applicationTypes = any.simpleObject();
   const packageTypes = any.simpleObject();
+  const monorepoTypes = any.simpleObject();
   const configureLinting = any.boolean();
   const projectTypeBuildDirectory = any.string();
   const packageProperties = any.simpleObject();
@@ -165,6 +166,7 @@ suite('javascript project scaffolder', () => {
         visibility,
         applicationTypes,
         packageTypes,
+        monorepoTypes,
         scope,
         tests,
         vcs: vcsDetails,
@@ -234,6 +236,7 @@ suite('javascript project scaffolder', () => {
         description,
         applicationTypes,
         packageTypes,
+        monorepoTypes,
         decisions,
         unitTestFrameworks,
         pathWithinParent,

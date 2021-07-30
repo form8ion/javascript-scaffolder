@@ -1,9 +1,8 @@
-import deepmerge from 'deepmerge';
 import {projectTypes} from '@form8ion/javascript-core';
 import scaffoldPackageType from './package';
 import scaffoldApplicationType from './application';
+import scaffoldMonorepoType from './monorepo';
 import scaffoldCliType from './cli';
-import buildCommonDetails from './common';
 
 export default async function ({
   projectType,
@@ -14,6 +13,7 @@ export default async function ({
   visibility,
   applicationTypes,
   packageTypes,
+  monorepoTypes,
   scope,
   tests,
   vcs,
@@ -22,44 +22,33 @@ export default async function ({
 }) {
   switch (projectType) {
     case projectTypes.PACKAGE:
-      return deepmerge(
-        buildCommonDetails(visibility, vcs),
-        await scaffoldPackageType({
-          projectRoot,
-          projectName,
-          packageName,
-          packageManager,
-          visibility,
-          scope,
-          packageTypes,
-          tests,
-          vcs,
-          decisions,
-          dialect
-        })
-      );
+      return scaffoldPackageType({
+        projectRoot,
+        projectName,
+        packageName,
+        packageManager,
+        visibility,
+        scope,
+        packageTypes,
+        tests,
+        vcs,
+        decisions,
+        dialect
+      });
     case projectTypes.APPLICATION:
-      return deepmerge(
-        buildCommonDetails(visibility, vcs),
-        await scaffoldApplicationType({
-          projectRoot,
-          projectName,
-          packageName,
-          packageManager,
-          applicationTypes,
-          tests,
-          decisions
-        })
-      );
+      return scaffoldApplicationType({
+        projectRoot,
+        projectName,
+        packageName,
+        packageManager,
+        applicationTypes,
+        tests,
+        decisions
+      });
     case projectTypes.CLI:
-      return deepmerge(
-        buildCommonDetails(visibility, vcs),
-        await scaffoldCliType({packageName, visibility, projectRoot})
-      );
+      return scaffoldCliType({packageName, visibility, projectRoot});
     case projectTypes.MONOREPO:
-      return {
-        eslintConfigs: []
-      };
+      return scaffoldMonorepoType({monorepoTypes, projectRoot, packageManager, decisions});
     case 'Other':
       return {
         eslintConfigs: []
