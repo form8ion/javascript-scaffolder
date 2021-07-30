@@ -1,7 +1,7 @@
 Feature: Dialects
 
   Scenario: Babel
-    Given the project will be an "any"
+    Given the project will be a "Package"
     And the project will use the "babel" dialect
     And the npm cli is logged in
     And the project will not be tested
@@ -11,7 +11,7 @@ Feature: Dialects
     Then the "babel" dialect is configured
 
   Scenario: Babel without a preset provided
-    Given the project will be an "any"
+    Given the project will be a "Package"
     And the project will use the "babel" dialect
     And the npm cli is logged in
     And the project will not be tested

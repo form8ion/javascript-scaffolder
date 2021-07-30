@@ -18,9 +18,12 @@ Feature: Monorepo
   @wip
   Scenario: Create new monorepo
     Given the project will be a "Monorepo"
+    And the chosen monorepo plugin defines scripts
     And the project will use the "common-js" dialect
     And the npm cli is logged in
     And nvm is properly configured
     And the project will not be tested
     When the project is scaffolded
     Then no error is thrown
+    And the monorepo scripts are included
+    And the expected results for a "Monorepo" are returned to the project scaffolder
