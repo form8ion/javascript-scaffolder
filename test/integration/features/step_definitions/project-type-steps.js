@@ -19,6 +19,8 @@ Given('the project will be a(n) {string}', async function (projectType) {
 
   if (projectTypes.CLI === this.projectType) {
     this.buildDirectory = 'bin';
+  } else if (projectTypes.MONOREPO === this.projectType) {
+    this.buildDirectory = null;
   } else if ('Other' === this.projectType) {
     this.buildDirectory = null;
   } else {

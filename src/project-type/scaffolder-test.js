@@ -4,8 +4,8 @@ import any from '@travi/any';
 import {assert} from 'chai';
 import * as packageTypeScaffolder from './package/scaffolder';
 import * as applicationTypeScaffolder from './application';
+import * as monorepoTypeScaffolder from './monorepo';
 import * as cliTypeScaffolder from './cli';
-import * as commonDetailsScaffolder from './common';
 import projectTypeScaffolder from './index';
 
 suite('project-type scaffolder', () => {
@@ -18,7 +18,6 @@ suite('project-type scaffolder', () => {
   const visibility = any.word();
   const tests = any.simpleObject();
   const decisions = any.simpleObject();
-  const commonDetails = any.simpleObject();
   const vcs = any.simpleObject();
 
   setup(() => {
@@ -27,9 +26,7 @@ suite('project-type scaffolder', () => {
     sandbox.stub(packageTypeScaffolder, 'default');
     sandbox.stub(applicationTypeScaffolder, 'default');
     sandbox.stub(cliTypeScaffolder, 'default');
-    sandbox.stub(commonDetailsScaffolder, 'default');
-
-    commonDetailsScaffolder.default.withArgs(visibility, vcs).returns(commonDetails);
+    sandbox.stub(monorepoTypeScaffolder, 'default');
   });
 
   teardown(() => sandbox.restore());
@@ -70,10 +67,7 @@ suite('project-type scaffolder', () => {
         decisions,
         dialect
       }),
-      {
-        ...commonDetails,
-        ...results
-      }
+      results
     );
   });
 
@@ -104,10 +98,7 @@ suite('project-type scaffolder', () => {
         visibility,
         vcs
       }),
-      {
-        ...commonDetails,
-        ...results
-      }
+      results
     );
   });
 
@@ -116,7 +107,23 @@ suite('project-type scaffolder', () => {
 
     assert.deepEqual(
       await projectTypeScaffolder({projectType: projectTypes.CLI, packageName, visibility, vcs, projectRoot}),
-      {...commonDetails, ...results}
+      results
+    );
+  });
+
+  test('that the monorepo-type scaffolder is applied when the project-type is `Monorepo`', async () => {
+    const monorepoTypes = any.simpleObject();
+    monorepoTypeScaffolder.default.withArgs({monorepoTypes, projectRoot, packageManager, decisions}).resolves(results);
+
+    assert.deepEqual(
+      await projectTypeScaffolder({
+        projectRoot,
+        projectType: projectTypes.MONOREPO,
+        packageManager,
+        monorepoTypes,
+        decisions
+      }),
+      results
     );
   });
 

@@ -618,6 +618,63 @@ suite('options validator', () => {
     }));
   });
 
+  suite('monorepo types', () => {
+    const key = any.word();
+
+    test('that a provided monorepo-type must define config', () => assert.throws(
+      () => validate({
+        projectRoot: any.string(),
+        projectName: any.string(),
+        visibility: any.fromList(['Public', 'Private']),
+        license: any.string(),
+        monorepoTypes: {[key]: any.word()}
+      }),
+      `"monorepoTypes.${key}" must be of type object`
+    ));
+
+    test('that a provided monorepo-type must provide a scaffolded', () => assert.throws(
+      () => validate({
+        projectRoot: any.string(),
+        projectName: any.string(),
+        visibility: any.fromList(['Public', 'Private']),
+        license: any.string(),
+        monorepoTypes: {[key]: {}}
+      }),
+      `"monorepoTypes.${key}.scaffolder" is required`
+    ));
+
+    test('that a provided monorepo-type must provide a scaffold function', () => assert.throws(
+      () => validate({
+        projectRoot: any.string(),
+        projectName: any.string(),
+        visibility: any.fromList(['Public', 'Private']),
+        license: any.string(),
+        monorepoTypes: {[key]: {scaffolder: any.word()}}
+      }),
+      `"monorepoTypes.${key}.scaffolder" must be of type function`
+    ));
+
+    test('that a provided monorepo-type scaffolder must accept a single argument', () => assert.throws(
+      () => validate({
+        projectRoot: any.string(),
+        projectName: any.string(),
+        visibility: any.fromList(['Public', 'Private']),
+        license: any.string(),
+        monorepoTypes: {[key]: {scaffolder: () => undefined}}
+      }),
+      `"monorepoTypes.${key}.scaffolder" must have an arity of 1`
+    ));
+
+    test('that a provided monorepo-type scaffolder is valid if an options object is provided', () => validate({
+      projectRoot: any.string(),
+      projectName: any.string(),
+      visibility: any.fromList(['Public', 'Private']),
+      license: any.string(),
+      monorepoTypes: {[key]: {scaffolder: options => options}},
+      unitTestFrameworks: {}
+    }));
+  });
+
   suite('registries', () => {
     const key = any.word();
 
