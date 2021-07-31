@@ -33,7 +33,16 @@ suite('monorepo project-type', () => {
 
     assert.deepEqual(
       await scaffoldMonorepo({monorepoTypes, decisions, projectRoot, packageManager}),
-      {eslintConfigs: [], packageProperties: {private: true}, ...typeScaffoldingResults}
+      {
+        eslintConfigs: [],
+        packageProperties: {private: true},
+        nextSteps: [{
+          summary: 'Add packages to your new monorepo',
+          description: 'Leverage [@form8ion/add-package-to-monorepo](https://npm.im/@form8ion/add-package-to-monorepo)'
+            + ' to scaffold new packages into your new monorepo'
+        }],
+        ...typeScaffoldingResults
+      }
     );
   });
 });

@@ -9,5 +9,16 @@ export default async function ({monorepoTypes, projectRoot, packageManager, deci
   const chosenType = await chooseApplicationType({types: monorepoTypes, projectType: projectTypes.MONOREPO, decisions});
   const results = await scaffoldChosenApplicationType(monorepoTypes, chosenType, {projectRoot, packageManager});
 
-  return deepmerge({eslintConfigs: [], packageProperties: {private: true}}, results);
+  return deepmerge(
+    {
+      eslintConfigs: [],
+      packageProperties: {private: true},
+      nextSteps: [{
+        summary: 'Add packages to your new monorepo',
+        description: 'Leverage [@form8ion/add-package-to-monorepo](https://npm.im/@form8ion/add-package-to-monorepo)'
+          + ' to scaffold new packages into your new monorepo'
+      }]
+    },
+    results
+  );
 }
