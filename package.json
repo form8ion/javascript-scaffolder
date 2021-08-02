@@ -57,7 +57,7 @@
     "@cucumber/cucumber": "7.3.1",
     "@rollup/plugin-node-resolve": "13.0.4",
     "@travi/any": "2.0.17",
-    "@travi/babel-preset": "3.0.61",
+    "@travi/babel-preset": "3.0.62",
     "@travi/eslint-config": "1.0.78",
     "@travi/eslint-config-cucumber": "1.0.5",
     "@travi/eslint-config-mocha": "1.0.12",
