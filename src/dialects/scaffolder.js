@@ -1,10 +1,14 @@
 import {dialects} from '@form8ion/javascript-core';
 import scaffoldBabel from './babel';
+import scaffoldTypescript from './typescript';
 
 export default function ({dialect, projectRoot, configs, tests, buildDirectory}) {
-  if (dialects.BABEL === dialect) {
-    return scaffoldBabel({preset: configs.babelPreset, projectRoot, tests, buildDirectory});
+  switch (dialect) {
+    case dialects.BABEL:
+      return scaffoldBabel({preset: configs.babelPreset, projectRoot, tests, buildDirectory});
+    case dialects.TYPESCRIPT:
+      return scaffoldTypescript();
+    default:
+      return {eslint: {}};
   }
-
-  return {};
 }

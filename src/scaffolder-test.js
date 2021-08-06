@@ -46,7 +46,7 @@ suite('javascript project scaffolder', () => {
   const projectTypeEslintConfigs = any.listOf(any.string);
   const projectTypeNextSteps = any.listOf(any.simpleObject);
   const hostResults = any.simpleObject();
-  const babelResults = any.simpleObject();
+  const dialectResults = {...any.simpleObject(), eslint: any.simpleObject()};
   const npmResults = any.simpleObject();
   const chosenHost = any.word();
   const chosenDialect = any.word();
@@ -96,11 +96,11 @@ suite('javascript project scaffolder', () => {
     hostResults,
     lintingResults,
     ciServiceResults,
-    babelResults,
     commitConventionResults,
     projectTypeResults,
     testingResults,
-    npmResults
+    npmResults,
+    dialectResults
   ];
   const packageScaffoldingInputs = {
     projectRoot,
@@ -215,7 +215,7 @@ suite('javascript project scaffolder', () => {
       .resolves(lintingResults);
     dialects.default
       .withArgs({projectRoot, configs, tests, buildDirectory: projectTypeBuildDirectory, dialect: chosenDialect})
-      .resolves(babelResults);
+      .resolves(dialectResults);
     npmConfig.default.resolves(npmResults);
     commitConvention.default
       .withArgs({projectRoot, configs, pathWithinParent, packageManager})

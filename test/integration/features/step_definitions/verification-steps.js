@@ -7,6 +7,5 @@ Given(/^the project will not be tested$/, async function () {
 });
 
 Given(/^the project will not be transpiled or linted$/, async function () {
-  this.transpilationLintAnswer = false;
-  this.transpileAndLint = false;
+  this.configureLinting = false;
 });

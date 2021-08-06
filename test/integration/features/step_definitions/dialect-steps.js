@@ -1,5 +1,6 @@
 import {promises as fs} from 'fs';
 import {fileExists} from '@form8ion/core';
+import {load} from 'js-yaml';
 import {Given, Then} from '@cucumber/cucumber';
 import {assert} from 'chai';
 import any from '@travi/any';
@@ -19,6 +20,7 @@ Given('no babel preset is provided', async function () {
 
 Then('the {string} dialect is configured', async function (dialect) {
   const {dialects} = require('@form8ion/javascript-core');
+  const eslintConfig = load(await fs.readFile(`${process.cwd()}/.eslintrc.yml`, 'utf-8'));
 
   if (dialects.BABEL === dialect) {
     const {presets, ignore} = JSON.parse(await fs.readFile(`${process.cwd()}/.babelrc`, 'utf-8'));
@@ -26,6 +28,12 @@ Then('the {string} dialect is configured', async function (dialect) {
     assert.deepEqual(presets, [this.babelPreset.name]);
     assert.deepEqual(ignore, [`./${this.buildDirectory}/`]);
     assertDevDependencyIsInstalled(this.execa, this.babelPreset.packageName);
+  }
+
+  if (dialects.TYPESCRIPT === dialect) {
+    assert.include(eslintConfig.extends, `${this.eslintScope}/typescript`);
+
+    assert.isFalse(await fileExists(`${process.cwd()}/.babelrc`));
   }
 
   if (dialects.COMMON_JS === dialect) {

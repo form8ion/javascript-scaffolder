@@ -19,6 +19,7 @@ export default async function ({projectRoot, preset, tests, buildDirectory}) {
       '@babel/register',
       preset.packageName,
       ...tests.unit ? ['babel-plugin-istanbul'] : []
-    ]
+    ],
+    eslint: {}
   };
 }

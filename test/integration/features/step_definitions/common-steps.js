@@ -66,7 +66,7 @@ Before(async function () {
     }
   });
 
-  this.transpileAndLint = true;
+  this.configureLinting = true;
   this.tested = true;
   this.visibility = any.fromList(['Public', 'Private']);
   this.eslintScope = `@${any.word()}`;
@@ -89,7 +89,7 @@ Given(/^the default answers are chosen$/, async function () {
   this.unitTestAnswer = true;
   this.unitTestFrameworkAnswer = 'foo';
   this.integrationTestAnswer = true;
-  this.transpilationLintAnswer = null;
+  this.configureLinting = true;
 });
 
 Given(/^the project will have "([^"]*)" visibility$/, function (visibility) {
@@ -129,7 +129,7 @@ When(/^the project is scaffolded$/, async function () {
         ...this.unitTestAnswer && {[jsCoreQuestionNames.UNIT_TEST_FRAMEWORK]: this.unitTestFrameworkAnswer},
         [commonQuestionNames.INTEGRATION_TESTS]: this.integrationTestAnswer,
         ...null !== this.ciAnswer && {[commonQuestionNames.CI_SERVICE]: this.ciAnswer || 'Other'},
-        [questionNames.CONFIGURE_LINTING]: this.transpileAndLint,
+        [questionNames.CONFIGURE_LINTING]: this.configureLinting,
         [questionNames.PROJECT_TYPE_CHOICE]: this.projectTypeChoiceAnswer || 'Other',
         [questionNames.HOST]: 'Other',
         ...['Package', 'CLI'].includes(this.projectType) && {
@@ -161,7 +161,7 @@ Then('the expected files for a(n) {string} are generated', async function (proje
   await Promise.all([
     assertThatProperDirectoriesAreIgnoredFromEslint(
       projectType,
-      this.transpileAndLint,
+      this.configureLinting,
       this.tested,
       this.buildDirectory
     ),
@@ -169,12 +169,12 @@ Then('the expected files for a(n) {string} are generated', async function (proje
       projectType,
       visibility: this.visibility,
       tested: this.tested,
-      transpileAndLint: this.transpileAndLint,
+      configureLinting: this.configureLinting,
       projectName: this.projectName,
       npmAccount: this.npmAccount
     }),
     assertThatNpmConfigDetailsAreConfiguredCorrectlyFor(projectType),
-    assertThatDocumentationIsDefinedAppropriately(projectType, this.projectName, this.transpileAndLint)
+    assertThatDocumentationIsDefinedAppropriately(projectType, this.projectName, this.configureLinting)
   ]);
 });
 
