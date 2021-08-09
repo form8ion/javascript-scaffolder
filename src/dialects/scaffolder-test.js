@@ -33,10 +33,14 @@ suite('scaffold dialect', () => {
   });
 
   test('that typescript is scaffolded when chosen', async () => {
+    const typescriptConfigs = any.simpleObject();
     const typescriptResults = any.simpleObject();
-    typescript.default.withArgs().resolves(typescriptResults);
+    typescript.default.withArgs({config: typescriptConfigs}).resolves(typescriptResults);
 
-    assert.equal(await scaffoldDialect({dialect: dialects.TYPESCRIPT}), typescriptResults);
+    assert.equal(
+      await scaffoldDialect({dialect: dialects.TYPESCRIPT, configs: {typescript: typescriptConfigs}}),
+      typescriptResults
+    );
   });
 
   test('that neither babel nor typescript are scaffolded when not chosen', async () => {

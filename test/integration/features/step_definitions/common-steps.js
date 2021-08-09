@@ -110,7 +110,8 @@ When(/^the project is scaffolded$/, async function () {
       configs: {
         eslint: {scope: this.eslintScope},
         babelPreset: this.babelPreset,
-        commitlint: {name: any.word(), packageName: any.word()}
+        commitlint: {name: any.word(), packageName: any.word()},
+        ...this.typescriptConfig && {typescript: this.typescriptConfig}
       },
       ciServices: {[any.word()]: {scaffolder: foo => ({foo}), public: true}},
       applicationTypes: {

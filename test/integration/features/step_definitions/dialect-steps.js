@@ -7,7 +7,12 @@ import any from '@travi/any';
 import {assertDevDependencyIsInstalled} from './common-steps';
 
 Given('the project will use the {string} dialect', async function (dialect) {
+  const {dialects} = require('@form8ion/javascript-core');
   this.dialect = dialect;
+
+  if (dialects.TYPESCRIPT === dialect) {
+    this.typescriptConfig = {scope: `@${any.word()}`};
+  }
 });
 
 Given('a babel preset is provided', async function () {
