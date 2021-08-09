@@ -43,7 +43,6 @@ Feature: Dialects
     Then no error is thrown
     And the "esm" dialect is configured
 
-  @wip
   Scenario: TypeScript
     Given the project will be an "any"
     And the project will use the "typescript" dialect

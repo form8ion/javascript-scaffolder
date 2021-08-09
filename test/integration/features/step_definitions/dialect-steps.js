@@ -37,6 +37,10 @@ Then('the {string} dialect is configured', async function (dialect) {
 
   if (dialects.TYPESCRIPT === dialect) {
     assert.include(eslintConfig.extends, `${this.eslintScope}/typescript`);
+    assert.deepEqual(
+      JSON.parse(await fs.readFile(`${process.cwd()}/tsconfig.json`, 'utf-8')),
+      {extends: `${this.typescriptConfig.scope}/tsconfig`}
+    );
 
     assert.isFalse(await fileExists(`${process.cwd()}/.babelrc`));
   }

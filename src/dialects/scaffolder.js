@@ -7,7 +7,7 @@ export default function ({dialect, projectRoot, configs, tests, buildDirectory})
     case dialects.BABEL:
       return scaffoldBabel({preset: configs.babelPreset, projectRoot, tests, buildDirectory});
     case dialects.TYPESCRIPT:
-      return scaffoldTypescript({config: configs.typescript});
+      return scaffoldTypescript({config: configs.typescript, projectRoot});
     default:
       return {eslint: {}};
   }
