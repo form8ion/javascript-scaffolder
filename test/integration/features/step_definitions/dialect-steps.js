@@ -41,6 +41,8 @@ Then('the {string} dialect is configured', async function (dialect) {
       JSON.parse(await fs.readFile(`${process.cwd()}/tsconfig.json`, 'utf-8')),
       {extends: `${this.typescriptConfig.scope}/tsconfig`}
     );
+    assertDevDependencyIsInstalled(this.execa, 'typescript');
+    assertDevDependencyIsInstalled(this.execa, `${this.typescriptConfig.scope}/tsconfig`);
 
     assert.isFalse(await fileExists(`${process.cwd()}/.babelrc`));
   }

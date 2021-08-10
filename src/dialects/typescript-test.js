@@ -6,6 +6,7 @@ import scaffoldTypescriptDialect from './typescript';
 
 suite('typescript dialect', () => {
   let sandbox;
+  const scope = `@${any.word()}`;
 
   setup(() => {
     sandbox = sinon.createSandbox();
@@ -23,7 +24,6 @@ suite('typescript dialect', () => {
   });
 
   test('that the tsconfig extends the scoped package', async () => {
-    const scope = `@${any.word()}`;
     const projectRoot = any.string();
 
     await scaffoldTypescriptDialect({config: {scope}, projectRoot});
@@ -33,5 +33,11 @@ suite('typescript dialect', () => {
       `${projectRoot}/tsconfig.json`,
       JSON.stringify({extends: `${scope}/tsconfig`})
     );
+  });
+
+  test('that dev dependencies are defined', async () => {
+    const {devDependencies} = await scaffoldTypescriptDialect({config: {scope}});
+
+    assert.deepEqual(devDependencies, ['typescript', `${scope}/tsconfig`]);
   });
 });
