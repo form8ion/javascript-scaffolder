@@ -53,7 +53,7 @@
     }
   },
   "devDependencies": {
-    "@babel/register": "7.14.5",
+    "@babel/register": "7.15.3",
     "@cucumber/cucumber": "7.3.1",
     "@rollup/plugin-node-resolve": "13.0.4",
     "@travi/any": "2.0.17",
