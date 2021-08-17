@@ -41,7 +41,7 @@
     "access": "public"
   },
   "engines": {
-    "node": ">=12.17"
+    "node": ">=12.20"
   },
   "files": [
     "lib/",
