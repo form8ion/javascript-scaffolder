@@ -94,7 +94,7 @@
     "@form8ion/core": "1.4.2",
     "@form8ion/eslint": "2.0.1",
     "@form8ion/husky": "1.3.0",
-    "@form8ion/javascript-core": "^2.13.0-beta.1",
+    "@form8ion/javascript-core": "^3.0.0",
     "@form8ion/lift-javascript": "3.1.4",
     "@form8ion/overridable-prompts": "^1.1.0",
     "@hapi/hoek": "^9.2.0",
