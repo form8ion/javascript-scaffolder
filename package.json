@@ -84,7 +84,7 @@
     "remark-preset-lint-travi": "2.0.2",
     "remark-toc": "8.0.0",
     "remark-usage": "10.0.0",
-    "rollup": "2.56.2",
+    "rollup": "2.56.3",
     "rollup-plugin-auto-external": "2.0.0",
     "sinon": "11.1.2",
     "testdouble": "3.16.1",
