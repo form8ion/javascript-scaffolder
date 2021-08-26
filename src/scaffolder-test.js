@@ -46,7 +46,6 @@ suite('javascript project scaffolder', () => {
   const projectTypeEslintConfigs = any.listOf(any.string);
   const projectTypeNextSteps = any.listOf(any.simpleObject);
   const hostResults = any.simpleObject();
-  const dialectResults = {...any.simpleObject(), eslint: any.simpleObject()};
   const npmResults = any.simpleObject();
   const chosenHost = any.word();
   const chosenDialect = any.word();
@@ -81,13 +80,19 @@ suite('javascript project scaffolder', () => {
   const monorepoTypes = any.simpleObject();
   const configureLinting = any.boolean();
   const projectTypeBuildDirectory = any.string();
-  const packageProperties = any.simpleObject();
+  const projectTypePackageProperties = any.simpleObject();
+  const dialectPackageProperties = any.simpleObject();
   const projectTypeTags = any.listOf(any.word);
   const packageManager = any.word();
+  const dialectResults = {
+    ...any.simpleObject(),
+    eslint: any.simpleObject(),
+    packageProperties: dialectPackageProperties
+  };
   const projectTypeResults = {
     ...any.simpleObject(),
     buildDirectory: projectTypeBuildDirectory,
-    packageProperties,
+    packageProperties: projectTypePackageProperties,
     eslintConfigs: projectTypeEslintConfigs,
     nextSteps: projectTypeNextSteps,
     tags: projectTypeTags
@@ -111,7 +116,7 @@ suite('javascript project scaffolder', () => {
     vcs: vcsDetails,
     author: {name: authorName, email: authorEmail, url: authorUrl},
     description,
-    packageProperties,
+    packageProperties: {...projectTypePackageProperties, ...dialectPackageProperties},
     pathWithinParent
   };
   const commonPromptAnswers = {

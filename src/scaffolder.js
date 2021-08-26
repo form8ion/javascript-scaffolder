@@ -125,7 +125,7 @@ export async function scaffold(options) {
     vcs,
     author: {name: authorName, email: authorEmail, url: authorUrl},
     description,
-    packageProperties: projectTypeResults.packageProperties,
+    packageProperties: {...projectTypeResults.packageProperties, ...dialectResults.packageProperties},
     pathWithinParent
   });
 

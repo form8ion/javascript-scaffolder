@@ -9,6 +9,7 @@ export default async function ({config, projectRoot}) {
   return {
     eslint: {configs: eslintConfigs},
     eslintConfigs,
-    devDependencies: ['typescript', shareableTsConfigPackage]
+    devDependencies: ['typescript', shareableTsConfigPackage],
+    packageProperties: {types: 'lib/index.d.ts'}
   };
 }
