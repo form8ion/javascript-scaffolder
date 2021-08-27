@@ -190,6 +190,87 @@ suite('options validator', () => {
       });
     });
 
+    suite('typescript', () => {
+      test('that `scope` is required', () => assert.throws(
+        () => validate({
+          projectRoot: any.string(),
+          projectName: any.string(),
+          visibility: any.fromList(['Public', 'Private']),
+          license: any.string(),
+          vcs: {host: any.word(), owner: any.word(), name: any.word()},
+          ci: any.string(),
+          description: any.string(),
+          configs: {typescript: {}}
+        }),
+        '"configs.typescript.scope" is required'
+      ));
+
+      test('that `scope` must be a string', () => assert.throws(
+        () => validate({
+          projectRoot: any.string(),
+          projectName: any.string(),
+          visibility: any.fromList(['Public', 'Private']),
+          license: any.string(),
+          vcs: {host: any.word(), owner: any.word(), name: any.word()},
+          ci: any.string(),
+          description: any.string(),
+          configs: {typescript: {scope: any.simpleObject()}}
+        }),
+        '"configs.typescript.scope" must be a string'
+      ));
+
+      test('that `scope` starts with `@`', () => {
+        const scope = any.word();
+
+        assert.throws(
+          () => validate({
+            projectRoot: any.string(),
+            projectName: any.string(),
+            visibility: any.fromList(['Public', 'Private']),
+            license: any.string(),
+            vcs: {host: any.word(), owner: any.word(), name: any.word()},
+            ci: any.string(),
+            description: any.string(),
+            configs: {typescript: {scope}}
+          }),
+          `"configs.typescript.scope" with value "${scope}" fails to match the scope pattern`
+        );
+      });
+
+      test('that `scope` does not contain a `/`', () => {
+        const scope = `@${any.word()}/${any.word()}`;
+
+        assert.throws(
+          () => validate({
+            projectRoot: any.string(),
+            projectName: any.string(),
+            visibility: any.fromList(['Public', 'Private']),
+            license: any.string(),
+            vcs: {host: any.word(), owner: any.word(), name: any.word()},
+            ci: any.string(),
+            description: any.string(),
+            configs: {typescript: {scope}}
+          }),
+          `"configs.typescript.scope" with value "${scope}" fails to match the scope pattern`
+        );
+      });
+
+      test('that scope can contain a `-`', () => {
+        const scope = `@${any.word()}-${any.word()}`;
+
+        validate({
+          projectRoot: any.string(),
+          projectName: any.string(),
+          visibility: any.fromList(['Public', 'Private']),
+          license: any.string(),
+          vcs: {host: any.word(), owner: any.word(), name: any.word()},
+          description: any.string(),
+          configs: {typescript: {scope}},
+          unitTestFrameworks: {}
+        });
+      });
+    });
+
     suite('commitlint', () => {
       test('that `packageName` is required', () => assert.throws(
         () => validate({

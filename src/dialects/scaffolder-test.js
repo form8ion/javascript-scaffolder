@@ -3,6 +3,7 @@ import sinon from 'sinon';
 import any from '@travi/any';
 import {assert} from 'chai';
 import * as babel from './babel';
+import * as typescript from './typescript';
 import scaffoldDialect from './scaffolder';
 
 suite('scaffold dialect', () => {
@@ -13,6 +14,7 @@ suite('scaffold dialect', () => {
     sandbox = sinon.createSandbox();
 
     sandbox.stub(babel, 'default');
+    sandbox.stub(typescript, 'default');
   });
 
   teardown(() => sandbox.restore());
@@ -30,8 +32,20 @@ suite('scaffold dialect', () => {
     );
   });
 
-  test('that babel is not scaffolded when not chosen', async () => {
-    assert.deepEqual(await scaffoldDialect({dialect: any.word()}), {});
+  test('that typescript is scaffolded when chosen', async () => {
+    const typescriptConfigs = any.simpleObject();
+    const typescriptResults = any.simpleObject();
+    typescript.default.withArgs({config: typescriptConfigs, projectRoot}).resolves(typescriptResults);
+
+    assert.equal(
+      await scaffoldDialect({dialect: dialects.TYPESCRIPT, configs: {typescript: typescriptConfigs}, projectRoot}),
+      typescriptResults
+    );
+  });
+
+  test('that neither babel nor typescript are scaffolded when not chosen', async () => {
+    assert.deepEqual(await scaffoldDialect({dialect: any.word()}), {eslint: {}});
     assert.notCalled(babel.default);
+    assert.notCalled(typescript.default);
   });
 });

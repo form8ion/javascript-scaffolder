@@ -13,13 +13,13 @@ function assertThatPackageSpecificDetailsAreDefinedCorrectly(
   packageDetails,
   npmAccount,
   projectName,
-  transpileAndLint,
+  configureLinting,
   visibility
 ) {
   assert.equal(packageDetails.name, `@${npmAccount}/${projectName}`);
   assert.equal(packageDetails.version, '0.0.0-semantically-released');
 
-  if (transpileAndLint) {
+  if (configureLinting) {
     assert.equal(packageDetails.main, 'lib/index.cjs.js');
     assert.equal(packageDetails.module, 'lib/index.es.js');
     assert.deepEqual(packageDetails.files, ['example.js', 'lib/']);
@@ -65,17 +65,17 @@ export async function assertThatPackageDetailsAreConfiguredCorrectlyFor({
   projectType,
   visibility,
   tested,
-  transpileAndLint,
+  configureLinting,
   projectName,
   npmAccount
 }) {
   const packageDetails = JSON.parse(await promises.readFile(`${process.cwd()}/package.json`));
 
-  if (tested && 'package' === projectType && transpileAndLint) {
+  if (tested && 'package' === projectType && configureLinting) {
     assert.equal(packageDetails.scripts.test, 'npm-run-all --print-label build --parallel lint:* --parallel test:*');
   } else if (tested) {
     assert.equal(packageDetails.scripts.test, 'npm-run-all --print-label --parallel lint:* --parallel test:*');
-  // } else if ('package' === projectType && transpileAndLint) {
+  // } else if ('package' === projectType && configureLinting) {
   //   assert.equal(packageDetails.scripts.test, 'npm-run-all --print-label build --parallel lint:*');
   } else {
     assert.equal(packageDetails.scripts.test, 'npm-run-all --print-label --parallel lint:*');
@@ -92,7 +92,7 @@ export async function assertThatPackageDetailsAreConfiguredCorrectlyFor({
       packageDetails,
       npmAccount,
       projectName,
-      transpileAndLint,
+      configureLinting,
       visibility
     );
   } else {

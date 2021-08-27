@@ -7,11 +7,11 @@ import {Given, Then} from '@cucumber/cucumber';
 
 export async function assertThatProperDirectoriesAreIgnoredFromEslint(
   projectType,
-  transpileAndLint,
+  configureLinting,
   unitTested,
   buildDirectory
 ) {
-  if (transpileAndLint) {
+  if (configureLinting) {
     const eslintIgnoreDetails = (await fs.readFile(`${process.cwd()}/.eslintignore`)).toString().split(EOL);
 
     assert.include(eslintIgnoreDetails, `/${buildDirectory}/`);
