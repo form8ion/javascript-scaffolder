@@ -27,7 +27,10 @@ async function assertTypescriptDialectDetailsAreCorrect(eslintConfig, eslintScop
   assert.include(eslintConfig.extends, `${eslintScope}/typescript`);
   assert.deepEqual(
     JSON.parse(tsConfigContents),
-    {extends: `${typescriptConfig.scope}/tsconfig`}
+    {
+      $schema: 'https://json.schemastore.org/tsconfig',
+      extends: `${typescriptConfig.scope}/tsconfig`
+    }
   );
   assert.equal(JSON.parse(packageContents).types, 'lib/index.d.ts');
   assertDevDependencyIsInstalled(execa, 'typescript');

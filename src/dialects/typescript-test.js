@@ -31,7 +31,10 @@ suite('typescript dialect', () => {
     assert.calledWith(
       fs.writeFile,
       `${projectRoot}/tsconfig.json`,
-      JSON.stringify({extends: `${scope}/tsconfig`})
+      JSON.stringify({
+        $schema: 'https://json.schemastore.org/tsconfig',
+        extends: `${scope}/tsconfig`
+      })
     );
   });
 

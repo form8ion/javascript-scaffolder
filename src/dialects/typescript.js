@@ -4,7 +4,13 @@ export default async function ({config, projectRoot}) {
   const eslintConfigs = ['typescript'];
   const shareableTsConfigPackage = `${config.scope}/tsconfig`;
 
-  await fs.writeFile(`${projectRoot}/tsconfig.json`, JSON.stringify({extends: shareableTsConfigPackage}));
+  await fs.writeFile(
+    `${projectRoot}/tsconfig.json`,
+    JSON.stringify({
+      $schema: 'https://json.schemastore.org/tsconfig',
+      extends: shareableTsConfigPackage
+    })
+  );
 
   return {
     eslint: {configs: eslintConfigs},
