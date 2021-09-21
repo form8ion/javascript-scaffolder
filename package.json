@@ -55,7 +55,7 @@
   "devDependencies": {
     "@babel/register": "7.15.3",
     "@cucumber/cucumber": "7.3.1",
-    "@rollup/plugin-node-resolve": "13.0.4",
+    "@rollup/plugin-node-resolve": "13.0.5",
     "@travi/any": "2.0.18",
     "@travi/babel-preset": "3.0.66",
     "@travi/eslint-config": "1.0.81",
