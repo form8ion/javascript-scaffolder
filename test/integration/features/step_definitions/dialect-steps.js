@@ -18,7 +18,13 @@ async function assertBabelDialectDetailsAreCorrect(babelPreset, buildDirectory, 
   assertDevDependencyIsInstalled(execa, babelPreset.packageName);
 }
 
-async function assertTypescriptDialectDetailsAreCorrect(eslintConfig, eslintScope, typescriptConfig, execa) {
+async function assertTypescriptDialectDetailsAreCorrect(
+  eslintConfig,
+  eslintScope,
+  typescriptConfig,
+  {vcsIgnore},
+  execa
+) {
   const [tsConfigContents, packageContents] = await Promise.all([
     fs.readFile(`${process.cwd()}/tsconfig.json`, 'utf-8'),
     fs.readFile(`${process.cwd()}/package.json`, 'utf-8')
@@ -36,6 +42,7 @@ async function assertTypescriptDialectDetailsAreCorrect(eslintConfig, eslintScop
   assertDevDependencyIsInstalled(execa, 'typescript');
   assertDevDependencyIsInstalled(execa, `${typescriptConfig.scope}/tsconfig`);
   assertDevDependencyIsInstalled(execa, `${eslintScope}/eslint-config-typescript`);
+  assert.include(vcsIgnore.files, 'tsconfig.tsbuildinfo');
 
   await assertBabelIsNotConfigured();
 }
@@ -65,12 +72,18 @@ Then('the {string} dialect is configured', async function (dialect) {
   const {dialects} = require('@form8ion/javascript-core');
   const eslintConfig = load(await fs.readFile(`${process.cwd()}/.eslintrc.yml`, 'utf-8'));
 
-  const {buildDirectory, babelPreset, typescriptConfig, eslintScope} = this;
+  const {buildDirectory, babelPreset, typescriptConfig, eslintScope, scaffoldResult} = this;
 
   if (dialects.BABEL === dialect) await assertBabelDialectDetailsAreCorrect(babelPreset, buildDirectory, this.execa);
 
   if (dialects.TYPESCRIPT === dialect) {
-    await assertTypescriptDialectDetailsAreCorrect(eslintConfig, eslintScope, typescriptConfig, this.execa);
+    await assertTypescriptDialectDetailsAreCorrect(
+      eslintConfig,
+      eslintScope,
+      typescriptConfig,
+      scaffoldResult,
+      this.execa
+    );
   }
 
   if (dialects.COMMON_JS === dialect) {

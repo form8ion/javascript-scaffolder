@@ -18,7 +18,7 @@ Feature: Dialects
     And nvm is properly configured
     And no babel preset is provided
     When the project is scaffolded
-    And an error is reported about the missing babel preset
+    Then an error is reported about the missing babel preset
 
   Scenario: Common JS
     Given the project will be an "any"

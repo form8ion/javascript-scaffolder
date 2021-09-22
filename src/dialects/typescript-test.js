@@ -49,4 +49,10 @@ suite('typescript dialect', () => {
 
     assert.deepEqual(packageProperties, {types: 'lib/index.d.ts'});
   });
+
+  test('that files to ignore from VCS are defined', async () => {
+    const {vcsIgnore: {files}} = await scaffoldTypescriptDialect({config: {}});
+
+    assert.deepEqual(files, ['tsconfig.tsbuildinfo']);
+  });
 });
