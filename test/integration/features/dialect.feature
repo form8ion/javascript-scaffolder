@@ -54,3 +54,15 @@ Feature: Dialects
     When the project is scaffolded
     Then no error is thrown
     And the "typescript" dialect is configured
+
+  Scenario: TypeScript package
+    Given the project will be an "Package"
+    And the project will use the "typescript" dialect
+    And the default answers are chosen
+    And the npm cli is logged in
+    And the project will not be tested
+    And nvm is properly configured
+    And a babel preset is provided
+    When the project is scaffolded
+    Then no error is thrown
+    And the package is bundled with rollup

@@ -46,7 +46,7 @@ export default async function ({
         decisions
       });
     case projectTypes.CLI:
-      return scaffoldCliType({packageName, visibility, projectRoot});
+      return scaffoldCliType({packageName, visibility, projectRoot, dialect});
     case projectTypes.MONOREPO:
       return scaffoldMonorepoType({monorepoTypes, projectRoot, packageManager, decisions});
     case 'Other':

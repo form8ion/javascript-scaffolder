@@ -26,11 +26,12 @@ suite('cli project-type', () => {
   test('that details specific to a cli project-type are scaffolded', async () => {
     const visibility = 'Private';
     const rollupResults = any.simpleObject();
-    rollupScaffolder.scaffold.withArgs({projectRoot}).resolves(rollupResults);
+    const dialect = any.word();
+    rollupScaffolder.scaffold.withArgs({projectRoot, dialect}).resolves(rollupResults);
     defineBadges.default.withArgs(packageName, visibility).returns(badges);
 
     assert.deepEqual(
-      await scaffoldCli({projectRoot, configs, packageName, visibility}),
+      await scaffoldCli({projectRoot, configs, packageName, visibility, dialect}),
       {
         ...rollupResults,
         scripts: {

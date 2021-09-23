@@ -34,7 +34,7 @@ export default async function ({projectRoot, projectName, visibility, packageNam
 
   const pathToCreatedSrcDirectory = await mkdir(`${projectRoot}/src`);
   const [rollupResults] = await Promise.all([
-    scaffoldRollup({projectRoot}),
+    scaffoldRollup({projectRoot, dialect}),
     await createExample(projectRoot, projectName),
     touch(`${pathToCreatedSrcDirectory}/index.js`)
   ]);

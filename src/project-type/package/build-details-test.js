@@ -36,7 +36,6 @@ suite('package build details', () => {
     sandbox.stub(camelcase, 'default');
 
     mkdir.default.withArgs(`${projectRoot}/src`).resolves(pathToCreatedSrcDirectory);
-    rollupScaffolder.scaffold.withArgs({projectRoot}).resolves(rollupResults);
     templatePath.default.withArgs('example.mustache').returns(pathToExampleTemplate);
     fsPromises.readFile.withArgs(pathToExampleTemplate, 'utf8').resolves(exampleTemplateContent);
     camelcase.default.withArgs(projectName).returns(camelizedProjectName);
@@ -52,7 +51,10 @@ suite('package build details', () => {
   });
 
   test('that a modern-js project is defined correctly', async () => {
-    const results = await buildDetails({dialect: dialects.BABEL, projectRoot, projectName});
+    const dialect = dialects.BABEL;
+    rollupScaffolder.scaffold.withArgs({projectRoot, dialect}).resolves(rollupResults);
+
+    const results = await buildDetails({dialect, projectRoot, projectName});
 
     assert.deepEqual(
       results,

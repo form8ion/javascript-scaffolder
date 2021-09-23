@@ -20,6 +20,7 @@ export default async function ({
 }) {
   info('Scaffolding Package Details');
 
+  const detailsForBuild = await buildDetails({projectRoot, projectName, visibility, packageName, dialect});
   const details = {
     ...dialects.BABEL === dialect && {
       packageProperties: {
@@ -28,11 +29,20 @@ export default async function ({
         sideEffects: false,
         files: ['lib/']
       },
-      ...await buildDetails({projectRoot, projectName, visibility, packageName, dialect})
+      ...detailsForBuild
+    },
+    ...dialects.TYPESCRIPT === dialect && {
+      packageProperties: {
+        main: 'lib/index.cjs.js',
+        module: 'lib/index.es.js',
+        sideEffects: false,
+        files: ['lib/']
+      },
+      ...detailsForBuild
     },
     ...dialects.COMMON_JS === dialect && {
       packageProperties: {files: ['index.js']},
-      ...await buildDetails({projectRoot, projectName, dialect})
+      ...detailsForBuild
     }
   };
 

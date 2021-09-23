@@ -4,8 +4,8 @@ import defineBadges from './package/badges';
 
 const defaultBuildDirectory = 'bin';
 
-export default async function ({packageName, visibility, projectRoot}) {
-  const rollupResults = await scaffoldRollup({projectRoot});
+export default async function ({packageName, visibility, projectRoot, dialect}) {
+  const rollupResults = await scaffoldRollup({projectRoot, dialect});
 
   return deepmerge(
     rollupResults,

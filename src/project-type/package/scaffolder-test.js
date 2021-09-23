@@ -33,6 +33,7 @@ suite('package project-type', () => {
   const chosenType = any.word();
   const tests = any.simpleObject();
   const decisions = any.simpleObject();
+  const buildDetailsResults = any.simpleObject();
   const typeScaffoldingResults = {
     dependencies: scaffoldedTypeDependencies,
     devDependencies: scaffoldedTypeDevDependencies,
@@ -59,8 +60,7 @@ suite('package project-type', () => {
 
   teardown(() => sandbox.restore());
 
-  test('that details specific to a package project-type are scaffolded', async () => {
-    const buildDetailsResults = any.simpleObject();
+  test('that details specific to a modern-js package are scaffolded', async () => {
     const dialect = jsCore.dialects.BABEL;
     defineBadges.default.withArgs(packageName, visibility).returns(badges);
     buildDetails.default
@@ -102,8 +102,54 @@ suite('package project-type', () => {
     );
   });
 
-  test('that build details are not included when the project will not be transpiled', async () => {
+  test('that details specific to a typescript package are scaffolded', async () => {
+    const dialect = jsCore.dialects.TYPESCRIPT;
     defineBadges.default.withArgs(packageName, visibility).returns(badges);
+    buildDetails.default
+      .withArgs({projectRoot, projectName, visibility, packageName, dialect})
+      .resolves(buildDetailsResults);
+
+    assert.deepEqual(
+      await scaffoldPackage({
+        projectRoot,
+        projectName,
+        packageName,
+        packageManager,
+        visibility,
+        scope,
+        packageTypes,
+        tests,
+        decisions,
+        dialect
+      }),
+      {
+        ...buildDetailsResults,
+        dependencies: scaffoldedTypeDependencies,
+        devDependencies: scaffoldedTypeDevDependencies,
+        scripts: scaffoldedTypeScripts,
+        vcsIgnore: {directories: scaffoldedDirectoriesToIgnore, files: scaffoldedFilesToIgnore},
+        badges,
+        packageProperties: {
+          ...commonPackageProperties,
+          sideEffects: false,
+          main: 'lib/index.cjs.js',
+          module: 'lib/index.es.js',
+          files: ['example.js', 'lib/'],
+          publishConfig: {access: 'restricted'}
+        },
+        documentation,
+        eslintConfigs,
+        nextSteps: commonNextSteps
+      }
+    );
+  });
+
+  test('that build details are not included when the project will not be transpiled', async () => {
+    const dialect = jsCore.dialects.COMMON_JS;
+    defineBadges.default.withArgs(packageName, visibility).returns(badges);
+    buildDetails.default
+      .withArgs({projectRoot, projectName, visibility, packageName, dialect})
+      .resolves(buildDetailsResults);
 
     assert.deepEqual(
       await scaffoldPackage({
@@ -116,9 +162,10 @@ suite('package project-type', () => {
         decisions,
         packageTypes,
         tests,
-        dialect: jsCore.dialects.COMMON_JS
+        dialect
       }),
       {
+        ...buildDetailsResults,
         dependencies: scaffoldedTypeDependencies,
         devDependencies: scaffoldedTypeDevDependencies,
         scripts: scaffoldedTypeScripts,

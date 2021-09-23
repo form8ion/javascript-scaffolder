@@ -19,6 +19,7 @@ suite('project-type scaffolder', () => {
   const tests = any.simpleObject();
   const decisions = any.simpleObject();
   const vcs = any.simpleObject();
+  const dialect = any.word();
 
   setup(() => {
     sandbox = sinon.createSandbox();
@@ -33,7 +34,6 @@ suite('project-type scaffolder', () => {
 
   test('that the package-type scaffolder is applied when the project-type is `Package`', async () => {
     const scope = any.word();
-    const dialect = any.word();
     const packageTypes = any.simpleObject();
 
     packageTypeScaffolder.default
@@ -103,10 +103,10 @@ suite('project-type scaffolder', () => {
   });
 
   test('that the cli-type scaffolder is applied when the project-type is `CLI`', async () => {
-    cliTypeScaffolder.default.withArgs({packageName, visibility, projectRoot}).resolves(results);
+    cliTypeScaffolder.default.withArgs({packageName, visibility, projectRoot, dialect}).resolves(results);
 
     assert.deepEqual(
-      await projectTypeScaffolder({projectType: projectTypes.CLI, packageName, visibility, vcs, projectRoot}),
+      await projectTypeScaffolder({projectType: projectTypes.CLI, packageName, visibility, vcs, projectRoot, dialect}),
       results
     );
   });
