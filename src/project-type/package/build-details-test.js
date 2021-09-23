@@ -6,10 +6,10 @@ import sinon from 'sinon';
 import any from '@travi/any';
 import * as touch from '../../../third-party-wrappers/touch';
 import * as mkdir from '../../../third-party-wrappers/make-dir';
+import * as camelcase from '../../../third-party-wrappers/camelcase';
 import * as rollupScaffolder from '../../build/rollup';
 import * as templatePath from '../../template-path';
 import buildDetails from './build-details';
-import * as camelcase from '../../../third-party-wrappers/camelcase';
 
 suite('package build details', () => {
   let sandbox;
