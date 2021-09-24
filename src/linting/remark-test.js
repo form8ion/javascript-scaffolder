@@ -29,20 +29,20 @@ suite('remark config scaffolder', () => {
     );
     assert.calledWith(
       fsPromises.writeFile,
-      `${projectRoot}/.remarkrc.js`,
-      `// https://github.com/remarkjs/remark/tree/master/packages/remark-stringify#options
-exports.settings = {
-  listItemIndent: 1,
-  emphasis: '_',
-  strong: '_',
-  bullet: '*',
-  incrementListMarker: false
-};
-
-exports.plugins = [
-  '${config}',
-  ['remark-toc', {tight: true}]
-];`
+      `${projectRoot}/.remarkrc.json`,
+      JSON.stringify({
+        settings: {
+          listItemIndent: 1,
+          emphasis: '_',
+          strong: '_',
+          bullet: '*',
+          incrementListMarker: false
+        },
+        plugins: [
+          config,
+          ['remark-toc', {tight: true}]
+        ]
+      })
     );
   });
 
@@ -65,21 +65,21 @@ exports.plugins = [
     );
     assert.calledWith(
       fsPromises.writeFile,
-      `${projectRoot}/.remarkrc.js`,
-      `// https://github.com/remarkjs/remark/tree/master/packages/remark-stringify#options
-exports.settings = {
-  listItemIndent: 1,
-  emphasis: '_',
-  strong: '_',
-  bullet: '*',
-  incrementListMarker: false
-};
-
-exports.plugins = [
-  '${config}',
-  ['remark-toc', {tight: true}],
-  ['remark-usage', {heading: 'example'}]
-];`
+      `${projectRoot}/.remarkrc.json`,
+      JSON.stringify({
+        settings: {
+          listItemIndent: 1,
+          emphasis: '_',
+          strong: '_',
+          bullet: '*',
+          incrementListMarker: false
+        },
+        plugins: [
+          config,
+          ['remark-toc', {tight: true}],
+          ['remark-usage', {heading: 'example'}]
+        ]
+      })
     );
   });
 
@@ -129,21 +129,21 @@ exports.plugins = [
     await scaffoldRemark({config, projectRoot, vcs: undefined});
     assert.calledWith(
       fsPromises.writeFile,
-      `${projectRoot}/.remarkrc.js`,
-      `// https://github.com/remarkjs/remark/tree/master/packages/remark-stringify#options
-exports.settings = {
-  listItemIndent: 1,
-  emphasis: '_',
-  strong: '_',
-  bullet: '*',
-  incrementListMarker: false
-};
-
-exports.plugins = [
-  '${config}',
-  ['remark-toc', {tight: true}],
-  ['validate-links', {repository: false}]
-];`
+      `${projectRoot}/.remarkrc.json`,
+      JSON.stringify({
+        settings: {
+          listItemIndent: 1,
+          emphasis: '_',
+          strong: '_',
+          bullet: '*',
+          incrementListMarker: false
+        },
+        plugins: [
+          config,
+          ['remark-toc', {tight: true}],
+          ['validate-links', {repository: false}]
+        ]
+      })
     );
   });
 });

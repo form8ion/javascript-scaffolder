@@ -4,30 +4,22 @@ import {dialects, projectTypes} from '@form8ion/javascript-core';
 
 export default async function ({config, projectRoot, projectType, vcs, dialect}) {
   await fsPromises.writeFile(
-    `${projectRoot}/.remarkrc.js`,
-    `// https://github.com/remarkjs/remark/tree/master/packages/remark-stringify#options
-exports.settings = {
-  listItemIndent: 1,
-  emphasis: '_',
-  strong: '_',
-  bullet: '*',
-  incrementListMarker: false
-};
-
-exports.plugins = [
-  '${config}',
-  ['remark-toc', {tight: true}]${
-  projectTypes.PACKAGE === projectType
-    ? `,
-  ['remark-usage', {heading: 'example'}]`
-    : ''
-}${
-  !vcs
-    ? `,
-  ['validate-links', {repository: false}]`
-    : ''
-}
-];`
+    `${projectRoot}/.remarkrc.json`,
+    JSON.stringify({
+      settings: {
+        listItemIndent: 1,
+        emphasis: '_',
+        strong: '_',
+        bullet: '*',
+        incrementListMarker: false
+      },
+      plugins: [
+        config,
+        ['remark-toc', {tight: true}],
+        ...projectTypes.PACKAGE === projectType ? [['remark-usage', {heading: 'example'}]] : [],
+        ...!vcs ? [['validate-links', {repository: false}]] : []
+      ]
+    })
   );
 
   return deepmerge(
