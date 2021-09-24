@@ -67,7 +67,7 @@ Feature: Dialects
     And the "typescript" dialect is configured
 
   Scenario: TypeScript package
-    Given the project will be an "Package"
+    Given the project will be a "Package"
     And the project will use the "typescript" dialect
     And the default answers are chosen
     And the npm cli is logged in
@@ -76,4 +76,5 @@ Feature: Dialects
     And a babel preset is provided
     When the project is scaffolded
     Then no error is thrown
+    And the "typescript" dialect is configured
     And the package is bundled with rollup

@@ -1,4 +1,5 @@
 import {promises as fs} from 'fs';
+import {projectTypes} from '@form8ion/javascript-core';
 import {assert} from 'chai';
 import sinon from 'sinon';
 import any from '@travi/any';
@@ -35,6 +36,27 @@ suite('typescript dialect', () => {
         $schema: 'https://json.schemastore.org/tsconfig',
         extends: `${scope}/tsconfig`,
         compilerOptions: {rootDir: 'src'},
+        include: ['src/**/*.ts']
+      })
+    );
+  });
+
+  test('that package specific details are defined when the project is a package', async () => {
+    const projectRoot = any.string();
+
+    await scaffoldTypescriptDialect({config: {scope}, projectType: projectTypes.PACKAGE, projectRoot});
+
+    assert.calledWith(
+      fs.writeFile,
+      `${projectRoot}/tsconfig.json`,
+      JSON.stringify({
+        $schema: 'https://json.schemastore.org/tsconfig',
+        extends: `${scope}/tsconfig`,
+        compilerOptions: {
+          rootDir: 'src',
+          outDir: 'lib',
+          declaration: true
+        },
         include: ['src/**/*.ts']
       })
     );

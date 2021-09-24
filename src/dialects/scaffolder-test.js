@@ -36,13 +36,15 @@ suite('scaffold dialect', () => {
     const typescriptConfigs = any.simpleObject();
     const typescriptResults = any.simpleObject();
     const testFilenamePattern = any.string();
+    const projectType = any.word();
     typescript.default
-      .withArgs({config: typescriptConfigs, projectRoot, testFilenamePattern})
+      .withArgs({config: typescriptConfigs, projectType, projectRoot, testFilenamePattern})
       .resolves(typescriptResults);
 
     assert.equal(
       await scaffoldDialect({
         dialect: dialects.TYPESCRIPT,
+        projectType,
         configs: {typescript: typescriptConfigs},
         projectRoot,
         testFilenamePattern

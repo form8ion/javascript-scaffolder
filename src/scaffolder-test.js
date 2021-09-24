@@ -223,6 +223,7 @@ suite('javascript project scaffolder', () => {
     dialects.default
       .withArgs({
         projectRoot,
+        projectType,
         configs,
         tests,
         buildDirectory: projectTypeBuildDirectory,
@@ -277,6 +278,7 @@ suite('javascript project scaffolder', () => {
         {
           configs,
           projectRoot,
+          projectType,
           tests,
           buildDirectory: projectTypeBuildDirectory,
           dialect: chosenDialect,

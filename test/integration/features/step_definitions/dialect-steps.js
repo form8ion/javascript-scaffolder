@@ -25,8 +25,10 @@ async function assertTypescriptDialectDetailsAreCorrect(
   {vcsIgnore},
   unitTestAnswer,
   testFilenamePattern,
+  projectType,
   execa
 ) {
+  const {projectTypes} = require('@form8ion/javascript-core');
   const [tsConfigContents, packageContents] = await Promise.all([
     fs.readFile(`${process.cwd()}/tsconfig.json`, 'utf-8'),
     fs.readFile(`${process.cwd()}/package.json`, 'utf-8')
@@ -39,7 +41,11 @@ async function assertTypescriptDialectDetailsAreCorrect(
       $schema: 'https://json.schemastore.org/tsconfig',
       extends: `${typescriptConfig.scope}/tsconfig`,
       compilerOptions: {
-        rootDir: 'src'
+        rootDir: 'src',
+        ...projectTypes.PACKAGE === projectType && {
+          outDir: 'lib',
+          declaration: true
+        }
       },
       include: ['src/**/*.ts'],
       ...unitTestAnswer && {exclude: [testFilenamePattern]}
@@ -86,7 +92,8 @@ Then('the {string} dialect is configured', async function (dialect) {
     eslintScope,
     scaffoldResult,
     unitTestAnswer,
-    testFilenamePattern
+    testFilenamePattern,
+    projectType
   } = this;
 
   if (dialects.BABEL === dialect) await assertBabelDialectDetailsAreCorrect(babelPreset, buildDirectory, this.execa);
@@ -99,6 +106,7 @@ Then('the {string} dialect is configured', async function (dialect) {
       scaffoldResult,
       unitTestAnswer,
       testFilenamePattern,
+      projectType,
       this.execa
     );
   }

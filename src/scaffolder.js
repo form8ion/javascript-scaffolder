@@ -87,6 +87,7 @@ export async function scaffold(options) {
       dialect,
       configs,
       projectRoot,
+      projectType,
       tests,
       buildDirectory: projectTypeResults.buildDirectory,
       testFilenamePattern: testingResults.testFilenamePattern
