@@ -8,7 +8,8 @@ export default async function ({config, projectRoot}) {
     `${projectRoot}/tsconfig.json`,
     JSON.stringify({
       $schema: 'https://json.schemastore.org/tsconfig',
-      extends: shareableTsConfigPackage
+      extends: shareableTsConfigPackage,
+      compilerOptions: {rootDir: 'src'}
     })
   );
 

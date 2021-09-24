@@ -33,7 +33,8 @@ suite('typescript dialect', () => {
       `${projectRoot}/tsconfig.json`,
       JSON.stringify({
         $schema: 'https://json.schemastore.org/tsconfig',
-        extends: `${scope}/tsconfig`
+        extends: `${scope}/tsconfig`,
+        compilerOptions: {rootDir: 'src'}
       })
     );
   });

@@ -35,7 +35,10 @@ async function assertTypescriptDialectDetailsAreCorrect(
     JSON.parse(tsConfigContents),
     {
       $schema: 'https://json.schemastore.org/tsconfig',
-      extends: `${typescriptConfig.scope}/tsconfig`
+      extends: `${typescriptConfig.scope}/tsconfig`,
+      compilerOptions: {
+        rootDir: 'src'
+      }
     }
   );
   assert.equal(JSON.parse(packageContents).types, 'lib/index.d.ts');
