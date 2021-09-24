@@ -1,6 +1,6 @@
 import {promises as fs} from 'fs';
 
-export default async function ({config, projectRoot}) {
+export default async function ({config, projectRoot, testFilenamePattern}) {
   const eslintConfigs = ['typescript'];
   const shareableTsConfigPackage = `${config.scope}/tsconfig`;
 
@@ -9,7 +9,9 @@ export default async function ({config, projectRoot}) {
     JSON.stringify({
       $schema: 'https://json.schemastore.org/tsconfig',
       extends: shareableTsConfigPackage,
-      compilerOptions: {rootDir: 'src'}
+      compilerOptions: {rootDir: 'src'},
+      include: ['src/**/*.ts'],
+      ...testFilenamePattern && {exclude: [testFilenamePattern]}
     })
   );
 

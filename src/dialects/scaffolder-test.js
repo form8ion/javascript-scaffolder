@@ -35,10 +35,18 @@ suite('scaffold dialect', () => {
   test('that typescript is scaffolded when chosen', async () => {
     const typescriptConfigs = any.simpleObject();
     const typescriptResults = any.simpleObject();
-    typescript.default.withArgs({config: typescriptConfigs, projectRoot}).resolves(typescriptResults);
+    const testFilenamePattern = any.string();
+    typescript.default
+      .withArgs({config: typescriptConfigs, projectRoot, testFilenamePattern})
+      .resolves(typescriptResults);
 
     assert.equal(
-      await scaffoldDialect({dialect: dialects.TYPESCRIPT, configs: {typescript: typescriptConfigs}, projectRoot}),
+      await scaffoldDialect({
+        dialect: dialects.TYPESCRIPT,
+        configs: {typescript: typescriptConfigs},
+        projectRoot,
+        testFilenamePattern
+      }),
       typescriptResults
     );
   });

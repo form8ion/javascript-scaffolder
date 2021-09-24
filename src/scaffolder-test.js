@@ -66,11 +66,13 @@ suite('javascript project scaffolder', () => {
   const babelPreset = {name: babelPresetName};
   const configs = {babelPreset, ...any.simpleObject()};
   const versionCategory = any.word();
+  const testFilenamePattern = any.string();
   const testingResults = {
     ...any.simpleObject(),
     eslint: {configs: testingEslintConfigs, ...testingEslintOtherDetails},
     eslintConfigs: testingEslintConfigs,
-    nextSteps: testingNextSteps
+    nextSteps: testingNextSteps,
+    testFilenamePattern
   };
   const lintingResults = any.simpleObject();
   const ciServiceResults = {...any.simpleObject(), nextSteps: ciServiceNextSteps};
@@ -219,7 +221,14 @@ suite('javascript project scaffolder', () => {
       })
       .resolves(lintingResults);
     dialects.default
-      .withArgs({projectRoot, configs, tests, buildDirectory: projectTypeBuildDirectory, dialect: chosenDialect})
+      .withArgs({
+        projectRoot,
+        configs,
+        tests,
+        buildDirectory: projectTypeBuildDirectory,
+        dialect: chosenDialect,
+        testFilenamePattern
+      })
       .resolves(dialectResults);
     npmConfig.default.resolves(npmResults);
     commitConvention.default
@@ -265,7 +274,14 @@ suite('javascript project scaffolder', () => {
 
       assert.calledWith(
         dialects.default,
-        {configs, projectRoot, tests, buildDirectory: projectTypeBuildDirectory, dialect: chosenDialect}
+        {
+          configs,
+          projectRoot,
+          tests,
+          buildDirectory: projectTypeBuildDirectory,
+          dialect: chosenDialect,
+          testFilenamePattern
+        }
       );
       assert.calledWith(npmConfig.default, {projectRoot, projectType, registries});
       assert.calledWith(

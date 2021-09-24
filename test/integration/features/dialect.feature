@@ -55,6 +55,17 @@ Feature: Dialects
     Then no error is thrown
     And the "typescript" dialect is configured
 
+  Scenario: TypeScript with unit tests
+    Given the project will be an "any"
+    And the project will use the "typescript" dialect
+    And the default answers are chosen
+    And the npm cli is logged in
+    And nvm is properly configured
+    And a babel preset is provided
+    When the project is scaffolded
+    Then no error is thrown
+    And the "typescript" dialect is configured
+
   Scenario: TypeScript package
     Given the project will be an "Package"
     And the project will use the "typescript" dialect

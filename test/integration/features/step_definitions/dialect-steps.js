@@ -23,6 +23,8 @@ async function assertTypescriptDialectDetailsAreCorrect(
   eslintScope,
   typescriptConfig,
   {vcsIgnore},
+  unitTestAnswer,
+  testFilenamePattern,
   execa
 ) {
   const [tsConfigContents, packageContents] = await Promise.all([
@@ -38,7 +40,9 @@ async function assertTypescriptDialectDetailsAreCorrect(
       extends: `${typescriptConfig.scope}/tsconfig`,
       compilerOptions: {
         rootDir: 'src'
-      }
+      },
+      include: ['src/**/*.ts'],
+      ...unitTestAnswer && {exclude: [testFilenamePattern]}
     }
   );
   assert.equal(JSON.parse(packageContents).types, 'lib/index.d.ts');
@@ -75,7 +79,15 @@ Then('the {string} dialect is configured', async function (dialect) {
   const {dialects} = require('@form8ion/javascript-core');
   const eslintConfig = load(await fs.readFile(`${process.cwd()}/.eslintrc.yml`, 'utf-8'));
 
-  const {buildDirectory, babelPreset, typescriptConfig, eslintScope, scaffoldResult} = this;
+  const {
+    buildDirectory,
+    babelPreset,
+    typescriptConfig,
+    eslintScope,
+    scaffoldResult,
+    unitTestAnswer,
+    testFilenamePattern
+  } = this;
 
   if (dialects.BABEL === dialect) await assertBabelDialectDetailsAreCorrect(babelPreset, buildDirectory, this.execa);
 
@@ -85,6 +97,8 @@ Then('the {string} dialect is configured', async function (dialect) {
       eslintScope,
       typescriptConfig,
       scaffoldResult,
+      unitTestAnswer,
+      testFilenamePattern,
       this.execa
     );
   }

@@ -34,7 +34,27 @@ suite('typescript dialect', () => {
       JSON.stringify({
         $schema: 'https://json.schemastore.org/tsconfig',
         extends: `${scope}/tsconfig`,
-        compilerOptions: {rootDir: 'src'}
+        compilerOptions: {rootDir: 'src'},
+        include: ['src/**/*.ts']
+      })
+    );
+  });
+
+  test('that the testFilenamePattern is included as an `exclude` when provided', async () => {
+    const projectRoot = any.string();
+    const testFilenamePattern = any.string();
+
+    await scaffoldTypescriptDialect({config: {scope}, projectRoot, testFilenamePattern});
+
+    assert.calledWith(
+      fs.writeFile,
+      `${projectRoot}/tsconfig.json`,
+      JSON.stringify({
+        $schema: 'https://json.schemastore.org/tsconfig',
+        extends: `${scope}/tsconfig`,
+        compilerOptions: {rootDir: 'src'},
+        include: ['src/**/*.ts'],
+        exclude: [testFilenamePattern]
       })
     );
   });

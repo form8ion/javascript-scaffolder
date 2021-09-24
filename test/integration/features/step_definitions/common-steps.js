@@ -90,6 +90,7 @@ Given(/^the default answers are chosen$/, async function () {
   this.unitTestFrameworkAnswer = 'foo';
   this.integrationTestAnswer = true;
   this.configureLinting = true;
+  this.testFilenamePattern = any.string();
 });
 
 Given(/^the project will have "([^"]*)" visibility$/, function (visibility) {
@@ -141,7 +142,12 @@ When(/^the project is scaffolded$/, async function () {
         [questionNames.DIALECT]: this.dialect
       },
       unitTestFrameworks: {
-        foo: {scaffolder: ({foo}) => ({foo})},
+        foo: {
+          scaffolder: ({foo}) => ({
+            testFilenamePattern: this.testFilenamePattern,
+            foo
+          })
+        },
         bar: {
           scaffolder: ({bar}) => ({
             eslint: {configs: this.barUnitTestFrameworkEslintConfigs},

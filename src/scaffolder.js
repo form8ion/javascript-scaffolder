@@ -79,11 +79,18 @@ export async function scaffold(options) {
     decisions,
     dialect
   });
-  const [testingResults, nodeVersion, npmResults, dialectResults] = await Promise.all([
-    scaffoldTesting({projectRoot, tests, visibility, vcs, unitTestFrameworks, decisions}),
+  const testingResults = await scaffoldTesting({projectRoot, tests, visibility, vcs, unitTestFrameworks, decisions});
+  const [nodeVersion, npmResults, dialectResults] = await Promise.all([
     scaffoldNodeVersion({projectRoot, nodeVersionCategory}),
     scaffoldNpmConfig({projectType, projectRoot, registries}),
-    scaffoldDialect({dialect, configs, projectRoot, tests, buildDirectory: projectTypeResults.buildDirectory})
+    scaffoldDialect({
+      dialect,
+      configs,
+      projectRoot,
+      tests,
+      buildDirectory: projectTypeResults.buildDirectory,
+      testFilenamePattern: testingResults.testFilenamePattern
+    })
   ]);
   const contributors = [
     ...(await Promise.all([
