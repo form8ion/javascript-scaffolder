@@ -22,7 +22,34 @@ suite('prompts', () => {
   const pathWithinParent = any.string();
   const ciServices = any.simpleObject();
   const visibility = any.word();
-  const answers = any.simpleObject();
+  const integrationTested = any.boolean();
+  const unitTested = any.boolean();
+  const tests = {unit: unitTested, integration: integrationTested};
+  const authorName = any.string();
+  const authorEmail = any.string();
+  const authorUrl = any.url();
+  const author = {name: authorName, email: authorEmail, url: authorUrl};
+  const chosenHost = any.word();
+  const dialect = any.word();
+  const ci = any.word();
+  const nodeVersionCategory = any.word();
+  const packageManager = any.word();
+  const projectType = any.word();
+  const scope = any.word();
+  const answers = {
+    [commonPrompts.questionNames.UNIT_TESTS]: unitTested,
+    [commonPrompts.questionNames.INTEGRATION_TESTS]: integrationTested,
+    [questionNames.PROJECT_TYPE]: projectType,
+    [commonPrompts.questionNames.CI_SERVICE]: ci,
+    [questionNames.HOST]: chosenHost,
+    [questionNames.SCOPE]: scope,
+    [questionNames.NODE_VERSION_CATEGORY]: nodeVersionCategory,
+    [questionNames.AUTHOR_NAME]: authorName,
+    [questionNames.AUTHOR_EMAIL]: authorEmail,
+    [questionNames.AUTHOR_URL]: authorUrl,
+    [questionNames.PACKAGE_MANAGER]: packageManager,
+    [questionNames.DIALECT]: dialect
+  };
 
   setup(() => {
     sandbox = sinon.createSandbox();
@@ -45,9 +72,6 @@ suite('prompts', () => {
   teardown(() => sandbox.restore());
 
   test('that the user is prompted for the necessary details', async () => {
-    const authorName = any.string();
-    const authorEmail = any.string();
-    const authorUrl = any.url();
     const npmUser = any.word();
     const get = sinon.stub();
     const filteredCiServiceNames = any.listOf(any.word);
@@ -140,11 +164,22 @@ suite('prompts', () => {
           choices: [...Object.keys(hosts), new inquirer.Separator(), 'Other']
         }
       ], decisions)
-      .resolves(answers);
+      .resolves({...answers, [questionNames.CONFIGURE_LINTING]: any.word()});
 
     assert.deepEqual(
       await prompt({}, ciServices, hosts, visibility, vcs, decisions, configs),
-      {...answers, [questionNames.CONFIGURE_LINTING]: true}
+      {
+        tests,
+        projectType,
+        ci,
+        chosenHost,
+        scope,
+        nodeVersionCategory,
+        author,
+        packageManager,
+        dialect,
+        configureLinting: true
+      }
     );
   });
 
@@ -157,18 +192,29 @@ suite('prompts', () => {
 
     assert.deepEqual(
       await prompt({}, ciServices, {}, visibility, vcs, decisions),
-      {...answers, [questionNames.CONFIGURE_LINTING]: false}
+      {
+        tests,
+        projectType,
+        ci,
+        chosenHost,
+        scope,
+        nodeVersionCategory,
+        author,
+        packageManager,
+        dialect,
+        configureLinting: false
+      }
     );
   });
 
   test('that defaults are overridden by the provided options', async () => {
     const npmAccount = any.word();
-    const author = {name: any.string(), email: any.string(), url: any.url()};
+    const authorOverrides = {name: any.string(), email: any.string(), url: any.url()};
     const get = sinon.stub();
     npmConf.default.returns({get});
     prompts.prompt.resolves(answers);
 
-    await prompt({npmAccount, author}, ciServices, {}, visibility, vcs);
+    await prompt({npmAccount, author: authorOverrides}, ciServices, {}, visibility, vcs);
 
     assert.calledWith(
       prompts.prompt,
@@ -179,19 +225,19 @@ suite('prompts', () => {
     assert.calledWith(
       prompts.prompt,
       sinon.match(value => 1 === value.filter((
-        question => questionNames.AUTHOR_NAME === question.name && author.name === question.default
+        question => questionNames.AUTHOR_NAME === question.name && authorOverrides.name === question.default
       )).length)
     );
     assert.calledWith(
       prompts.prompt,
       sinon.match(value => 1 === value.filter((
-        question => questionNames.AUTHOR_EMAIL === question.name && author.email === question.default
+        question => questionNames.AUTHOR_EMAIL === question.name && authorOverrides.email === question.default
       )).length)
     );
     assert.calledWith(
       prompts.prompt,
       sinon.match(value => 1 === value.filter((
-        question => questionNames.AUTHOR_URL === question.name && author.url === question.default
+        question => questionNames.AUTHOR_URL === question.name && authorOverrides.url === question.default
       )).length)
     );
   });

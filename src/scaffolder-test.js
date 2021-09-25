@@ -1,7 +1,6 @@
 import deepmerge from 'deepmerge';
 import * as jsCore from '@form8ion/javascript-core';
 import * as jsLifter from '@form8ion/lift-javascript';
-import {questionNames as commonQuestionNames} from '@travi/language-scaffolder-prompts';
 import {assert} from 'chai';
 import any from '@travi/any';
 import sinon from 'sinon';
@@ -21,7 +20,6 @@ import * as projectTypeScaffolder from './project-type/scaffolder';
 import * as packageNameBuilder from './package-name';
 import * as documentationCommandBuilder from './documentation/generation-command';
 import {scaffold} from './scaffolder';
-import {questionNames} from './prompts/question-names';
 
 suite('javascript project scaffolder', () => {
   let sandbox;
@@ -65,7 +63,7 @@ suite('javascript project scaffolder', () => {
   const babelPresetName = any.string();
   const babelPreset = {name: babelPresetName};
   const configs = {babelPreset, ...any.simpleObject()};
-  const versionCategory = any.word();
+  const nodeVersionCategory = any.word();
   const testFilenamePattern = any.string();
   const testingResults = {
     ...any.simpleObject(),
@@ -122,23 +120,16 @@ suite('javascript project scaffolder', () => {
     pathWithinParent
   };
   const commonPromptAnswers = {
-    [questionNames.NODE_VERSION_CATEGORY]: any.word(),
-    [questionNames.PROJECT_TYPE]: projectType,
-    [questionNames.UNIT_TESTS]: unitTested,
-    [questionNames.INTEGRATION_TESTS]: integrationTested,
-    [questionNames.SCOPE]: scope,
-    [questionNames.PROJECT_TYPE]: projectType,
-    [commonQuestionNames.UNIT_TESTS]: tests.unit,
-    [commonQuestionNames.INTEGRATION_TESTS]: tests.integration,
-    [questionNames.AUTHOR_NAME]: authorName,
-    [questionNames.AUTHOR_EMAIL]: authorEmail,
-    [questionNames.AUTHOR_URL]: authorUrl,
-    [commonQuestionNames.CI_SERVICE]: chosenCiService,
-    [questionNames.HOST]: chosenHost,
-    [questionNames.NODE_VERSION_CATEGORY]: versionCategory,
-    [questionNames.CONFIGURE_LINTING]: configureLinting,
-    [questionNames.PACKAGE_MANAGER]: packageManager,
-    [questionNames.DIALECT]: chosenDialect
+    nodeVersionCategory,
+    projectType,
+    tests,
+    scope,
+    author: {name: authorName, email: authorEmail, url: authorUrl},
+    ci: chosenCiService,
+    chosenHost,
+    configureLinting,
+    packageManager,
+    dialect: chosenDialect
   };
 
   setup(() => {
@@ -235,7 +226,7 @@ suite('javascript project scaffolder', () => {
     commitConvention.default
       .withArgs({projectRoot, configs, pathWithinParent, packageManager})
       .resolves(commitConventionResults);
-    nodeVersionScaffolder.default.withArgs({projectRoot, nodeVersionCategory: versionCategory}).resolves(version);
+    nodeVersionScaffolder.default.withArgs({projectRoot, nodeVersionCategory}).resolves(version);
     optionsValidator.validate
       .withArgs(options)
       .returns({

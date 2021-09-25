@@ -1,16 +1,16 @@
 import {Separator} from 'inquirer';
 import {packageManagers, projectTypes} from '@form8ion/javascript-core';
 import {prompt as promptWithInquirer} from '@form8ion/overridable-prompts';
-import {questions as commonQuestions} from '@travi/language-scaffolder-prompts';
+import {questionNames as commonQuestionNames, questions as commonQuestions} from '@travi/language-scaffolder-prompts';
 import {warn} from '@travi/cli-messages';
 import execa from '../../third-party-wrappers/execa';
 import npmConfFactory from '../../third-party-wrappers/npm-conf';
 import buildDialectChoices from '../dialects/prompt-choices';
 import {
+  lintingPromptShouldBePresented,
   projectIsApplication,
   scopePromptShouldBePresentedFactory,
-  shouldBeScopedPromptShouldBePresented,
-  lintingPromptShouldBePresented
+  shouldBeScopedPromptShouldBePresented
 } from './conditionals';
 import {questionNames} from './question-names';
 import {scope as validateScope} from './validators';
@@ -55,7 +55,21 @@ export async function prompt(
       + 'to use your npm account name as the package scope default.');
   }
 
-  const answers = await promptWithInquirer([
+  const {
+    [commonQuestionNames.UNIT_TESTS]: unitTested,
+    [commonQuestionNames.INTEGRATION_TESTS]: integrationTested,
+    [questionNames.PROJECT_TYPE]: projectType,
+    [commonQuestionNames.CI_SERVICE]: ci,
+    [questionNames.HOST]: chosenHost,
+    [questionNames.SCOPE]: scope,
+    [questionNames.NODE_VERSION_CATEGORY]: nodeVersionCategory,
+    [questionNames.AUTHOR_NAME]: authorName,
+    [questionNames.AUTHOR_EMAIL]: authorEmail,
+    [questionNames.AUTHOR_URL]: authorUrl,
+    [questionNames.CONFIGURE_LINTING]: configureLinting,
+    [questionNames.PACKAGE_MANAGER]: packageManager,
+    [questionNames.DIALECT]: dialect
+  } = await promptWithInquirer([
     {
       name: questionNames.DIALECT,
       message: 'Which JavaScript dialect should this project follow?',
@@ -120,7 +134,15 @@ export async function prompt(
   ], decisions);
 
   return {
-    ...answers,
-    ...false !== answers[questionNames.CONFIGURE_LINTING] && {[questionNames.CONFIGURE_LINTING]: true}
+    tests: {unit: unitTested, integration: integrationTested},
+    projectType,
+    ci,
+    chosenHost,
+    scope,
+    nodeVersionCategory,
+    author: {name: authorName, email: authorEmail, url: authorUrl},
+    configureLinting: false !== configureLinting,
+    packageManager,
+    dialect
   };
 }
