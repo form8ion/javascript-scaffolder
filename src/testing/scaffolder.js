@@ -1,5 +1,5 @@
 import deepmerge from 'deepmerge';
-import {scaffoldUnitTesting} from '@form8ion/javascript-core';
+import {scaffoldUnitTesting} from '@form8ion/javascript';
 
 export default async function ({
   projectRoot,
