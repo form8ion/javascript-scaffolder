@@ -1,6 +1,6 @@
 import * as joi from '@hapi/joi';
 import hoek from '@hapi/hoek';
-import {unitTestFrameworksSchema} from '@form8ion/javascript-core';
+import {unitTestFrameworksSchema} from '@form8ion/javascript';
 
 export function validate(options) {
   const schema = joi.object().required()

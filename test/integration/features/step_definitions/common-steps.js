@@ -28,7 +28,7 @@ const stubbedNodeModules = stubbedFs.load(resolve(__dirname, '../../../../', 'no
 
 setWorldConstructor(World);
 
-let scaffold, questionNames, jsCoreQuestionNames;
+let scaffold, questionNames, jsQuestionNames;
 
 function escapeSpecialCharacters(string) {
   return string.replace(/[.*+?^$\-{}()|[\]\\]/g, '\\$&');
@@ -49,7 +49,7 @@ Before(async function () {
   this.execa = td.replace('execa');
 
   ({scaffold, questionNames} = importFresh('@travi/javascript-scaffolder'));
-  ({questionNames: jsCoreQuestionNames} = importFresh('@form8ion/javascript-core'));
+  ({questionNames: jsQuestionNames} = importFresh('@form8ion/javascript'));
 
   stubbedFs({
     node_modules: stubbedNodeModules,
@@ -128,7 +128,7 @@ When(/^the project is scaffolded$/, async function () {
         [questionNames.AUTHOR_EMAIL]: any.email(),
         [questionNames.AUTHOR_URL]: any.url(),
         [commonQuestionNames.UNIT_TESTS]: this.unitTestAnswer,
-        ...this.unitTestAnswer && {[jsCoreQuestionNames.UNIT_TEST_FRAMEWORK]: this.unitTestFrameworkAnswer},
+        ...this.unitTestAnswer && {[jsQuestionNames.UNIT_TEST_FRAMEWORK]: this.unitTestFrameworkAnswer},
         [commonQuestionNames.INTEGRATION_TESTS]: this.integrationTestAnswer,
         ...null !== this.ciAnswer && {[commonQuestionNames.CI_SERVICE]: this.ciAnswer || 'Other'},
         [questionNames.CONFIGURE_LINTING]: this.configureLinting,

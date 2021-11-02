@@ -117,5 +117,9 @@ Then('the {string} dialect is configured', async function (dialect) {
 });
 
 Then('an error is reported about the missing babel preset', async function () {
-  assert.equal(this.resultError.message, 'No babel preset provided. Cannot configure babel transpilation');
+  assert.equal(
+    this.resultError.message,
+    'No babel preset provided. Cannot configure babel transpilation',
+    this.resultError
+  );
 });
