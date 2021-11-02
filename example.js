@@ -1,6 +1,6 @@
 // ##### Dependencies:
 import yargs from 'yargs';
-import {scaffold} from '@travi/project-scaffolder';
+import {scaffold} from '@form8ion/project';
 import {scaffold as scaffoldJavaScript} from './lib/index.cjs';
 
 // ##### Register with yargs

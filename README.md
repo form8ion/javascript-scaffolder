@@ -27,6 +27,7 @@ opinionated scaffolder for JavaScript projects
       * [`description` __string__ (_optional_)](#description-string-optional)
       * [`configs` __object__ (_optional_)](#configs-object-optional)
       * [`overrides` __object__ (_optional_)](#overrides-object-optional)
+      * [`registries` __object__ (_optional_)](#registries-object-optional)
       * [`ciServices` __object__ (_optional_)](#ciservices-object-optional)
       * [`applicationTypes` __object__ (_optional_)](#applicationtypes-object-optional)
       * [`unitTestFrameworks` __object__ (_required_)](#unittestframeworks-object-required)
@@ -74,8 +75,8 @@ $ npm install @travi/javascript-scaffolder --save-prod
 ### As one of the languages for scaffolding a project
 
 This scaffolder is intended to be used to scaffold the
-[language specific details](https://github.com/travi/project-scaffolder#languages-optional)
-within the [project-scaffolder](https://github.com/travi/project-scaffolder).
+[language specific details](https://github.com/form8ion/project#languages-optional)
+within the [project-scaffolder](https://github.com/form8ion/project).
 
 #### Example
 
@@ -83,9 +84,8 @@ within the [project-scaffolder](https://github.com/travi/project-scaffolder).
 
 ```javascript
 import yargs from 'yargs';
-import {scaffold} from '@travi/project-scaffolder';
-import {scaffold as scaffoldTravisForJavaScript} from '@travi/travis-scaffolder-javascript';
-import {scaffold as scaffoldJavaScript} from '@travi/javascript-scaffolder';
+import {scaffold} from '@form8ion/project';
+import {scaffold as scaffoldJavaScript} from './lib/index.cjs';
 ```
 
 ##### Register with yargs
@@ -105,7 +105,7 @@ yargs
           commitlint: {name: '@form8ion', packageName: '@form8ion/commitlint-config'}
         },
         overrides: {npmAccount: 'form8ion'},
-        ciServices: {Travis: {scaffolder: scaffoldTravisForJavaScript, public: true}}
+        ciServices: {}
       })
     },
     overrides: {copyrightHolder: 'Matt Travi'}
@@ -246,8 +246,7 @@ $ npm test
 
 ## Related Projects
 
-* [project-scaffolder](https://npm.im/@travi/project-scaffolder)
-* [scaffolder-sub-command](https://github.com/travi/scaffolder-sub-command)
+* [project-scaffolder](https://npm.im/@form8ion/project)
 * [travis-scaffolder-javascript](https://github.com/travi/travis-scaffolder-javascript)
 * [cli](https://npm.im/@travi/cli)
 
