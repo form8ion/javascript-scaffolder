@@ -5,7 +5,6 @@ opinionated scaffolder for JavaScript projects
 <!--status-badges start -->
 
 [![Codecov](https://img.shields.io/codecov/c/github/travi/javascript-scaffolder.svg)](https://codecov.io/github/travi/javascript-scaffolder)
-[![Snyk Vulnerabilities for npm package][snyk-badge]][snyk-link]
 [![Node CI Workflow Status][github-actions-ci-badge]][github-actions-ci-link]
 
 <!--status-badges end -->
@@ -273,10 +272,6 @@ $ npm test
 [prs-link]: http://makeapullrequest.com
 
 [prs-badge]: https://img.shields.io/badge/PRs-welcome-brightgreen.svg
-
-[snyk-badge]: https://img.shields.io/snyk/vulnerabilities/npm/@travi/javascript-scaffolder
-
-[snyk-link]: https://snyk.io/test/npm/@travi/javascript-scaffolder
 
 [renovate-link]: https://renovatebot.com
 
