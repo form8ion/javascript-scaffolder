@@ -51,8 +51,10 @@ export async function prompt(
   try {
     maybeLoggedInNpmUsername = (await execa('npm', ['whoami'])).stdout;
   } catch (failedExecutionResult) {
-    warn('No logged in user found with `npm whoami`. Login with `npm login` '
-      + 'to use your npm account name as the package scope default.');
+    if (!decisions[questionNames.SCOPE]) {
+      warn('No logged in user found with `npm whoami`. Login with `npm login` '
+        + 'to use your npm account name as the package scope default.');
+    }
   }
 
   const {

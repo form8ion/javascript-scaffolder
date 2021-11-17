@@ -214,7 +214,7 @@ suite('prompts', () => {
     npmConf.default.returns({get});
     prompts.prompt.resolves(answers);
 
-    await prompt({npmAccount, author: authorOverrides}, ciServices, {}, visibility, vcs);
+    await prompt({npmAccount, author: authorOverrides}, ciServices, {}, visibility, vcs, {});
 
     assert.calledWith(
       prompts.prompt,
@@ -282,7 +282,7 @@ suite('prompts', () => {
       .returns(commonQuestions);
     prompts.prompt.resolves(answers);
 
-    await prompt({}, ciServices, {}, 'Public', vcs, null, null, pathWithinParent);
+    await prompt({}, ciServices, {}, 'Public', vcs, {}, null, pathWithinParent);
 
     assert.calledWith(
       prompts.prompt,
