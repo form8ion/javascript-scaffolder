@@ -4,7 +4,7 @@ import {assert} from 'chai';
 import {assertDevDependencyIsInstalled} from './common-steps';
 
 Then('the package is bundled with rollup', async function () {
-  const {dialects} = require('@form8ion/javascript-core');
+  const {dialects, projectTypes} = require('@form8ion/javascript-core');
   const autoExternal = 'rollup-plugin-auto-external';
   const {scripts} = JSON.parse(await fs.readFile(`${process.cwd()}/package.json`, 'utf-8'));
 
@@ -30,6 +30,11 @@ export default {
   );
   assert.equal(scripts['build:js'], 'rollup --config');
   assert.equal(scripts.watch, 'run-s \'build:js -- --watch\'');
+
+  if (projectTypes.CLI === this.projectType) {
+    assertDevDependencyIsInstalled(this.execa, '@rollup/plugin-json');
+    assertDevDependencyIsInstalled(this.execa, 'rollup-plugin-executable');
+  }
 
   if (dialects.TYPESCRIPT === dialect) {
     assert.include(vcsIgnore.directories, '.rollup.cache/');
