@@ -1,6 +1,6 @@
 import {promises as fsPromises, promises as fs} from 'fs';
 import mustache from 'mustache';
-import {dialects} from '@form8ion/javascript-core';
+import {dialects, projectTypes} from '@form8ion/javascript-core';
 import {assert} from 'chai';
 import sinon from 'sinon';
 import any from '@travi/any';
@@ -52,7 +52,9 @@ suite('package build details', () => {
 
   test('that a modern-js project is defined correctly', async () => {
     const dialect = dialects.BABEL;
-    rollupScaffolder.scaffold.withArgs({projectRoot, dialect}).resolves(rollupResults);
+    rollupScaffolder.scaffold
+      .withArgs({projectRoot, dialect, projectType: projectTypes.PACKAGE})
+      .resolves(rollupResults);
 
     const results = await buildDetails({dialect, projectRoot, projectName});
 

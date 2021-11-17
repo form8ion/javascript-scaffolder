@@ -1,11 +1,13 @@
 import deepmerge from 'deepmerge';
+import {projectTypes} from '@form8ion/javascript-core';
+
 import {scaffold as scaffoldRollup} from '../build/rollup';
 import defineBadges from './package/badges';
 
 const defaultBuildDirectory = 'bin';
 
 export default async function ({packageName, visibility, projectRoot, dialect}) {
-  const rollupResults = await scaffoldRollup({projectRoot, dialect});
+  const rollupResults = await scaffoldRollup({projectRoot, dialect, projectType: projectTypes.CLI});
 
   return deepmerge(
     rollupResults,
@@ -17,11 +19,7 @@ export default async function ({packageName, visibility, projectRoot, dialect}) 
         prepack: 'run-s build'
       },
       dependencies: ['update-notifier'],
-      devDependencies: [
-        'rimraf',
-        '@rollup/plugin-json',
-        'rollup-plugin-executable'
-      ],
+      devDependencies: ['rimraf'],
       vcsIgnore: {files: [], directories: [`/${defaultBuildDirectory}/`]},
       buildDirectory: defaultBuildDirectory,
       badges: defineBadges(packageName, visibility),

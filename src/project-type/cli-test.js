@@ -1,7 +1,10 @@
 import {promises as fsPromises} from 'fs';
+import {projectTypes} from '@form8ion/javascript-core';
+
 import {assert} from 'chai';
 import any from '@travi/any';
 import sinon from 'sinon';
+
 import * as rollupScaffolder from '../build/rollup';
 import * as defineBadges from './package/badges';
 import scaffoldCli from './cli';
@@ -27,7 +30,7 @@ suite('cli project-type', () => {
     const visibility = 'Private';
     const rollupResults = any.simpleObject();
     const dialect = any.word();
-    rollupScaffolder.scaffold.withArgs({projectRoot, dialect}).resolves(rollupResults);
+    rollupScaffolder.scaffold.withArgs({projectRoot, dialect, projectType: projectTypes.CLI}).resolves(rollupResults);
     defineBadges.default.withArgs(packageName, visibility).returns(badges);
 
     assert.deepEqual(
@@ -41,11 +44,7 @@ suite('cli project-type', () => {
           prepack: 'run-s build'
         },
         dependencies: ['update-notifier'],
-        devDependencies: [
-          'rimraf',
-          '@rollup/plugin-json',
-          'rollup-plugin-executable'
-        ],
+        devDependencies: ['rimraf'],
         vcsIgnore: {files: [], directories: ['/bin/']},
         buildDirectory: 'bin',
         badges,

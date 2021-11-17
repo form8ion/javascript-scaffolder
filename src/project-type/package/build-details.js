@@ -1,7 +1,7 @@
 import {promises as fs} from 'fs';
 import deepmerge from 'deepmerge';
 import mustache from 'mustache';
-import {dialects} from '@form8ion/javascript-core';
+import {dialects, projectTypes} from '@form8ion/javascript-core';
 import camelcase from '../../../third-party-wrappers/camelcase';
 import mkdir from '../../../third-party-wrappers/make-dir';
 import touch from '../../../third-party-wrappers/touch';
@@ -34,7 +34,7 @@ export default async function ({projectRoot, projectName, visibility, packageNam
 
   const pathToCreatedSrcDirectory = await mkdir(`${projectRoot}/src`);
   const [rollupResults] = await Promise.all([
-    scaffoldRollup({projectRoot, dialect}),
+    scaffoldRollup({projectRoot, dialect, projectType: projectTypes.PACKAGE}),
     await createExample(projectRoot, projectName),
     touch(`${pathToCreatedSrcDirectory}/index.js`)
   ]);
