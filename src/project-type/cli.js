@@ -1,7 +1,7 @@
 import deepmerge from 'deepmerge';
 import {projectTypes} from '@form8ion/javascript-core';
+import {scaffold as scaffoldRollup} from '@form8ion/rollup';
 
-import {scaffold as scaffoldRollup} from '../build/rollup';
 import defineBadges from './package/badges';
 
 const defaultBuildDirectory = 'bin';

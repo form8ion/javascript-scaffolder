@@ -1,13 +1,15 @@
 import {promises as fsPromises, promises as fs} from 'fs';
 import mustache from 'mustache';
 import {dialects, projectTypes} from '@form8ion/javascript-core';
+import * as rollupScaffolder from '@form8ion/rollup';
+
 import {assert} from 'chai';
 import sinon from 'sinon';
 import any from '@travi/any';
+
 import * as touch from '../../../third-party-wrappers/touch';
 import * as mkdir from '../../../third-party-wrappers/make-dir';
 import * as camelcase from '../../../third-party-wrappers/camelcase';
-import * as rollupScaffolder from '../../build/rollup';
 import * as templatePath from '../../template-path';
 import buildDetails from './build-details';
 

@@ -1,11 +1,11 @@
 import {promises as fsPromises} from 'fs';
 import {projectTypes} from '@form8ion/javascript-core';
+import * as rollupScaffolder from '@form8ion/rollup';
 
 import {assert} from 'chai';
 import any from '@travi/any';
 import sinon from 'sinon';
 
-import * as rollupScaffolder from '../build/rollup';
 import * as defineBadges from './package/badges';
 import scaffoldCli from './cli';
 

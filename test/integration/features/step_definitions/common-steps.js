@@ -57,8 +57,19 @@ Before(async function () {
       '@travi': {
         'javascript-scaffolder': {
           templates: {
-            'rollup.config.js': await fs.readFile(resolve(__dirname, '../../../../', 'templates/rollup.config.js')),
             'example.mustache': await fs.readFile(resolve(__dirname, '../../../../', 'templates/example.mustache'))
+          }
+        }
+      },
+      '@form8ion': {
+        rollup: {
+          templates: {
+            'rollup.config.js': await fs.readFile(resolve(
+              __dirname,
+              '../../../../',
+              'node_modules',
+              '@form8ion/rollup/templates/rollup.config.js'
+            ))
           }
         }
       },
