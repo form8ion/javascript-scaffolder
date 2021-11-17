@@ -28,7 +28,7 @@ export default async function ({packageName, visibility, projectRoot, dialect}) 
       packageProperties: {
         version: '0.0.0-semantically-released',
         bin: {},
-        files: ['bin/'],
+        files: [`${defaultBuildDirectory}/`],
         publishConfig: {access: 'Public' === visibility ? 'public' : 'restricted'}
       },
       eslintConfigs: [],
