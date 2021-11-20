@@ -121,6 +121,7 @@ export async function scaffold(options) {
   const {homepage: projectHomepage} = await scaffoldPackage({
     projectRoot,
     projectType,
+    dialect,
     contributors,
     packageName,
     license,

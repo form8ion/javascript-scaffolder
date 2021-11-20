@@ -23,6 +23,7 @@ suite('package scaffolder', () => {
     const packageDetails = {...any.simpleObject(), homepage};
     const projectRoot = any.string();
     const projectType = any.word();
+    const dialect = any.word();
     const license = any.string();
     const vcs = any.simpleObject();
     const author = any.simpleObject();
@@ -34,6 +35,7 @@ suite('package scaffolder', () => {
       .withArgs({
         packageName,
         projectType,
+        dialect,
         license,
         vcs,
         author,
@@ -48,6 +50,7 @@ suite('package scaffolder', () => {
       await scaffold({
         projectRoot,
         projectType,
+        dialect,
         contributors,
         packageName,
         license,

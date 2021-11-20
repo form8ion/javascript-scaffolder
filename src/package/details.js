@@ -1,4 +1,4 @@
-import {projectTypes} from '@form8ion/javascript-core';
+import {dialects, projectTypes} from '@form8ion/javascript-core';
 
 function projectWillBeTested(contributors) {
   return contributors
@@ -43,6 +43,7 @@ function defineVcsHostDetails(vcs, packageType, packageName, pathWithinParent) {
 export default function ({
   packageName,
   projectType,
+  dialect,
   license,
   vcs,
   author,
@@ -55,6 +56,7 @@ export default function ({
     name: packageName,
     description,
     license,
+    type: dialects.ESM === dialect ? 'module' : 'commonjs',
     ...packageProperties,
     ...defineVcsHostDetails(vcs, projectType, packageName, pathWithinParent),
     author: `${author.name}${author.email ? ` <${author.email}>` : ''}${author.url ? ` (${author.url})` : ''}`,

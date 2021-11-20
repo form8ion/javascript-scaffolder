@@ -31,7 +31,6 @@ Feature: Dialects
     Then no error is thrown
     And the "common-js" dialect is configured
 
-  @wip
   Scenario: EcmaScript Module
     Given the project will be an "any"
     And the project will use the "esm" dialect

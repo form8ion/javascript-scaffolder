@@ -1,4 +1,4 @@
-import {projectTypes} from '@form8ion/javascript-core';
+import {dialects, projectTypes} from '@form8ion/javascript-core';
 import any from '@travi/any';
 import {assert} from 'chai';
 import buildPackageDetails from './details';
@@ -243,6 +243,20 @@ suite('package details builder', () => {
       });
 
       assert.include(packageDetails, packageProperties);
+    });
+  });
+
+  suite('module format', () => {
+    test('that `commonjs` is used by default', () => {
+      const {type} = buildPackageDetails({author: {}, contributors: []});
+
+      assert.equal(type, 'commonjs');
+    });
+
+    test('that `module` is used when the project dialect is ESM', () => {
+      const {type} = buildPackageDetails({author: {}, contributors: [], dialect: dialects.ESM});
+
+      assert.equal(type, 'module');
     });
   });
 });

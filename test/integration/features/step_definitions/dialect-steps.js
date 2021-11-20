@@ -11,7 +11,14 @@ async function assertBabelIsNotConfigured() {
 }
 
 async function assertBabelDialectDetailsAreCorrect(babelPreset, buildDirectory, execa) {
-  const {presets, ignore} = JSON.parse(await fs.readFile(`${process.cwd()}/.babelrc`, 'utf-8'));
+  const [babelRcContents, packageContents] = await Promise.all([
+    fs.readFile(`${process.cwd()}/.babelrc`, 'utf-8'),
+    fs.readFile(`${process.cwd()}/package.json`, 'utf-8')
+  ]);
+  const {presets, ignore} = JSON.parse(babelRcContents);
+  const {type} = JSON.parse(packageContents);
+
+  assert.equal(type, 'commonjs');
 
   assert.deepEqual(presets, [babelPreset.name]);
   assert.deepEqual(ignore, [`./${buildDirectory}/`]);
@@ -33,6 +40,9 @@ async function assertTypescriptDialectDetailsAreCorrect(
     fs.readFile(`${process.cwd()}/tsconfig.json`, 'utf-8'),
     fs.readFile(`${process.cwd()}/package.json`, 'utf-8')
   ]);
+  const {type, types} = JSON.parse(packageContents);
+
+  assert.equal(type, 'commonjs');
 
   assert.include(eslintConfig.extends, `${eslintScope}/typescript`);
   assert.deepEqual(
@@ -51,7 +61,7 @@ async function assertTypescriptDialectDetailsAreCorrect(
       ...unitTestAnswer && {exclude: [testFilenamePattern]}
     }
   );
-  assert.equal(JSON.parse(packageContents).types, 'lib/index.d.ts');
+  assert.equal(types, 'lib/index.d.ts');
   assertDevDependencyIsInstalled(execa, 'typescript');
   assertDevDependencyIsInstalled(execa, `${typescriptConfig.scope}/tsconfig`);
   assertDevDependencyIsInstalled(execa, `${eslintScope}/eslint-config-typescript`);
@@ -61,6 +71,18 @@ async function assertTypescriptDialectDetailsAreCorrect(
 }
 
 async function assertCommonJsDialectDetailsAreCorrect() {
+  const {type} = JSON.parse(await fs.readFile(`${process.cwd()}/package.json`, 'utf-8'));
+
+  assert.equal(type, 'commonjs');
+
+  await assertBabelIsNotConfigured();
+}
+
+async function assertEsmDialectDetailsAreCorrect() {
+  const {type} = JSON.parse(await fs.readFile(`${process.cwd()}/package.json`, 'utf-8'));
+
+  assert.equal(type, 'module');
+
   await assertBabelIsNotConfigured();
 }
 
@@ -113,6 +135,10 @@ Then('the {string} dialect is configured', async function (dialect) {
 
   if (dialects.COMMON_JS === dialect) {
     await assertCommonJsDialectDetailsAreCorrect();
+  }
+
+  if (dialects.ESM === dialect) {
+    await assertEsmDialectDetailsAreCorrect();
   }
 });
 

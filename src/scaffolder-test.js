@@ -110,6 +110,7 @@ suite('javascript project scaffolder', () => {
   const packageScaffoldingInputs = {
     projectRoot,
     projectType,
+    dialect: chosenDialect,
     contributors,
     packageName,
     license,

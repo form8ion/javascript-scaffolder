@@ -1,10 +1,11 @@
-import {promises as fsPromises} from 'fs';
+import {promises as fs} from 'fs';
 import {info} from '@travi/cli-messages';
 import buildPackageDetails from './details';
 
 export default async function ({
   projectRoot,
   projectType,
+  dialect,
   contributors,
   packageName,
   license,
@@ -19,6 +20,7 @@ export default async function ({
   const packageData = await buildPackageDetails({
     packageName,
     projectType,
+    dialect,
     license,
     vcs,
     author,
@@ -28,7 +30,7 @@ export default async function ({
     pathWithinParent
   });
 
-  await fsPromises.writeFile(`${projectRoot}/package.json`, JSON.stringify(packageData));
+  await fs.writeFile(`${projectRoot}/package.json`, JSON.stringify(packageData));
 
   return {homepage: packageData.homepage};
 }

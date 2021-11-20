@@ -31,7 +31,7 @@ Feature: Package Project Type
     And the expected files for a "package" are generated
     And the expected results for a "Package" are returned to the project scaffolder
 
-  Scenario: Without testing, transpilation, or linting
+  Scenario: Simple Common JS package
     Given the project will be a "Package"
     And the project will use the "common-js" dialect
     And the project will be versioned on GitHub
