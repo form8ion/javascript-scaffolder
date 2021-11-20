@@ -13,23 +13,25 @@ function assertThatPackageSpecificDetailsAreDefinedCorrectly(
   packageDetails,
   npmAccount,
   projectName,
-  configureLinting,
+  dialect,
   visibility
 ) {
+  const {dialects} = require('@form8ion/javascript-core');
+
   assert.equal(packageDetails.name, `@${npmAccount}/${projectName}`);
   assert.equal(packageDetails.version, '0.0.0-semantically-released');
 
-  if (configureLinting) {
-    assert.equal(packageDetails.main, 'lib/index.cjs.js');
-    assert.equal(packageDetails.module, 'lib/index.es.js');
-    assert.deepEqual(packageDetails.files, ['example.js', 'lib/']);
-    assert.isFalse(packageDetails.sideEffects);
-  } else {
+  if (dialects.COMMON_JS === dialect) {
     assert.deepEqual(packageDetails.files, ['example.js', 'index.js']);
 
     assert.isUndefined(packageDetails.main);
     assert.isUndefined(packageDetails.module);
     assert.isUndefined(packageDetails.sideEffects);
+  } else {
+    assert.equal(packageDetails.main, 'lib/index.cjs.js');
+    assert.equal(packageDetails.module, 'lib/index.es.js');
+    assert.deepEqual(packageDetails.files, ['example.js', 'lib/']);
+    assert.isFalse(packageDetails.sideEffects);
   }
 
   if ('Public' === visibility) {
@@ -65,18 +67,17 @@ export async function assertThatPackageDetailsAreConfiguredCorrectlyFor({
   projectType,
   visibility,
   tested,
-  configureLinting,
+  dialect,
   projectName,
   npmAccount
 }) {
-  const packageDetails = JSON.parse(await promises.readFile(`${process.cwd()}/package.json`));
+  const {dialects} = require('@form8ion/javascript-core');
+  const packageDetails = JSON.parse(await promises.readFile(`${process.cwd()}/package.json`, 'utf-8'));
 
-  if (tested && 'package' === projectType && configureLinting) {
+  if (tested && 'package' === projectType && dialects.COMMON_JS !== dialect) {
     assert.equal(packageDetails.scripts.test, 'npm-run-all --print-label build --parallel lint:* --parallel test:*');
   } else if (tested) {
     assert.equal(packageDetails.scripts.test, 'npm-run-all --print-label --parallel lint:* --parallel test:*');
-  // } else if ('package' === projectType && configureLinting) {
-  //   assert.equal(packageDetails.scripts.test, 'npm-run-all --print-label build --parallel lint:*');
   } else {
     assert.equal(packageDetails.scripts.test, 'npm-run-all --print-label --parallel lint:*');
   }
@@ -92,7 +93,7 @@ export async function assertThatPackageDetailsAreConfiguredCorrectlyFor({
       packageDetails,
       npmAccount,
       projectName,
-      configureLinting,
+      dialect,
       visibility
     );
   } else {

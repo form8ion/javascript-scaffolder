@@ -186,6 +186,7 @@ Then('the expected files for a(n) {string} are generated', async function (proje
     assertThatPackageDetailsAreConfiguredCorrectlyFor({
       projectType,
       visibility: this.visibility,
+      dialect: this.dialect,
       tested: this.tested,
       configureLinting: this.configureLinting,
       projectName: this.projectName,
