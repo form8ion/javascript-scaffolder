@@ -31,6 +31,14 @@ export default async function ({
       },
       ...detailsForBuild
     },
+    ...dialects.ESM === dialect && {
+      packageProperties: {
+        main: 'lib/index.es.js',
+        sideEffects: false,
+        files: ['lib/']
+      },
+      ...detailsForBuild
+    },
     ...dialects.TYPESCRIPT === dialect && {
       packageProperties: {
         main: 'lib/index.cjs.js',

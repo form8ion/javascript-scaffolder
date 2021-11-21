@@ -11,6 +11,6 @@ Feature: Application Project Type
     And a babel preset is provided
     When the project is scaffolded
     And the expected details are provided for a root-level project
-    Then the expected files for an "application" are generated
+    Then the expected files for an "Application" are generated
     And repository details will be defined using the shorthand
     And the expected results for an "Application" are returned to the project scaffolder

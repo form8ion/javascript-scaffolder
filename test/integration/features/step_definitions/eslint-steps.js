@@ -12,11 +12,12 @@ export async function assertThatProperDirectoriesAreIgnoredFromEslint(
   buildDirectory
 ) {
   if (configureLinting) {
-    const eslintIgnoreDetails = (await fs.readFile(`${process.cwd()}/.eslintignore`)).toString().split(EOL);
+    const {projectTypes} = require('@form8ion/javascript-core');
+    const eslintIgnoreDetails = (await fs.readFile(`${process.cwd()}/.eslintignore`, 'utf-8')).toString().split(EOL);
 
     assert.include(eslintIgnoreDetails, `/${buildDirectory}/`);
 
-    if ('cli' === projectType) {
+    if (projectTypes.CLI === projectType) {
       assert.notInclude(eslintIgnoreDetails, '/lib/');
     } else {
       assert.notInclude(eslintIgnoreDetails, '/bin/');

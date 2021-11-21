@@ -12,6 +12,6 @@ Feature: CLI Project Type
     When the project is scaffolded
     Then repository details will be defined using the shorthand
     And the expected details are provided for a root-level project
-    And the expected files for a "cli" are generated
+    And the expected files for a "CLI" are generated
     And the package is bundled with rollup
     And the expected results for a "CLI" are returned to the project scaffolder

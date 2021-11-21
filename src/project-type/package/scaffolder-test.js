@@ -102,6 +102,47 @@ suite('package project-type', () => {
     );
   });
 
+  test('that details specific to an esm-only package are scaffolded', async () => {
+    const dialect = jsCore.dialects.ESM;
+    defineBadges.default.withArgs(packageName, visibility).returns(badges);
+    buildDetails.default
+      .withArgs({projectRoot, projectName, visibility, packageName, dialect})
+      .resolves(buildDetailsResults);
+
+    assert.deepEqual(
+      await scaffoldPackage({
+        projectRoot,
+        projectName,
+        packageName,
+        visibility,
+        dialect,
+        scope,
+        packageManager,
+        packageTypes,
+        decisions,
+        tests
+      }),
+      {
+        ...buildDetailsResults,
+        dependencies: scaffoldedTypeDependencies,
+        devDependencies: scaffoldedTypeDevDependencies,
+        scripts: scaffoldedTypeScripts,
+        vcsIgnore: {directories: scaffoldedDirectoriesToIgnore, files: scaffoldedFilesToIgnore},
+        badges,
+        packageProperties: {
+          ...commonPackageProperties,
+          main: 'lib/index.es.js',
+          files: ['example.js', 'lib/'],
+          sideEffects: false,
+          publishConfig: {access: 'restricted'}
+        },
+        documentation,
+        eslintConfigs,
+        nextSteps: commonNextSteps
+      }
+    );
+  });
+
   test('that details specific to a typescript package are scaffolded', async () => {
     const dialect = jsCore.dialects.TYPESCRIPT;
     defineBadges.default.withArgs(packageName, visibility).returns(badges);

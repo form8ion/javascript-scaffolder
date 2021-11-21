@@ -6,7 +6,9 @@ import {assert} from 'chai';
 import td from 'testdouble';
 
 function isNonConsumable(projectType) {
-  return 'application' === projectType || 'cli' === projectType;
+  const {projectTypes: {APPLICATION, CLI}} = require('@form8ion/javascript-core');
+
+  return APPLICATION === projectType || CLI === projectType;
 }
 
 function assertThatPackageSpecificDetailsAreDefinedCorrectly(
@@ -23,10 +25,14 @@ function assertThatPackageSpecificDetailsAreDefinedCorrectly(
 
   if (dialects.COMMON_JS === dialect) {
     assert.deepEqual(packageDetails.files, ['example.js', 'index.js']);
-
     assert.isUndefined(packageDetails.main);
     assert.isUndefined(packageDetails.module);
     assert.isUndefined(packageDetails.sideEffects);
+  } else if (dialects.ESM === dialect) {
+    assert.equal(packageDetails.main, 'lib/index.es.js');
+    assert.isUndefined(packageDetails.module);
+    assert.deepEqual(packageDetails.files, ['example.js', 'lib/']);
+    assert.isFalse(packageDetails.sideEffects);
   } else {
     assert.equal(packageDetails.main, 'lib/index.cjs.js');
     assert.equal(packageDetails.module, 'lib/index.es.js');
@@ -71,10 +77,10 @@ export async function assertThatPackageDetailsAreConfiguredCorrectlyFor({
   projectName,
   npmAccount
 }) {
-  const {dialects} = require('@form8ion/javascript-core');
+  const {dialects, projectTypes} = require('@form8ion/javascript-core');
   const packageDetails = JSON.parse(await promises.readFile(`${process.cwd()}/package.json`, 'utf-8'));
 
-  if (tested && 'package' === projectType && dialects.COMMON_JS !== dialect) {
+  if (tested && projectTypes.PACKAGE === projectType && dialects.COMMON_JS !== dialect) {
     assert.equal(packageDetails.scripts.test, 'npm-run-all --print-label build --parallel lint:* --parallel test:*');
   } else if (tested) {
     assert.equal(packageDetails.scripts.test, 'npm-run-all --print-label --parallel lint:* --parallel test:*');
@@ -82,13 +88,13 @@ export async function assertThatPackageDetailsAreConfiguredCorrectlyFor({
     assert.equal(packageDetails.scripts.test, 'npm-run-all --print-label --parallel lint:*');
   }
 
-  if ('application' === projectType) {
+  if (projectTypes.APPLICATION === projectType) {
     assertThatApplicationSpecificDetailsAreDefinedCorrectly(packageDetails, projectName);
   } else {
     assert.isUndefined(packageDetails.private);
   }
 
-  if ('package' === projectType) {
+  if (projectTypes.PACKAGE === projectType) {
     assertThatPackageSpecificDetailsAreDefinedCorrectly(
       packageDetails,
       npmAccount,
@@ -102,7 +108,7 @@ export async function assertThatPackageDetailsAreConfiguredCorrectlyFor({
     assert.isUndefined(packageDetails.sideEffects);
   }
 
-  if ('cli' === projectType) {
+  if (projectTypes.CLI === projectType) {
     assertThatCliSpecificDetailsAreDefinedCorrectly(packageDetails, npmAccount, projectName, visibility);
   } else {
     assert.isUndefined(packageDetails.bin);
@@ -140,7 +146,7 @@ Then('the npm cli is configured for use', async function () {
   const {packageManagers} = require('@form8ion/javascript-core');
   const [lockfileLintConfig] = await Promise.all([
     fs.readFile(`${process.cwd()}/.lockfile-lintrc.json`, 'utf-8'),
-    assertThatNpmConfigDetailsAreConfiguredCorrectlyFor(this.projectType.toLowerCase())
+    assertThatNpmConfigDetailsAreConfiguredCorrectlyFor(this.projectType)
   ]);
 
   const {type, 'allowed-hosts': allowedHosts, path} = JSON.parse(lockfileLintConfig);

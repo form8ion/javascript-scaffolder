@@ -7,10 +7,11 @@ export async function assertThatDocumentationIsDefinedAppropriately(
   projectName,
   shouldBeTranspiledAndLinted
 ) {
+  const {projectTypes} = require('@form8ion/javascript-core');
   const pathToExampleFile = `${process.cwd()}/example.js`;
-  const packageDetails = JSON.parse(await fs.readFile(`${process.cwd()}/package.json`));
+  const packageDetails = JSON.parse(await fs.readFile(`${process.cwd()}/package.json`, 'utf-8'));
 
-  if ('package' === projectType && shouldBeTranspiledAndLinted) {
+  if (projectTypes.PACKAGE === projectType && shouldBeTranspiledAndLinted) {
     const exampleContents = (await fs.readFile(pathToExampleFile)).toString();
 
     assert.equal(exampleContents, `// remark-usage-ignore-next
@@ -20,7 +21,7 @@ import ${camelcase(projectName)} from './lib/index.cjs';
     assert.isTrue(existsSync(`${process.cwd()}/src/index.js`));
     assert.isDefined(packageDetails.scripts['generate:md']);
     assert.isDefined(packageDetails.scripts['pregenerate:md']);
-  } else if ('package' === projectType && !shouldBeTranspiledAndLinted) {
+  } else if (projectTypes.PACKAGE === projectType && !shouldBeTranspiledAndLinted) {
     const exampleContents = (await fs.readFile(pathToExampleFile)).toString();
 
     assert.equal(exampleContents, `const ${camelcase(projectName)} = require('.');\n`);
