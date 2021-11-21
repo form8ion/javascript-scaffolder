@@ -79,9 +79,10 @@ async function assertCommonJsDialectDetailsAreCorrect() {
 }
 
 async function assertEsmDialectDetailsAreCorrect() {
-  const {type} = JSON.parse(await fs.readFile(`${process.cwd()}/package.json`, 'utf-8'));
+  const {type, engines} = JSON.parse(await fs.readFile(`${process.cwd()}/package.json`, 'utf-8'));
 
   assert.equal(type, 'module');
+  assert.equal(engines.node, '>=12.20');
 
   await assertBabelIsNotConfigured();
 }
