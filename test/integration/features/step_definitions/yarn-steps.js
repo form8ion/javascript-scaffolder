@@ -24,7 +24,7 @@ Then('the yarn cli is configured for use', async function () {
   const {packageManagers} = require('@form8ion/javascript-core');
   const [lockfileLintConfig] = await Promise.all([
     fs.readFile(`${process.cwd()}/.lockfile-lintrc.json`, 'utf-8'),
-    assertThatNpmConfigDetailsAreConfiguredCorrectlyFor(this.projectType.toLowerCase())
+    assertThatNpmConfigDetailsAreConfiguredCorrectlyFor(this.projectType)
   ]);
 
   const {type, 'allowed-hosts': allowedHosts, path} = JSON.parse(lockfileLintConfig);
