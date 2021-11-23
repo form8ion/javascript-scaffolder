@@ -78,11 +78,13 @@ async function assertCommonJsDialectDetailsAreCorrect() {
   await assertBabelIsNotConfigured();
 }
 
-async function assertEsmDialectDetailsAreCorrect() {
-  const {type, engines} = JSON.parse(await fs.readFile(`${process.cwd()}/package.json`, 'utf-8'));
+async function assertEsmDialectDetailsAreCorrect(execa) {
+  const {type, engines, scripts} = JSON.parse(await fs.readFile(`${process.cwd()}/package.json`, 'utf-8'));
 
   assert.equal(type, 'module');
   assert.equal(engines.node, '>=12.20');
+  assert.equal(scripts['lint:engines'], 'ls-engines');
+  assertDevDependencyIsInstalled(execa, 'ls-engines');
 
   await assertBabelIsNotConfigured();
 }
@@ -139,7 +141,7 @@ Then('the {string} dialect is configured', async function (dialect) {
   }
 
   if (dialects.ESM === dialect) {
-    await assertEsmDialectDetailsAreCorrect();
+    await assertEsmDialectDetailsAreCorrect(this.execa);
   }
 });
 

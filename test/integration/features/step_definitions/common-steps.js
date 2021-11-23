@@ -24,7 +24,8 @@ import {
 import {assertThatProperDirectoriesAreIgnoredFromEslint} from './eslint-steps';
 
 const packagePreviewDirectory = '../__package_previews__/javascript-scaffolder';
-const stubbedNodeModules = stubbedFs.load(resolve(__dirname, '../../../../', 'node_modules'));
+const pathToNodeModules = [__dirname, '..', '..', '..', '..', 'node_modules'];
+const stubbedNodeModules = stubbedFs.load(resolve(...pathToNodeModules));
 
 setWorldConstructor(World);
 
@@ -65,10 +66,11 @@ Before(async function () {
         rollup: {
           templates: {
             'rollup.config.js': await fs.readFile(resolve(
-              __dirname,
-              '../../../../',
-              'node_modules',
-              '@form8ion/rollup/templates/rollup.config.js'
+              ...pathToNodeModules,
+              '@form8ion',
+              'rollup',
+              'templates',
+              'rollup.config.js'
             ))
           }
         }
