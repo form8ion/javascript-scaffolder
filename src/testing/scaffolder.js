@@ -7,10 +7,11 @@ export default async function ({
   tests: {unit, integration},
   vcs,
   unitTestFrameworks,
-  decisions
+  decisions,
+  dialect
 }) {
   const unitResults = unit
-    ? await scaffoldUnitTesting({projectRoot, visibility, vcs, frameworks: unitTestFrameworks, decisions})
+    ? await scaffoldUnitTesting({projectRoot, visibility, vcs, frameworks: unitTestFrameworks, decisions, dialect})
     : {};
 
   return deepmerge({devDependencies: [...(unit || integration) ? ['@travi/any'] : []]}, unitResults);

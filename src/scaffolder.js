@@ -73,7 +73,15 @@ export async function scaffold(options) {
     decisions,
     dialect
   });
-  const testingResults = await scaffoldTesting({projectRoot, tests, visibility, vcs, unitTestFrameworks, decisions});
+  const testingResults = await scaffoldTesting({
+    projectRoot,
+    tests,
+    visibility,
+    vcs,
+    unitTestFrameworks,
+    decisions,
+    dialect
+  });
   const [nodeVersion, npmResults, dialectResults] = await Promise.all([
     scaffoldNodeVersion({projectRoot, nodeVersionCategory}),
     scaffoldNpmConfig({projectType, projectRoot, registries}),

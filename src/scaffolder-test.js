@@ -194,7 +194,15 @@ suite('javascript project scaffolder', () => {
       )
       .resolves(ciServiceResults);
     testing.default
-      .withArgs({projectRoot, tests, visibility, vcs: vcsDetails, unitTestFrameworks, decisions})
+      .withArgs({
+        projectRoot,
+        tests,
+        visibility,
+        vcs: vcsDetails,
+        unitTestFrameworks,
+        decisions,
+        dialect: chosenDialect
+      })
       .resolves(testingResults);
     linting.default
       .withArgs({
