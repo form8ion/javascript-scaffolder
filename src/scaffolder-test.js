@@ -132,6 +132,7 @@ suite('javascript project scaffolder', () => {
     packageManager,
     dialect: chosenDialect
   };
+  const liftResults = {...any.simpleObject(), badges: any.simpleObject()};
 
   setup(() => {
     sandbox = sinon.createSandbox();
@@ -249,6 +250,13 @@ suite('javascript project scaffolder', () => {
         pathWithinParent,
         registries
       });
+    jsLifter.lift
+      .withArgs({
+        results: deepmerge.all([{devDependencies: ['npm-run-all'], packageManager}, ...contributors]),
+        projectRoot,
+        configs
+      })
+      .resolves(liftResults);
   });
 
   teardown(() => sandbox.restore());
@@ -278,14 +286,6 @@ suite('javascript project scaffolder', () => {
         }
       );
       assert.calledWith(npmConfig.default, {projectRoot, projectType, registries});
-      assert.calledWith(
-        jsLifter.lift,
-        {
-          results: deepmerge.all([{devDependencies: ['npm-run-all'], packageManager}, ...contributors]),
-          projectRoot,
-          configs
-        }
-      );
     });
   });
 
@@ -303,7 +303,7 @@ suite('javascript project scaffolder', () => {
     suite('badges', () => {
       test('that badges are provided', async () => {
         const builtBadges = any.simpleObject();
-        badgeDetailsBuilder.default.withArgs(contributors).returns(builtBadges);
+        badgeDetailsBuilder.default.withArgs([...contributors, liftResults]).returns(builtBadges);
 
         const {badges} = await scaffold(options);
 

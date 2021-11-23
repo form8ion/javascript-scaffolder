@@ -132,14 +132,14 @@ export async function scaffold(options) {
     pathWithinParent
   });
 
-  await lift({
+  const liftResults = await lift({
     results: deepmerge.all([{devDependencies: ['npm-run-all'], packageManager}, ...contributors]),
     projectRoot,
     configs
   });
 
   return {
-    badges: buildBadgesDetails(contributors),
+    badges: buildBadgesDetails([...contributors, liftResults]),
     documentation: scaffoldDocumentation({projectTypeResults, packageManager}),
     tags: projectTypeResults.tags,
     vcsIgnore: buildVcsIgnoreLists(contributors),
