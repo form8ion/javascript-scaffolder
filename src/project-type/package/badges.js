@@ -11,8 +11,8 @@ export default function (packageName, visibility) {
     },
     contribution: {
       'semantic-release': {
-        img: 'https://img.shields.io/badge/semantic-release-e10079.svg?logo=semantic-release',
-        text: 'semantic-release',
+        img: 'https://img.shields.io/badge/semantic--release-angular-e10079?logo=semantic-release',
+        text: 'semantic-release: angular',
         link: 'https://github.com/semantic-release/semantic-release'
       }
     },

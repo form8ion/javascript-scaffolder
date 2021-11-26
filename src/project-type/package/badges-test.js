@@ -5,8 +5,8 @@ import defineBadges from './badges';
 suite('badges for package project-type', () => {
   const packageName = any.word();
   const semanticReleaseBadgeDetails = {
-    img: 'https://img.shields.io/badge/semantic-release-e10079.svg?logo=semantic-release',
-    text: 'semantic-release',
+    img: 'https://img.shields.io/badge/semantic--release-angular-e10079?logo=semantic-release',
+    text: 'semantic-release: angular',
     link: 'https://github.com/semantic-release/semantic-release'
   };
   const npmBadgeDetails = {
