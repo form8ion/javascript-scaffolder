@@ -107,11 +107,11 @@ suite('javascript project scaffolder', () => {
     npmResults,
     dialectResults
   ];
+  const mergedContributions = deepmerge.all(contributors);
   const packageScaffoldingInputs = {
     projectRoot,
     projectType,
     dialect: chosenDialect,
-    contributors,
     packageName,
     license,
     vcs: vcsDetails,
@@ -122,6 +122,7 @@ suite('javascript project scaffolder', () => {
       ...dialectPackageProperties,
       ...commitConventionResults.packageProperties
     },
+    scripts: mergedContributions.scripts,
     pathWithinParent
   };
   const commonPromptAnswers = {
@@ -315,7 +316,7 @@ suite('javascript project scaffolder', () => {
     suite('badges', () => {
       test('that badges are provided', async () => {
         const builtBadges = any.simpleObject();
-        badgeDetailsBuilder.default.withArgs([...contributors, liftResults]).returns(builtBadges);
+        badgeDetailsBuilder.default.withArgs([mergedContributions, liftResults]).returns(builtBadges);
 
         const {badges} = await scaffold(options);
 
@@ -326,7 +327,7 @@ suite('javascript project scaffolder', () => {
     suite('vcs ignore', () => {
       test('that ignores are defined', async () => {
         const ignores = any.simpleObject();
-        vcsIgnoresBuilder.default.withArgs(contributors).returns(ignores);
+        vcsIgnoresBuilder.default.withArgs(mergedContributions.vcsIgnore).returns(ignores);
         commitConvention.default.resolves({devDependencies: commitConventionDevDependencies});
 
         const {vcsIgnore} = await scaffold(options);

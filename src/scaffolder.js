@@ -95,7 +95,7 @@ export async function scaffold(options) {
       testFilenamePattern: testingResults.testFilenamePattern
     })
   ]);
-  const contributors = [
+  const mergedContributions = deepmerge.all([
     ...(await Promise.all([
       scaffoldChoice(
         hosts,
@@ -124,37 +124,35 @@ export async function scaffold(options) {
     testingResults,
     npmResults,
     dialectResults
-  ];
-  const mergedContributions = deepmerge.all(contributors);
+  ]);
 
   const {homepage: projectHomepage} = await scaffoldPackage({
     projectRoot,
     projectType,
     dialect,
-    contributors,
     packageName,
     license,
     vcs,
     author,
     description,
     packageProperties: mergedContributions.packageProperties,
+    scripts: mergedContributions.scripts,
     pathWithinParent
   });
 
   const liftResults = await lift({
-    results: deepmerge.all([{devDependencies: ['npm-run-all'], packageManager}, ...contributors]),
+    results: deepmerge({devDependencies: ['npm-run-all'], packageManager}, mergedContributions),
     projectRoot,
     configs
   });
 
   return {
-    badges: buildBadgesDetails([...contributors, liftResults]),
+    badges: buildBadgesDetails([mergedContributions, liftResults]),
     documentation: scaffoldDocumentation({projectTypeResults, packageManager}),
     tags: projectTypeResults.tags,
-    vcsIgnore: buildVcsIgnoreLists(contributors),
+    vcsIgnore: buildVcsIgnoreLists(mergedContributions.vcsIgnore),
     verificationCommand: `${buildDocumentationCommand(packageManager)} && ${packageManager} test`,
     projectDetails: {...projectHomepage && {homepage: projectHomepage}},
-    nextSteps: contributors
-      .reduce((acc, contributor) => (contributor.nextSteps ? [...acc, ...contributor.nextSteps] : acc), [])
+    nextSteps: mergedContributions.nextSteps
   };
 }

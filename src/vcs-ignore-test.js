@@ -3,35 +3,24 @@ import any from '@travi/any';
 import buildVcsIgnoreLists from './vcs-ignore';
 
 suite('vcs-ignore lists builder', () => {
-  const filesLists = any.listOf(() => any.listOf(any.word));
-  const directoriesLists = any.listOf(() => any.listOf(any.word), {size: filesLists.length});
-  const contributors = any.listOf(index => ({
-    ...any.simpleObject(),
-    vcsIgnore: {files: filesLists[index], directories: directoriesLists[index]}
-  }), {size: filesLists.length});
+  const vcsIgnore = {files: any.listOf(any.word), directories: any.listOf(any.word)};
 
   test('that default lists are defined', () => {
     assert.deepEqual(
-      buildVcsIgnoreLists(contributors),
-      {
-        files: filesLists.reduce((acc, files) => ([...acc, ...files]), []),
-        directories: [
-          '/node_modules/',
-          ...directoriesLists.reduce((acc, directories) => ([...acc, ...directories]), [])
-        ]
-      }
+      buildVcsIgnoreLists(vcsIgnore),
+      {files: vcsIgnore.files, directories: ['/node_modules/', ...vcsIgnore.directories]}
     );
   });
 
-  test('that contributors without`vcsIgnore` defined do not cause an error', () => {
-    buildVcsIgnoreLists([...contributors, any.simpleObject()]);
+  test('that the default file list is empty', () => {
+    assert.deepEqual(buildVcsIgnoreLists({...vcsIgnore, files: undefined}).files, []);
   });
 
-  test('that contributors without`vcsIgnore.files` defined do not cause an error', () => {
-    buildVcsIgnoreLists([...contributors, {...any.simpleObject(), vcsIgnore: {directories: []}}]);
+  test('that the default directories list contains `node_modules`', () => {
+    assert.deepEqual(buildVcsIgnoreLists({...vcsIgnore, directories: undefined}).directories, ['/node_modules/']);
   });
 
-  test('that contributors without`vcsIgnore.directories` defined do not cause an error', () => {
-    buildVcsIgnoreLists([...contributors, {...any.simpleObject(), vcsIgnore: {files: []}}]);
+  test('that missing ignores produce defaults', () => {
+    assert.deepEqual(buildVcsIgnoreLists(), {files: [], directories: ['/node_modules/']});
   });
 });

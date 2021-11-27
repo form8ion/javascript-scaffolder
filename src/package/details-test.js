@@ -15,7 +15,7 @@ suite('package details builder', () => {
       vcs: undefined,
       author: {},
       configs: {},
-      contributors: []
+      scripts: {}
     });
 
     assert.equal(packageDetails.name, packageName);
@@ -32,7 +32,7 @@ suite('package details builder', () => {
         vcs: {},
         author: {},
         configs: {},
-        contributors: []
+        scripts: {}
       });
 
       assert.equal(packageDetails.description, description);
@@ -50,7 +50,7 @@ suite('package details builder', () => {
         vcs: {},
         author: {name, email, url},
         configs: {},
-        contributors: []
+        scripts: {}
       });
 
       assert.equal(packageDetails.author, `${name} <${email}> (${url})`);
@@ -62,7 +62,7 @@ suite('package details builder', () => {
         vcs: {},
         author: {name, url},
         configs: {},
-        contributors: []
+        scripts: {}
       });
 
       assert.equal(packageDetails.author, `${name} (${url})`);
@@ -74,7 +74,7 @@ suite('package details builder', () => {
         vcs: {},
         author: {name, email},
         configs: {},
-        contributors: []
+        scripts: {}
       });
 
       assert.equal(packageDetails.author, `${name} <${email}>`);
@@ -91,7 +91,7 @@ suite('package details builder', () => {
         vcs: {},
         author: {},
         configs: {},
-        contributors: []
+        scripts: {}
       });
 
       assert.equal(packageDetails.license, license);
@@ -108,7 +108,7 @@ suite('package details builder', () => {
         vcs: {host: 'github', name: repoName, owner},
         author: {},
         configs: {},
-        contributors: []
+        scripts: {}
       });
 
       assert.equal(packageDetails.repository, `${owner}/${repoName}`);
@@ -124,7 +124,7 @@ suite('package details builder', () => {
         vcs: {host: 'github', name: repoName, owner},
         author: {},
         configs: {},
-        contributors: []
+        scripts: {}
       });
 
       assert.equal(packageDetails.homepage, `https://npm.im/${packageName}`);
@@ -138,7 +138,7 @@ suite('package details builder', () => {
         vcs: {host: 'github', name: repoName, owner},
         author: {},
         configs: {},
-        contributors: [],
+        scripts: {},
         pathWithinParent
       });
 
@@ -162,7 +162,7 @@ suite('package details builder', () => {
         vcs: {host: any.word()},
         author: {},
         configs: {},
-        contributors: []
+        scripts: {}
       });
 
       assert.isUndefined(packageDetails.repository);
@@ -174,15 +174,7 @@ suite('package details builder', () => {
   suite('scripts', () => {
     suite('verification', () => {
       test('that the `test` script is defined', () => {
-        const packageDetails = buildPackageDetails({
-          vcs: {},
-          author: {},
-          configs: {},
-          contributors: [
-            ...any.listOf(() => ({...any.simpleObject(), scripts: any.simpleObject()})),
-            any.simpleObject()
-          ]
-        });
+        const packageDetails = buildPackageDetails({vcs: {}, author: {}, configs: {}, scripts: any.simpleObject()});
 
         assert.equal(packageDetails.scripts.test, 'npm-run-all --print-label --parallel lint:*');
       });
@@ -192,10 +184,7 @@ suite('package details builder', () => {
           vcs: {},
           author: {},
           configs: {},
-          contributors: [
-            ...any.listOf(() => ({...any.simpleObject(), scripts: any.simpleObject()})),
-            {...any.simpleObject(), scripts: {...any.simpleObject(), 'pregenerate:md': 'run-s build'}}
-          ]
+          scripts: {...any.simpleObject(), 'pregenerate:md': 'run-s build'}
         });
 
         assert.equal(packageDetails.scripts.test, 'npm-run-all --print-label build --parallel lint:*');
@@ -206,20 +195,10 @@ suite('package details builder', () => {
           vcs: {},
           author: {},
           configs: {},
-          contributors: [
-            ...any.listOf(
-              index => ({
-                ...any.simpleObject(),
-                scripts: index % 2
-                  ? any.simpleObject()
-                  : any.objectWithKeys([
-                    ...any.listOf(() => any.fromList([any.string(), `test:${any.word}`])),
-                    `test:${any.word}`
-                  ])
-              })
-            ),
-            any.simpleObject()
-          ]
+          scripts: any.objectWithKeys([
+            ...any.listOf(() => any.fromList([any.string(), `test:${any.word}`])),
+            `test:${any.word}`
+          ])
         });
 
         assert.equal(packageDetails.scripts.test, 'npm-run-all --print-label --parallel lint:* --parallel test:*');
@@ -238,7 +217,7 @@ suite('package details builder', () => {
         vcs: undefined,
         author: {},
         configs: {},
-        contributors: [],
+        scripts: {},
         packageProperties
       });
 
@@ -248,13 +227,13 @@ suite('package details builder', () => {
 
   suite('module format', () => {
     test('that `commonjs` is used by default', () => {
-      const {type} = buildPackageDetails({author: {}, contributors: []});
+      const {type} = buildPackageDetails({author: {}, scripts: {}});
 
       assert.equal(type, 'commonjs');
     });
 
     test('that `module` is used when the project dialect is ESM', () => {
-      const {type} = buildPackageDetails({author: {}, contributors: [], dialect: dialects.ESM});
+      const {type} = buildPackageDetails({author: {}, scripts: {}, dialect: dialects.ESM});
 
       assert.equal(type, 'module');
     });
