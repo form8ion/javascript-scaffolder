@@ -56,7 +56,7 @@
     "@cucumber/cucumber": "7.3.1",
     "@form8ion/project": "11.0.1",
     "@rollup/plugin-node-resolve": "13.0.6",
-    "@travi/any": "2.0.18",
+    "@travi/any": "2.0.19",
     "@travi/babel-preset": "3.0.69",
     "@travi/eslint-config": "1.0.86",
     "@travi/eslint-config-cucumber": "1.0.5",
