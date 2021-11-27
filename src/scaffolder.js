@@ -118,13 +118,14 @@ export async function scaffold(options) {
         )
       }),
       scaffoldChoice(ciServices, ci, {projectRoot, vcs, visibility, projectType, projectName, nodeVersion, tests}),
-      scaffoldCommitConvention({projectRoot, configs, pathWithinParent, packageManager})
+      scaffoldCommitConvention({projectRoot, projectType, configs, pathWithinParent, packageManager})
     ])),
     projectTypeResults,
     testingResults,
     npmResults,
     dialectResults
   ];
+  const mergedContributions = deepmerge.all(contributors);
 
   const {homepage: projectHomepage} = await scaffoldPackage({
     projectRoot,
@@ -136,7 +137,7 @@ export async function scaffold(options) {
     vcs,
     author,
     description,
-    packageProperties: {...projectTypeResults.packageProperties, ...dialectResults.packageProperties},
+    packageProperties: mergedContributions.packageProperties,
     pathWithinParent
   });
 

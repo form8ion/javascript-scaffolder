@@ -18,7 +18,6 @@ suite('package project-type', () => {
   const visibility = 'Private';
   const scope = any.word();
   const badges = {consumer: any.simpleObject(), contribution: any.simpleObject(), status: any.simpleObject()};
-  const commonPackageProperties = {version: '0.0.0-semantically-released'};
   const commonNextSteps = [
     {summary: 'Add the appropriate `save` flag to the installation instructions in the README'},
     {summary: 'Publish pre-release versions to npm until package is stable enough to publish v1.0.0'}
@@ -88,7 +87,6 @@ suite('package project-type', () => {
         vcsIgnore: {directories: scaffoldedDirectoriesToIgnore, files: scaffoldedFilesToIgnore},
         badges,
         packageProperties: {
-          ...commonPackageProperties,
           sideEffects: false,
           main: 'lib/index.cjs.js',
           module: 'lib/index.es.js',
@@ -130,7 +128,6 @@ suite('package project-type', () => {
         vcsIgnore: {directories: scaffoldedDirectoriesToIgnore, files: scaffoldedFilesToIgnore},
         badges,
         packageProperties: {
-          ...commonPackageProperties,
           main: 'lib/index.es.js',
           files: ['example.js', 'lib/'],
           sideEffects: false,
@@ -171,7 +168,6 @@ suite('package project-type', () => {
         vcsIgnore: {directories: scaffoldedDirectoriesToIgnore, files: scaffoldedFilesToIgnore},
         badges,
         packageProperties: {
-          ...commonPackageProperties,
           sideEffects: false,
           main: 'lib/index.cjs.js',
           module: 'lib/index.es.js',
@@ -213,7 +209,6 @@ suite('package project-type', () => {
         vcsIgnore: {directories: scaffoldedDirectoriesToIgnore, files: scaffoldedFilesToIgnore},
         badges,
         packageProperties: {
-          ...commonPackageProperties,
           files: ['example.js', 'index.js'],
           publishConfig: {access: 'restricted'}
         },

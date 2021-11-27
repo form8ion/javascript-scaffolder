@@ -74,7 +74,7 @@ suite('javascript project scaffolder', () => {
   };
   const lintingResults = any.simpleObject();
   const ciServiceResults = {...any.simpleObject(), nextSteps: ciServiceNextSteps};
-  const commitConventionResults = any.simpleObject();
+  const commitConventionResults = {...any.simpleObject(), packageProperties: any.simpleObject()};
   const applicationTypes = any.simpleObject();
   const packageTypes = any.simpleObject();
   const monorepoTypes = any.simpleObject();
@@ -117,7 +117,11 @@ suite('javascript project scaffolder', () => {
     vcs: vcsDetails,
     author: {name: authorName, email: authorEmail, url: authorUrl},
     description,
-    packageProperties: {...projectTypePackageProperties, ...dialectPackageProperties},
+    packageProperties: {
+      ...projectTypePackageProperties,
+      ...dialectPackageProperties,
+      ...commitConventionResults.packageProperties
+    },
     pathWithinParent
   };
   const commonPromptAnswers = {
@@ -234,7 +238,7 @@ suite('javascript project scaffolder', () => {
       .resolves(dialectResults);
     npmConfig.default.resolves(npmResults);
     commitConvention.default
-      .withArgs({projectRoot, configs, pathWithinParent, packageManager})
+      .withArgs({projectRoot, projectType, configs, pathWithinParent, packageManager})
       .resolves(commitConventionResults);
     nodeVersionScaffolder.default.withArgs({projectRoot, nodeVersionCategory}).resolves(version);
     optionsValidator.validate

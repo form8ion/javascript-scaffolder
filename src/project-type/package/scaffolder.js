@@ -64,7 +64,6 @@ export default async function ({
   return deepmerge.all([
     {
       packageProperties: {
-        version: '0.0.0-semantically-released',
         files: ['example.js'],
         publishConfig: {access: 'Public' === visibility ? 'public' : 'restricted'},
         ...'Public' === visibility && {runkitExampleFilename: './example.js'}

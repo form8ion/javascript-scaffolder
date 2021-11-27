@@ -1,7 +1,10 @@
+import {projectTypes} from '@form8ion/javascript-core';
+import * as huskyScaffolder from '@form8ion/husky';
+
 import sinon from 'sinon';
 import any from '@travi/any';
 import {assert} from 'chai';
-import * as huskyScaffolder from '@form8ion/husky';
+
 import * as commitizenScaffolder from './commitizen';
 import * as commitlintScaffolder from './commitlint';
 import scaffoldCommitConvention from './index';
@@ -14,12 +17,18 @@ suite('commit-convention scaffolder', () => {
   const commitizenDevDependencies = any.listOf(any.string);
   const huskyScripts = any.simpleObject();
   const huskyDevDependencies = any.listOf(any.string);
+  const publishedProjectType = any.fromList([projectTypes.PACKAGE, projectTypes.CLI]);
   const contributionBadges = {
     'commit-convention': {
       img: 'https://img.shields.io/badge/Conventional%20Commits-1.0.0-yellow.svg',
       text: 'Conventional Commits',
       link: 'https://conventionalcommits.org'
     }
+  };
+  const semanticReleaseBadge = {
+    img: 'https://img.shields.io/badge/semantic--release-angular-e10079?logo=semantic-release',
+    text: 'semantic-release: angular',
+    link: 'https://github.com/semantic-release/semantic-release'
   };
 
   setup(() => {
@@ -41,6 +50,19 @@ suite('commit-convention scaffolder', () => {
 
   test('that tools for the commit-convention are not configured for a sub-project', async () => {
     assert.deepEqual(await scaffoldCommitConvention({pathWithinParent: any.string()}), {});
+  });
+
+  test('that only semantic-release is configured for a sub-package', async () => {
+    assert.deepEqual(
+      await scaffoldCommitConvention({
+        pathWithinParent: any.string(),
+        projectType: publishedProjectType
+      }),
+      {
+        packageProperties: {version: '0.0.0-semantically-released'},
+        badges: {contribution: {'semantic-release': semanticReleaseBadge}}
+      }
+    );
   });
 
   test('that the convention is configured', async () => {
@@ -72,5 +94,17 @@ suite('commit-convention scaffolder', () => {
       }
     );
     assert.notCalled(commitlintScaffolder.default);
+  });
+
+  test('that semantic-release is configured for packages', async () => {
+    const {badges, packageProperties} = await scaffoldCommitConvention({
+      projectRoot,
+      projectType: publishedProjectType,
+      configs: {},
+      packageManager
+    });
+
+    assert.equal(packageProperties.version, '0.0.0-semantically-released');
+    assert.deepEqual(badges.contribution['semantic-release'], semanticReleaseBadge);
   });
 });
