@@ -95,7 +95,7 @@
     "@form8ion/husky": "1.4.0",
     "@form8ion/javascript": "^1.0.0-alpha.4",
     "@form8ion/javascript-core": "^4.0.0",
-    "@form8ion/lift-javascript": "3.2.0",
+    "@form8ion/lift-javascript": "3.2.1",
     "@form8ion/overridable-prompts": "^1.1.0",
     "@form8ion/rollup": "^1.0.0-alpha.1",
     "@hapi/hoek": "^9.2.0",
