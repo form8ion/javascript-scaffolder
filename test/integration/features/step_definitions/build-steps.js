@@ -15,8 +15,7 @@ Then('the package is bundled with rollup', async function () {
 
   assert.equal(
     await fs.readFile(`${process.cwd()}/rollup.config.js`, 'utf-8'),
-    `/* eslint import/no-extraneous-dependencies: ['error', {'devDependencies': true}] */
-import autoExternal from '${autoExternal}';
+    `import autoExternal from '${autoExternal}';
 
 export default {
   input: 'src/index.js',
