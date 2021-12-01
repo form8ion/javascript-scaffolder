@@ -1,14 +1,15 @@
 import deepmerge from 'deepmerge';
 import * as jsCore from '@form8ion/javascript-core';
 import * as jsLifter from '@form8ion/lift-javascript';
+
 import {assert} from 'chai';
 import any from '@travi/any';
 import sinon from 'sinon';
+
 import * as prompts from './prompts/questions';
 import * as optionsValidator from './options-validator';
-import * as testing from './testing/scaffolder';
 import * as dialects from './dialects/scaffolder';
-import * as linting from './linting/scaffolder';
+import * as verification from './verification/verifier';
 import * as npmConfig from './config/npm';
 import * as documentation from './documentation/scaffolder';
 import * as nodeVersionScaffolder from './node-version/scaffolder';
@@ -37,8 +38,6 @@ suite('javascript project scaffolder', () => {
   const visibility = any.fromList(['Private', 'Public']);
   const version = any.string();
   const commitConventionDevDependencies = any.listOf(any.string);
-  const testingEslintConfigs = any.listOf(any.string);
-  const testingEslintOtherDetails = any.simpleObject();
   const testingNextSteps = any.listOf(any.simpleObject);
   const ciServiceNextSteps = any.listOf(any.simpleObject);
   const projectTypeEslintConfigs = any.listOf(any.string);
@@ -65,14 +64,7 @@ suite('javascript project scaffolder', () => {
   const configs = {babelPreset, ...any.simpleObject()};
   const nodeVersionCategory = any.word();
   const testFilenamePattern = any.string();
-  const testingResults = {
-    ...any.simpleObject(),
-    eslint: {configs: testingEslintConfigs, ...testingEslintOtherDetails},
-    eslintConfigs: testingEslintConfigs,
-    nextSteps: testingNextSteps,
-    testFilenamePattern
-  };
-  const lintingResults = any.simpleObject();
+  const verificationResults = {...any.simpleObject(), nextSteps: testingNextSteps, testFilenamePattern};
   const ciServiceResults = {...any.simpleObject(), nextSteps: ciServiceNextSteps};
   const commitConventionResults = {...any.simpleObject(), packageProperties: any.simpleObject()};
   const applicationTypes = any.simpleObject();
@@ -99,11 +91,10 @@ suite('javascript project scaffolder', () => {
   };
   const contributors = [
     hostResults,
-    lintingResults,
     ciServiceResults,
     commitConventionResults,
     projectTypeResults,
-    testingResults,
+    verificationResults,
     npmResults,
     dialectResults
   ];
@@ -144,11 +135,10 @@ suite('javascript project scaffolder', () => {
 
     sandbox.stub(prompts, 'prompt');
     sandbox.stub(optionsValidator, 'validate');
-    sandbox.stub(testing, 'default');
     sandbox.stub(jsCore, 'scaffoldChoice');
     sandbox.stub(jsLifter, 'lift');
     sandbox.stub(dialects, 'default');
-    sandbox.stub(linting, 'default');
+    sandbox.stub(verification, 'scaffoldVerification');
     sandbox.stub(npmConfig, 'default');
     sandbox.stub(documentation, 'default');
     sandbox.stub(nodeVersionScaffolder, 'default');
@@ -198,34 +188,24 @@ suite('javascript project scaffolder', () => {
         }
       )
       .resolves(ciServiceResults);
-    testing.default
+    verification.scaffoldVerification
       .withArgs({
-        projectRoot,
-        tests,
-        visibility,
-        vcs: vcsDetails,
-        unitTestFrameworks,
-        decisions,
-        dialect: chosenDialect
-      })
-      .resolves(testingResults);
-    linting.default
-      .withArgs({
-        configs,
         projectRoot,
         projectType,
-        packageManager,
         dialect: chosenDialect,
-        registries,
+        visibility,
+        packageManager,
         vcs: vcsDetails,
+        configs,
+        registries,
         configureLinting,
+        tests,
+        unitTestFrameworks,
+        decisions,
         buildDirectory: projectTypeBuildDirectory,
-        eslint: {
-          ...testingEslintOtherDetails,
-          configs: [...testingEslintConfigs, ...testingEslintConfigs, ...projectTypeEslintConfigs]
-        }
+        eslintConfigs: projectTypeEslintConfigs
       })
-      .resolves(lintingResults);
+      .resolves(verificationResults);
     dialects.default
       .withArgs({
         projectRoot,

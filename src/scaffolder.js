@@ -15,7 +15,7 @@ import scaffoldPackage from './package';
 import buildPackageName from './package-name';
 import scaffoldProjectType from './project-type';
 import buildDocumentationCommand from './documentation/generation-command';
-import {scaffoldVerification} from './verification/verifier';
+import {scaffoldVerification} from './verification';
 
 export async function scaffold(options) {
   info('Initializing JavaScript project');
