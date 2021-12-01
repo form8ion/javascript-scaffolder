@@ -4,9 +4,7 @@ import {lift} from '@form8ion/lift-javascript';
 import {info} from '@travi/cli-messages';
 import {validate} from './options-validator';
 import {prompt} from './prompts/questions';
-import scaffoldTesting from './testing';
 import scaffoldDialect from './dialects';
-import scaffoldLinting from './linting';
 import scaffoldNpmConfig from './config/npm';
 import scaffoldCommitConvention from './commit-convention';
 import scaffoldDocumentation from './documentation';
@@ -17,6 +15,7 @@ import scaffoldPackage from './package';
 import buildPackageName from './package-name';
 import scaffoldProjectType from './project-type';
 import buildDocumentationCommand from './documentation/generation-command';
+import {scaffoldVerification} from './verification/verifier';
 
 export async function scaffold(options) {
   info('Initializing JavaScript project');
@@ -73,14 +72,21 @@ export async function scaffold(options) {
     decisions,
     dialect
   });
-  const testingResults = await scaffoldTesting({
+  const verificationResults = await scaffoldVerification({
     projectRoot,
-    tests,
+    projectType,
+    dialect,
+    packageManager,
     visibility,
     vcs,
+    configs,
+    registries,
+    configureLinting,
+    tests,
     unitTestFrameworks,
     decisions,
-    dialect
+    buildDirectory: projectTypeResults.buildDirectory,
+    eslintConfigs: projectTypeResults.eslintConfigs
   });
   const [nodeVersion, npmResults, dialectResults] = await Promise.all([
     scaffoldNodeVersion({projectRoot, nodeVersionCategory}),
@@ -92,7 +98,7 @@ export async function scaffold(options) {
       projectType,
       tests,
       buildDirectory: projectTypeResults.buildDirectory,
-      testFilenamePattern: testingResults.testFilenamePattern
+      testFilenamePattern: verificationResults.testFilenamePattern
     })
   ]);
   const mergedContributions = deepmerge.all([
@@ -102,26 +108,11 @@ export async function scaffold(options) {
         chosenHost,
         {buildDirectory: `./${projectTypeResults.buildDirectory}`, projectRoot, projectName, nodeVersion}
       ),
-      scaffoldLinting({
-        configs,
-        projectRoot,
-        projectType,
-        packageManager,
-        dialect,
-        registries,
-        vcs,
-        configureLinting,
-        buildDirectory: projectTypeResults.buildDirectory,
-        eslint: deepmerge(
-          testingResults.eslint,
-          {configs: deepmerge(testingResults.eslintConfigs, projectTypeResults.eslintConfigs)}
-        )
-      }),
       scaffoldChoice(ciServices, ci, {projectRoot, vcs, visibility, projectType, projectName, nodeVersion, tests}),
       scaffoldCommitConvention({projectRoot, projectType, configs, pathWithinParent, packageManager})
     ])),
     projectTypeResults,
-    testingResults,
+    verificationResults,
     npmResults,
     dialectResults
   ]);
