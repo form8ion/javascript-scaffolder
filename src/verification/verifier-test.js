@@ -4,8 +4,8 @@ import sinon from 'sinon';
 import any from '@travi/any';
 import {assert} from 'chai';
 
-import * as testingScaffolder from '../testing/scaffolder';
-import * as lintingScaffolder from '../linting/scaffolder';
+import * as testingScaffolder from './testing/scaffolder';
+import * as lintingScaffolder from './linting/scaffolder';
 import {scaffoldVerification} from './verifier';
 
 suite('verification', () => {

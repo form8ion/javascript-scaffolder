@@ -1,7 +1,7 @@
 import deepmerge from 'deepmerge';
 
-import scaffoldTesting from '../testing';
-import scaffoldLinting from '../linting';
+import scaffoldTesting from './testing';
+import scaffoldLinting from './linting';
 
 export async function scaffoldVerification({
   projectRoot,
