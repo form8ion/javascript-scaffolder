@@ -1,4 +1,5 @@
 import deepmerge from 'deepmerge';
+import * as huskyScaffolder from '@form8ion/husky';
 
 import sinon from 'sinon';
 import any from '@travi/any';
@@ -16,6 +17,8 @@ suite('verification', () => {
 
     sandbox.stub(testingScaffolder, 'default');
     sandbox.stub(lintingScaffolder, 'default');
+    sandbox.stub(huskyScaffolder, 'scaffold');
+    sandbox.stub(deepmerge, 'all');
   });
 
   teardown(() => sandbox.restore());
@@ -32,6 +35,7 @@ suite('verification', () => {
     const unitTestFrameworks = any.simpleObject();
     const decisions = any.simpleObject();
     const lintingResults = any.simpleObject();
+    const huskyResults = any.simpleObject();
     const testingEslintResults = any.simpleObject();
     const testingResultsEslintConfigs = any.simpleObject();
     const testingResults = {
@@ -43,6 +47,8 @@ suite('verification', () => {
     const registries = any.simpleObject();
     const eslintConfigs = any.simpleObject();
     const configureLinting = any.boolean();
+    const mergedEslintResults = any.simpleObject();
+    const mergedResults = any.simpleObject();
     lintingScaffolder.default
       .withArgs({
         projectRoot,
@@ -54,12 +60,17 @@ suite('verification', () => {
         registries,
         configureLinting,
         buildDirectory,
-        eslint: deepmerge.all([testingEslintResults, {configs: testingResultsEslintConfigs}, {configs: eslintConfigs}])
+        eslint: mergedEslintResults
       })
       .resolves(lintingResults);
     testingScaffolder.default
       .withArgs({projectRoot, tests, visibility, vcs, unitTestFrameworks, decisions, dialect})
       .resolves(testingResults);
+    huskyScaffolder.scaffold.withArgs({projectRoot, packageManager}).resolves(huskyResults);
+    deepmerge.all
+      .withArgs([testingEslintResults, {configs: testingResultsEslintConfigs}, {configs: eslintConfigs}])
+      .returns(mergedEslintResults);
+    deepmerge.all.withArgs([testingResults, lintingResults, huskyResults]).returns(mergedResults);
 
     assert.deepEqual(
       await scaffoldVerification({
@@ -78,7 +89,7 @@ suite('verification', () => {
         buildDirectory,
         eslintConfigs
       }),
-      deepmerge(lintingResults, testingResults)
+      mergedResults
     );
   });
 });

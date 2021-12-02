@@ -9,4 +9,5 @@ Feature: Registries
     And nvm is properly configured
     And registries are defined for scopes
     When the project is scaffolded
-    Then the registry configuration is defined
+    Then no error is thrown
+    And the registry configuration is defined

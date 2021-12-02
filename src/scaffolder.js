@@ -109,7 +109,7 @@ export async function scaffold(options) {
         {buildDirectory: `./${projectTypeResults.buildDirectory}`, projectRoot, projectName, nodeVersion}
       ),
       scaffoldChoice(ciServices, ci, {projectRoot, vcs, visibility, projectType, projectName, nodeVersion, tests}),
-      scaffoldCommitConvention({projectRoot, projectType, configs, pathWithinParent, packageManager})
+      scaffoldCommitConvention({projectRoot, projectType, configs, pathWithinParent})
     ])),
     projectTypeResults,
     verificationResults,

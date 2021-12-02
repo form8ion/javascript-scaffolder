@@ -219,7 +219,7 @@ suite('javascript project scaffolder', () => {
       .resolves(dialectResults);
     npmConfig.default.resolves(npmResults);
     commitConvention.default
-      .withArgs({projectRoot, projectType, configs, pathWithinParent, packageManager})
+      .withArgs({projectRoot, projectType, configs, pathWithinParent})
       .resolves(commitConventionResults);
     nodeVersionScaffolder.default.withArgs({projectRoot, nodeVersionCategory}).resolves(version);
     optionsValidator.validate

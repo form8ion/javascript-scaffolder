@@ -1,5 +1,4 @@
 import {projectTypes} from '@form8ion/javascript-core';
-import * as huskyScaffolder from '@form8ion/husky';
 
 import sinon from 'sinon';
 import any from '@travi/any';
@@ -15,8 +14,6 @@ suite('commit-convention scaffolder', () => {
   const packageManager = any.word();
   const commitizenScripts = any.simpleObject();
   const commitizenDevDependencies = any.listOf(any.string);
-  const huskyScripts = any.simpleObject();
-  const huskyDevDependencies = any.listOf(any.string);
   const publishedProjectType = any.fromList([projectTypes.PACKAGE, projectTypes.CLI]);
   const contributionBadges = {
     'commit-convention': {
@@ -35,12 +32,8 @@ suite('commit-convention scaffolder', () => {
     sandbox = sinon.createSandbox();
 
     sandbox.stub(commitlintScaffolder, 'default');
-    sandbox.stub(huskyScaffolder, 'scaffold');
     sandbox.stub(commitizenScaffolder, 'default');
 
-    huskyScaffolder.scaffold
-      .withArgs({projectRoot, packageManager})
-      .resolves({devDependencies: huskyDevDependencies, scripts: huskyScripts});
     commitizenScaffolder.default
       .withArgs({projectRoot})
       .resolves({devDependencies: commitizenDevDependencies, scripts: commitizenScripts});
@@ -75,8 +68,8 @@ suite('commit-convention scaffolder', () => {
     assert.deepEqual(
       await scaffoldCommitConvention({projectRoot, packageManager, configs: {commitlint: commitlintConfig}}),
       {
-        devDependencies: [...commitizenDevDependencies, ...huskyDevDependencies, ...commitlintDevDependencies],
-        scripts: {...commitizenScripts, ...huskyScripts},
+        devDependencies: [...commitizenDevDependencies, ...commitlintDevDependencies],
+        scripts: commitizenScripts,
         vcsIgnore: {files: [], directories: []},
         badges: {contribution: contributionBadges}
       }
@@ -87,8 +80,8 @@ suite('commit-convention scaffolder', () => {
     assert.deepEqual(
       await scaffoldCommitConvention({projectRoot, configs: {}, packageManager}),
       {
-        devDependencies: [...commitizenDevDependencies, ...huskyDevDependencies],
-        scripts: {...commitizenScripts, ...huskyScripts},
+        devDependencies: commitizenDevDependencies,
+        scripts: commitizenScripts,
         vcsIgnore: {files: [], directories: []},
         badges: {contribution: contributionBadges}
       }

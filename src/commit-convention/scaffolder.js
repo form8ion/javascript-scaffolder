@@ -1,11 +1,10 @@
 import deepmerge from 'deepmerge';
 import {projectTypes} from '@form8ion/javascript-core';
-import {scaffold} from '@form8ion/husky';
 
 import scaffoldCommitizen from './commitizen';
 import scaffoldCommitlint from './commitlint';
 
-export default async function ({projectRoot, projectType, configs, pathWithinParent, packageManager}) {
+export default async function ({projectRoot, projectType, configs, pathWithinParent}) {
   const detailsForProjectsPublishedToARegistry = [projectTypes.PACKAGE, projectTypes.CLI].includes(projectType) ? {
     packageProperties: {version: '0.0.0-semantically-released'},
     badges: {
@@ -26,11 +25,8 @@ export default async function ({projectRoot, projectType, configs, pathWithinPar
     configs.commitlint && scaffoldCommitlint({projectRoot, config: configs.commitlint})
   ]);
 
-  const huskyResults = await scaffold({projectRoot, packageManager});
-
   return deepmerge.all([
     commitizenResults,
-    huskyResults,
     ...commitlintResults ? [commitlintResults] : [],
     {
       vcsIgnore: {files: [], directories: []},

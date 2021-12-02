@@ -1,4 +1,5 @@
 import deepmerge from 'deepmerge';
+import {scaffold as scaffoldHusky} from '@form8ion/husky';
 
 import scaffoldTesting from './testing';
 import scaffoldLinting from './linting';
@@ -19,15 +20,18 @@ export async function scaffoldVerification({
   buildDirectory,
   eslintConfigs
 }) {
-  const testingResults = await scaffoldTesting({
-    projectRoot,
-    tests,
-    visibility,
-    vcs,
-    unitTestFrameworks,
-    decisions,
-    dialect
-  });
+  const [testingResults, huskyResults] = await Promise.all([
+    scaffoldTesting({
+      projectRoot,
+      tests,
+      visibility,
+      vcs,
+      unitTestFrameworks,
+      decisions,
+      dialect
+    }),
+    scaffoldHusky({projectRoot, packageManager})
+  ]);
 
   const lintingResults = await scaffoldLinting({
     projectRoot,
@@ -39,11 +43,8 @@ export async function scaffoldVerification({
     vcs,
     configureLinting,
     buildDirectory,
-    eslint: deepmerge(
-      testingResults.eslint,
-      {configs: deepmerge(testingResults.eslintConfigs, eslintConfigs)}
-    )
+    eslint: deepmerge.all([testingResults.eslint, {configs: testingResults.eslintConfigs}, {configs: eslintConfigs}])
   });
 
-  return deepmerge(testingResults, lintingResults);
+  return deepmerge.all([testingResults, lintingResults, huskyResults]);
 }
