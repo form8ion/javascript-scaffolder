@@ -54,7 +54,8 @@ Feature: Package Project Type
     And nvm is properly configured
     And a babel preset is provided
     When the project is scaffolded
-    Then the expected files for a "Package" are generated
+    Then no error is thrown
+    And the expected files for a "Package" are generated
     And the expected results for a "Package" are returned to the project scaffolder
 
   Scenario: Simple Common JS package
@@ -67,7 +68,8 @@ Feature: Package Project Type
     And a babel preset is provided
     But the project will not be transpiled or linted
     When the project is scaffolded
-    Then repository details will be defined using the shorthand
+    Then no error is thrown
+    And repository details will be defined using the shorthand
     And the expected details are provided for a root-level project
     And the expected files for a "Package" are generated
     And Babel and ESLint are not scaffolded

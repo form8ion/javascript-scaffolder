@@ -95,6 +95,7 @@ After(function () {
   clearModule('@travi/javascript-scaffolder');
   clearModule('@form8ion/lift-javascript');
   clearModule('@form8ion/javascript-core');
+  clearModule('@form8ion/javascript');
   clearModule('execa');
 });
 

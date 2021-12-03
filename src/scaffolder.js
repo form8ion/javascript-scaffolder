@@ -1,12 +1,13 @@
 import deepmerge from 'deepmerge';
+import {info} from '@travi/cli-messages';
 import {scaffoldChoice} from '@form8ion/javascript-core';
 import {lift} from '@form8ion/lift-javascript';
-import {info} from '@travi/cli-messages';
+import {scaffold as scaffoldCommitConvention} from '@form8ion/commit-convention';
+
 import {validate} from './options-validator';
 import {prompt} from './prompts/questions';
 import scaffoldDialect from './dialects';
 import scaffoldNpmConfig from './config/npm';
-import scaffoldCommitConvention from './commit-convention';
 import scaffoldDocumentation from './documentation';
 import scaffoldNodeVersion from './node-version';
 import buildBadgesDetails from './badges';

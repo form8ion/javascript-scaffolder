@@ -1,6 +1,7 @@
 import deepmerge from 'deepmerge';
 import * as jsCore from '@form8ion/javascript-core';
 import * as jsLifter from '@form8ion/lift-javascript';
+import * as commitConvention from '@form8ion/commit-convention';
 
 import {assert} from 'chai';
 import any from '@travi/any';
@@ -15,7 +16,6 @@ import * as documentation from './documentation/scaffolder';
 import * as nodeVersionScaffolder from './node-version/scaffolder';
 import * as badgeDetailsBuilder from './badges';
 import * as vcsIgnoresBuilder from './vcs-ignore';
-import * as commitConvention from './commit-convention/scaffolder';
 import * as packageScaffolder from './package/scaffolder';
 import * as projectTypeScaffolder from './project-type/scaffolder';
 import * as packageNameBuilder from './package-name';
@@ -144,7 +144,7 @@ suite('javascript project scaffolder', () => {
     sandbox.stub(nodeVersionScaffolder, 'default');
     sandbox.stub(badgeDetailsBuilder, 'default');
     sandbox.stub(vcsIgnoresBuilder, 'default');
-    sandbox.stub(commitConvention, 'default');
+    sandbox.stub(commitConvention, 'scaffold');
     sandbox.stub(packageScaffolder, 'default');
     sandbox.stub(packageNameBuilder, 'default');
     sandbox.stub(projectTypeScaffolder, 'default');
@@ -218,7 +218,7 @@ suite('javascript project scaffolder', () => {
       })
       .resolves(dialectResults);
     npmConfig.default.resolves(npmResults);
-    commitConvention.default
+    commitConvention.scaffold
       .withArgs({projectRoot, projectType, configs, pathWithinParent})
       .resolves(commitConventionResults);
     nodeVersionScaffolder.default.withArgs({projectRoot, nodeVersionCategory}).resolves(version);
@@ -308,7 +308,7 @@ suite('javascript project scaffolder', () => {
       test('that ignores are defined', async () => {
         const ignores = any.simpleObject();
         vcsIgnoresBuilder.default.withArgs(mergedContributions.vcsIgnore).returns(ignores);
-        commitConvention.default.resolves({devDependencies: commitConventionDevDependencies});
+        commitConvention.scaffold.resolves({devDependencies: commitConventionDevDependencies});
 
         const {vcsIgnore} = await scaffold(options);
 

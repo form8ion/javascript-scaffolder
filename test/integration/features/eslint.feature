@@ -8,7 +8,8 @@ Feature: ESLint
     And the project will not be tested
     And nvm is properly configured
     When the project is scaffolded
-    Then the base ESLint config is extended
+    Then no error is thrown
+    And the base ESLint config is extended
 
   Scenario: Base Config with Additional Config
     Given the project will be an "any"
