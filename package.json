@@ -90,7 +90,7 @@
     "yargs": "17.3.0"
   },
   "dependencies": {
-    "@form8ion/commit-convention": "^1.0.0-alpha.1",
+    "@form8ion/commit-convention": "^1.0.0",
     "@form8ion/core": "1.4.2",
     "@form8ion/eslint": "2.0.1",
     "@form8ion/husky": "2.2.0",
