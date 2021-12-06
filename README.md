@@ -17,7 +17,7 @@ opinionated scaffolder for JavaScript projects
   * [As one of the languages for scaffolding a project](#as-one-of-the-languages-for-scaffolding-a-project)
     * [Example](#example)
       * [Dependencies:](#dependencies)
-      * [Register with yargs](#register-with-yargs)
+      * [Execute](#execute)
     * [Options](#options)
       * [`projectRoot` __string__ (_required_)](#projectroot-string-required)
       * [`projectName` __string__ (_required_)](#projectname-string-required)
@@ -83,36 +83,24 @@ within the [project-scaffolder](https://github.com/form8ion/project).
 ##### Dependencies:
 
 ```javascript
-import yargs from 'yargs';
-import {scaffold} from '@form8ion/project';
-import {scaffold as scaffoldJavaScript} from './lib/index.cjs';
+import {scaffold as scaffoldJavaScript} from '@travi/javascript-scaffolder';
 ```
 
-##### Register with yargs
+##### Execute
 
 ```javascript
-yargs
-  .scriptName('form8ion-utils')
-  .usage('Usage: $0 <cmd> [args]')
-  .command('scaffold', 'Scaffold a new project', () => scaffold({
-    languages: {
-      JavaScript: options => scaffoldJavaScript({
-        ...options,
-        configs: {
-          eslint: {scope: '@form8ion'},
-          remark: '@form8ion/remark-lint-preset',
-          babelPreset: {name: '@form8ion', packageName: '@form8ion/babel-preset'},
-          commitlint: {name: '@form8ion', packageName: '@form8ion/commitlint-config'}
-        },
-        overrides: {npmAccount: 'form8ion'},
-        ciServices: {}
-      })
+(async () => {
+  scaffoldJavaScript({
+    configs: {
+      eslint: {scope: '@form8ion'},
+      remark: '@form8ion/remark-lint-preset',
+      babelPreset: {name: '@form8ion', packageName: '@form8ion/babel-preset'},
+      commitlint: {name: '@form8ion', packageName: '@form8ion/commitlint-config'}
     },
-    overrides: {copyrightHolder: 'Matt Travi'}
-  }))
-  .help('h')
-  .alias('h', 'help')
-  .argv;
+    overrides: {npmAccount: 'form8ion'},
+    ciServices: {}
+  });
+})();
 ```
 
 #### Options
