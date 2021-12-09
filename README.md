@@ -2,6 +2,8 @@
 
 opinionated scaffolder for JavaScript projects
 
+** REPLACED BY [@form8ion/javascript](https://github.com/form8ion/javascript)
+
 <!--status-badges start -->
 
 [![Codecov](https://img.shields.io/codecov/c/github/travi/javascript-scaffolder.svg)](https://codecov.io/github/travi/javascript-scaffolder)
