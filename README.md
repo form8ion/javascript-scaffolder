@@ -2,7 +2,7 @@
 
 opinionated scaffolder for JavaScript projects
 
-** REPLACED BY [@form8ion/javascript](https://github.com/form8ion/javascript)
+**REPLACED BY [@form8ion/javascript](https://github.com/form8ion/javascript)**
 
 <!--status-badges start -->
 
